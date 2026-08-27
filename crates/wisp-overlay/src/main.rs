@@ -413,6 +413,7 @@ fn main() -> anyhow::Result<()> {
         .init();
     let args = Args::parse();
     let socket = args.socket.unwrap_or_else(default_socket_path);
+    wisp_daemon::ensure_no_running_instance(&socket)?;
     let config = args.config.unwrap_or_else(wisp_daemon::default_config_path);
     let loaded_config = WispConfig::load(&config)?;
     OVERLAY_CONFIG

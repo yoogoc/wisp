@@ -425,7 +425,7 @@ const fn default_window_frame_cache_ms() -> u64 {
     250
 }
 const fn default_startup_attempts() -> usize {
-    20
+    100
 }
 const fn default_startup_retry_ms() -> u64 {
     50
@@ -462,6 +462,6 @@ mod tests {
         config.validate().unwrap();
         assert_eq!(config.generator.max_output_bytes, 262_144);
         assert_eq!(config.overlay.detail_columns, 54);
-        assert_eq!(config.startup.attempts, 20);
+        assert_eq!(config.startup.attempts, 100);
     }
 }

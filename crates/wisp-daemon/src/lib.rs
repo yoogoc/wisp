@@ -1,4 +1,9 @@
-use std::{collections::HashMap, path::PathBuf, sync::Arc, time::Duration};
+use std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+    sync::Arc,
+    time::Duration,
+};
 
 use anyhow::{Context, bail};
 use directories::ProjectDirs;
@@ -497,7 +502,7 @@ pub fn default_config_path() -> PathBuf {
         .unwrap_or_else(|| PathBuf::from("wisp.toml"))
 }
 
-fn prepare_socket(path: &PathBuf) -> anyhow::Result<()> {
+fn prepare_socket(path: &Path) -> anyhow::Result<()> {
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)
             .with_context(|| format!("create socket directory {}", parent.display()))?;
@@ -506,6 +511,7 @@ fn prepare_socket(path: &PathBuf) -> anyhow::Result<()> {
         #[cfg(unix)]
         {
             use std::os::unix::fs::FileTypeExt;
+            ensure_no_running_instance(path)?;
             if !path
                 .symlink_metadata()
                 .context("inspect existing socket path")?
@@ -517,6 +523,17 @@ fn prepare_socket(path: &PathBuf) -> anyhow::Result<()> {
         }
         std::fs::remove_file(path)
             .with_context(|| format!("remove stale socket {}", path.display()))?;
+    }
+    Ok(())
+}
+
+pub fn ensure_no_running_instance(path: &Path) -> anyhow::Result<()> {
+    #[cfg(unix)]
+    if path.exists() && std::os::unix::net::UnixStream::connect(path).is_ok() {
+        bail!(
+            "another Wisp instance is already listening at {}",
+            path.display()
+        );
     }
     Ok(())
 }
@@ -562,5 +579,22 @@ mod tests {
         assert!(!requests.register("shell", 4));
         assert!(requests.register("shell", 5));
         assert!(requests.is_latest("shell", 5));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn active_daemon_socket_is_never_removed_as_stale() {
+        let path = PathBuf::from(format!(
+            "/tmp/wisp-active-socket-test-{}.sock",
+            std::process::id()
+        ));
+        let listener = std::os::unix::net::UnixListener::bind(&path).unwrap();
+
+        let error = prepare_socket(&path).unwrap_err();
+        assert!(error.to_string().contains("already listening"));
+        assert!(path.exists());
+
+        drop(listener);
+        std::fs::remove_file(path).unwrap();
     }
 }

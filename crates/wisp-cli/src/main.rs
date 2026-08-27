@@ -219,15 +219,20 @@ fn spawn_sibling(name: &str, socket: &PathBuf, config: &Path) -> anyhow::Result<
             current.display()
         );
     }
-    Command::new(path)
+    let mut command = Command::new(path);
+    command
         .env("WISP_SOCKET", socket)
         .arg("--config")
         .arg(config)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .spawn()
-        .with_context(|| format!("start {name}"))?;
+        .stderr(Stdio::null());
+    #[cfg(unix)]
+    {
+        use std::os::unix::process::CommandExt;
+        command.process_group(0);
+    }
+    command.spawn().with_context(|| format!("start {name}"))?;
     Ok(())
 }
 

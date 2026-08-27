@@ -2,11 +2,12 @@ use std::{
     collections::HashSet,
     ffi::OsStr,
     path::{Path, PathBuf},
+    process::Stdio,
     sync::Arc,
     time::Duration,
 };
 
-use tokio::{process::Command, time::timeout};
+use tokio::{io::AsyncReadExt, process::Command, time::timeout};
 use tracing::debug;
 use wisp_config::GeneratorConfig;
 use wisp_protocol::{BufferSnapshot, Candidate, CandidateKind};
@@ -261,20 +262,12 @@ impl CompletionEngine {
             return Vec::new();
         }
 
-        let output = timeout(
-            Duration::from_millis(self.generator.timeout_ms),
-            Command::new(program).args(args).current_dir(cwd).output(),
-        )
-        .await;
-        let Ok(Ok(output)) = output else {
+        let Some(stdout) = execute_generator(program, args, cwd, &self.generator).await else {
             debug!(program, "imported completion generator timed out or failed");
             return Vec::new();
         };
-        if !output.status.success() || output.stdout.len() > self.generator.max_output_bytes {
-            return Vec::new();
-        }
 
-        parse_imported_generator_output(&output.stdout, &generator.output, context)
+        parse_imported_generator_output(&stdout, &generator.output, context)
     }
 
     async fn run_generator(
@@ -302,25 +295,52 @@ impl CompletionEngine {
             _ => return Vec::new(),
         };
 
-        let output = timeout(
-            Duration::from_millis(self.generator.timeout_ms),
-            Command::new(program).args(args).current_dir(cwd).output(),
-        )
-        .await;
-        let Ok(Ok(output)) = output else {
+        let Some(stdout) = execute_generator(program, &args, cwd, &self.generator).await else {
             debug!(generator, "completion generator timed out or failed");
             return Vec::new();
         };
-        if !output.status.success() || output.stdout.len() > self.generator.max_output_bytes {
-            return Vec::new();
-        }
 
-        String::from_utf8_lossy(&output.stdout)
+        String::from_utf8_lossy(&stdout)
             .lines()
             .filter(|line| !line.is_empty())
             .filter_map(|line| make_candidate(line, line, None, kind, context))
             .collect()
     }
+}
+
+async fn execute_generator<S: AsRef<OsStr>>(
+    program: &str,
+    args: &[S],
+    cwd: &Path,
+    config: &GeneratorConfig,
+) -> Option<Vec<u8>> {
+    let mut command = Command::new(program);
+    command
+        .args(args)
+        .current_dir(cwd)
+        .stdin(Stdio::null())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::null())
+        .kill_on_drop(true);
+    let mut child = command.spawn().ok()?;
+    let stdout = child.stdout.take()?;
+    let limit = u64::try_from(config.max_output_bytes)
+        .unwrap_or(u64::MAX)
+        .saturating_add(1);
+    let operation = async move {
+        let mut bytes = Vec::new();
+        stdout.take(limit).read_to_end(&mut bytes).await.ok()?;
+        if bytes.len() > config.max_output_bytes {
+            let _ = child.kill().await;
+            let _ = child.wait().await;
+            return None;
+        }
+        child.wait().await.ok()?.success().then_some(bytes)
+    };
+    timeout(Duration::from_millis(config.timeout_ms), operation)
+        .await
+        .ok()
+        .flatten()
 }
 
 impl ImportedGenerator {
@@ -851,6 +871,36 @@ mod tests {
                 .collect::<Vec<_>>(),
             ["alpha", "beta"]
         );
+    }
+
+    #[tokio::test]
+    async fn generator_output_and_runtime_are_bounded() {
+        let cwd = Path::new(env!("CARGO_MANIFEST_DIR"));
+        let oversized = execute_generator(
+            "/bin/sh",
+            &["-c", "printf '12345'"],
+            cwd,
+            &GeneratorConfig {
+                timeout_ms: 500,
+                max_output_bytes: 4,
+            },
+        )
+        .await;
+        assert!(oversized.is_none());
+
+        let started = std::time::Instant::now();
+        let timed_out = execute_generator(
+            "/bin/sh",
+            &["-c", "sleep 2"],
+            cwd,
+            &GeneratorConfig {
+                timeout_ms: 20,
+                max_output_bytes: 64,
+            },
+        )
+        .await;
+        assert!(timed_out.is_none());
+        assert!(started.elapsed() < Duration::from_millis(500));
     }
 
     #[test]
