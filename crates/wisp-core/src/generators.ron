@@ -1,0 +1,342 @@
+// Rules that stand in for the JavaScript `postProcess` callbacks Fig ships with
+// its generators. Each one is a transcription of what the matching Fig callback
+// does, keyed on the head of the script's argv; the longest match wins. A
+// generator with no rule falls back to its own `splitOn`, and then to `Auto`,
+// which reads JSON, newline-delimited JSON, or plain lines from the output.
+(
+    // A generator may only spawn one of these programs, so an imported spec
+    // still cannot run an arbitrary command. Keep this to fast, local,
+    // read-only tools: a generator runs while the user is typing.
+    // A generator may only spawn one of these, so a spec cannot hand Wisp an
+    // arbitrary command to run. The line this draws is not "no side effects" --
+    // `npm` and `docker` can do plenty -- it is that nothing here takes another
+    // command as its argument. Shells (`bash -c ...`), `env`, `find -exec`, and
+    // `xargs` are refused for that reason, and `curl` and `wget` because a
+    // keystroke should not reach the network. Every name below appears in a
+    // script some imported spec declares.
+    allowed: [
+        "Rscript",
+        "adb",
+        "amplify",
+        "ansible-doc",
+        "apt",
+        "arduino-cli",
+        "asdf",
+        "assimp",
+        "aws",
+        "aws-vault",
+        "bat",
+        "bosh",
+        "brew",
+        "bundle",
+        "cargo",
+        "cat",
+        "cf",
+        "chsh",
+        "conda",
+        "cordova",
+        "cw",
+        "dapr",
+        "dcli",
+        "defaultbrowser",
+        "defaults",
+        "docker",
+        "docker-compose",
+        "doppler",
+        "dotnet",
+        "dtm",
+        "eb",
+        "echo",
+        "envchain",
+        "expressots",
+        "fig",
+        "fin",
+        "firebase",
+        "flutter",
+        "fly",
+        "flyctl",
+        "fnm",
+        "fvm",
+        "gh",
+        "gibo",
+        "git",
+        "git-profile",
+        "go",
+        "gpg",
+        "herd",
+        "heroku",
+        "hyper",
+        "ibus",
+        "ifconfig",
+        "jenv",
+        "k3d",
+        "kind",
+        "kool",
+        "kubectl",
+        "kubectx",
+        "kubens",
+        "launchctl",
+        "lerna",
+        "limactl",
+        "ls",
+        "mackup",
+        "mdfind",
+        "meteor",
+        "mix",
+        "multipass",
+        "n",
+        "networksetup",
+        "ng",
+        "nx",
+        "okteto",
+        "op",
+        "oxlint",
+        "pandoc",
+        "pbpaste",
+        "phpunit",
+        "pip",
+        "pipx",
+        "pkgutil",
+        "pnpm",
+        "podman",
+        "pulumi",
+        "pyenv",
+        "q",
+        "quickmail",
+        "rake",
+        "rancher",
+        "rbenv",
+        "rclone",
+        "rubocop",
+        "rugby",
+        "rustc",
+        "rustup",
+        "sake",
+        "scarb",
+        "shortcuts",
+        "snaplet",
+        "stepzen",
+        "sysctl",
+        "tailscale",
+        "task",
+        "terraform",
+        "terragrunt",
+        "tfenv",
+        "tmux",
+        "tmuxinator",
+        "tokei",
+        "tsh",
+        "tsuru",
+        "v",
+        "valet",
+        "vr",
+        "vultr-cli",
+        "watson",
+        "xcodes",
+        "xcrun",
+        "yarn",
+        "ykman",
+        "yo",
+        "zellij",
+    ],
+
+    timeout_ms: 400,
+    cache_ttl_ms: 3000,
+
+    // Git reports a missing repository on stdout and still exits zero.
+    reject_prefixes: ["fatal:", "error:", "ERR_PNPM"],
+
+    // Fig writes these as `custom` generators, which are pure JavaScript. The
+    // answer is in a file the shell can already see, so Wisp reads it instead.
+    natives: {
+        "npm run": PackageJsonScripts,
+        "npm run-script": PackageJsonScripts,
+        "pnpm run": PackageJsonScripts,
+        "yarn run": PackageJsonScripts,
+        "make": MakeTargets,
+        "ssh": SshHosts,
+        "scp": SshHosts,
+        "sftp": SshHosts,
+    },
+
+    rules: [
+        // -- git ------------------------------------------------------------
+        (
+            script: ["git", "--no-optional-locks", "branch", "--no-color", "--sort=-committerdate"],
+            pipeline: Lines((strip_prefix: Some("* "), reject_containing: ["HEAD detached"])),
+            kind: Branch,
+        ),
+        (
+            script: ["git", "--no-optional-locks", "branch", "-a", "--no-color", "--sort=-committerdate"],
+            pipeline: Lines((strip_prefix: Some("* "), reject_containing: ["HEAD detached"])),
+            kind: Branch,
+        ),
+        (
+            script: ["git", "--no-optional-locks", "branch", "-r", "--no-color", "--sort=-committerdate"],
+            pipeline: Lines((strip_prefix: Some("* "), reject_containing: ["HEAD detached"])),
+            kind: Branch,
+        ),
+        (
+            script: ["git", "branch", "--no-color"],
+            pipeline: Lines((strip_prefix: Some("* "))),
+            kind: Branch,
+        ),
+        (
+            script: ["git", "remote"],
+            kind: Branch,
+        ),
+        // `<remote>\t<url> (fetch|push)`; the duplicate push line collapses.
+        (
+            script: ["git", "--no-optional-locks", "remote", "-v"],
+            pipeline: Lines((delimiter: Some(""), name: 0, description: Some(At(1)))),
+            kind: Branch,
+        ),
+        // `<sha> <subject>`: the sha is inserted, the subject describes it.
+        (
+            script: ["git", "--no-optional-locks", "log", "--oneline"],
+            pipeline: Lines((delimiter: Some(""), name: 0, description: Some(From(1)))),
+        ),
+        (
+            script: ["git", "rev-list", "--all", "--oneline"],
+            pipeline: Lines((delimiter: Some(""), name: 0, description: Some(From(1)))),
+        ),
+        // `<status> <path>`, so the path is what gets completed.
+        (
+            script: ["git", "--no-optional-locks", "status", "--short"],
+            pipeline: Lines((delimiter: Some(""), name: 1)),
+            kind: File,
+        ),
+        (
+            script: ["git", "--no-optional-locks", "diff", "--cached", "--name-only"],
+            kind: File,
+        ),
+        (
+            script: ["git", "--no-optional-locks", "tag", "--list", "--sort=-committerdate"],
+            kind: Branch,
+        ),
+        // `stash@{0}: WIP on main: <subject>`: show the subject, insert the ref.
+        (
+            script: ["git", "--no-optional-locks", "stash", "list"],
+            pipeline: Lines((
+                delimiter: Some(":"),
+                name: 2,
+                description: Some(At(1)),
+                insert: Some(At(0)),
+            )),
+        ),
+        // `alias.co checkout` -- the alias name, described by what it runs.
+        (
+            script: ["git", "--no-optional-locks", "config", "--get-regexp", "^alias."],
+            pipeline: Lines((
+                strip_prefix: Some("alias."),
+                delimiter: Some(""),
+                name: 0,
+                description: Some(From(1)),
+            )),
+        ),
+        (
+            script: ["git", "config", "--get-regexp", ".*"],
+            pipeline: Lines((delimiter: Some(""), name: 0)),
+        ),
+
+        // -- docker and podman ----------------------------------------------
+        (
+            script: ["docker", "ps"],
+            pipeline: Json((name: Some("Names"), description: Some("Image"))),
+        ),
+        (
+            script: ["podman", "ps"],
+            pipeline: Json((name: Some("Names"), description: Some("Image"))),
+        ),
+        // Fig inserts the image id and shows the repository beside it.
+        (
+            script: ["docker", "image", "ls", "--format", "{{ json . }}"],
+            pipeline: Json((name: Some("ID"), description: Some("Repository"))),
+        ),
+        (
+            script: ["docker", "images", "--format", "{{.Repository}} {{.Size}} {{.Tag}} {{.ID}}"],
+            pipeline: Lines((delimiter: Some(""), name: 0, description: Some(From(1)))),
+        ),
+        (
+            script: ["podman", "images", "--format", "{{.Repository}} {{.Size}} {{.Tag}} {{.ID}}"],
+            pipeline: Lines((delimiter: Some(""), name: 0, description: Some(From(1)))),
+        ),
+        (
+            script: ["docker", "context", "list", "--format", "{{ json . }}"],
+            pipeline: Json((name: Some("Name"), description: Some("Description"))),
+        ),
+        (
+            script: ["docker", "service", "list", "--format", "{{ json . }}"],
+            pipeline: Json((name: Some("Name"), description: Some("Image"))),
+        ),
+        (
+            script: ["docker", "node", "list", "--format", "{{ json . }}"],
+            pipeline: Json((name: Some("ID"), description: Some("Hostname"))),
+        ),
+
+        // -- kubernetes ------------------------------------------------------
+        // A table with a header row; the first column is the name.
+        (
+            script: ["kubectl", "get", "namespaces"],
+            pipeline: Lines((skip: 1, delimiter: Some(""), name: 0)),
+        ),
+
+        // -- language and package tooling ------------------------------------
+        (
+            script: ["cargo", "metadata"],
+            pipeline: Json((path: ["packages"], name: Some("name"), description: Some("version"))),
+        ),
+        // A crate's features are the keys of the manifest's `features` object.
+        (
+            script: ["cargo", "read-manifest"],
+            pipeline: Json((path: ["features"], keys: true)),
+        ),
+        (
+            script: ["brew", "list", "-1"],
+            pipeline: Lines((reject_containing: ["="])),
+        ),
+        // `pnpm ls` prints a legend, the package path, and section headers.
+        (
+            script: ["pnpm", "ls"],
+            pipeline: Lines((
+                skip: 3,
+                delimiter: Some(""),
+                name: 0,
+                description: Some(From(1)),
+                reject_containing: ["dependencies", "workspace:"],
+            )),
+        ),
+        // A pull request argument takes the number, not the title.
+        (
+            script: ["gh", "pr", "list"],
+            pipeline: Json((name: Some("number"), description: Some("title"))),
+        ),
+        (
+            script: ["gh", "alias", "list"],
+            pipeline: Lines((delimiter: Some(":"), name: 0, description: Some(From(1)))),
+        ),
+
+        // -- tmux -------------------------------------------------------------
+        // Every `tmux ls*` prints `<name>: <details>`.
+        (
+            script: ["tmux", "ls"],
+            pipeline: Lines((delimiter: Some(":"), name: 0, description: Some(From(1)))),
+        ),
+        (
+            script: ["tmux", "lsw"],
+            pipeline: Lines((delimiter: Some(":"), name: 0, description: Some(From(1)))),
+        ),
+        (
+            script: ["tmux", "lsp"],
+            pipeline: Lines((delimiter: Some(":"), name: 0, description: Some(From(1)))),
+        ),
+        (
+            script: ["tmux", "lsb"],
+            pipeline: Lines((delimiter: Some(":"), name: 0, description: Some(From(1)))),
+        ),
+        (
+            script: ["tmux", "lsc"],
+            pipeline: Lines((delimiter: Some(":"), name: 0, description: Some(From(1)))),
+        ),
+    ],
+)

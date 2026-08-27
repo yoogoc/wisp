@@ -85,7 +85,8 @@ fn collect(root: &Path, directory: &Path, specs: &mut BTreeMap<String, PathBuf>)
 /// the largest specs are several megabytes and only their id and command name
 /// are needed at build time.
 fn read_command(document: &[u8]) -> Option<String> {
-    let head = std::str::from_utf8(document.get(..4096).unwrap_or(document)).ok()?;
+    // The cut can land mid-character, so decode the head leniently.
+    let head = String::from_utf8_lossy(document.get(..4096).unwrap_or(document));
     for line in head.lines() {
         let value = line.trim();
         if let Some(value) = value.strip_prefix("command:") {

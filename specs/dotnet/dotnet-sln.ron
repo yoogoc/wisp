@@ -1,45 +1,34 @@
 (
     version: 1,
     command: "sln",
-    description: None,
     subcommands: [
         (
             name: "list",
-            aliases: [],
             description: Some("Lists all projects in a solution file"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "add",
-            aliases: [],
             description: Some("Adds one or more projects to the solution file"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--in-root",
                     ],
-                    description: Some("Places the projects in the root of the solution, rather than creating a solution folder. Can\'t be used with -s|--solution-folder. Available since .NET Core 3.0 SDK"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Places the projects in the root of the solution, rather than creating a solution folder. Can't be used with -s|--solution-folder. Available since .NET Core 3.0 SDK"),
                 ),
                 (
                     names: [
                         "-s",
                         "--solution-folder",
                     ],
-                    description: Some("The destination solution folder path to add the projects to. Can\'t be used with --in-root. Available since .NET Core 3.0 SDK"),
-                    takes_value: true,
+                    description: Some("The destination solution folder path to add the projects to. Can't be used with --in-root. Available since .NET Core 3.0 SDK"),
                     arguments: [
                         (
                             name: "path",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The destination solution folder path to add the projects to. Can't be used with --in-root. Available since .NET Core 3.0 SDK"),
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -47,44 +36,39 @@
             arguments: [
                 (
                     name: "path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The path to the project or projects to add to the solution. Unix/Linux shell globbing pattern expansions are processed correctly by the dotnet sln command"),
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "remove",
-            aliases: [],
             description: Some("Removes a project or multiple projects from the solution file"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The path to the project or projects to add to the solution. Unix/Linux shell globbing pattern expansions are processed correctly by the dotnet sln command"),
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
     ],
-    options: [],
     arguments: [
         (
             name: "solution",
-            source: Unavailable,
+            description: Some("The solution file to use. If this argument is omitted, the command searches the current directory for one. If it finds no solution file or multiple solution files, the command fails"),
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    has_dynamic_query_term: true,
+                ),
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
         ),
     ],
 )

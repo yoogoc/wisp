@@ -2,7 +2,6 @@
     version: 1,
     command: "base64",
     description: Some("Encode and decode using Base64 representation"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "-h",
             ],
             description: Some("Display this help and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,16 +16,15 @@
                 "-b",
             ],
             description: Some("Insert line breaks every count characters.  Default is 0, which generates an unbroken stream"),
-            takes_value: true,
             arguments: [
                 (
                     name: "count",
-                    source: Static([
-                        "0",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "0",
+                        ),
+                    ],
+                    default: Some("0"),
                 ),
             ],
         ),
@@ -39,8 +35,6 @@
                 "-D",
             ],
             description: Some("Decode incoming Base64 stream into binary data"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -48,17 +42,21 @@
                 "-i",
             ],
             description: Some("Read input from input_file.  Default is stdin; passing - also represents stdin"),
-            takes_value: true,
             arguments: [
                 (
                     name: "input_file",
-                    source: Static([
-                        "stdin",
-                        "-",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "stdin",
+                        ),
+                        (
+                            name: "-",
+                        ),
+                    ],
+                    template: [
+                        FilePaths,
+                    ],
+                    default: Some("stdin"),
                 ),
             ],
         ),
@@ -68,20 +66,26 @@
                 "-o",
             ],
             description: Some("Write output to output_file.  Default is stdout; passing - also represents stdout"),
-            takes_value: true,
             arguments: [
                 (
                     name: "output_file",
-                    source: Static([
-                        "stdout",
-                        "-",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "stdout",
+                        ),
+                        (
+                            name: "-",
+                        ),
+                    ],
+                    template: [
+                        FilePaths,
+                    ],
+                    default: Some("stdout"),
                 ),
             ],
         ),
     ],
-    arguments: [],
+    parser_directives: Some((
+        options_must_precede_arguments: true,
+    )),
 )

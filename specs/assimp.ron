@@ -5,75 +5,53 @@
     subcommands: [
         (
             name: "listext",
-            aliases: [],
             description: Some("List all known file extensions available for import"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "listexport",
-            aliases: [],
             description: Some("List all supported export formats"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "knowext",
-            aliases: [],
             description: Some("List all known file extensions available for import"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "extension",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "assimp",
-                            "listext",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("Check whether a particular file extension is known by us"),
+                    generators: [
+                        (
+                            script: [
+                                "assimp",
+                                "listext",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "exportinfo",
-            aliases: [],
             description: Some("Show basic information on a specific export format"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "extension",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "assimp",
-                            "listexport",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("Specific file extension"),
+                    generators: [
+                        (
+                            script: [
+                                "assimp",
+                                "listexport",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "info",
-            aliases: [],
             description: Some("Load a model file and print basic statistics. Full postprocessing is applied unless the `-r` switch is specified"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -81,8 +59,6 @@
                         "--raw",
                     ],
                     description: Some("No postprocessing, do a raw import"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -90,8 +66,6 @@
                         "--verbose",
                     ],
                     description: Some("Print verbose info such as node transform data"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -99,8 +73,6 @@
                         "--silent",
                     ],
                     description: Some("Print only minimal info"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -108,26 +80,22 @@
                         "--help",
                     ],
                     description: Some("Detailed help on a command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
+                    description: Some("Print basic structure of a 3D model"),
+                    template: [
+                        FilePaths,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "export",
-            aliases: [],
             description: Some("Export a file to one of the supported output formats"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -135,21 +103,18 @@
                         "--format",
                     ],
                     description: Some("Export file formats supported by Assimp"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "assimp",
-                                    "listexport",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "assimp",
+                                        "listexport",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -159,33 +124,28 @@
                         "--help",
                     ],
                     description: Some("Detailed help on a command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "model",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Relative or absolute path to the input model"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
                 (
                     name: "out",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Relative or absolute path to write the output export to"),
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "extract",
-            aliases: [],
             description: Some("Extract embedded texture images"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -193,14 +153,9 @@
                         "--texture",
                     ],
                     description: Some("Zero-based index of the texture to be extracted"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "index",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -210,8 +165,6 @@
                         "–-bmp-with-alpha",
                     ],
                     description: Some("Specifies whether output BMPs contain an alpha channel or not"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -219,17 +172,17 @@
                         "--format",
                     ],
                     description: Some("Specifies the output file format. Supported formats are BMP and TGA. The default value is BMP (if a full output filename is specified, the output file format is taken from its extension)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "bmp",
-                                "tga",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "bmp",
+                                ),
+                                (
+                                    name: "tga",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -239,32 +192,24 @@
                         "–-nosuffix",
                     ],
                     description: Some("Prevents the tool from adding the _img<n> suffix to all filenames. This option must be specified together with -t to ensure that just one image is written"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-cfast",
                     ],
                     description: Some("Fast post processing preset, runs just a few important steps"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-cdefault",
                     ],
                     description: Some("Default post processing: runs all recommended steps"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-cfull",
                     ],
                     description: Some("Fires almost all post processing steps"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -272,33 +217,29 @@
                         "--help",
                     ],
                     description: Some("Detailed help on a command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "model",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Relative or absolute path to the input model"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
                 (
                     name: "out",
-                    source: Directories,
+                    description: Some("Relative or absolute path to write the output images to"),
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "dump",
-            aliases: [],
             description: Some("Convert models to a binary or textual dump (ASSBIN/ASSXML)"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -306,8 +247,6 @@
                         "--binary",
                     ],
                     description: Some("If true, the dump is written in binary format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -315,8 +254,6 @@
                         "--short",
                     ],
                     description: Some("If true, the dump is shortened to include only min/max values for all vertex components and animation channels"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -324,32 +261,24 @@
                         "--compressed",
                     ],
                     description: Some("If true, Compressed"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-cfast",
                     ],
                     description: Some("Fast post processing preset, runs just a few important steps"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-cdefault",
                     ],
                     description: Some("Default post processing: runs all recommended steps"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-cfull",
                     ],
                     description: Some("Fires almost all post processing steps"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -357,33 +286,29 @@
                         "--help",
                     ],
                     description: Some("Detailed help on a command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "model",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Relative or absolute path to the input model"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
                 (
                     name: "out",
-                    source: Directories,
+                    description: Some("Relative or absolute path to write the output dump to. If it is omitted, the dump is written to '<model>-dump.txt'"),
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "cmpdump",
-            aliases: [],
-            description: Some("Compare dumps created using \'assimp dump <file> -s ...\'"),
-            subcommands: [],
+            description: Some("Compare dumps created using 'assimp dump <file> -s ...'"),
             options: [
                 (
                     names: [
@@ -391,36 +316,28 @@
                         "--help",
                     ],
                     description: Some("Detailed help on a command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "actual",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Mini dump now"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
                 (
                     name: "expected",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Archived dump from some point in the past"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Display Assimp version"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -430,9 +347,6 @@
                 "--help",
             ],
             description: Some("Display some basic help"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

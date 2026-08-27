@@ -5,37 +5,35 @@
     subcommands: [
         (
             name: "build",
-            aliases: [],
             description: Some("Execute build pipeline (if configuration present)"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "compile",
-            aliases: [],
             description: Some("Compile contract source files"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--list",
                     ],
                     description: Some("List all recent stable releases from solc-bin. If filter is specified then it will display only that type of release or docker tags"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "filter",
-                            source: Static([
-                                "prereleases",
-                                "releases",
-                                "latestRelease",
-                                "docker",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The filter parameter must be one of the following: prereleases, releases, latestRelease or docker"),
+                            suggestions: [
+                                (
+                                    name: "prereleases",
+                                ),
+                                (
+                                    name: "releases",
+                                ),
+                                (
+                                    name: "latestRelease",
+                                ),
+                                (
+                                    name: "docker",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -44,66 +42,39 @@
                         "--all",
                     ],
                     description: Some("Compile all contracts instead of only the contracts changed since last compile"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--quiet",
                     ],
                     description: Some("Suppress all compilation output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "config",
-            aliases: [],
             description: Some("Set user-level configuration options"),
             subcommands: [
                 (
                     name: "get",
-                    aliases: [],
                     description: Some("Get a Truffle configuration option value"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "key",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "set",
-                    aliases: [],
                     description: Some("Set a Truffle configuration option value"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "key",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                         (
                             name: "value-for-set",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -112,40 +83,34 @@
                         "--enable-analytics",
                     ],
                     description: Some("Enable Truffle to send usage data to Google Analytics"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--disable-analytics",
+                    ],
                 ),
                 (
                     names: [
                         "--disable-analytics",
                     ],
-                    description: Some("Disable Truffle\'s ability to send usage data to Google Analytics"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Disable Truffle's ability to send usage data to Google Analytics"),
+                    exclusive_on: [
+                        "--enable-analytics",
+                    ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "console",
-            aliases: [],
             description: Some("Run a console with contract abstractions and commands available"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--network",
                     ],
                     description: Some("Specify the network to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Network name must exist in the configuration"),
                         ),
                     ],
                 ),
@@ -154,8 +119,6 @@
                         "--verbose-rpc",
                     ],
                     description: Some("Log communication between Truffle and the Ethereum client"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -163,14 +126,13 @@
                         "-r",
                     ],
                     description: Some("Preload console environment from required JavaScript file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The default export must be an object with named keys that will be used to populate the console environment. For example, if your JavaScript is module.exports = { desert: \"yes please!\" } then breakfast will be available in the console with the value \"yes please!.\""),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -178,62 +140,50 @@
                     names: [
                         "--require-none",
                     ],
-                    description: Some("Do not load any user-defined JavaScript into the console environment. This option takes precedence over --require, -r, and values provided for console.require in your project\'s truffle-config.js"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Do not load any user-defined JavaScript into the console environment. This option takes precedence over --require, -r, and values provided for console.require in your project's truffle-config.js"),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "create",
-            aliases: [],
             description: Some("Helper to create new contracts, migrations and tests"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "artifact_type",
-                    source: Static([
-                        "contract",
-                        "migration",
-                        "test",
-                        "all",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Create a new artifact where artifact_type is one of the following: contract, migration, test or all. The new artifact is created along with one(or all) of the followingfiles: `contracts/ArtifactName.sol`, `migrations/####_artifact_name.js` or`tests/artifact_name.js`. (required)"),
+                    suggestions: [
+                        (
+                            name: "contract",
+                        ),
+                        (
+                            name: "migration",
+                        ),
+                        (
+                            name: "test",
+                        ),
+                        (
+                            name: "all",
+                        ),
+                    ],
                 ),
                 (
                     name: "ArtifactName",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name of new artifact. (required)"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "debug",
-            aliases: [],
             description: Some("Interactively debug any transaction on the blockchain"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--network",
                     ],
                     description: Some("The network to connect to"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "network",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -243,73 +193,62 @@
                         "-x",
                     ],
                     description: Some("Allows the debugger to download source from source verification services to debug transactions involving external contracts. When used, a transaction hash is required. May be abbreviated -x"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--compile-tests",
                     ],
                     description: Some("Allows the debugger to compile Solidity test contracts. Implies --compile-all"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--compile-all",
+                        "--compile-none",
+                    ],
                 ),
                 (
                     names: [
                         "--compile-all",
                     ],
                     description: Some("Forces the debugger to recompile all contracts, even when it would otherwise judge doing so unnecessary. Compilation results are not saved"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--compile-tests",
+                        "--compile-none",
+                    ],
                 ),
                 (
                     names: [
                         "--compile-none",
                     ],
                     description: Some("Forces the debugger not to recompile contracts, even when it would otherwise judge it necessary. This option is dangerous and may cause errors. Please only use this if you are sure a recompilation is not necessary"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--compile-tests",
+                        "--compile-all",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "transaction_hash",
-                    source: Files,
+                    description: Some("Transaction ID to use for debugging. You can omit this to simply start the debugger and then load a transaction later"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "deploy",
-            aliases: [],
             description: Some("Alias for migrate. See migrate for details"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "develop",
-            aliases: [],
             description: Some("Open a console with a development blockchaine"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--log",
                     ],
                     description: Some("Start/Connect to a Truffle develop session and log all RPC activity. See the Log RPC Activity docs for more information about using this option"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "network",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -319,14 +258,13 @@
                         "-r",
                     ],
                     description: Some("Preload console environment from required JavaScript file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The default export must be an object with named keys that will be used to populate the console environment. For example, if your JavaScript is module.exports = { desert: \"yes please!\" } then breakfast will be available in the console with the value \"yes please!.\""),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -334,33 +272,23 @@
                     names: [
                         "--require-none",
                     ],
-                    description: Some("Do not load any user-defined JavaScript into the console environment. This option takes precedence over --require, -r, and values provided for console.require in your project\'s truffle-config.js"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Do not load any user-defined JavaScript into the console environment. This option takes precedence over --require, -r, and values provided for console.require in your project's truffle-config.js"),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "exec",
-            aliases: [],
             description: Some("Execute a JS module within the Truffle environment"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--network",
                     ],
                     description: Some("Specify the network to use, using artifacts specific to that network"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Network name must exist in the configuration"),
                         ),
                     ],
                 ),
@@ -369,228 +297,203 @@
                         "--compile",
                     ],
                     description: Some("Compile contracts before executing the script"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "script.js",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("JavaScript file to be executed. Can include path information if the script does not exist in the current directory. (required)"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Display a list of all commands or information about a specific command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Static([
-                        "build",
-                        "compile",
-                        "config",
-                        "console",
-                        "create",
-                        "debug",
-                        "deploy",
-                        "develop",
-                        "exec",
-                        "help",
-                        "init",
-                        "install",
-                        "networks",
-                        "obtain",
-                        "opcode",
-                        "publish",
-                        "run",
-                        "version",
-                        "watch",
-                        "preserve",
-                        "migrate",
-                        "unbox",
-                        "test",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Display usage information about the specified command"),
+                    suggestions: [
+                        (
+                            name: "build",
+                        ),
+                        (
+                            name: "compile",
+                        ),
+                        (
+                            name: "config",
+                        ),
+                        (
+                            name: "console",
+                        ),
+                        (
+                            name: "create",
+                        ),
+                        (
+                            name: "debug",
+                        ),
+                        (
+                            name: "deploy",
+                        ),
+                        (
+                            name: "develop",
+                        ),
+                        (
+                            name: "exec",
+                        ),
+                        (
+                            name: "help",
+                        ),
+                        (
+                            name: "init",
+                        ),
+                        (
+                            name: "install",
+                        ),
+                        (
+                            name: "networks",
+                        ),
+                        (
+                            name: "obtain",
+                        ),
+                        (
+                            name: "opcode",
+                        ),
+                        (
+                            name: "publish",
+                        ),
+                        (
+                            name: "run",
+                        ),
+                        (
+                            name: "version",
+                        ),
+                        (
+                            name: "watch",
+                        ),
+                        (
+                            name: "preserve",
+                        ),
+                        (
+                            name: "migrate",
+                        ),
+                        (
+                            name: "unbox",
+                        ),
+                        (
+                            name: "test",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
             description: Some("Initialize new and empty Ethereum project"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--force",
                     ],
-                    description: Some("Initialize project regardless of the current working directory\'s state. Be careful, this could overwrite existing files that have name conflicts"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Initialize project regardless of the current working directory's state. Be careful, this could overwrite existing files that have name conflicts"),
+                    presentation: (
+                        dangerous: true,
+                    ),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "install",
-            aliases: [],
             description: Some("Install a package from the Ethereum Package Registry"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "package_name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name of the package as listed in the Ethereum Package Registry. (required)"),
                 ),
                 (
                     name: "@version",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("When specified, will install a specific version of the package, otherwise will install the latest version"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "networks",
-            aliases: [],
             description: Some("Show addresses for deployed contracts on each network"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--clean",
                     ],
-                    description: Some("Remove all network artifacts that aren\'t associated with a named network"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Remove all network artifacts that aren't associated with a named network"),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "obtain",
-            aliases: [],
             description: Some("Fetch and cache a specified compiler"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--solc",
                     ],
                     description: Some("Download and cache a version of the solc compiler. (required)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "version",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "opcode",
-            aliases: [],
             description: Some("Print the compiled opcodes for a given contract"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "contract_name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name of the contract to print opcodes for. Must be a contract name, not a file name. (required)"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "publish",
-            aliases: [],
             description: Some("Publish a package to the Ethereum Package Registry"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "run",
-            aliases: [],
             description: Some("Run a third-party plugin command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name of a command defined by an installed plugin. (required)"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Show version number and exit"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "watch",
-            aliases: [],
             description: Some("Watch filesystem for changes and rebuild the project automatically"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "preserve",
-            aliases: [],
             description: Some("Save data to decentralized storage platforms like IPFS and Filecoin"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--environment",
                     ],
                     description: Some("Environment name, as defined in truffle-config `environments` object"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("development"),
                         ),
                     ],
                 ),
@@ -599,64 +502,48 @@
                         "--ipfs",
                     ],
                     description: Some("Preserve to IPFS"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filecoin",
                     ],
                     description: Some("Preserve to Filecoin"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--buckets",
                     ],
                     description: Some("Preserve to Textile Buckets"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "migrate",
-            aliases: [],
             description: Some("Run migrations to deploy contracts"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--reset",
                     ],
                     description: Some("Run all migrations from the beginning, instead of running from the last completed migration"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--f",
                     ],
                     description: Some("Run contracts from a specific migration"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "number",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The number refers to the prefix of the migration file"),
                         ),
                     ],
                 ),
@@ -665,14 +552,10 @@
                         "--to",
                     ],
                     description: Some("Run contracts to a specific migration"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "number",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The number refers to the prefix of the migration file"),
                         ),
                     ],
                 ),
@@ -681,14 +564,10 @@
                         "--network",
                     ],
                     description: Some("Specify the network to use, saving artifacts specific to that network"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Network name must exist in the configuration"),
                         ),
                     ],
                 ),
@@ -697,125 +576,96 @@
                         "--compile-all",
                     ],
                     description: Some("Compile all contracts instead of intelligently choosing which contracts need to be compiled"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose-rpc",
                     ],
                     description: Some("Log communication between Truffle and the Ethereum client"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--dry-run",
                     ],
                     description: Some("Fork the network specified and only perform a test migration"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--skip-dry-run",
                     ],
                     description: Some("Skip the test migration performed before the real migration"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--interactive",
                     ],
                     description: Some("Prompt to confirm that the user wants to proceed after the dry run"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--describe-json",
                     ],
                     description: Some("Prints additional status messages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "unbox",
-            aliases: [],
             description: Some("Download a Truffle Box, a pre-built Truffle project"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--force",
                     ],
                     description: Some("Unbox project in the current directory regardless of its state. Be careful, this will potentially overwrite files that exist in the directory"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        dangerous: true,
+                    ),
                 ),
             ],
             arguments: [
                 (
                     name: "box_name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name of the Truffle Box. (required)"),
                 ),
                 (
                     name: "path",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            template: [
+                                FilePaths,
+                            ],
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "test",
-            aliases: [],
             description: Some("Run JavaScript and Solidity tests"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--compile-all",
                     ],
                     description: Some("Compile all contracts instead of intelligently choosing which contracts need to be compiled"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--compile-all-debug",
                     ],
                     description: Some("Like --compile-all, but compiles contracts in debug mode for extra information. Has no effect on Solidity <0.6.3"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--network",
                     ],
                     description: Some("Specify the network to use, using artifacts specific to that network"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Network name must exist in the configuration"),
                         ),
                     ],
                 ),
@@ -824,38 +674,27 @@
                         "--verbose-rpc",
                     ],
                     description: Some("Log communication between Truffle and the Ethereum client"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--show-events",
                     ],
                     description: Some("Log all contract events"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--debug",
                     ],
                     description: Some("Provides global debug() function for in-test debugging. Usable with Javascript tests only; implies --compile-all"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--debug-global",
                     ],
                     description: Some("Allows one to rename the debug() function to something else"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "identifier",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -865,8 +704,6 @@
                         "-b",
                     ],
                     description: Some("Bail after the first test failure. May be abbreviated -b"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -874,30 +711,23 @@
                         "-t",
                     ],
                     description: Some("Allows for mixed Javascript-and-Solidity stacktraces when a Truffle Contract transaction or deployment reverts. Does not apply to calls or gas estimates. Implies --compile-all. May be abbreviated -t. Warning: This option is still somewhat experimental"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--stacktrace-extra",
                     ],
                     description: Some("Shortcut for --stacktrace --compile-all-debug"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "test_file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name of the test file to be run. Can include path information if the file does not exist in the current directory"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
     ],
-    options: [],
-    arguments: [],
 )

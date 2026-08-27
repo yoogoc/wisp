@@ -2,7 +2,6 @@
     version: 1,
     command: "rushx",
     description: Some("Run arbitrary package scripts for rush project. analogous to npm run"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "--help",
             ],
             description: Some("Show this help message and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,25 +16,28 @@
                 "--quiet",
             ],
             description: Some("Hide rushx startup information"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "Scripts",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [
-                    "bash",
-                    "-c",
-                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
+            description: Some("Script to run from your package.json"),
+            generators: [
+                (
+                    script: [
+                        "bash",
+                        "-c",
+                        "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                    ],
+                    has_post_process: true,
+                    cache: Some((
+                        by_directory: true,
+                        stale_while_revalidate: true,
+                    )),
+                ),
+            ],
+            filter_strategy: Fuzzy,
+            is_command: true,
         ),
     ],
 )

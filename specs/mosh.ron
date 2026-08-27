@@ -1,8 +1,6 @@
 (
     version: 1,
     command: "mosh",
-    description: Some(""),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,84 +8,98 @@
                 "-h",
             ],
             description: Some("Show help for mosh"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--client",
             ],
             description: Some("Mosh client on local machine (default: \"mosh-client\")"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--server",
             ],
             description: Some("Mosh server on remote machine (default: \"mosh-server\")"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--predict",
             ],
             description: Some("Local echo options"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Static([
-                        "adaptive",
-                        "always",
-                        "never",
-                        "experimental",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    suggestions: [
+                        (
+                            name: "adaptive",
+                            description: Some("Local echo for slower links [default]"),
+                        ),
+                        (
+                            name: "always",
+                            description: Some("Use local echo even on fast links"),
+                        ),
+                        (
+                            name: "never",
+                            description: Some("Never use local echo"),
+                        ),
+                        (
+                            name: "experimental",
+                            description: Some("Aggressively echo even when incorrect"),
+                        ),
+                    ],
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "-4",
             ],
             description: Some("Use IPv4 only"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-6",
             ],
             description: Some("Use IPv6 only"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--family",
             ],
             description: Some("Network Type"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Static([
-                        "inet",
-                        "ine6",
-                        "auto",
-                        "all",
-                        "prefer-inet4",
-                        "prefer-inet6",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    suggestions: [
+                        (
+                            name: "inet",
+                            description: Some("Use IPv4 only"),
+                        ),
+                        (
+                            name: "ine6",
+                            description: Some("Use IPv6 only"),
+                        ),
+                        (
+                            name: "auto",
+                            description: Some("Autodetect network type for single-family hosts only"),
+                        ),
+                        (
+                            name: "all",
+                            description: Some("Try all network types"),
+                        ),
+                        (
+                            name: "prefer-inet4",
+                            description: Some("Use all network types, but try IPv4 first [default]"),
+                        ),
+                        (
+                            name: "prefer-inet6",
+                            description: Some("Use all network types, but try IPv6 first"),
+                        ),
+                    ],
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
@@ -95,97 +107,95 @@
                 "-p",
             ],
             description: Some("Server-side UDP port or range, (No effect on server-side SSH port)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--bind-server",
             ],
             description: Some("{ssh|any|IP}, ask the server to reply from an IP address, (default: \"ssh\")"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ssh",
             ],
             description: Some("Ssh command to run when setting up session, (example: \"ssh -p 2222\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    is_command: true,
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "--no-ssh-pty",
             ],
             description: Some("Do not allocate a pseudo tty on ssh connection"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-init",
             ],
             description: Some("Do not send terminal initialization string"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--local",
             ],
             description: Some("Run mosh-server locally without using ssh"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--experimental-remote-ip",
             ],
             description: Some("Select the method for discovering the remote IP address to use for mosh"),
-            takes_value: true,
             arguments: [
                 (
                     name: "method",
-                    source: Static([
-                        "local",
-                        "remote",
-                        "proxy",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "local",
+                        ),
+                        (
+                            name: "remote",
+                        ),
+                        (
+                            name: "proxy",
+                        ),
+                    ],
+                    default: Some("proxy"),
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Version and copyright information"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "user@hostname",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
+            description: Some("Address of remote machine to log into"),
+            generators: [
+                (
+                    has_custom: true,
+                    trigger: Some(OnMatch([
+                            "@",
+                        ])),
+                ),
+                (
+                    has_custom: true,
+                ),
+                (
+                    template: [
+                        History,
+                    ],
+                ),
+            ],
         ),
     ],
 )

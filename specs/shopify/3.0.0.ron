@@ -5,14 +5,11 @@
     subcommands: [
         (
             name: "theme",
-            aliases: [],
             description: Some("Suite of commands for developing Shopify themes"),
             subcommands: [
                 (
                     name: "init",
-                    aliases: [],
                     description: Some("Clones a Git repository to your local machine to use as the starting point for building a theme"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -20,38 +17,35 @@
                                 "-u",
                             ],
                             description: Some("The URL of the Git repository that you want to clone. If no URL is specified, then https://github.com/Shopify/dawn.git is used"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "URL",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            presentation: (
+                                icon: Some("fig://icon?type=github"),
+                            ),
                         ),
                         (
                             names: [
                                 "--latest",
                             ],
-                            description: Some("Clone the latest release from the repository, rather than the content of the repository\'s main branch"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Clone the latest release from the repository, rather than the content of the repository's main branch"),
+                            presentation: (
+                                icon: Some("fig://icon?type=github"),
+                            ),
                         ),
                         (
                             names: [
                                 "--path",
                             ],
                             description: Some("The path to your theme directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -59,19 +53,16 @@
                     arguments: [
                         (
                             name: "NAME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The name that you want to give your theme. Cloned files are stored in a folder with this name"),
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        priority: Some(75.0),
+                    ),
                 ),
                 (
                     name: "dev",
-                    aliases: [],
                     description: Some("Uploads the current theme as the specified theme, or a development theme, to a store so you can preview it"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -79,14 +70,9 @@
                                 "-s",
                             ],
                             description: Some("The development store that you want to use to preview your theme"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "store",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -95,23 +81,16 @@
                                 "--password",
                             ],
                             description: Some("Your Theme Access password for the store"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--theme",
                                 "-t",
                             ],
-                            description: Some("The ID or name of the theme that you want to preview. If you don\'t use this flag, then the theme is previewed using a new or existing development theme"),
-                            takes_value: true,
+                            description: Some("The ID or name of the theme that you want to preview. If you don't use this flag, then the theme is previewed using a new or existing development theme"),
                             arguments: [
                                 (
                                     name: "NAME_OR_ID",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -120,18 +99,23 @@
                                 "--live-reload",
                             ],
                             description: Some("The level at which content is reloaded when changes are made to the theme"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "MODE",
-                                    source: Static([
-                                        "hot-reload",
-                                        "full-page",
-                                        "off",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "hot-reload",
+                                            description: Some("Hot reloads local changes to CSS and sections (default)"),
+                                        ),
+                                        (
+                                            name: "full-page",
+                                            description: Some("Refreshes the entire page when a file is modified"),
+                                        ),
+                                        (
+                                            name: "off",
+                                            description: Some("Deactivate live reload"),
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -140,14 +124,10 @@
                                 "--host",
                             ],
                             description: Some("The network interface the web server listens on. The default value is 127.0.0.1"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "IP",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("The network interface the web server listens on. The default value is 127.0.0.1"),
                                 ),
                             ],
                         ),
@@ -156,14 +136,9 @@
                                 "--port",
                             ],
                             description: Some("The local port to serve the theme preview from"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "PORT",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -171,9 +146,7 @@
                             names: [
                                 "--poll",
                             ],
-                            description: Some("Force the polling adapter to watch file changes. You can try this option if live reload isn\'t working as expected"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Force the polling adapter to watch file changes. You can try this option if live reload isn't working as expected"),
                         ),
                         (
                             names: [
@@ -181,8 +154,6 @@
                                 "-e",
                             ],
                             description: Some("Enables two-way sync for theme JSON files. When this option is enabled, changes made in the theme editor in the Shopify admin are applied to the local copy of the theme"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -190,14 +161,10 @@
                                 "-x",
                             ],
                             description: Some("Skips hot reloading any files that match the specified pattern. Specify multiple patterns to ignore by using the flag multiple times in a single command"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "pattern",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Pattern to match files"),
                                 ),
                             ],
                         ),
@@ -207,26 +174,21 @@
                                 "-o",
                             ],
                             description: Some("Hot reloads only files that match the specified pattern. Specify multiple patterns by using the flag multiple times in a single command"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "pattern",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Pattern to match files"),
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        priority: Some(100.0),
+                    ),
                 ),
                 (
                     name: "check",
-                    aliases: [],
                     description: Some("Calls and runs Theme Check to analyze your theme code for errors and to ensure that it follows theme and Liquid best practices. Learn more about the checks that Theme Check runs"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -234,14 +196,12 @@
                                 "-C",
                             ],
                             description: Some("The path to your custom Theme Check config. This config overrides .theme-check.yml, if it is present in the directory being analyzed"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "PATH",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -251,20 +211,26 @@
                                 "-c",
                             ],
                             description: Some("Run only the specified category of checks. You can specify multiple categories using multiple instances of this flag"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "CATEGORY",
-                                    source: Static([
-                                        "html",
-                                        "json",
-                                        "liquid",
-                                        "performance",
-                                        "translation",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "html",
+                                        ),
+                                        (
+                                            name: "json",
+                                        ),
+                                        (
+                                            name: "liquid",
+                                        ),
+                                        (
+                                            name: "performance",
+                                        ),
+                                        (
+                                            name: "translation",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -274,20 +240,26 @@
                                 "-x",
                             ],
                             description: Some("Run all checks other than those in the specified category. You can specify multiple categories using multiple instances of this flag"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "CATEGORY",
-                                    source: Static([
-                                        "html",
-                                        "json",
-                                        "liquid",
-                                        "performance",
-                                        "translation",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "html",
+                                        ),
+                                        (
+                                            name: "json",
+                                        ),
+                                        (
+                                            name: "liquid",
+                                        ),
+                                        (
+                                            name: "performance",
+                                        ),
+                                        (
+                                            name: "translation",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -296,18 +268,20 @@
                                 "--fail-level",
                             ],
                             description: Some("Configure the severity level that causes a run of theme check to fail (exit code 1). Options include error, suggestion, and style"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "LEVEL",
-                                    source: Static([
-                                        "error",
-                                        "suggestion",
-                                        "style",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "error",
+                                        ),
+                                        (
+                                            name: "suggestion",
+                                        ),
+                                        (
+                                            name: "style",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -317,16 +291,12 @@
                                 "-a",
                             ],
                             description: Some("Automatically fix correctable offenses"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--init",
                             ],
                             description: Some("Generate a new Theme Check config file"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -334,17 +304,17 @@
                                 "-o",
                             ],
                             description: Some("Output the results of the check to a file. Options include json and text (default)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "type",
-                                    source: Static([
-                                        "json",
-                                        "text",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "json",
+                                        ),
+                                        (
+                                            name: "text",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -353,8 +323,6 @@
                                 "--print",
                             ],
                             description: Some("Output the active config to STDOUT"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -362,8 +330,6 @@
                                 "-l",
                             ],
                             description: Some("List the active checks"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -371,34 +337,30 @@
                                 "-v",
                             ],
                             description: Some("Print the version of Theme Check being used"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--path",
                             ],
                             description: Some("The path to your theme directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("The path to your theme directory"),
+                                    template: [
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("fig://icon?type=alert"),
+                    ),
                 ),
                 (
                     name: "open",
-                    aliases: [],
                     description: Some("Returns links that let you preview the specified theme"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -406,14 +368,9 @@
                                 "-t",
                             ],
                             description: Some("The name or ID of the theme that you want to overwrite"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "NAME_OR_ID",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -423,14 +380,9 @@
                                 "-s",
                             ],
                             description: Some("The development store that you want to use to preview your theme"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "store",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -439,18 +391,14 @@
                                 "--live",
                                 "-l",
                             ],
-                            description: Some("Returns links for the live (published) theme. This option doesn\'t require --theme"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Returns links for the live (published) theme. This option doesn't require --theme"),
                         ),
                         (
                             names: [
                                 "--development",
                                 "-d",
                             ],
-                            description: Some("Returns links for your development theme. This option doesn\'t require --theme"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Returns links for your development theme. This option doesn't require --theme"),
                         ),
                         (
                             names: [
@@ -458,18 +406,12 @@
                                 "-e",
                             ],
                             description: Some("Opens the theme editor for the specified theme in your browser"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Deletes a theme from your store"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -477,14 +419,9 @@
                                 "-s",
                             ],
                             description: Some("The development store that you want to delete your theme from"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "store",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -494,8 +431,6 @@
                                 "-d",
                             ],
                             description: Some("Deletes your development theme"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -503,8 +438,6 @@
                                 "-f",
                             ],
                             description: Some("Deletes the theme without confirming with the user"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -512,8 +445,6 @@
                                 "-a",
                             ],
                             description: Some("Shows development themes created by others in the theme list"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -521,14 +452,9 @@
                                 "-t",
                             ],
                             description: Some("The name or ID of the theme that you want to delete"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "NAME_OR_ID",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -536,45 +462,36 @@
                     arguments: [
                         (
                             name: "THEME_ID",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The ID of the theme that you want to delete. You can specify multiple theme IDs separated by spaces"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "package",
-                    aliases: [],
                     description: Some("Packages your local theme files into a ZIP file that can be uploaded to Shopify"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--path",
                             ],
                             description: Some("The path to your theme directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("fig://icon?type=box"),
+                    ),
                 ),
                 (
                     name: "publish",
-                    aliases: [],
                     description: Some("Publishes an unpublished theme from your theme library"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -582,8 +499,6 @@
                                 "-f",
                             ],
                             description: Some("Publish the theme without confirming with the user"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -591,14 +506,9 @@
                                 "-s",
                             ],
                             description: Some("The development store that you want to use to preview your theme"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "store",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -608,26 +518,17 @@
                                 "-t",
                             ],
                             description: Some("The name or ID of the theme that you want to publish"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "NAME_OR_ID",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "share",
-                    aliases: [],
                     description: Some("Uploads your theme as a new, unpublished theme in your theme library. The theme is given a randomized name"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -635,14 +536,9 @@
                                 "-s",
                             ],
                             description: Some("The development store that you want to use to preview your theme"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "store",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -651,26 +547,20 @@
                                 "--path",
                             ],
                             description: Some("The path to your theme directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "pull",
-                    aliases: [],
                     description: Some("Retrieves theme files from Shopify"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -678,14 +568,9 @@
                                 "-t",
                             ],
                             description: Some("The name or ID of the theme that you want to overwrite"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "NAME_OR_ID",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -694,14 +579,12 @@
                                 "--path",
                             ],
                             description: Some("The path to your theme directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -711,14 +594,9 @@
                                 "-s",
                             ],
                             description: Some("The development store that you want to use to preview your theme"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "store",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -727,18 +605,14 @@
                                 "--live",
                                 "-l",
                             ],
-                            description: Some("Pulls the live (published) theme. This option doesn\'t require --theme"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Pulls the live (published) theme. This option doesn't require --theme"),
                         ),
                         (
                             names: [
                                 "--development",
                                 "-d",
                             ],
-                            description: Some("Downloads theme files from your remote development theme. You might use this command to copy changes made to the development theme in the theme editor to your local copy of the theme. This option doesn\'t require --theme"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Downloads theme files from your remote development theme. You might use this command to copy changes made to the development theme in the theme editor to your local copy of the theme. This option doesn't require --theme"),
                         ),
                         (
                             names: [
@@ -746,8 +620,6 @@
                                 "-n",
                             ],
                             description: Some("Runs the pull command without deleting local files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -755,8 +627,6 @@
                                 "-x",
                             ],
                             description: Some("Skips downloading the specified files from Shopify. Specify multiple patterns to ignore by using the flag multiple times in a single command. If files are excluded using .shopifyignore, then both the contents of .shopifyignore and the --ignore flag are respected"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -764,18 +634,12 @@
                                 "-o",
                             ],
                             description: Some("Downloads only the specified files from Shopify. Specify multiple patterns by using the flag multiple times in a single command"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "push",
-                    aliases: [],
                     description: Some("Uploads your local theme files to Shopify, overwriting the remote theme if specified"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -783,14 +647,9 @@
                                 "-t",
                             ],
                             description: Some("The name or ID of the theme that you want to overwrite"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "NAME_OR_ID",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -800,14 +659,9 @@
                                 "-s",
                             ],
                             description: Some("The development store that you want to use to preview your theme"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "store",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -816,14 +670,12 @@
                                 "--path",
                             ],
                             description: Some("The path to your theme directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -832,9 +684,7 @@
                                 "--development",
                                 "-d",
                             ],
-                            description: Some("Pushes to your development theme. If you don\'t have a development theme, then one is created. This option doesn\'t require --theme"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Pushes to your development theme. If you don't have a development theme, then one is created. This option doesn't require --theme"),
                         ),
                         (
                             names: [
@@ -842,8 +692,6 @@
                                 "-n",
                             ],
                             description: Some("Pushes your local files without deleting remote files from Shopify"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -851,8 +699,6 @@
                                 "-j",
                             ],
                             description: Some("Returns information about the pushed theme as a JSON object"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -860,17 +706,13 @@
                                 "-a",
                             ],
                             description: Some("Allows Shopify CLI to overwrite the live (published) theme"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--live",
                                 "-l",
                             ],
-                            description: Some("Pushes to the live (published) theme. This option doesn\'t require --theme or --allow-live"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Pushes to the live (published) theme. This option doesn't require --theme or --allow-live"),
                         ),
                         (
                             names: [
@@ -878,17 +720,13 @@
                                 "-p",
                             ],
                             description: Some("After the theme is pushed, publishes the theme so it is live in the store"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--unpublished",
                                 "-u",
                             ],
-                            description: Some("Uploads the theme to the theme library as a new unpublished theme.You\'re prompted to provide a name for the theme. Use the --theme flag to provide a name as a part of the command"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Uploads the theme to the theme library as a new unpublished theme.You're prompted to provide a name for the theme. Use the --theme flag to provide a name as a part of the command"),
                         ),
                         (
                             names: [
@@ -896,8 +734,6 @@
                                 "-x",
                             ],
                             description: Some("Skips uploading the specified files to Shopify. Specify multiple patterns to ignore by using the flag multiple times in a single command. If files are excluded using .shopifyignore, then both the contents of .shopifyignore and the --ignore flag are respected"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -905,18 +741,12 @@
                                 "-o",
                             ],
                             description: Some("Uploads only the specified files to Shopify. Specify multiple patterns by using the flag multiple times in a single command"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("Lists the themes in your store, along with their IDs and statuses"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -924,14 +754,9 @@
                                 "-s",
                             ],
                             description: Some("The development store that you want to list your themes from"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "store",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -940,14 +765,9 @@
                                 "--id",
                             ],
                             description: Some("Only list the theme with the given ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "ID",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -956,18 +776,20 @@
                                 "--role",
                             ],
                             description: Some("Only list themes with the given role"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "role",
-                                    source: Static([
-                                        "live",
-                                        "unpublished",
-                                        "development",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "live",
+                                        ),
+                                        (
+                                            name: "unpublished",
+                                        ),
+                                        (
+                                            name: "development",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -976,38 +798,21 @@
                                 "--name",
                             ],
                             description: Some("Only list themes that contain the given string in their name"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "info",
-                    aliases: [],
                     description: Some("Displays information about your theme environment, including your current store"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "language-server",
-                    aliases: [],
                     description: Some("Starts a Language Server Protocol server"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -1016,31 +821,29 @@
                         "--verbose",
                     ],
                     description: Some("Provide more detailed output in the logs"),
-                    takes_value: false,
-                    arguments: [],
+                    persistent: true,
+                    presentation: (
+                        priority: Some(1.0),
+                    ),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                priority: Some(100.0),
+            ),
         ),
         (
             name: "app",
-            aliases: [],
             description: Some("This reference lists the Shopify CLI commands for apps"),
             subcommands: [
                 (
                     name: "dev",
-                    aliases: [],
                     description: Some("Builds the app and lets you preview it on a development store or Plus sandbox store"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--tunnel-url",
                             ],
-                            description: Some("The URL of a tunnel that you\'ve started using your own local tunneling software. Shopify recommends Cloudflare tunnel for use with Shopify CLI"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("The URL of a tunnel that you've started using your own local tunneling software. Shopify recommends Cloudflare tunnel for use with Shopify CLI"),
                         ),
                         (
                             names: [
@@ -1048,14 +851,9 @@
                                 "-s",
                             ],
                             description: Some("The development store or Plus sandbox store that you want to use to preview your app"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "store",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1064,14 +862,9 @@
                                 "--api-key",
                             ],
                             description: Some("The client ID of your app. Use this flag to specify the app that you want connect your project with"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1079,23 +872,19 @@
                             names: [
                                 "--no-update",
                             ],
-                            description: Some("Skip the prompt to update the app URLs that are set in the Partner Dashboard. Your URLs won\'t be updated"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Skip the prompt to update the app URLs that are set in the Partner Dashboard. Your URLs won't be updated"),
                         ),
                         (
                             names: [
                                 "--path",
                             ],
                             description: Some("The path to your app directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1104,46 +893,33 @@
                                 "--skip-dependencies-installation",
                             ],
                             description: Some("Skip checking and installing missing dependencies for your app"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--reset",
                             ],
                             description: Some("Reset all of your dev settings and send an uninstall request for the store to the default webhook endpoint (/api/webhooks), or the endpoint defined in shopify.web.toml"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--checkout-cart-url",
                             ],
                             description: Some("A partial link with a product variant ID and quantity to be used to create a test checkout for checkout UI extensions"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--subscription-product-url",
                             ],
                             description: Some("A partial link with a product ID. Use this flag to specify the product to use when testing a purchase option extension"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--theme-app-extension-port",
                             ],
                             description: Some("The local port to be used to test a theme app extension"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "port",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1153,31 +929,24 @@
                                 "-t",
                             ],
                             description: Some("The ID or name of the theme to be used to test a theme app extension"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "ID or name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        priority: Some(100.0),
+                    ),
                 ),
                 (
                     name: "generate",
-                    aliases: [],
                     description: Some("Generates a new app extension or GraphQL schema"),
                     subcommands: [
                         (
                             name: "extension",
-                            aliases: [],
                             description: Some("Creates a new app extension for your app"),
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
@@ -1185,14 +954,9 @@
                                         "-n",
                                     ],
                                     description: Some("The name of your extension"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -1201,14 +965,12 @@
                                         "--path",
                                     ],
                                     description: Some("The path to your app directory"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "path",
-                                            source: Directories,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            template: [
+                                                Folders,
+                                            ],
                                         ),
                                     ],
                                 ),
@@ -1218,54 +980,70 @@
                                         "-t",
                                     ],
                                     description: Some("The extension type"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "type",
-                                            source: Static([
-                                                "checkout_ui",
-                                                "post_purchase_ui",
-                                                "subscription_ui",
-                                                "theme_app_extension",
-                                                "web_pixel",
-                                                "order_discount",
-                                                "product_discount",
-                                                "shipping_discount",
-                                                "delivery_customization",
-                                                "payment_customization",
-                                                "order_routing_location_rule",
-                                                "cart_checkout_validation",
-                                                "cart_transform",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "checkout_ui",
+                                                ),
+                                                (
+                                                    name: "post_purchase_ui",
+                                                ),
+                                                (
+                                                    name: "subscription_ui",
+                                                ),
+                                                (
+                                                    name: "theme_app_extension",
+                                                ),
+                                                (
+                                                    name: "web_pixel",
+                                                ),
+                                                (
+                                                    name: "order_discount",
+                                                ),
+                                                (
+                                                    name: "product_discount",
+                                                ),
+                                                (
+                                                    name: "shipping_discount",
+                                                ),
+                                                (
+                                                    name: "delivery_customization",
+                                                ),
+                                                (
+                                                    name: "payment_customization",
+                                                ),
+                                                (
+                                                    name: "order_routing_location_rule",
+                                                ),
+                                                (
+                                                    name: "cart_checkout_validation",
+                                                ),
+                                                (
+                                                    name: "cart_transform",
+                                                ),
+                                            ],
                                         ),
                                     ],
                                 ),
                             ],
-                            arguments: [],
-                            load_spec: None,
                         ),
                         (
                             name: "schema",
-                            aliases: [],
                             description: Some("Generates the GraphQL schema for a function in your app"),
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
                                         "--path",
                                     ],
                                     description: Some("The path to your app directory"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "path",
-                                            source: Directories,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            template: [
+                                                Folders,
+                                            ],
                                         ),
                                     ],
                                 ),
@@ -1274,45 +1052,29 @@
                                         "--api-key",
                                     ],
                                     description: Some("The client ID of your app"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "key",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
                             ],
-                            arguments: [],
-                            load_spec: None,
                         ),
                     ],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    requires_subcommand: true,
                 ),
                 (
                     name: "deploy",
-                    aliases: [],
                     description: Some("Builds the app and deploys all of the extensions in your app"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--api-key",
                             ],
                             description: Some("The API key of your app"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1322,64 +1084,53 @@
                                 "-f",
                             ],
                             description: Some("Skip the deploy summary confirmation prompt. Critical prompts will still be shown"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--reset",
                             ],
                             description: Some("Reset all of your deploy settings"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--path",
                             ],
                             description: Some("The path to your app directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        priority: Some(80.0),
+                    ),
                 ),
                 (
                     name: "build",
-                    aliases: [],
                     description: Some("Builds the app, including extensions"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--api-key",
                             ],
                             description: Some("Specify the client ID to use when building the app. This client ID is set as an environment variable, which is used by App Bridge"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--path",
                             ],
                             description: Some("The path to your app directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1388,102 +1139,77 @@
                                 "--skip-dependencies-installation",
                             ],
                             description: Some("Skip checking and installing missing dependencies for your app"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "env",
-                    aliases: [],
                     description: Some("List of environment commands for your app"),
                     subcommands: [
                         (
                             name: "pull",
-                            aliases: [],
                             description: Some("Creates or updates an .env files that contains app and app extension environment variables"),
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
                                         "--env-file",
                                     ],
-                                    description: Some("Specify the file where environment variables are saved. If the file doesn\'t exist, then it will be created"),
-                                    takes_value: false,
-                                    arguments: [],
+                                    description: Some("Specify the file where environment variables are saved. If the file doesn't exist, then it will be created"),
                                 ),
                                 (
                                     names: [
                                         "--path",
                                     ],
                                     description: Some("The path to your app directory"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "path",
-                                            source: Directories,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            template: [
+                                                Folders,
+                                            ],
                                         ),
                                     ],
                                 ),
                             ],
-                            arguments: [],
-                            load_spec: None,
                         ),
                         (
                             name: "show",
-                            aliases: [],
                             description: Some("Displays environment variables that can be used to deploy apps and app extensions"),
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
                                         "--path",
                                     ],
                                     description: Some("The path to your app directory"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "path",
-                                            source: Directories,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            template: [
+                                                Folders,
+                                            ],
                                         ),
                                     ],
                                 ),
                             ],
-                            arguments: [],
-                            load_spec: None,
                         ),
                     ],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    requires_subcommand: true,
                 ),
                 (
                     name: "update-url",
-                    aliases: [],
                     description: Some("Updates the app URL and allowed redirection URLs for your app. When you specify URLs using this command, the current URLs are overwritten"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--path",
                             ],
                             description: Some("The path to your app directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1492,28 +1218,20 @@
                                 "--redirect-urls",
                             ],
                             description: Some("A comma-separated list of the new allowed redirection URL or URLs for the app"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--app-url",
                             ],
                             description: Some("The new app URL for the app"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--api-key",
                             ],
                             description: Some("The Client ID of your app. Use this flag to specify the app that you want to update"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -1522,120 +1240,76 @@
                         "--verbose",
                     ],
                     description: Some("Provide more detailed output in the logs"),
-                    takes_value: false,
-                    arguments: [],
+                    persistent: true,
+                    presentation: (
+                        priority: Some(1.0),
+                    ),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                priority: Some(90.0),
+            ),
         ),
         (
             name: "auth",
-            aliases: [],
-            description: None,
             subcommands: [
                 (
                     name: "logout",
-                    aliases: [],
                     description: Some("Logs you out of the Shopify account or Partner account and store"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            requires_subcommand: true,
         ),
         (
             name: "config",
-            aliases: [],
             description: Some("Enables or disables command autocorrection. By default, autocorrect is off"),
             subcommands: [
                 (
                     name: "on",
-                    aliases: [],
                     description: Some("Enable autocorrect"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "off",
-                    aliases: [],
                     description: Some("Disable autocorrect"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "status",
-                    aliases: [],
                     description: Some("Check whether autocorrect is enabled or disabled"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            requires_subcommand: true,
         ),
         (
             name: "ngrok",
-            aliases: [],
-            description: None,
             subcommands: [
                 (
                     name: "auth",
-                    aliases: [],
                     description: Some("Saves a token to authenticate against ngrok"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "TOKEN",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Your auth token for ngrok"),
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            requires_subcommand: true,
         ),
         (
             name: "webhook",
-            aliases: [],
-            description: None,
             subcommands: [
                 (
                     name: "trigger",
-                    aliases: [],
                     description: Some("Triggers the delivery of a sample Admin API event topic payload to a designated address"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--topic",
                             ],
                             description: Some("The requested event topic. You can pass the webhook topic using the GraphQL enum value or the webhook topic name"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "topic",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1644,14 +1318,9 @@
                                 "--api-version",
                             ],
                             description: Some("API version of the event topic, in the format YYYY-MM or unstable"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "version",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1659,15 +1328,10 @@
                             names: [
                                 "--shared-secret",
                             ],
-                            description: Some("Your app\'s client secret. This secret is used to generate and return a X-Shopify-Hmac-SHA256 header, which lets you validate the origin of the response that you receive"),
-                            takes_value: true,
+                            description: Some("Your app's client secret. This secret is used to generate and return a X-Shopify-Hmac-SHA256 header, which lets you validate the origin of the response that you receive"),
                             arguments: [
                                 (
                                     name: "secret",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1676,18 +1340,20 @@
                                 "--delivery-method",
                             ],
                             description: Some("The method chosen to deliver the topic payload"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "option",
-                                    source: Static([
-                                        "http",
-                                        "google-pub-sub",
-                                        "event-bridge",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "http",
+                                        ),
+                                        (
+                                            name: "google-pub-sub",
+                                        ),
+                                        (
+                                            name: "event-bridge",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1696,43 +1362,31 @@
                                 "--address",
                             ],
                             description: Some("The URL where the webhook payload should be sent"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "address",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            requires_subcommand: true,
         ),
         (
             name: "version",
-            aliases: [],
-            description: Some("Displays the version of Shopify CLI that you\'re running"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Displays the version of Shopify CLI that you're running"),
+            presentation: (
+                priority: Some(30.0),
+                icon: Some("fig://icon?type=option"),
+            ),
         ),
         (
             name: "upgrade",
-            aliases: [],
             description: Some("Upgrades the @shopify/cli and @shopify/app packages to their latest versions"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("fig://icon?type=option"),
+            ),
         ),
     ],
     options: [
@@ -1742,9 +1396,14 @@
                 "-h",
             ],
             description: Some("Show help for this command"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
+            presentation: (
+                priority: Some(1.0),
+                icon: Some("fig://icon?type=option"),
+            ),
         ),
     ],
-    arguments: [],
+    presentation: (
+        icon: Some("https://avatars.githubusercontent.com/u/8085?s=16&v=4"),
+    ),
 )

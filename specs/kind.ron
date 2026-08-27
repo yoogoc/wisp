@@ -5,28 +5,21 @@
     subcommands: [
         (
             name: "Build",
-            aliases: [],
             description: Some("Build one of [node-image]"),
             subcommands: [
                 (
                     name: "node-image",
-                    aliases: [],
                     description: Some("Builds a node image"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--arch",
                             ],
                             description: Some("Architecture to build for, defaults to the host architecture"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "architecture",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Architecture to build for, defaults to the host architecture"),
                                 ),
                             ],
                         ),
@@ -35,14 +28,10 @@
                                 "--base-image",
                             ],
                             description: Some("Base image to use for the node image"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "base image",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Name:tag of the base image to use for the build"),
                                 ),
                             ],
                         ),
@@ -51,14 +40,10 @@
                                 "--image",
                             ],
                             description: Some("Name:tag of the resulting image to be built"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name:tag",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Name:tag of the resulting image to be built"),
                                 ),
                             ],
                         ),
@@ -67,14 +52,10 @@
                                 "--kube-root",
                             ],
                             description: Some("Path to the Kubernetes source directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Path to the Kubernetes source directory"),
                                 ),
                             ],
                         ),
@@ -83,175 +64,120 @@
                                 "--type",
                             ],
                             description: Some("Type of node image to build"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "type",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Build type, default is docker"),
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "create",
-            aliases: [],
             description: Some("Creates a cluster"),
             subcommands: [
                 (
                     name: "cluster",
-                    aliases: [],
                     description: Some("Creates a cluster"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--config",
                             ],
                             description: Some("Path to a kind config file"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--image",
                             ],
                             description: Some("Node docker image to use for booting the cluster"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--kubeconfig",
                             ],
                             description: Some("Sets kubeconfig path instead of $KUBECONFIG or $HOME/.kube/config"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--name",
                             ],
                             description: Some("Cluster name"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--retain",
                             ],
                             description: Some("Retain nodes for debugging when cluster creation fails"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--wait",
                             ],
                             description: Some("Wait for control-plane node to be ready"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "completion",
-            aliases: [],
             description: Some("Generates shell completion scripts"),
             subcommands: [
                 (
                     name: "bash",
-                    aliases: [],
                     description: Some("Output shell completions for bash"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "fish",
-                    aliases: [],
                     description: Some("Output shell completions for fish"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "zsh",
-                    aliases: [],
                     description: Some("Output shell completions for zsh"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "delete",
-            aliases: [],
             description: Some("Deletes one or more clusters"),
             subcommands: [
                 (
                     name: "cluster",
-                    aliases: [],
                     description: Some("Delete Cluster"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--name",
                             ],
                             description: Some("Cluster name"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster name",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "kind",
-                                            "get",
-                                            "clusters",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "kind",
+                                                "get",
+                                                "clusters",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
+                            presentation: (
+                                priority: Some(100.0),
+                            ),
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "clusters",
-                    aliases: [],
                     description: Some("Delete Clusters"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -259,165 +185,127 @@
                                 "--all",
                             ],
                             description: Some("Delete all clusters"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                priority: Some(100.0),
+                            ),
                         ),
                         (
                             names: [
                                 "--kubeconfig",
                             ],
                             description: Some("Sets kubeconfig path instead of $KUBECONFIG or $HOME/.kube/config"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "export",
-            aliases: [],
-            description: Some("Exports a cluster\'s kubeconfig"),
+            description: Some("Exports a cluster's kubeconfig"),
             subcommands: [
                 (
                     name: "kubeconfig",
-                    aliases: [],
-                    description: Some("Exports a cluster\'s kubeconfig"),
-                    subcommands: [],
+                    description: Some("Exports a cluster's kubeconfig"),
                     options: [
                         (
                             names: [
                                 "--name",
                             ],
                             description: Some("Cluster name"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--internal",
                             ],
                             description: Some("Use internal address instead of externalt"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--kubeconfig",
                             ],
                             description: Some("Sets kubeconfig path instead of $KUBECONFIG or $HOME/.kube/config"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "logs",
-                    aliases: [],
                     description: Some("Exports logs to a tempdir or [output-dir] if specified"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--name",
                             ],
                             description: Some("Cluster name"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster name",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "kind",
-                                            "get",
-                                            "clusters",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "kind",
+                                                "get",
+                                                "clusters",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
+                            presentation: (
+                                priority: Some(100.0),
+                            ),
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "get",
-            aliases: [],
             description: Some("Gets one of [clusters, nodes, kubeconfig]"),
             subcommands: [
                 (
                     name: "clusters",
-                    aliases: [],
                     description: Some("Lists existing kind clusters by their name"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "kubeconfig",
-                    aliases: [],
                     description: Some("Prints cluster kubeconfig"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--name",
                             ],
                             description: Some("Cluster name"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster name",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "kind",
-                                            "get",
-                                            "clusters",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "kind",
+                                                "get",
+                                                "clusters",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
+                            presentation: (
+                                priority: Some(100.0),
+                            ),
                         ),
                         (
                             names: [
                                 "--internal",
                             ],
                             description: Some("Use internal address instead of external"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "nodes",
-                    aliases: [],
                     description: Some("Lists existing kind nodes by their name"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -425,74 +313,64 @@
                                 "--all",
                             ],
                             description: Some("List all nodes"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                priority: Some(50.0),
+                            ),
                         ),
                         (
                             names: [
                                 "--name",
                             ],
                             description: Some("Cluster name"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster name",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "kind",
-                                            "get",
-                                            "clusters",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "kind",
+                                                "get",
+                                                "clusters",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
+                            presentation: (
+                                priority: Some(50.0),
+                            ),
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "load",
-            aliases: [],
             description: Some("Loads images into node from an archive or image on host"),
             subcommands: [
                 (
                     name: "docker-image",
-                    aliases: [],
                     description: Some("Loads docker images from host into all or specified nodes by name"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--name",
                             ],
                             description: Some("Cluster name"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster name",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "kind",
-                                            "get",
-                                            "clusters",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "kind",
+                                                "get",
+                                                "clusters",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -501,57 +379,47 @@
                                 "--nodes",
                             ],
                             description: Some("Comma separated list of nodes to load images into"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "nodes",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "kind",
-                                            "get",
-                                            "nodes",
-                                            "-A",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "kind",
+                                                "get",
+                                                "nodes",
+                                                "-A",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "image-archive",
-                    aliases: [],
                     description: Some("Loads docker images from archive into all or specified nodes by name"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--name",
                             ],
                             description: Some("Cluster name"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster name",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "kind",
-                                            "get",
-                                            "clusters",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "kind",
+                                                "get",
+                                                "clusters",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -560,43 +428,30 @@
                                 "--nodes",
                             ],
                             description: Some("Comma separated list of nodes to load images into"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "nodes",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "kind",
-                                            "get",
-                                            "nodes",
-                                            "-A",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "kind",
+                                                "get",
+                                                "nodes",
+                                                "-A",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Prints the kind CLI version"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -606,8 +461,7 @@
                 "--help",
             ],
             description: Some("Help for kind"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
@@ -615,8 +469,7 @@
                 "--quiet",
             ],
             description: Some("Silence all stderr output"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
@@ -624,17 +477,12 @@
                 "--verbosity",
             ],
             description: Some("Info log verbosity, higher value produces more output"),
-            takes_value: true,
             arguments: [
                 (
                     name: "int",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            persistent: true,
         ),
     ],
-    arguments: [],
 )

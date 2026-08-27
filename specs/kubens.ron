@@ -2,7 +2,6 @@
     version: 1,
     command: "kubens",
     description: Some("Switch between Kubernetes-namespaces"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "-h",
             ],
             description: Some("Show help for kubens"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,27 +16,42 @@
                 "-c",
             ],
             description: Some("Show current namespace"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "namespace",
-            source: Unavailable,
+            generators: [
+                (
+                    script: [
+                        "bash",
+                        "-c",
+                        "kubens | grep -v $(kubens -c)",
+                    ],
+                    has_post_process: true,
+                ),
+                (
+                    script: [
+                        "kubens",
+                        "-c",
+                    ],
+                    has_post_process: true,
+                ),
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: Some((
-                script: [
-                    "bash",
-                    "-c",
-                    "kubens | grep -v $(kubens -c)",
-                    "kubens",
-                    "-c",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
         ),
     ],
+    additional_suggestions: [
+        (
+            name: "-",
+            description: Some("Switch to previous namespace within the current context"),
+            presentation: (
+                priority: Some(85.0),
+                icon: Some("fig://icon?type=asterisk"),
+            ),
+        ),
+    ],
+    parser_directives: Some((
+        flags_are_posix_noncompliant: true,
+    )),
 )

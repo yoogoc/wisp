@@ -10,40 +10,53 @@ use anyhow::{Context, bail};
 use flate2::read::GzDecoder;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// A command's completion spec, imported from a Fig `Subcommand` at the root of
+/// a spec module. Every field a Fig spec can carry declaratively is kept;
+/// whatever Fig expressed as a JavaScript callback is kept as a `has_*` flag so
+/// the engine knows the difference between "nothing here" and "not expressible
+/// without a JavaScript runtime".
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
 pub struct CommandSpec {
-    #[serde(default = "spec_version")]
     pub version: u32,
     pub command: String,
-    #[serde(default)]
+    pub aliases: Vec<String>,
     pub description: Option<String>,
-    #[serde(default)]
     pub subcommands: Vec<SubcommandSpec>,
-    #[serde(default)]
     pub options: Vec<OptionSpec>,
-    #[serde(default)]
     pub arguments: Vec<ArgumentSpec>,
+    pub additional_suggestions: Vec<SuggestionSpec>,
+    pub requires_subcommand: bool,
+    pub filter_strategy: FilterStrategy,
+    pub parser_directives: Option<ParserDirectives>,
+    pub has_generate_spec: bool,
+    pub load_spec: Option<String>,
+    pub has_dynamic_load_spec: bool,
+    pub load_spec_inline: Option<Box<SubcommandSpec>>,
+    pub presentation: Presentation,
+    /// The source module held no spec -- a shared helper or data module that
+    /// keeps its id so `loadSpec` references still resolve.
+    pub placeholder: bool,
 }
 
-const fn spec_version() -> u32 {
-    1
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
 pub struct SubcommandSpec {
     pub name: String,
-    #[serde(default)]
     pub aliases: Vec<String>,
-    #[serde(default)]
     pub description: Option<String>,
-    #[serde(default)]
     pub subcommands: Vec<SubcommandSpec>,
-    #[serde(default)]
     pub options: Vec<OptionSpec>,
-    #[serde(default)]
     pub arguments: Vec<ArgumentSpec>,
-    #[serde(default)]
+    pub additional_suggestions: Vec<SuggestionSpec>,
+    pub requires_subcommand: bool,
+    pub filter_strategy: FilterStrategy,
+    pub parser_directives: Option<ParserDirectives>,
+    pub has_generate_spec: bool,
     pub load_spec: Option<String>,
+    pub has_dynamic_load_spec: bool,
+    pub load_spec_inline: Option<Box<SubcommandSpec>>,
+    pub presentation: Presentation,
 }
 
 impl SubcommandSpec {
@@ -52,49 +65,197 @@ impl SubcommandSpec {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
 pub struct OptionSpec {
     pub names: Vec<String>,
-    #[serde(default)]
     pub description: Option<String>,
-    #[serde(default)]
-    pub takes_value: bool,
-    #[serde(default)]
     pub arguments: Vec<ArgumentSpec>,
+    /// The option stays available to every descendant subcommand.
+    pub persistent: bool,
+    pub required: bool,
+    pub repeat: Repeat,
+    /// The option's value must follow a separator rather than a space, as in
+    /// `--message="text"`.
+    pub requires_separator: Option<String>,
+    /// Names this option cannot appear alongside.
+    pub exclusive_on: Vec<String>,
+    /// Names that must already be present for this option to apply.
+    pub depends_on: Vec<String>,
+    pub presentation: Presentation,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+impl OptionSpec {
+    pub fn matches(&self, value: &str) -> bool {
+        self.names.iter().any(|name| name == value)
+    }
+
+    pub fn takes_value(&self) -> bool {
+        !self.arguments.is_empty()
+    }
+}
+
+/// How often an option may be repeated on one command line.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Repeat {
+    #[default]
+    Once,
+    Many,
+    Times(u32),
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
 pub struct ArgumentSpec {
     pub name: String,
-    #[serde(default)]
-    pub source: SuggestionSource,
-    #[serde(default)]
+    pub description: Option<String>,
+    /// Fixed values Fig lists for this argument.
+    pub suggestions: Vec<SuggestionSpec>,
+    /// Fig's prebuilt generators: paths, folders, history, help.
+    pub template: Vec<Template>,
+    pub generators: Vec<GeneratorSpec>,
     pub optional: bool,
-    #[serde(default)]
     pub variadic: bool,
-    #[serde(default)]
-    pub imported_generator: Option<ImportedGenerator>,
+    pub options_can_break_variadic: bool,
+    pub filter_strategy: FilterStrategy,
+    pub suggest_current_token: bool,
+    /// The argument is itself a command, so completion restarts from it.
+    pub is_command: bool,
+    pub is_script: bool,
+    pub is_module: Option<String>,
+    pub debounce: bool,
+    pub default: Option<String>,
+    pub load_spec: Option<String>,
+    pub has_dynamic_load_spec: bool,
+    pub load_spec_inline: Option<Box<SubcommandSpec>>,
+    pub dangerous: bool,
+    pub parser_directives: Option<ParserDirectives>,
+}
+
+impl ArgumentSpec {
+    /// Whether anything at all can be suggested for this argument.
+    pub fn is_empty(&self) -> bool {
+        self.suggestions.is_empty()
+            && self.template.is_empty()
+            && self.generators.is_empty()
+            && self.load_spec.is_none()
+    }
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct ImportedGenerator {
-    #[serde(default)]
+#[serde(default)]
+pub struct SuggestionSpec {
+    pub name: String,
+    pub aliases: Vec<String>,
+    pub description: Option<String>,
+    pub kind: Option<SuggestionType>,
+    pub presentation: Presentation,
+}
+
+/// What a suggestion stands for, straight from Fig's `SuggestionType`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SuggestionType {
+    Folder,
+    File,
+    Arg,
+    Subcommand,
+    Option,
+    Special,
+    Mixin,
+    Shortcut,
+}
+
+/// One of Fig's prebuilt generators.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Template {
+    FilePaths,
+    Folders,
+    History,
+    Help,
+}
+
+/// A generator: a script to run plus how to read what it prints. Fig turned the
+/// output into suggestions with JavaScript; see `generators.ron` for the
+/// declarative rules that stand in for it.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct GeneratorSpec {
     pub script: Vec<String>,
-    #[serde(default)]
+    /// Fig built the argv from the typed tokens, which needs JavaScript.
+    pub has_dynamic_script: bool,
+    pub cwd: Option<String>,
+    pub script_timeout_ms: Option<u64>,
+    /// Fig's `splitOn`: cut the output on this string, one suggestion per part.
+    pub split_on: Option<String>,
+    pub template: Vec<Template>,
+    pub has_filter_template_suggestions: bool,
     pub has_post_process: bool,
-    #[serde(default)]
     pub has_custom: bool,
+    /// When to throw away cached suggestions and generate again.
+    pub trigger: Option<Trigger>,
+    pub has_dynamic_trigger: bool,
+    /// Which part of the typed token filters the suggestions.
+    pub query_term: Option<QueryTerm>,
+    pub has_dynamic_query_term: bool,
+    pub cache: Option<CacheSpec>,
+}
+
+/// Fig's `trigger`, in the forms that do not need JavaScript.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Trigger {
+    /// Regenerate on every keystroke.
+    OnChange,
+    /// Regenerate once the token reaches this length.
+    OnThreshold(u32),
+    /// Regenerate when the count of one of these strings changes.
+    OnMatch(Vec<String>),
+}
+
+/// Fig's `getQueryTerm` string form: filter on the text after the last
+/// occurrence of this separator.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum QueryTerm {
+    AfterLast(String),
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub enum SuggestionSource {
+#[serde(default)]
+pub struct CacheSpec {
+    pub ttl_ms: Option<u64>,
+    pub by_directory: bool,
+    /// Serve stale suggestions while refreshing, rather than waiting.
+    pub stale_while_revalidate: bool,
+}
+
+/// How the parser should read this command's tokens.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct ParserDirectives {
+    /// `-work` is one flag, not `-w -o -r -k`.
+    pub flags_are_posix_noncompliant: bool,
+    pub options_must_precede_arguments: bool,
+    pub option_arg_separators: Vec<String>,
+}
+
+/// How a suggestion is shown and what it inserts.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Presentation {
+    pub priority: Option<f32>,
+    pub hidden: bool,
+    pub icon: Option<String>,
+    pub display_name: Option<String>,
+    pub insert_value: Option<String>,
+    pub dangerous: bool,
+}
+
+/// How a typed token is matched against suggestions.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum FilterStrategy {
     #[default]
-    Files,
-    Directories,
-    Static(Vec<String>),
-    Generator(String),
-    /// Fig declared a dynamic JavaScript callback which has no safe Rust adapter yet.
-    Unavailable,
+    Default,
+    Fuzzy,
+    Prefix,
 }
 
 #[derive(Debug, Clone, Default)]
@@ -225,10 +386,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn fig_index_contains_the_complete_snapshot() {
+    fn the_snapshot_is_complete_and_every_document_parses() {
         let store = SpecStore::builtins();
-        assert!(store.len() >= 1_484);
+        assert_eq!(store.len(), 1_484);
         assert!(store.get("az").is_some());
         assert!(store.get_by_id("az/2.53.0").is_some());
+        // Parsing the whole snapshot is what catches a malformed document: a
+        // spec nobody completes today would otherwise panic in front of a user.
+        for &(id, ..) in SPEC_INDEX {
+            assert!(
+                store.get_by_id(id).is_some(),
+                "{id} must deserialize into a spec"
+            );
+        }
     }
 }

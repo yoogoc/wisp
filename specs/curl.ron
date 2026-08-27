@@ -2,7 +2,6 @@
     version: 1,
     command: "curl",
     description: Some("Transfer a URL"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "--append",
             ],
             description: Some("Append to target file when uploading"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,18 +16,14 @@
                 "--cert",
             ],
             description: Some("Client certificate file and password"),
-            takes_value: true,
             arguments: [
                 (
                     name: "certificate[:password]",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            query_term: Some(AfterLast(":")),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -40,14 +33,12 @@
                 "--config",
             ],
             description: Some("Read config from a file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -57,14 +48,9 @@
                 "--continue-at",
             ],
             description: Some("Resumed transfer offset"),
-            takes_value: true,
             arguments: [
                 (
                     name: "offset",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -74,14 +60,12 @@
                 "--cookie",
             ],
             description: Some("Send cookies from string/file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "data or filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -91,14 +75,12 @@
                 "--cookie-jar",
             ],
             description: Some("Write cookies to <filename> after operation"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -108,16 +90,15 @@
                 "--data",
             ],
             description: Some("HTTP POST data"),
-            takes_value: true,
             arguments: [
                 (
                     name: "data",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            repeat: Many,
+            presentation: (
+                insert_value: Some("-d '{cursor}'"),
+            ),
         ),
         (
             names: [
@@ -125,8 +106,6 @@
                 "--disable",
             ],
             description: Some("Disable .curlrc"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -134,14 +113,12 @@
                 "--dump-header",
             ],
             description: Some("Write the received headers to <filename>"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -151,8 +128,6 @@
                 "--fail",
             ],
             description: Some("Fail silently (no output at all) on HTTP errors"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -160,16 +135,12 @@
                 "--form",
             ],
             description: Some("Specify multipart MIME data"),
-            takes_value: true,
             arguments: [
                 (
                     name: "content",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
@@ -177,14 +148,9 @@
                 "--ftp-port",
             ],
             description: Some("Use PORT instead of PASV"),
-            takes_value: true,
             arguments: [
                 (
                     name: "address",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -194,8 +160,6 @@
                 "--get",
             ],
             description: Some("Put the post data in the URL and use GET"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -203,8 +167,6 @@
                 "--globoff",
             ],
             description: Some("Disable URL sequences and ranges using {} and []"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -212,8 +174,6 @@
                 "--head",
             ],
             description: Some("Show document info only"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -221,17 +181,17 @@
                 "--header",
             ],
             description: Some("Pass custom header(s) to server"),
-            takes_value: true,
             arguments: [
                 (
                     name: "header/file",
-                    source: Static([
-                        "Content-Type: application/json",
-                        "Content-Type: application/x-www-form-urlencoded",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "Content-Type: application/json",
+                        ),
+                        (
+                            name: "Content-Type: application/x-www-form-urlencoded",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -241,8 +201,6 @@
                 "--help",
             ],
             description: Some("This help text"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -250,8 +208,6 @@
                 "--http1.0",
             ],
             description: Some("Use HTTP 1.0"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -259,8 +215,6 @@
                 "--include",
             ],
             description: Some("Include protocol response headers in the output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -268,8 +222,6 @@
                 "--insecure",
             ],
             description: Some("Allow insecure server connections when using SSL"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -277,8 +229,6 @@
                 "--ipv4",
             ],
             description: Some("Resolve names to IPv4 addresses"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -286,8 +236,6 @@
                 "--ipv6",
             ],
             description: Some("Resolve names to IPv6 addresses"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -295,8 +243,6 @@
                 "--junk-session-cookies",
             ],
             description: Some("Ignore session cookies read from file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -304,8 +250,6 @@
                 "--list-only",
             ],
             description: Some("List only mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -313,8 +257,6 @@
                 "--location",
             ],
             description: Some("Follow redirects"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -322,8 +264,6 @@
                 "--manual",
             ],
             description: Some("Display the full manual"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -331,14 +271,9 @@
                 "--max-time",
             ],
             description: Some("Maximum time allowed for the transfer"),
-            takes_value: true,
             arguments: [
                 (
                     name: "seconds",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -348,8 +283,6 @@
                 "--netrc",
             ],
             description: Some("Must read .netrc for user name and password"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -357,8 +290,6 @@
                 "--next",
             ],
             description: Some("Make next URL use its separate set of options"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -366,8 +297,6 @@
                 "--no-buffer",
             ],
             description: Some("Disable buffering of the output stream"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -375,14 +304,12 @@
                 "--output",
             ],
             description: Some("Write to file instead of stdout"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -392,8 +319,6 @@
                 "--progress-bar",
             ],
             description: Some("Display transfer progress as a bar"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -401,8 +326,6 @@
                 "--proxy",
             ],
             description: Some("[protocol://]host[:port] Use this proxy"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -410,14 +333,9 @@
                 "--proxy-user",
             ],
             description: Some("Proxy user and password"),
-            takes_value: true,
             arguments: [
                 (
                     name: "user:password",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -427,8 +345,6 @@
                 "--proxytunnel",
             ],
             description: Some("Operate through an HTTP proxy tunnel (using CONNECT)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -436,8 +352,6 @@
                 "--quote",
             ],
             description: Some("Send command(s) to server before transfer"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -445,14 +359,9 @@
                 "--range",
             ],
             description: Some("Retrieve only the bytes within RANGE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "range",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -462,14 +371,9 @@
                 "--referer",
             ],
             description: Some("Referrer URL"),
-            takes_value: true,
             arguments: [
                 (
                     name: "URL",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -479,8 +383,6 @@
                 "--remote-header-name",
             ],
             description: Some("Use the header-provided filename"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -488,17 +390,13 @@
                 "--remote-name",
             ],
             description: Some("Write output to a file named as the remote file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-R",
                 "--remote-time",
             ],
-            description: Some("Set the remote file\'s time on the local output"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Set the remote file's time on the local output"),
         ),
         (
             names: [
@@ -506,24 +404,38 @@
                 "--request",
             ],
             description: Some("Specify request command to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "command",
-                    source: Static([
-                        "GET",
-                        "HEAD",
-                        "POST",
-                        "PUT",
-                        "DELETE",
-                        "CONNECT",
-                        "OPTIONS",
-                        "TRACE",
-                        "PATCH",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "GET",
+                        ),
+                        (
+                            name: "HEAD",
+                        ),
+                        (
+                            name: "POST",
+                        ),
+                        (
+                            name: "PUT",
+                        ),
+                        (
+                            name: "DELETE",
+                        ),
+                        (
+                            name: "CONNECT",
+                        ),
+                        (
+                            name: "OPTIONS",
+                        ),
+                        (
+                            name: "TRACE",
+                        ),
+                        (
+                            name: "PATCH",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -533,8 +445,6 @@
                 "--show-error",
             ],
             description: Some("Show error even when -s is used"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -542,8 +452,6 @@
                 "--silent",
             ],
             description: Some("Silent mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -551,14 +459,9 @@
                 "--speed-limit",
             ],
             description: Some("Stop transfers slower than this"),
-            takes_value: true,
             arguments: [
                 (
                     name: "speed",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -567,15 +470,10 @@
                 "-y",
                 "--speed-time",
             ],
-            description: Some("Trigger \'speed-limit\' abort after this time"),
-            takes_value: true,
+            description: Some("Trigger 'speed-limit' abort after this time"),
             arguments: [
                 (
                     name: "seconds",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -585,8 +483,6 @@
                 "--sslv2",
             ],
             description: Some("Use SSLv2"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -594,8 +490,6 @@
                 "--sslv3",
             ],
             description: Some("Use SSLv3"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -603,14 +497,9 @@
                 "--telnet-option",
             ],
             description: Some("Set telnet option"),
-            takes_value: true,
             arguments: [
                 (
                     name: "val",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -620,14 +509,9 @@
                 "--time-cond",
             ],
             description: Some("Transfer based on a time condition"),
-            takes_value: true,
             arguments: [
                 (
                     name: "time",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -637,8 +521,6 @@
                 "--tlsv1",
             ],
             description: Some("Use TLSv1.0 or greater"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -646,14 +528,12 @@
                 "--upload-file",
             ],
             description: Some("Transfer local FILE to destination"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -663,8 +543,6 @@
                 "--use-ascii",
             ],
             description: Some("Use ASCII/text transfer"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -672,14 +550,9 @@
                 "--user",
             ],
             description: Some("Server user and password"),
-            takes_value: true,
             arguments: [
                 (
                     name: "user:password",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -689,14 +562,9 @@
                 "--user-agent",
             ],
             description: Some("Send User-Agent <name> to server"),
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -706,8 +574,6 @@
                 "--verbose",
             ],
             description: Some("Make the operation more talkative"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -715,8 +581,6 @@
                 "--version",
             ],
             description: Some("Show version number and quit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -724,14 +588,9 @@
                 "--write-out",
             ],
             description: Some("Use output FORMAT after completion"),
-            takes_value: true,
             arguments: [
                 (
                     name: "format",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -740,14 +599,9 @@
                 "--abstract-unix-socket",
             ],
             description: Some("Connect via abstract Unix domain socket"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -756,14 +610,12 @@
                 "--alt-svc",
             ],
             description: Some("Name> Enable alt-svc with this cache file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -772,30 +624,24 @@
                 "--anyauth",
             ],
             description: Some("Pick any authentication method"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--basic",
             ],
             description: Some("Use HTTP Basic Authentication"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--cacert",
             ],
             description: Some("CA certificate to verify peer against"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -804,14 +650,12 @@
                 "--capath",
             ],
             description: Some("CA directory to verify peer against"),
-            takes_value: true,
             arguments: [
                 (
                     name: "dir",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -820,26 +664,26 @@
                 "--cert-status",
             ],
             description: Some("Verify the status of the server certificate"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--cert-type",
             ],
             description: Some("Certificate file type"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "DER",
-                        "PEM",
-                        "ENG",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "DER",
+                        ),
+                        (
+                            name: "PEM",
+                        ),
+                        (
+                            name: "ENG",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -848,14 +692,9 @@
                 "--ciphers",
             ],
             description: Some("Of ciphers> SSL ciphers to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "list",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -864,30 +703,21 @@
                 "--compressed",
             ],
             description: Some("Request compressed response"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--compressed-ssh",
             ],
             description: Some("Enable SSH compression"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--connect-timeout",
             ],
             description: Some("Maximum time allowed for connection"),
-            takes_value: true,
             arguments: [
                 (
                     name: "seconds",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -896,14 +726,9 @@
                 "--connect-to",
             ],
             description: Some("Connect to host"),
-            takes_value: true,
             arguments: [
                 (
                     name: "HOST1:PORT1:HOST2:PORT2",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -912,30 +737,24 @@
                 "--create-dirs",
             ],
             description: Some("Create necessary local directory hierarchy"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--crlf",
             ],
             description: Some("Convert LF to CRLF in upload"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--crlfile",
             ],
             description: Some("Get a CRL list in PEM format from the given file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -944,14 +763,9 @@
                 "--data-ascii",
             ],
             description: Some("HTTP POST ASCII data"),
-            takes_value: true,
             arguments: [
                 (
                     name: "data",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -960,14 +774,9 @@
                 "--data-binary",
             ],
             description: Some("HTTP POST binary data"),
-            takes_value: true,
             arguments: [
                 (
                     name: "data",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -975,15 +784,10 @@
             names: [
                 "--data-raw",
             ],
-            description: Some("HTTP POST data, \'@\' allowed"),
-            takes_value: true,
+            description: Some("HTTP POST data, '@' allowed"),
             arguments: [
                 (
                     name: "data",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -992,14 +796,9 @@
                 "--data-urlencode",
             ],
             description: Some("HTTP POST data url encoded"),
-            takes_value: true,
             arguments: [
                 (
                     name: "data",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1008,14 +807,9 @@
                 "--delegation",
             ],
             description: Some("GSS-API delegation permission"),
-            takes_value: true,
             arguments: [
                 (
                     name: "LEVEL",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1024,46 +818,33 @@
                 "--digest",
             ],
             description: Some("Use HTTP Digest Authentication"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--disable-eprt",
             ],
             description: Some("Inhibit using EPRT or LPRT"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--disable-epsv",
             ],
             description: Some("Inhibit using EPSV"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--disallow-username-in-url",
             ],
             description: Some("Disallow username in url"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--dns-interface",
             ],
             description: Some("Interface to use for DNS requests"),
-            takes_value: true,
             arguments: [
                 (
                     name: "interface",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1072,14 +853,9 @@
                 "--dns-ipv4-addr",
             ],
             description: Some("IPv4 address to use for DNS requests"),
-            takes_value: true,
             arguments: [
                 (
                     name: "address",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1088,14 +864,9 @@
                 "--dns-ipv6-addr",
             ],
             description: Some("IPv6 address to use for DNS requests"),
-            takes_value: true,
             arguments: [
                 (
                     name: "address",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1104,14 +875,9 @@
                 "--dns-servers",
             ],
             description: Some("DNS server addrs to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "addresses",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1120,14 +886,9 @@
                 "--doh-url",
             ],
             description: Some("Resolve host names over DOH"),
-            takes_value: true,
             arguments: [
                 (
                     name: "URL",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1136,14 +897,12 @@
                 "--egd-file",
             ],
             description: Some("EGD socket path for random data"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -1152,14 +911,9 @@
                 "--engine",
             ],
             description: Some("Crypto engine to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1168,14 +922,9 @@
                 "--etag-compare",
             ],
             description: Some("Make a conditional HTTP request for the ETag read from the given file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1184,14 +933,9 @@
                 "--etag-save",
             ],
             description: Some("Save an HTTP ETag to the specified file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1200,14 +944,9 @@
                 "--expect100-timeout",
             ],
             description: Some("How long to wait for 100-continue"),
-            takes_value: true,
             arguments: [
                 (
                     name: "seconds",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1216,38 +955,27 @@
                 "--fail-early",
             ],
             description: Some("Fail on first transfer error, do not continue"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--fail-with-body",
             ],
             description: Some("On HTTP errors, return an error and also output any HTML response"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--false-start",
             ],
             description: Some("Enable TLS False Start"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--form-string",
             ],
             description: Some("Specify multipart MIME data"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1256,14 +984,9 @@
                 "--ftp-account",
             ],
             description: Some("Account data string"),
-            takes_value: true,
             arguments: [
                 (
                     name: "data",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1272,14 +995,9 @@
                 "--ftp-alternative-to-user",
             ],
             description: Some("String to replace USER [name]"),
-            takes_value: true,
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1288,22 +1006,15 @@
                 "--ftp-create-dirs",
             ],
             description: Some("Create the remote dirs if not present"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ftp-method",
             ],
             description: Some("Control CWD usage"),
-            takes_value: true,
             arguments: [
                 (
                     name: "method",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1312,49 +1023,41 @@
                 "--ftp-pasv",
             ],
             description: Some("Use PASV/EPSV instead of PORT"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ftp-pret",
             ],
             description: Some("Send PRET before PASV"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ftp-skip-pasv-ip",
             ],
             description: Some("Skip the IP address for PASV"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ftp-ssl-ccc",
             ],
             description: Some("Send CCC after authenticating"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ftp-ssl-ccc-mode",
             ],
             description: Some("Set CCC mode"),
-            takes_value: true,
             arguments: [
                 (
                     name: "mode",
-                    source: Static([
-                        "active",
-                        "passive",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "active",
+                        ),
+                        (
+                            name: "passive",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -1363,22 +1066,15 @@
                 "--ftp-ssl-control",
             ],
             description: Some("Require SSL/TLS for FTP login, clear for transfer"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--happy-eyeballs-timeout-ms",
             ],
             description: Some("How long to wait in milliseconds for IPv6 before trying IPv4"),
-            takes_value: true,
             arguments: [
                 (
                     name: "milliseconds",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1387,22 +1083,15 @@
                 "--haproxy-protocol",
             ],
             description: Some("Send HAProxy PROXY protocol v1 header"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--hostpubmd5",
             ],
             description: Some("Acceptable MD5 hash of the host public key"),
-            takes_value: true,
             arguments: [
                 (
                     name: "md5",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1411,54 +1100,39 @@
                 "--http0.9",
             ],
             description: Some("Allow HTTP 0.9 responses"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--http1.1",
             ],
             description: Some("Use HTTP 1.1"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--http2",
             ],
             description: Some("Use HTTP 2"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--http2-prior-knowledge",
             ],
             description: Some("Use HTTP 2 without HTTP/1.1 Upgrade"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ignore-content-length",
             ],
             description: Some("Ignore the size of the remote resource"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--interface",
             ],
             description: Some("Use network INTERFACE (or address)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1467,14 +1141,9 @@
                 "--keepalive-time",
             ],
             description: Some("Interval time for keepalive probes"),
-            takes_value: true,
             arguments: [
                 (
                     name: "seconds",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1483,14 +1152,9 @@
                 "--key",
             ],
             description: Some("Private key file name"),
-            takes_value: true,
             arguments: [
                 (
                     name: "key",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1499,18 +1163,20 @@
                 "--key-type",
             ],
             description: Some("Private key file type"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "DER",
-                        "PEM",
-                        "ENG",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "DER",
+                        ),
+                        (
+                            name: "PEM",
+                        ),
+                        (
+                            name: "ENG",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -1519,14 +1185,9 @@
                 "--krb",
             ],
             description: Some("Enable Kerberos with security <level>"),
-            takes_value: true,
             arguments: [
                 (
                     name: "level",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1535,14 +1196,12 @@
                 "--libcurl",
             ],
             description: Some("Dump libcurl equivalent code of this command line"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -1551,14 +1210,9 @@
                 "--limit-rate",
             ],
             description: Some("Limit transfer speed to RATE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "speed",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1567,14 +1221,9 @@
                 "--local-port",
             ],
             description: Some("Force use of RANGE for local port numbers"),
-            takes_value: true,
             arguments: [
                 (
                     name: "num/range",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1583,22 +1232,15 @@
                 "--location-trusted",
             ],
             description: Some("Like --location, and send auth to other hosts"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--login-options",
             ],
             description: Some("Server login options"),
-            takes_value: true,
             arguments: [
                 (
                     name: "options",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1607,14 +1249,9 @@
                 "--mail-auth",
             ],
             description: Some("Originator address of the original email"),
-            takes_value: true,
             arguments: [
                 (
                     name: "address",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1623,14 +1260,9 @@
                 "--mail-from",
             ],
             description: Some("Mail from this address"),
-            takes_value: true,
             arguments: [
                 (
                     name: "address",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1639,14 +1271,9 @@
                 "--mail-rcpt",
             ],
             description: Some("Mail to this address"),
-            takes_value: true,
             arguments: [
                 (
                     name: "address",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1655,14 +1282,9 @@
                 "--max-filesize",
             ],
             description: Some("Maximum file size to download"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bytes",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1671,14 +1293,9 @@
                 "--max-redirs",
             ],
             description: Some("Maximum number of redirects allowed"),
-            takes_value: true,
             arguments: [
                 (
                     name: "num",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1687,30 +1304,24 @@
                 "--metalink",
             ],
             description: Some("Process given URLs as metalink XML file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--negotiate",
             ],
             description: Some("Use HTTP Negotiate (SPNEGO) authentication"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--netrc-file",
             ],
             description: Some("Specify FILE for netrc"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -1719,54 +1330,39 @@
                 "--netrc-optional",
             ],
             description: Some("Use either .netrc or URL"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-alpn",
             ],
             description: Some("Disable the ALPN TLS extension"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-keepalive",
             ],
             description: Some("Disable TCP keepalive on the connection"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-npn",
             ],
             description: Some("Disable the NPN TLS extension"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-sessionid",
             ],
             description: Some("Disable SSL session-ID reusing"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noproxy",
             ],
             description: Some("List of hosts which do not use proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "no-proxy-list",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1775,30 +1371,21 @@
                 "--ntlm",
             ],
             description: Some("Use HTTP NTLM authentication"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ntlm-wb",
             ],
             description: Some("Use HTTP NTLM authentication with winbind"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--oauth2-bearer",
             ],
             description: Some("OAuth 2 Bearer Token"),
-            takes_value: true,
             arguments: [
                 (
                     name: "token",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1807,14 +1394,9 @@
                 "--pass",
             ],
             description: Some("Pass phrase for the private key"),
-            takes_value: true,
             arguments: [
                 (
                     name: "phrase",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1823,22 +1405,15 @@
                 "--path-as-is",
             ],
             description: Some("Do not squash .. sequences in URL path"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--pinnedpubkey",
             ],
             description: Some("FILE/HASHES Public key to verify peer against"),
-            takes_value: true,
             arguments: [
                 (
                     name: "hashes",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1847,46 +1422,33 @@
                 "--post301",
             ],
             description: Some("Do not switch to GET after following a 301"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--post302",
             ],
             description: Some("Do not switch to GET after following a 302"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--post303",
             ],
             description: Some("Do not switch to GET after following a 303"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--preproxy",
             ],
             description: Some("[protocol://]host[:port] Use this proxy first"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--proto",
             ],
             description: Some("Enable/disable PROTOCOLS"),
-            takes_value: true,
             arguments: [
                 (
                     name: "protocols",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1895,14 +1457,9 @@
                 "--proto-default",
             ],
             description: Some("Use PROTOCOL for any URL missing a scheme"),
-            takes_value: true,
             arguments: [
                 (
                     name: "protocol",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1911,14 +1468,9 @@
                 "--proto-redir",
             ],
             description: Some("Enable/disable PROTOCOLS on redirect"),
-            takes_value: true,
             arguments: [
                 (
                     name: "protocols",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1927,30 +1479,24 @@
                 "--proxy-anyauth",
             ],
             description: Some("Pick any proxy authentication method"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--proxy-basic",
             ],
             description: Some("Use Basic authentication on the proxy"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--proxy-cacert",
             ],
             description: Some("CA certificate to verify peer against for proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -1959,14 +1505,12 @@
                 "--proxy-capath",
             ],
             description: Some("CA directory to verify peer against for proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "dir",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -1975,14 +1519,9 @@
                 "--proxy-cert",
             ],
             description: Some("Set client certificate for proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "cert[:passwd]",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1991,14 +1530,9 @@
                 "--proxy-cert-type",
             ],
             description: Some("Client certificate type for HTTPS proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2007,14 +1541,9 @@
                 "--proxy-ciphers",
             ],
             description: Some("SSL ciphers to use for proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "list",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2023,14 +1552,12 @@
                 "--proxy-crlfile",
             ],
             description: Some("Set a CRL list for proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -2039,25 +1566,23 @@
                 "--proxy-digest",
             ],
             description: Some("Use Digest authentication on the proxy"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--proxy-header",
             ],
             description: Some("Pass custom header(s) to proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "header/file",
-                    source: Static([
-                        "Content-Type: application/json",
-                        "Content-Type: application/x-www-form-urlencoded",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "Content-Type: application/json",
+                        ),
+                        (
+                            name: "Content-Type: application/x-www-form-urlencoded",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -2066,22 +1591,15 @@
                 "--proxy-insecure",
             ],
             description: Some("Do HTTPS proxy connections without verifying the proxy"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--proxy-key",
             ],
             description: Some("Private key for HTTPS proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "key",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2090,14 +1608,9 @@
                 "--proxy-key-type",
             ],
             description: Some("Private key file type for proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2106,30 +1619,21 @@
                 "--proxy-negotiate",
             ],
             description: Some("Use HTTP Negotiate (SPNEGO) authentication on the proxy"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--proxy-ntlm",
             ],
             description: Some("Use NTLM authentication on the proxy"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--proxy-pass",
             ],
             description: Some("Pass phrase for the private key for HTTPS proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "phrase",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2138,14 +1642,9 @@
                 "--proxy-pinnedpubkey",
             ],
             description: Some("FILE/HASHES public key to verify proxy with"),
-            takes_value: true,
             arguments: [
                 (
                     name: "hashes",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2154,14 +1653,9 @@
                 "--proxy-service-name",
             ],
             description: Some("SPNEGO proxy service name"),
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2170,22 +1664,15 @@
                 "--proxy-ssl-allow-beast",
             ],
             description: Some("Allow security flaw for interop for HTTPS proxy"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--proxy-tls13-ciphers",
             ],
             description: Some("List> TLS 1.3 proxy cipher suites"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ciphersuite",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2194,14 +1681,9 @@
                 "--proxy-tlsauthtype",
             ],
             description: Some("TLS authentication type for HTTPS proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2210,14 +1692,9 @@
                 "--proxy-tlspassword",
             ],
             description: Some("TLS password for HTTPS proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2226,14 +1703,9 @@
                 "--proxy-tlsuser",
             ],
             description: Some("TLS username for HTTPS proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2242,22 +1714,15 @@
                 "--proxy-tlsv1",
             ],
             description: Some("Use TLSv1 for HTTPS proxy"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--proxy1.0",
             ],
             description: Some("Use HTTP/1.0 proxy on given port"),
-            takes_value: true,
             arguments: [
                 (
                     name: "host[:port]",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2266,14 +1731,12 @@
                 "--pubkey",
             ],
             description: Some("SSH Public key file name"),
-            takes_value: true,
             arguments: [
                 (
                     name: "key",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -2282,14 +1745,12 @@
                 "--random-file",
             ],
             description: Some("File for reading random data from"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -2298,38 +1759,27 @@
                 "--raw",
             ],
             description: Some("Do HTTP \"raw\"; no transfer decoding"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--remote-name-all",
             ],
             description: Some("Use the remote file name for all URLs"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--request-target",
             ],
             description: Some("Specify the target for this request"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--resolve",
             ],
             description: Some("Resolve the host+port to this address"),
-            takes_value: true,
             arguments: [
                 (
                     name: "host:port:address[,address]...",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2338,14 +1788,9 @@
                 "--retry",
             ],
             description: Some("Retry request if transient problems occur"),
-            takes_value: true,
             arguments: [
                 (
                     name: "num",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2354,22 +1799,15 @@
                 "--retry-connrefused",
             ],
             description: Some("Retry on connection refused (use with --retry)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--retry-delay",
             ],
             description: Some("Wait time between retries"),
-            takes_value: true,
             arguments: [
                 (
                     name: "seconds",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2378,14 +1816,9 @@
                 "--retry-max-time",
             ],
             description: Some("Retry only within this period"),
-            takes_value: true,
             arguments: [
                 (
                     name: "seconds",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2394,22 +1827,15 @@
                 "--sasl-ir",
             ],
             description: Some("Enable initial response in SASL authentication"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--service-name",
             ],
             description: Some("SPNEGO service name"),
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2418,14 +1844,9 @@
                 "--socks4",
             ],
             description: Some("SOCKS4 proxy on given host + port"),
-            takes_value: true,
             arguments: [
                 (
                     name: "host[:port]",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2434,14 +1855,9 @@
                 "--socks4a",
             ],
             description: Some("SOCKS4a proxy on given host + port"),
-            takes_value: true,
             arguments: [
                 (
                     name: "host[:port]",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2450,14 +1866,9 @@
                 "--socks5",
             ],
             description: Some("SOCKS5 proxy on given host + port"),
-            takes_value: true,
             arguments: [
                 (
                     name: "host[:port]",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2466,38 +1877,27 @@
                 "--socks5-basic",
             ],
             description: Some("Enable username/password auth for SOCKS5 proxies"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--socks5-gssapi",
             ],
             description: Some("Enable GSS-API auth for SOCKS5 proxies"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--socks5-gssapi-nec",
             ],
             description: Some("Compatibility with NEC SOCKS5 server"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--socks5-gssapi-service",
             ],
             description: Some("SOCKS5 proxy service name for GSS-API"),
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2506,14 +1906,9 @@
                 "--socks5-hostname",
             ],
             description: Some("SOCKS5 proxy, pass host name to proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "host[:port]",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2522,94 +1917,69 @@
                 "--ssl",
             ],
             description: Some("Try SSL/TLS"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ssl-auto-client-cert",
             ],
             description: Some("Obtain and use a client certificate automatically"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ssl-allow-beast",
             ],
             description: Some("Allow security flaw to improve interop"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ssl-no-revoke",
             ],
             description: Some("Disable cert revocation checks (Schannel)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ssl-reqd",
             ],
             description: Some("Require SSL/TLS"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--stderr",
             ],
             description: Some("Where to redirect stderr"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--styled-output",
             ],
             description: Some("Enable styled output for HTTP headers"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--suppress-connect-headers",
             ],
             description: Some("Suppress proxy CONNECT response headers"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tcp-fastopen",
             ],
             description: Some("Use TCP Fast Open"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tcp-nodelay",
             ],
             description: Some("Use the TCP_NODELAY option"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tftp-blksize",
             ],
             description: Some("Set TFTP BLKSIZE option"),
-            takes_value: true,
             arguments: [
                 (
                     name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2618,22 +1988,15 @@
                 "--tftp-no-options",
             ],
             description: Some("Do not send any TFTP options"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tls-max",
             ],
             description: Some("Set maximum allowed TLS version"),
-            takes_value: true,
             arguments: [
                 (
                     name: "VERSION",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2642,14 +2005,9 @@
                 "--tls13-ciphers",
             ],
             description: Some("Of TLS 1.3 ciphersuites> TLS 1.3 cipher suites to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "list",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2658,14 +2016,9 @@
                 "--tlsauthtype",
             ],
             description: Some("TLS authentication type"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2674,22 +2027,15 @@
                 "--tlspassword",
             ],
             description: Some("TLS password"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tlsuser",
             ],
             description: Some("TLS user name"),
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2698,54 +2044,42 @@
                 "--tlsv1.0",
             ],
             description: Some("Use TLSv1.0 or greater"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tlsv1.1",
             ],
             description: Some("Use TLSv1.1 or greater"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tlsv1.2",
             ],
             description: Some("Use TLSv1.2 or greater"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tlsv1.3",
             ],
             description: Some("Use TLSv1.3 or greater"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tr-encoding",
             ],
             description: Some("Request compressed transfer encoding"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--trace",
             ],
             description: Some("Write a debug trace to FILE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -2754,14 +2088,12 @@
                 "--trace-ascii",
             ],
             description: Some("Like --trace, but without hex output"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -2770,22 +2102,15 @@
                 "--trace-time",
             ],
             description: Some("Add time stamps to trace/verbose output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--unix-socket",
             ],
             description: Some("Connect through this Unix domain socket"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2794,14 +2119,9 @@
                 "--url",
             ],
             description: Some("URL to work with"),
-            takes_value: true,
             arguments: [
                 (
                     name: "url",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -2810,17 +2130,14 @@
                 "--xattr",
             ],
             description: Some("Store metadata in extended file attributes"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "URL",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            template: [
+                History,
+            ],
         ),
     ],
 )

@@ -2,7 +2,6 @@
     version: 1,
     command: "xed",
     description: Some("Xcode text editor invocation tool"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "-x",
             ],
             description: Some("Launches Xcode, opening a new empty unsaved file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,8 +16,6 @@
                 "-c",
             ],
             description: Some("Creates any non-existent files in the file list. If used without --launch, standard input will be read and piped to the last file created"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -28,8 +23,6 @@
                 "-w",
             ],
             description: Some("Wait for the files to be closed before exiting. xed will idle and will only terminate when all files are closed"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -37,14 +30,10 @@
                 "-l",
             ],
             description: Some("Selects the given line in the last file opened"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The line number to select"),
                 ),
             ],
         ),
@@ -54,8 +43,6 @@
                 "-b",
             ],
             description: Some("Opens Xcode without activating it; the process that invoked xed remains in front"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -63,8 +50,14 @@
                 "-h",
             ],
             description: Some("Show help for xed"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "-x",
+                "-c",
+                "-w",
+                "-l",
+                "-b",
+                "-v",
+            ],
         ),
         (
             names: [
@@ -72,17 +65,17 @@
                 "-v",
             ],
             description: Some("Prints the version number of xed"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "file",
-            source: Files,
+            description: Some("A list of file paths. If no files are passed, then standard input will       be read and piped into a new untitled document"),
+            template: [
+                FilePaths,
+            ],
             optional: true,
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

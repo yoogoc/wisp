@@ -2,21 +2,16 @@
     version: 1,
     command: "scc",
     description: Some("Sloc, Cloc and Code. Count lines of code in a directory with complexity estimation"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--avg-wage",
             ],
             description: Some("Average salary value used for COCOMO calculations"),
-            takes_value: true,
             arguments: [
                 (
                     name: "int",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("56286"),
                 ),
             ],
         ),
@@ -25,42 +20,48 @@
                 "--binary",
             ],
             description: Some("Disable binary file detection"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--by-file",
             ],
             description: Some("Display output for every file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ci",
             ],
             description: Some("Enable CI output settings where stdout is ASCII"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--cocomo-project-type",
             ],
             description: Some("Change the COCOMO model type (allows custom models, eg. \"name,1,1,1,1\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Static([
-                        "organic",
-                        "semi-detached",
-                        "embedded",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "organic",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "semi-detached",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "embedded",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                    ],
+                    default: Some("organic"),
                 ),
             ],
         ),
@@ -69,18 +70,16 @@
                 "--count-as",
             ],
             description: Some("Count a file extension as a language (comma-separated key:value list, eg. jst:js,tpl:Markdown)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -89,26 +88,23 @@
                 "--debug",
             ],
             description: Some("Enable debug output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--exclude-dir",
             ],
             description: Some("Directories to exclude"),
-            takes_value: true,
             arguments: [
                 (
                     name: "strings",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            template: [
+                                Folders,
+                            ],
+                            query_term: Some(AfterLast(",")),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -117,14 +113,10 @@
                 "--file-gc-count",
             ],
             description: Some("Number of files to parse before turning the GC on"),
-            takes_value: true,
             arguments: [
                 (
                     name: "int",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("10000"),
                 ),
             ],
         ),
@@ -134,25 +126,72 @@
                 "--format",
             ],
             description: Some("Set output format"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Static([
-                        "tabular",
-                        "wide",
-                        "json",
-                        "csv",
-                        "csv-stream",
-                        "cloc-yaml",
-                        "html",
-                        "html-table",
-                        "sql",
-                        "sql-insert",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "tabular",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "wide",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "json",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "csv",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "csv-stream",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "cloc-yaml",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "html",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "html-table",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "sql",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "sql-insert",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                    ],
+                    default: Some("tabular"),
                 ),
             ],
         ),
@@ -161,18 +200,16 @@
                 "--format-multi",
             ],
             description: Some("Multiple outputs with different formats (comma-separated key:value list, eg. tabular:stdout,csv:scc.csv)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -181,24 +218,21 @@
                 "--gen",
             ],
             description: Some("Identify generated files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--generated-markers",
             ],
             description: Some("Identify generated files by the presence of a string (comma-separated list)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "strings",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("do not edit,<auto-generated />"),
                 ),
             ],
+            presentation: (
+                insert_value: Some("--generated-markers '{cursor}'"),
+            ),
         ),
         (
             names: [
@@ -206,8 +240,6 @@
                 "--help",
             ],
             description: Some("Help for scc"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -215,18 +247,16 @@
                 "--include-ext",
             ],
             description: Some("Limit to these file extensions (comma-separated list)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "strings",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -235,8 +265,6 @@
                 "--include-symlinks",
             ],
             description: Some("Count symbolic links"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -244,22 +272,16 @@
                 "--languages",
             ],
             description: Some("Print supported languages and extensions"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--large-byte-count",
             ],
             description: Some("Number of bytes a file can contain before being omitted"),
-            takes_value: true,
             arguments: [
                 (
                     name: "int",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("1000000"),
                 ),
             ],
         ),
@@ -268,14 +290,10 @@
                 "--large-line-count",
             ],
             description: Some("Number of lines a file can contain before being omitted"),
-            takes_value: true,
             arguments: [
                 (
                     name: "int",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("40000"),
                 ),
             ],
         ),
@@ -284,8 +302,6 @@
                 "--min",
             ],
             description: Some("Identify minified files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -293,22 +309,16 @@
                 "--min-gen",
             ],
             description: Some("Identify minified or generated files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--min-gen-line-length",
             ],
             description: Some("Number of bytes per average line for file to be considered minified or generated"),
-            takes_value: true,
             arguments: [
                 (
                     name: "int",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("255"),
                 ),
             ],
         ),
@@ -317,8 +327,6 @@
                 "--no-cocomo",
             ],
             description: Some("Skip COCOMO calculation"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -326,8 +334,6 @@
                 "--no-complexity",
             ],
             description: Some("Skip code complexity calculation"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -335,64 +341,48 @@
                 "--no-duplicates",
             ],
             description: Some("Remove duplicate files from stats and output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-gen",
             ],
             description: Some("Ignore generated files in output (implies --gen)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-gitignore",
             ],
             description: Some("Disables .gitignore file logic"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-ignore",
             ],
             description: Some("Disables .ignore file logic"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-large",
             ],
             description: Some("Ignore files over certain byte and line size set by --max-line-count and --max-byte-count"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-min",
             ],
             description: Some("Ignore minified files in output (implies --min)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-min-gen",
             ],
             description: Some("Ignore minified or generated files in output (implies --min-gen)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-size",
             ],
             description: Some("Remove size calculation output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -400,16 +390,14 @@
                 "--not-match",
             ],
             description: Some("Ignore files and directories matching regular expression"),
-            takes_value: true,
             arguments: [
                 (
                     name: "regex",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            presentation: (
+                insert_value: Some("-M '{cursor}'"),
+            ),
         ),
         (
             names: [
@@ -417,14 +405,12 @@
                 "--output",
             ],
             description: Some("Output filename (defaults to stdout if not provided)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -433,18 +419,16 @@
                 "--remap-all",
             ],
             description: Some("Inspect every file and set its type by checking for a string (comma-separated key:value list, eg. \"-*- C++ -*-\":\"C Header\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -453,18 +437,16 @@
                 "--remap-unknown",
             ],
             description: Some("Inspect files of unknown type and set its type by checking for a string (comma-separated key:value list, eg. \"-*- C++ -*-\":\"C Header\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -473,24 +455,76 @@
                 "--size-unit",
             ],
             description: Some("Set the unit used for file size output"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Static([
-                        "si",
-                        "binary",
-                        "mixed",
-                        "xkcd-kb",
-                        "xkcd-kelly",
-                        "xkcd-imaginary",
-                        "xkcd-intel",
-                        "xkcd-drive",
-                        "xkcd-bakers",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("See https://xkcd.com/394/"),
+                    suggestions: [
+                        (
+                            name: "si",
+                            description: Some("1000^2 bytes"),
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "binary",
+                            description: Some("1024^2 bytes"),
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "mixed",
+                            description: Some("1,024,000 bytes (Binary kilobytes, SI megabytes)"),
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "xkcd-kb",
+                            description: Some("1000 bytes during leap years, 1024 otherwise"),
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "xkcd-kelly",
+                            description: Some("1012 bytes (a compromise between 1000 and 1024 bytes)"),
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "xkcd-imaginary",
+                            description: Some("1024*sqrt(-1) bytes (used in quantum computing)"),
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "xkcd-intel",
+                            description: Some("1023.937528 bytes (calculated on Pentium FPU)"),
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "xkcd-drive",
+                            description: Some("Currently 856 bytes (shrinks by 4 each year for marketing reasons)"),
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "xkcd-bakers",
+                            description: Some("1152 bytes (9 bits per byte, because you're such a good customer)"),
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                    ],
+                    default: Some("si"),
                 ),
             ],
         ),
@@ -500,22 +534,54 @@
                 "--sort",
             ],
             description: Some("Column to sort by"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Static([
-                        "files",
-                        "name",
-                        "lines",
-                        "blanks",
-                        "code",
-                        "comments",
-                        "complexity",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "files",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "name",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "lines",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "blanks",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "code",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "comments",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "complexity",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                    ],
+                    default: Some("files"),
                 ),
             ],
         ),
@@ -523,15 +589,10 @@
             names: [
                 "--sql-project",
             ],
-            description: Some("Use supplied name as the project identifier for the current run. Only valid with the \'--format sql\' or \'--format sql-insert\' option"),
-            takes_value: true,
+            description: Some("Use supplied name as the project identifier for the current run. Only valid with the '--format sql' or '--format sql-insert' option"),
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -541,8 +602,6 @@
                 "--trace",
             ],
             description: Some("Enable trace output (not recommended when processing multiple files)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -550,16 +609,12 @@
                 "--verbose",
             ],
             description: Some("Verbose output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Version for scc"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -567,17 +622,17 @@
                 "--wide",
             ],
             description: Some("Wider output with additional statistics (implies --complexity)"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "files or directories",
-            source: Directories,
+            template: [
+                FilePaths,
+                Folders,
+            ],
             optional: true,
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

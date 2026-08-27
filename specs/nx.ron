@@ -5,105 +5,84 @@
     subcommands: [
         (
             name: "init",
-            aliases: [],
             description: Some("Adds nx.json file and installs nx if not installed already"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "generate",
-            aliases: [],
             description: Some("Runs a generator that creates and/or modifies files based on a generator from a collection"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--defaults",
                     ],
                     description: Some("When true, disables interactive input prompts for options with a default"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--dryRun",
                     ],
                     description: Some("When true, preview the changes without updating files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--force",
                     ],
                     description: Some("When true, forces overwriting of existing files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--interactive",
                     ],
                     description: Some("Enable/disable prompts"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "collection:generator",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: true,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            has_post_process: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                            cache: Some((
+                                ttl_ms: Some(86400),
+                                by_directory: true,
+                            )),
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "run",
-            aliases: [],
             description: Some("Runs an Architect target with an optional custom builder configuration defined in your project"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -111,18 +90,18 @@
                         "-c",
                     ],
                     description: Some("A named builder configuration, defined in the \"configurations\" section of the workspace configuration file. The builder uses the named configuration to run the given target"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "configuration",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -131,98 +110,82 @@
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "project:target[:configuration]",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                            cache: Some((
+                                ttl_ms: Some(86400),
+                                by_directory: true,
+                            )),
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "daemon",
-            aliases: [],
             description: Some("Prints information about the Nx Daemon process or starts a daemon process"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--start",
                     ],
-                    description: None,
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--stop",
                     ],
-                    description: None,
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "graph",
-            aliases: [],
             description: Some("Graph dependencies within workspace"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--exclude",
                     ],
                     description: Some("Exclude certain projects from being processed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -231,14 +194,9 @@
                         "--file",
                     ],
                     description: Some("Output file (e.g. --file=output.json or --file=dep-graph.html)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -247,18 +205,18 @@
                         "--focus",
                     ],
                     description: Some("Use to show the project graph for a particular project and every node that is either an ancestor or a descendant"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "project",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -267,30 +225,21 @@
                         "--groupByFolder",
                     ],
                     description: Some("Group projects by folder in the project graph"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--host",
                     ],
                     description: Some("Bind the project graph server to a specific ip address"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -299,22 +248,15 @@
                         "--open",
                     ],
                     description: Some("Open the project graph in the browser"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--port",
                     ],
                     description: Some("Bind the project graph server to a specific port"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -323,18 +265,20 @@
                         "--targets",
                     ],
                     description: Some("Targets (comma/space delimited)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "targets",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -343,25 +287,24 @@
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--view",
                     ],
                     description: Some("Choose whether to view the projects or task graph"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Static([
-                                "projects",
-                                "tasks",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            suggestions: [
+                                (
+                                    name: "projects",
+                                ),
+                                (
+                                    name: "tasks",
+                                ),
+                            ],
+                            default: Some("projects"),
                         ),
                     ],
                 ),
@@ -370,26 +313,18 @@
                         "--watch",
                     ],
                     description: Some("Watch for changes to project graph and update in-browser"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "run-many",
-            aliases: [],
             description: Some("Run target for multiple listed projects"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("All projects"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -397,18 +332,18 @@
                         "-c",
                     ],
                     description: Some("A named builder configuration, defined in the \"configurations\" section of the workspace configuration file. The builder uses the named configuration to run the given target"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "configuration",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -417,18 +352,20 @@
                         "--exclude",
                     ],
                     description: Some("Exclude certain projects from being processed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -437,52 +374,50 @@
                         "--graph",
                     ],
                     description: Some("Show the task graph of the command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--nx-bail",
                     ],
                     description: Some("Stop command execution after the first failed task"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--nx-ignore-cycles",
                     ],
                     description: Some("Ignore cycles in the task graph"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--output-style",
                     ],
                     description: Some("Defines how Nx emits outputs tasks logs"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Static([
-                                "dynamic",
-                                "static",
-                                "stream",
-                                "stream-without-prefixes",
-                                "compact",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            suggestions: [
+                                (
+                                    name: "dynamic",
+                                ),
+                                (
+                                    name: "static",
+                                ),
+                                (
+                                    name: "stream",
+                                ),
+                                (
+                                    name: "stream-without-prefixes",
+                                ),
+                                (
+                                    name: "compact",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -491,14 +426,9 @@
                         "--parallel",
                     ],
                     description: Some("Max number of parallel processes [default is 3]"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -507,18 +437,20 @@
                         "--projects",
                     ],
                     description: Some("Projects (comma/space delimited)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -527,14 +459,9 @@
                         "--runner",
                     ],
                     description: Some("This is the name of the tasks runner configured in nx.json"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -543,26 +470,26 @@
                         "--skip-nx-cache",
                     ],
                     description: Some("Rerun the tasks even when the results are available in the cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--targets",
                     ],
                     description: Some("Targets (comma/space delimited)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "targets",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -571,48 +498,33 @@
                         "--verbose",
                     ],
                     description: Some("Prints additional information about the commands (e.g., stack traces)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "affected",
-            aliases: [],
             description: Some("Run target for affected projects"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("All projects"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--base",
                     ],
                     description: Some("Base of the current branch (usually main)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -622,18 +534,18 @@
                         "-c",
                     ],
                     description: Some("A named builder configuration, defined in the \"configurations\" section of the workspace configuration file. The builder uses the named configuration to run the given target"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "configuration",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -642,18 +554,20 @@
                         "--exclude",
                     ],
                     description: Some("Exclude certain projects from being processed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -662,14 +576,9 @@
                         "--files",
                     ],
                     description: Some("Change the way Nx is calculating the affected command by providing directly changed files, list of files delimited by commas or spaces"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -678,22 +587,15 @@
                         "--graph",
                     ],
                     description: Some("Show the task graph of the command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--head",
                     ],
                     description: Some("Latest commit of the current branch (usually HEAD)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -702,44 +604,44 @@
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--nx-bail",
                     ],
                     description: Some("Stop command execution after the first failed task"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--nx-ignore-cycles",
                     ],
                     description: Some("Ignore cycles in the task graph"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--output-style",
                     ],
                     description: Some("Defines how Nx emits outputs tasks logs"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Static([
-                                "dynamic",
-                                "static",
-                                "stream",
-                                "stream-without-prefixes",
-                                "compact",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            suggestions: [
+                                (
+                                    name: "dynamic",
+                                ),
+                                (
+                                    name: "static",
+                                ),
+                                (
+                                    name: "stream",
+                                ),
+                                (
+                                    name: "stream-without-prefixes",
+                                ),
+                                (
+                                    name: "compact",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -748,14 +650,9 @@
                         "--parallel",
                     ],
                     description: Some("Max number of parallel processes [default is 3]"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -764,14 +661,9 @@
                         "--runner",
                     ],
                     description: Some("This is the name of the tasks runner configured in nx.json"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -780,26 +672,26 @@
                         "--skip-nx-cache",
                     ],
                     description: Some("Rerun the tasks even when the results are available in the cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--targets",
                     ],
                     description: Some("Targets (comma/space delimited)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "targets",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -808,64 +700,45 @@
                         "--uncommitted",
                     ],
                     description: Some("Uncommitted changes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--untracked",
                     ],
                     description: Some("Untracked changes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Prints additional information about the commands (e.g., stack traces)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "affected:graph",
-            aliases: [],
             description: Some("Graph dependencies affected by changes"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("All projects"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--base",
                     ],
                     description: Some("Base of the current branch (usually main)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -874,18 +747,20 @@
                         "--exclude",
                     ],
                     description: Some("Exclude certain projects from being processed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -894,14 +769,9 @@
                         "--file",
                     ],
                     description: Some("Output file (e.g. --file=output.json or --file=dep-graph.html)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -910,14 +780,9 @@
                         "--files",
                     ],
                     description: Some("Change the way Nx is calculating the affected command by providing directly changed files, list of files delimited by commas or spaces"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -926,18 +791,18 @@
                         "--focus",
                     ],
                     description: Some("Use to show the project graph for a particular project and every node that is either an ancestor or a descendant"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "project",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -946,22 +811,15 @@
                         "--groupByFolder",
                     ],
                     description: Some("Group projects by folder in the project graph"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--head",
                     ],
                     description: Some("Latest commit of the current branch (usually HEAD)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -970,22 +828,15 @@
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--host",
                     ],
                     description: Some("Bind the project graph server to a specific ip address"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -994,22 +845,15 @@
                         "--open",
                     ],
                     description: Some("Open the project graph in the browser"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--port",
                     ],
                     description: Some("Bind the project graph server to a specific port"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1018,18 +862,20 @@
                         "--targets",
                     ],
                     description: Some("Targets (comma/space delimited)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "targets",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1038,41 +884,36 @@
                         "--uncommitted",
                     ],
                     description: Some("Uncommitted changes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--untracked",
                     ],
                     description: Some("Untracked changes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--view",
                     ],
                     description: Some("Choose whether to view the projects or task graph"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Static([
-                                "projects",
-                                "tasks",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            suggestions: [
+                                (
+                                    name: "projects",
+                                ),
+                                (
+                                    name: "tasks",
+                                ),
+                            ],
+                            default: Some("projects"),
                         ),
                     ],
                 ),
@@ -1081,40 +922,27 @@
                         "--watch",
                     ],
                     description: Some("Watch for changes to project graph and update in-browser"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "print-affected",
-            aliases: [],
             description: Some("Prints information about the projects and targets affected by changes"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("All projects"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--base",
                     ],
                     description: Some("Base of the current branch (usually main)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1124,18 +952,18 @@
                         "-c",
                     ],
                     description: Some("A named builder configuration, defined in the \"configurations\" section of the workspace configuration file. The builder uses the named configuration to run the given target"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "configuration",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1144,18 +972,20 @@
                         "--exclude",
                     ],
                     description: Some("Exclude certain projects from being processed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1164,14 +994,9 @@
                         "--files",
                     ],
                     description: Some("Change the way Nx is calculating the affected command by providing directly changed files, list of files delimited by commas or spaces"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1180,14 +1005,9 @@
                         "--head",
                     ],
                     description: Some("Latest commit of the current branch (usually HEAD)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1196,22 +1016,15 @@
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--select",
                     ],
                     description: Some("Select the subset of the returned json document (e.g., --select=projects)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1220,18 +1033,20 @@
                         "--targets",
                     ],
                     description: Some("Targets (comma/space delimited)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "targets",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1240,17 +1055,17 @@
                         "--type",
                     ],
                     description: Some("Select the type of projects to be returned (e.g., --type=app)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Static([
-                                "app",
-                                "lib",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            suggestions: [
+                                (
+                                    name: "app",
+                                ),
+                                (
+                                    name: "lib",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1259,56 +1074,39 @@
                         "--uncommitted",
                     ],
                     description: Some("Uncommitted changes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--untracked",
                     ],
                     description: Some("Untracked changes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "format:check",
-            aliases: [],
             description: Some("Check for un-formatted files"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("All projects"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--base",
                     ],
                     description: Some("Base of the current branch (usually main)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1317,18 +1115,20 @@
                         "--exclude",
                     ],
                     description: Some("Exclude certain projects from being processed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1337,14 +1137,9 @@
                         "--files",
                     ],
                     description: Some("Change the way Nx is calculating the affected command by providing directly changed files, list of files delimited by commas or spaces"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1353,14 +1148,9 @@
                         "--head",
                     ],
                     description: Some("Latest commit of the current branch (usually HEAD)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1369,34 +1159,32 @@
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--libs-and-apps",
                     ],
                     description: Some("Format only libraries and applications files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--projects",
                     ],
                     description: Some("Projects (comma/space delimited)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1405,56 +1193,39 @@
                         "--uncommitted",
                     ],
                     description: Some("Uncommitted changes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--untracked",
                     ],
                     description: Some("Untracked changes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "format:write",
-            aliases: [],
             description: Some("Overwrite un-formatted files"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("All projects"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--base",
                     ],
                     description: Some("Base of the current branch (usually main)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1463,18 +1234,20 @@
                         "--exclude",
                     ],
                     description: Some("Exclude certain projects from being processed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1483,14 +1256,9 @@
                         "--files",
                     ],
                     description: Some("Change the way Nx is calculating the affected command by providing directly changed files, list of files delimited by commas or spaces"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1499,14 +1267,9 @@
                         "--head",
                     ],
                     description: Some("Latest commit of the current branch (usually HEAD)"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1515,34 +1278,32 @@
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--libs-and-apps",
                     ],
                     description: Some("Format only libraries and applications files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--projects",
                     ],
                     description: Some("Projects (comma/space delimited)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1551,48 +1312,33 @@
                         "--uncommitted",
                     ],
                     description: Some("Uncommitted changes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--untracked",
                     ],
                     description: Some("Untracked changes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "migrate",
-            aliases: [],
             description: Some("Creates a migrations file or runs migrations from the migrations file"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--commitPrefix",
                     ],
                     description: Some("Commit prefix to apply to the commit for each migration, when --create-commits is enabled"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1601,30 +1347,21 @@
                         "--createCommits",
                     ],
                     description: Some("Automatically create a git commit after each migration runs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--excludeAppliedMigrations",
                     ],
                     description: Some("Exclude migrations that should have been applied on previous updates. To be used with --from"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--from",
                     ],
                     description: Some("Use the provided versions for packages instead of the ones installed in node_modules (e.g., --from=\"@nrwl/react@12.0.0,@nrwl/js@12.0.0\")"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1633,38 +1370,27 @@
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--ifExists",
                     ],
                     description: Some("Run migrations only if the migrations file exists, if not continues successfully"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--interactive",
                     ],
                     description: Some("Enable/disable prompts"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--runMigrations",
                     ],
-                    description: Some("Execute migrations from a file (when the file isn\'t provided, execute migrations from migrations.json)"),
-                    takes_value: true,
+                    description: Some("Execute migrations from a file (when the file isn't provided, execute migrations from migrations.json)"),
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1673,14 +1399,9 @@
                         "--to",
                     ],
                     description: Some("Use the provided versions for packages instead of the ones calculated by the migrator (e.g., --to=\"@nrwl/react@12.0.0,@nrwl/js@12.0.0\")"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -1689,231 +1410,182 @@
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "packageAndVersion",
-                    source: Static([
-                        "latest",
-                    ]),
+                    description: Some("The target package and version (e.g, @nrwl/workspace@13.0.0)"),
+                    suggestions: [
+                        (
+                            name: "latest",
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "report",
-            aliases: [],
             description: Some("Reports useful version numbers to copy into the Nx issue template"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "list",
-            aliases: [],
-            description: None,
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "plugin",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "nx",
-                            "list",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("The name of an installed plugin to query"),
+                    generators: [
+                        (
+                            script: [
+                                "nx",
+                                "list",
+                            ],
+                            has_post_process: true,
+                            cache: Some((
+                                ttl_ms: Some(86400),
+                                by_directory: true,
+                            )),
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "workspace-generator",
-            aliases: [],
             description: Some("Runs a workspace generator from the tools/generators directory"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--list-generators",
                     ],
                     description: Some("List the available workspace-generators"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "name",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "ls -d tools/generators/*/",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("The name of your generator"),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "ls -d tools/generators/*/",
+                            ],
+                            has_post_process: true,
+                            cache: Some((
+                                ttl_ms: Some(86400),
+                                by_directory: true,
+                            )),
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "connect",
-            aliases: [],
             description: Some("Connect workspace to Nx Cloud"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "reset",
-            aliases: [],
             description: Some("Clears all the cached Nx artifacts and metadata about the workspace and shuts down the Nx Daemon"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "repair",
-            aliases: [],
             description: Some("Repair any configuration that is no longer supported by Nx"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Prints additional information about the commands (e.g., stack traces)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "exec",
-            aliases: [],
             description: Some("Executes any command as if it was a target on the project"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1921,18 +1593,18 @@
                         "-c",
                     ],
                     description: Some("A named builder configuration, defined in the \"configurations\" section of the workspace configuration file. The builder uses the named configuration to run the given target"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "configuration",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1941,18 +1613,20 @@
                         "--exclude",
                     ],
                     description: Some("Exclude certain projects from being processed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1961,52 +1635,50 @@
                         "--graph",
                     ],
                     description: Some("Show the task graph of the command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--nx-bail",
                     ],
                     description: Some("Stop command execution after the first failed task"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--nx-ignore-cycles",
                     ],
                     description: Some("Ignore cycles in the task graph"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--output-style",
                     ],
                     description: Some("Defines how Nx emits outputs tasks logs"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Static([
-                                "dynamic",
-                                "static",
-                                "stream",
-                                "stream-without-prefixes",
-                                "compact",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            suggestions: [
+                                (
+                                    name: "dynamic",
+                                ),
+                                (
+                                    name: "static",
+                                ),
+                                (
+                                    name: "stream",
+                                ),
+                                (
+                                    name: "stream-without-prefixes",
+                                ),
+                                (
+                                    name: "compact",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -2015,14 +1687,9 @@
                         "--parallel",
                     ],
                     description: Some("Max number of parallel processes [default is 3]"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -2031,18 +1698,18 @@
                         "--project",
                     ],
                     description: Some("Target project"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "project",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -2051,14 +1718,9 @@
                         "--runner",
                     ],
                     description: Some("This is the name of the tasks runner configured in nx.json"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -2067,76 +1729,62 @@
                         "--skip-nx-cache",
                     ],
                     description: Some("Rerun the tasks even when the results are available in the cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Prints additional information about the commands (e.g., stack traces)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "watch",
-            aliases: [],
             description: Some("Watch for changes within projects, and execute commands"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("All projects"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--includeDependentProjects",
                     ],
                     description: Some("When watching selected projects, include dependent projects as well"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--projects",
                     ],
                     description: Some("Projects (comma/space delimited)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projects",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400),
+                                        by_directory: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -2145,84 +1793,63 @@
                         "--verbose",
                     ],
                     description: Some("Prints additional information about the commands (e.g., stack traces)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "show",
-            aliases: [],
             description: Some("Show information about the workspace (e.g., list of projects)"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "object",
-                    source: Static([
-                        "projects",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("What to show (e.g., projects)"),
+                    suggestions: [
+                        (
+                            name: "projects",
+                        ),
+                    ],
+                    default: Some("projects"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "view-logs",
-            aliases: [],
             description: Some("Enables you to view and interact with the logs via the advanced analytic UI from Nx Cloud to help you debug your issue. To do this, Nx needs to connect your workspace to Nx Cloud and upload the most recent run details. Only the metrics are uploaded, not the artefacts"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Show version number"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
-    options: [],
-    arguments: [],
+    has_generate_spec: true,
 )

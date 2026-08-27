@@ -5,40 +5,36 @@
     subcommands: [
         (
             name: "init",
-            aliases: [],
             description: Some("Initializes a configuration file in the current directory"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                priority: Some(60.0),
+                icon: Some("⚙️"),
+            ),
         ),
         (
             name: "fmt",
-            aliases: [],
             description: Some("Formats the source files and writes the result to the file system"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--diff",
                     ],
                     description: Some("Outputs a check-like diff of every formatted file"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        icon: Some("fig://template?badge=%2B-&color=ffffff"),
+                    ),
                 ),
                 (
                     names: [
                         "--stdin",
                     ],
                     description: Some("Format stdin and output the result to stdout. Provide an absolute file path to apply the inclusion and exclusion rules or an extension or file name to always format the text"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "extension/file-name/file-path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -47,17 +43,18 @@
                         "--incremental",
                     ],
                     description: Some("Only format files when they change. This may alternatively be specified in the configuration file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "incremental",
-                            source: Static([
-                                "true",
-                                "false",
-                            ]),
+                            suggestions: [
+                                (
+                                    name: "true",
+                                ),
+                                (
+                                    name: "false",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -66,59 +63,60 @@
                         "--excludes",
                     ],
                     description: Some("List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "pattern",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                                Folders,
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--allow-node-modules",
                     ],
                     description: Some("Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future)"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        icon: Some("fig://icon?type=npm"),
+                    ),
                 ),
             ],
             arguments: [
                 (
                     name: "files",
-                    source: Files,
-                    optional: false,
+                    description: Some("List of file patterns in quotes to format. This overrides what is specified in the config file"),
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                priority: Some(76.0),
+                icon: Some("🛠"),
+            ),
         ),
         (
             name: "check",
-            aliases: [],
-            description: Some("Checks for any files that haven\'t been formatted"),
-            subcommands: [],
+            description: Some("Checks for any files that haven't been formatted"),
             options: [
                 (
                     names: [
                         "--incremental",
                     ],
                     description: Some("Only format files when they change. This may alternatively be specified in the configuration file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "incremental",
-                            source: Static([
-                                "true",
-                                "false",
-                            ]),
+                            suggestions: [
+                                (
+                                    name: "true",
+                                ),
+                                (
+                                    name: "false",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -127,73 +125,59 @@
                         "--excludes",
                     ],
                     description: Some("List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "pattern",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                                Folders,
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--allow-node-modules",
                     ],
                     description: Some("Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future)"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        icon: Some("fig://icon?type=npm"),
+                    ),
                 ),
             ],
             arguments: [
                 (
                     name: "files",
-                    source: Files,
-                    optional: false,
+                    description: Some("List of file patterns in quotes to format. This overrides what is specified in the config file"),
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                priority: Some(60.0),
+                icon: Some("💬"),
+            ),
         ),
         (
             name: "config",
-            aliases: [],
             description: Some("Functionality related to the configuration file"),
             subcommands: [
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Adds a plugin to the configuration file"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "url-or-plugin-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "init",
-                    aliases: [],
                     description: Some("Initializes a configuration file in the current directory"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "update",
-                    aliases: [],
                     description: Some("Updates the plugins in the configuration file"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -201,108 +185,96 @@
                                 "--yes",
                             ],
                             description: Some("Upgrade process plugins without prompting to confirm checksums"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("⤴️"),
+                    ),
                 ),
                 (
                     name: "help",
-                    aliases: [],
                     description: Some("Prints the help of the given subcommand(s)"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "SUBCOMMAND",
-                            source: Files,
-                            optional: false,
+                            description: Some("The subcommand whose help message to display"),
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
+                    parser_directives: Some((
+                        options_must_precede_arguments: true,
+                    )),
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            requires_subcommand: true,
+            presentation: (
+                priority: Some(60.0),
+                icon: Some("⚙️"),
+            ),
         ),
         (
             name: "output-file-paths",
-            aliases: [],
             description: Some("Prints the resolved file paths for the plugins based on the args and configuration"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--excludes",
                     ],
                     description: Some("List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "pattern",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                                Folders,
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--allow-node-modules",
                     ],
                     description: Some("Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future)"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        icon: Some("fig://icon?type=npm"),
+                    ),
                 ),
             ],
             arguments: [
                 (
                     name: "files",
-                    source: Files,
-                    optional: false,
+                    description: Some("List of file patterns in quotes to format. This overrides what is specified in the config file"),
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "output-resolved-config",
-            aliases: [],
             description: Some("Prints the resolved configuration for the plugins based on the args and configuration"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "output-format-times",
-            aliases: [],
             description: Some("Prints the amount of time it takes to format each file. Use this for debugging"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--incremental",
                     ],
                     description: Some("Only format files when they change. This may alternatively be specified in the configuration file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "incremental",
-                            source: Static([
-                                "true",
-                                "false",
-                            ]),
+                            suggestions: [
+                                (
+                                    name: "true",
+                                ),
+                                (
+                                    name: "false",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -311,80 +283,64 @@
                         "--excludes",
                     ],
                     description: Some("List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "pattern",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                                Folders,
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--allow-node-modules",
                     ],
                     description: Some("Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future)"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        icon: Some("fig://icon?type=npm"),
+                    ),
                 ),
             ],
             arguments: [
                 (
                     name: "files",
-                    source: Files,
-                    optional: false,
+                    description: Some("List of file patterns in quotes to format. This overrides what is specified in the config file"),
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "clear-cache",
-            aliases: [],
             description: Some("Deletes the plugin cache directory"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "upgrade",
-            aliases: [],
             description: Some("Upgrades the dprint executable"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                priority: Some(55.0),
+                icon: Some("⤴️"),
+            ),
         ),
         (
             name: "license",
-            aliases: [],
             description: Some("Outputs the software license"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Prints the help of the given subcommand(s)"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "SUBCOMMAND",
-                    source: Files,
-                    optional: false,
+                    description: Some("The subcommand whose help message to display"),
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            parser_directives: Some((
+                options_must_precede_arguments: true,
+            )),
         ),
     ],
     options: [
@@ -394,16 +350,15 @@
                 "--config",
             ],
             description: Some("Path or url to JSON configuration file. Defaults to dprint.json or .dprint.json in current or ancestor directory when not provided"),
-            takes_value: true,
             arguments: [
                 (
                     name: "config",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            persistent: true,
+            presentation: (
+                icon: Some("⚙️"),
+            ),
         ),
         (
             names: [
@@ -411,33 +366,37 @@
                 "--help",
             ],
             description: Some("Prints help information"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--plugins",
             ],
             description: Some("List of urls or file paths of plugins to use. This overrides what is specified in the config file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "urls/files",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
+            persistent: true,
+            repeat: Many,
+            presentation: (
+                icon: Some("🔌"),
+            ),
         ),
         (
             names: [
                 "--verbose",
             ],
             description: Some("Prints additional diagnostic information"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
+            presentation: (
+                icon: Some("📢"),
+            ),
         ),
     ],
-    arguments: [],
+    requires_subcommand: true,
 )

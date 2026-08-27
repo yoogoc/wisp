@@ -2,7 +2,6 @@
     version: 1,
     command: "just",
     description: Some("Just a command runner"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,46 +9,37 @@
                 "-h",
             ],
             description: Some("Print help information"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--changelog",
             ],
             description: Some("Print the changelog"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--check",
             ],
-            description: Some("Run --fmt in \'check\' mode"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Run --fmt in 'check' mode"),
+            depends_on: [
+                "--unstable",
+                "--fmt",
+            ],
         ),
         (
             names: [
                 "--choose",
             ],
             description: Some("Select one or more recipes to run using another program"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--chooser",
             ],
             description: Some("Override the binary invoked by --choose"),
-            takes_value: true,
             arguments: [
                 (
                     name: "program",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -58,18 +48,29 @@
                 "--color",
             ],
             description: Some("Print colorful output"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Static([
-                        "auto",
-                        "always",
-                        "never",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    suggestions: [
+                        (
+                            name: "auto",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "always",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "never",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -79,14 +80,10 @@
                 "--command",
             ],
             description: Some("Run an arbitrary command with the working directory, .env, overrides, and exports"),
-            takes_value: true,
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    is_command: true,
                 ),
             ],
         ),
@@ -95,20 +92,41 @@
                 "--completions",
             ],
             description: Some("Print shell completions"),
-            takes_value: true,
             arguments: [
                 (
                     name: "shell",
-                    source: Static([
-                        "zsh",
-                        "bash",
-                        "fish",
-                        "powershell",
-                        "elvish",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "zsh",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "bash",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "fish",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "powershell",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "elvish",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -117,38 +135,27 @@
                 "--clear-shell-args",
             ],
             description: Some("Clear shell arguments"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--dry-run",
             ],
             description: Some("Print what just would do, without doing it"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--dump",
             ],
             description: Some("Print justfile"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--dotenv-filename",
             ],
             description: Some("Use a file with this name instead of .env"),
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -157,26 +164,34 @@
                 "--dotenv-path",
             ],
             description: Some("Load the environment file from a path instead of searching for one"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--dump-format",
             ],
             description: Some("Specify the format for dumping the justfile"),
-            takes_value: true,
             arguments: [
                 (
                     name: "format",
-                    source: Static([
-                        "just",
-                        "json",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "just",
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                        (
+                            name: "json",
+                            description: Some("This value requires --unstable"),
+                            presentation: (
+                                icon: Some("fig://icon?type=string"),
+                            ),
+                        ),
+                    ],
                 ),
+            ],
+            depends_on: [
+                "--dump",
             ],
         ),
         (
@@ -185,40 +200,36 @@
                 "--edit",
             ],
             description: Some("Edit the justfile with $VISUAL or $EDITOR, falling back to vim"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--evaluate",
             ],
             description: Some("Evaluate and print all variables"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--fmt",
             ],
             description: Some("Format and overwrite the justfile"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "--unstable",
+            ],
         ),
         (
             names: [
                 "--highlight",
             ],
             description: Some("Highlight echoed recipe lines in bold"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-highlight",
+            ],
         ),
         (
             names: [
                 "--init",
             ],
             description: Some("Initialize a new justfile"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -226,14 +237,12 @@
                 "--justfile",
             ],
             description: Some("Use a specific justfile"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -243,22 +252,15 @@
                 "--list",
             ],
             description: Some("List available recipes and their arguments"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--list-heading",
             ],
             description: Some("Print this text before the list"),
-            takes_value: true,
             arguments: [
                 (
                     name: "text",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -267,14 +269,9 @@
                 "--list-prefix",
             ],
             description: Some("Print this text before each list item"),
-            takes_value: true,
             arguments: [
                 (
                     name: "text",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -282,17 +279,16 @@
             names: [
                 "--no-dotenv",
             ],
-            description: Some("Don\'t load the environment file"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't load the environment file"),
         ),
         (
             names: [
                 "--no-highlight",
             ],
-            description: Some("Don\'t highlight echoed recipe lines"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't highlight echoed recipe lines"),
+            exclusive_on: [
+                "--highlight",
+            ],
         ),
         (
             names: [
@@ -300,33 +296,25 @@
                 "--quiet",
             ],
             description: Some("Suppress all output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--set",
             ],
             description: Some("Override a variable with a value"),
-            takes_value: true,
             arguments: [
                 (
                     name: "variable",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: true,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The string value the variable will be set to"),
                 ),
             ],
         ),
@@ -335,14 +323,10 @@
                 "--shell",
             ],
             description: Some("Invoke this shell to run recipes"),
-            takes_value: true,
             arguments: [
                 (
                     name: "shell",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("sh"),
                 ),
             ],
         ),
@@ -351,14 +335,10 @@
                 "--shell-arg",
             ],
             description: Some("Invoke the shell with this as an argument"),
-            takes_value: true,
             arguments: [
                 (
                     name: "argument",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("-cu"),
                 ),
             ],
         ),
@@ -367,8 +347,6 @@
                 "--shell-command",
             ],
             description: Some("Invoke --command with the shell used to run recipe lines and backticks"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -376,18 +354,15 @@
                 "--show",
             ],
             description: Some("Show information about a recipe"),
-            takes_value: true,
             arguments: [
                 (
                     name: "recipe",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: true,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -396,8 +371,6 @@
                 "--summary",
             ],
             description: Some("List names of available recipes"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -405,24 +378,18 @@
                 "--unsorted",
             ],
             description: Some("Return list and summary entries in source order"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--unstable",
             ],
             description: Some("Enable unstable features"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--variables",
             ],
             description: Some("List names of variables"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -430,8 +397,6 @@
                 "--verbose",
             ],
             description: Some("Use verbose output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -439,8 +404,6 @@
                 "--version",
             ],
             description: Some("Print version information"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -448,29 +411,31 @@
                 "--working-directory",
             ],
             description: Some("Use this as the working directory"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        Folders,
+                    ],
                 ),
+            ],
+            depends_on: [
+                "--justfile",
             ],
         ),
     ],
     arguments: [
         (
             name: "args",
-            source: Unavailable,
+            generators: [
+                (
+                    has_dynamic_script: true,
+                    has_post_process: true,
+                    has_dynamic_trigger: true,
+                ),
+            ],
             optional: true,
             variadic: true,
-            imported_generator: Some((
-                script: [],
-                has_post_process: true,
-                has_custom: true,
-            )),
         ),
     ],
 )

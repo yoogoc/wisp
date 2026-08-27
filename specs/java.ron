@@ -2,35 +2,36 @@
     version: 1,
     command: "java",
     description: Some("Launch a Java application"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-jar",
             ],
             description: Some("To launch the main class in a JAR file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "JAR file",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
+            presentation: (
+                priority: Some(99.0),
+            ),
         ),
         (
             names: [
                 "-D",
             ],
             description: Some("Set a system property, -D<NAME>=<VALUE>"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                priority: Some(98.0),
+            ),
         ),
         (
             names: [
@@ -39,8 +40,6 @@
                 "-?",
             ],
             description: Some("Show help for java"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -48,8 +47,6 @@
                 "-version",
             ],
             description: Some("Print product version to the error stream and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -57,16 +54,12 @@
                 "--show-version",
             ],
             description: Some("Print product version to the output stream and continue"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--dry-run",
             ],
             description: Some("Create VM and load main class but do not execute main method"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -74,14 +67,12 @@
                 "-cp",
             ],
             description: Some("Class search path of directories and zip/jar files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "search files",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -89,14 +80,17 @@
     arguments: [
         (
             name: "mainclass",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
+            description: Some("To launch a class file"),
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    has_dynamic_query_term: true,
+                ),
+            ],
         ),
     ],
+    parser_directives: Some((
+        flags_are_posix_noncompliant: true,
+    )),
 )

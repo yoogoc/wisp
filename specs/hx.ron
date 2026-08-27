@@ -2,7 +2,6 @@
     version: 1,
     command: "hx",
     description: Some("A post-modern text editor"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,30 +9,22 @@
                 "--help",
             ],
             description: Some("Show help"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tutor",
             ],
             description: Some("Open the tutorial"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--health",
             ],
             description: Some("Check for errors in editor setup"),
-            takes_value: true,
             arguments: [
                 (
                     name: "language",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -42,8 +33,7 @@
                 "-v",
             ],
             description: Some("Increases logging verbosity"),
-            takes_value: false,
-            arguments: [],
+            repeat: Many,
         ),
         (
             names: [
@@ -51,17 +41,23 @@
                 "--grammar",
             ],
             description: Some("Fetch or build tree-sitter grammars"),
-            takes_value: true,
             arguments: [
                 (
                     name: "action",
-                    source: Static([
-                        "fetch",
-                        "build",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "fetch",
+                            presentation: (
+                                icon: Some("fig://icon?type=command"),
+                            ),
+                        ),
+                        (
+                            name: "build",
+                            presentation: (
+                                icon: Some("fig://icon?type=command"),
+                            ),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -71,17 +67,19 @@
                 "--version",
             ],
             description: Some("Print version information"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "files",
-            source: Directories,
-            optional: false,
+            template: [
+                FilePaths,
+                Folders,
+            ],
             variadic: true,
-            imported_generator: None,
         ),
     ],
+    parser_directives: Some((
+        flags_are_posix_noncompliant: true,
+    )),
 )

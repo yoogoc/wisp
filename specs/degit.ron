@@ -2,15 +2,12 @@
     version: 1,
     command: "degit",
     description: Some("Straightforward project scaffolding"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--help",
             ],
             description: Some("Print help"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -18,8 +15,6 @@
                 "--force",
             ],
             description: Some("Overwrite existing files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -27,8 +22,6 @@
                 "--cache",
             ],
             description: Some("Use a cache"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -36,8 +29,6 @@
                 "--verbose",
             ],
             description: Some("Be verbose?"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -45,17 +36,17 @@
                 "--mode",
             ],
             description: Some("Clone mode"),
-            takes_value: true,
             arguments: [
                 (
                     name: "mode",
-                    source: Static([
-                        "git",
-                        "tar",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "git",
+                        ),
+                        (
+                            name: "tar",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -63,21 +54,20 @@
     arguments: [
         (
             name: "user/repo",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                ),
+            ],
         ),
         (
             name: "location",
-            source: Directories,
+            template: [
+                Folders,
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: None,
+            suggest_current_token: true,
         ),
     ],
 )

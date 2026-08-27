@@ -2,7 +2,6 @@
     version: 1,
     command: "serve",
     description: Some("Static file serving and directory listing"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "--help",
             ],
             description: Some("Shows help message"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,8 +16,6 @@
                 "--version",
             ],
             description: Some("Displays the current version of serve"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -28,19 +23,41 @@
                 "--listen",
             ],
             description: Some("Specify a URI endpoint on which to listen - more than one may be specified to listen in multiple places"),
-            takes_value: true,
             arguments: [
                 (
                     name: "listen_uri",
-                    source: Static([
-                        "port",
-                        "host/port",
-                        "unix domain",
-                        "windows pipe",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "port",
+                            description: Some("E.g. serve --listen 1234"),
+                            presentation: (
+                                priority: Some(100.0),
+                                insert_value: Some("1234"),
+                            ),
+                        ),
+                        (
+                            name: "host/port",
+                            description: Some("E.g. serve --listen tcp://hostname:1234"),
+                            presentation: (
+                                priority: Some(76.0),
+                                insert_value: Some("tcp://hostname:1234"),
+                            ),
+                        ),
+                        (
+                            name: "unix domain",
+                            description: Some("E.g. serve --listen unix:/path/to/socket.sock"),
+                            presentation: (
+                                insert_value: Some("unix:/path/to/socket.sock"),
+                            ),
+                        ),
+                        (
+                            name: "windows pipe",
+                            description: Some("E.g. serve -l pipe:\\.pipePipeName"),
+                            presentation: (
+                                insert_value: Some("pipe:\\.pipePipeName"),
+                            ),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -49,14 +66,9 @@
                 "-p",
             ],
             description: Some("Specify custom port"),
-            takes_value: true,
             arguments: [
                 (
                     name: "port",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -66,8 +78,6 @@
                 "--debug",
             ],
             description: Some("Show debugging information"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -75,8 +85,6 @@
                 "--single",
             ],
             description: Some("Rewrite all not-found requests to `index.html`"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -84,14 +92,12 @@
                 "--config",
             ],
             description: Some("Specify custom path to `serve.json`"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path to config file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -101,8 +107,6 @@
                 "--cors",
             ],
             description: Some("Enable CORS, sets `Access-Control-Allow-Origin` to `*`"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -110,8 +114,6 @@
                 "--no-clipboard",
             ],
             description: Some("Do not copy the local address to the clipboard"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -119,16 +121,12 @@
                 "--no-compression",
             ],
             description: Some("Do not compress files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-etag",
             ],
             description: Some("Send `Last-Modified` header instead of `ETag`"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -136,22 +134,18 @@
                 "--symlinks",
             ],
             description: Some("Resolve symlinks instead of showing 404 errors"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ssl-cert",
             ],
             description: Some("Optional path to an SSL/TLS certificate to serve with HTTPS"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path to SSL/TLS certificate",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -159,15 +153,13 @@
             names: [
                 "--ssl-key",
             ],
-            description: Some("Optional path to the SSL/TLS certificate\'s private key"),
-            takes_value: true,
+            description: Some("Optional path to the SSL/TLS certificate's private key"),
             arguments: [
                 (
                     name: "path to private key",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -175,15 +167,13 @@
             names: [
                 "--ssl-pass",
             ],
-            description: Some("Optional path to the SSL/TLS certificate\'s passphrase"),
-            takes_value: true,
+            description: Some("Optional path to the SSL/TLS certificate's passphrase"),
             arguments: [
                 (
                     name: "path to passphrase",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -191,18 +181,15 @@
             names: [
                 "--no-port-switching",
             ],
-            description: Some("Do not open a port other than the one specified when it\'s taken"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Do not open a port other than the one specified when it's taken"),
         ),
     ],
     arguments: [
         (
             name: "location",
-            source: Directories,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            template: [
+                Folders,
+            ],
         ),
     ],
 )

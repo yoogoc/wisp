@@ -1,51 +1,37 @@
 (
     version: 1,
     command: "tailscale",
-    description: None,
     subcommands: [
         (
             name: "up",
-            aliases: [],
             description: Some("Connect to Tailscale, logging in if needed"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--accept-dns",
                     ],
                     description: Some("Accept DNS configuration from the admin panel"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--accept-routes",
                     ],
                     description: Some("Accept routes advertised by other Tailscale nodes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--advertise-exit-node",
                     ],
                     description: Some("Offer to be an exit node for internet traffic for the tailnet"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--advertise-routes",
                     ],
                     description: Some("Routes to advertise to other nodes (comma-separated, e.g. \"10.0.0.0/8,192.168.0.0/24\") or empty string to not advertise routes"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "routes",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -54,14 +40,9 @@
                         "--advertise-tags",
                     ],
                     description: Some("Comma-separated ACL tags to request; each must start with \"tag:\" (e.g. \"tag:eng,tag:montreal,tag:ssh\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "tags",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -69,15 +50,10 @@
                     names: [
                         "--auth-key",
                     ],
-                    description: Some("Node authorization key; if it begins with \"file:\", then it\'s a path to a file containing the authkey"),
-                    takes_value: true,
+                    description: Some("Node authorization key; if it begins with \"file:\", then it's a path to a file containing the authkey"),
                     arguments: [
                         (
                             name: "authkey",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -86,14 +62,9 @@
                         "--exit-node",
                     ],
                     description: Some("Tailscale exit node (IP or base name) for internet traffic, or empty string to not use an exit node"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "exitnode",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -102,64 +73,50 @@
                         "--exit-node-allow-lan-access",
                     ],
                     description: Some("Allow direct access to the local network when routing traffic via an exit node"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--force-reauth",
                     ],
                     description: Some("Force reauthentication"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--host-routes",
                     ],
                     description: Some("Install host routes to other Tailscale nodes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--hostname",
                     ],
                     description: Some("Hostname to use instead of the one provided by the OS"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Output in JSON format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--login-server",
                     ],
                     description: Some("Login server to use"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--operator",
                     ],
                     description: Some("Unix username to allow to operate on tailscaled without sudo"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "username",
-                            source: Static([
-                                "$USER",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "$USER",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -168,112 +125,89 @@
                         "--qr",
                     ],
                     description: Some("Show QR code for login URLs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--reset",
                     ],
                     description: Some("Reset unspecified settings to their default values"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--shields-up",
                     ],
-                    description: Some("Don\'t allow incoming connections"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't allow incoming connections"),
                 ),
                 (
                     names: [
                         "--ssh",
                     ],
-                    description: Some("Run an SSH server, permitting access per tailnet admin\'s declared policy"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Run an SSH server, permitting access per tailnet admin's declared policy"),
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "down",
-            aliases: [],
             description: Some("Disconnect from Tailscale"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "logout",
-            aliases: [],
             description: Some("Disconnect from Tailscale and expire current node key"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "netcheck",
-            aliases: [],
             description: Some("Print an analysis of local network conditions"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--every",
                     ],
                     description: Some("If non-zero, do an incremental report with the given frequency"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--format",
                     ],
                     description: Some("Output format"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "json",
-                                "json-line",
-                                "human-readable",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "json",
+                                ),
+                                (
+                                    name: "json-line",
+                                ),
+                                (
+                                    name: "human-readable",
+                                    presentation: (
+                                        insert_value: Some("'' "),
+                                    ),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -282,122 +216,91 @@
                         "--verbose",
                     ],
                     description: Some("Verbose logs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ip",
-            aliases: [],
             description: Some("Show Tailscale IP addresses"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--1",
                     ],
                     description: Some("Only print one IP address"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--4",
                     ],
                     description: Some("Only print IPv4 address"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--6",
                     ],
                     description: Some("Only print IPv6 address"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
-                    name: "value",
-                    source: Unavailable,
+                    name: "",
+                    generators: [
+                        (
+                            script: [
+                                "tailscale",
+                                "status",
+                                "--json",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "tailscale",
-                            "status",
-                            "--json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "status",
-            aliases: [],
             description: Some("Show state of tailscaled and its connections"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--active",
                     ],
                     description: Some("Filter output to only peers with active sessions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--browser",
                     ],
                     description: Some("Open a browser in web mode"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Output in JSON format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--listen",
                     ],
                     description: Some("Listen address for web mode; use port 0 for automatic (default 127.0.0.1:8384)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "address",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -406,56 +309,39 @@
                         "--peers",
                     ],
                     description: Some("Show status of peers"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--self",
                     ],
                     description: Some("Show status of local machine"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--web",
                     ],
                     description: Some("Run webserver with HTML showing status"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ping",
-            aliases: [],
             description: Some("Ping a host at the Tailscale layer, see how it routed"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--c",
                     ],
                     description: Some("Max number of pings to send"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "count",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -464,14 +350,9 @@
                         "--timeout",
                     ],
                     description: Some("Timeout before giving up on a ping"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "timeout",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -480,149 +361,100 @@
                         "--tsmp",
                     ],
                     description: Some("Do a TSMP-level ping (through IP + wireguard, but not involving host OS stack)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--until-direct",
                     ],
                     description: Some("Stop once a direct path is established"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Verbose logs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "nc",
-            aliases: [],
             description: Some("Connect to a port on a host, connected to stdin/stdout"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "hosname-or-ip",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "port",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "ssh",
-            aliases: [],
             description: Some("SSH to a Tailscale machine"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "[user@]<host>",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Print Tailscale version"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--daemon",
                     ],
-                    description: Some("Also print local node\'s daemon version"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Also print local node's daemon version"),
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "web",
-            aliases: [],
             description: Some("Run a web server for controlling Tailscale"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--cgi",
                     ],
                     description: Some("Run as CGI script"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--listen",
                     ],
                     description: Some("Listen address; use port 0 for automatic (default localhost:8088)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "address",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -631,66 +463,55 @@
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "file",
-            aliases: [],
             description: Some("Send or receive files"),
             subcommands: [
                 (
                     name: "cp",
-                    aliases: [],
                     description: Some("Copy file(s) to a host"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                         (
                             name: "file or host",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    script: [
+                                        "tailscale",
+                                        "status",
+                                        "--json",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                                (
+                                    template: [
+                                        FilePaths,
+                                    ],
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "tailscale",
-                                    "status",
-                                    "--json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "get",
-                    aliases: [],
                     description: Some("Move files out of the Tailscale file inbox"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "target-directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -699,60 +520,49 @@
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "bugreport",
-            aliases: [],
             description: Some("Print a shareable identifier to help diagnose issues"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "note",
-                    source: Files,
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "cert",
-            aliases: [],
             description: Some("Get TLS certs"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--cert-file",
                     ],
                     description: Some("Output cert file or \"-\" for stdout"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Static([
-                                "-",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "-",
+                                    description: Some("Stdout"),
+                                ),
+                            ],
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -761,16 +571,18 @@
                         "--key-file",
                     ],
                     description: Some("Output cert file or \"-\" for stdout"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Static([
-                                "-",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "-",
+                                    description: Some("Stdout"),
+                                ),
+                            ],
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -779,29 +591,18 @@
                         "--serve-demo",
                     ],
                     description: Some("Serve on port :443 using the cert as a demo, instead of writing out the files to disk"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--help",
                     ],
                     description: Some("Show help message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Print help message"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -809,18 +610,13 @@
             names: [
                 "--socket",
             ],
-            description: Some("Path to tailscaled\'s unix socket"),
-            takes_value: true,
+            description: Some("Path to tailscaled's unix socket"),
             arguments: [
                 (
                     name: "socket",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("/var/run/tailscaled.socket"),
                 ),
             ],
         ),
     ],
-    arguments: [],
 )

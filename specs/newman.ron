@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "run",
-            aliases: [],
             description: Some("Initiate a Postman Collection run from a given URL or path"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,14 +13,12 @@
                         "--environment",
                     ],
                     description: Some("Specify a URL or path to a Postman Environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -32,14 +28,12 @@
                         "--globals",
                     ],
                     description: Some("Specify a URL or path to a file containing Postman Globals"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -49,14 +43,11 @@
                         "--reporters",
                     ],
                     description: Some("Specify the reporters to use for this run"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "reporters",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("cli"),
                         ),
                     ],
                 ),
@@ -66,14 +57,9 @@
                         "--iteration-count",
                     ],
                     description: Some("Define the number of iterations to run"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "n",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -83,17 +69,20 @@
                         "--iteration-data",
                     ],
                     description: Some("Specify a data file to use for iterations (either JSON or CSV)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Static([
-                                "JSON",
-                                "CSV",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "JSON",
+                                ),
+                                (
+                                    name: "CSV",
+                                ),
+                            ],
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -102,30 +91,24 @@
                         "--folder",
                     ],
                     description: Some("Specify the folder to run from a collection. Can be specified multiple times to run multiple folders"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--global-var",
                     ],
                     description: Some("Allows the specification of global variables via the command line, in a key=value format"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -134,14 +117,9 @@
                         "--env-var",
                     ],
                     description: Some("Allows the specification of environment variables via the command line, in a key=value format"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -150,14 +128,12 @@
                         "--export-environment",
                     ],
                     description: Some("Exports the final environment to a file after completing the run"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -166,14 +142,12 @@
                         "--export-globals",
                     ],
                     description: Some("Exports the final globals to a file after completing the run"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -182,14 +156,12 @@
                         "--export-collection",
                     ],
                     description: Some("Exports the executed collection to a file after completing the run"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -198,14 +170,9 @@
                         "--postman-api-key",
                     ],
                     description: Some("API Key used to load the resources from the Postman API"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "apiKey",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -214,14 +181,10 @@
                         "--bail",
                     ],
                     description: Some("Specify whether or not to gracefully stop a collection run on encountering an error and whether to end the run with an error based on the optional modifier"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "modifiers",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -230,8 +193,6 @@
                         "--ignore-redirects",
                     ],
                     description: Some("Prevents Newman from automatically following 3XX redirect responses"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -239,42 +200,39 @@
                         "--suppress-exit-code",
                     ],
                     description: Some("Specify whether or not to override the default exit code for the current run"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--silent",
                     ],
                     description: Some("Prevents Newman from showing output to CLI"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--disable-unicode",
                     ],
                     description: Some("Forces Unicode compliant symbols to be replaced by their plain text equivalents"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--color",
                     ],
                     description: Some("Enable/Disable colored output (auto|on|off)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "value",
-                            source: Static([
-                                "auto",
-                                "on",
-                                "off",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "auto",
+                                ),
+                                (
+                                    name: "on",
+                                ),
+                                (
+                                    name: "off",
+                                ),
+                            ],
+                            default: Some("auto"),
                         ),
                     ],
                 ),
@@ -283,14 +241,10 @@
                         "--delay-request",
                     ],
                     description: Some("Specify the extent of delay between requests (milliseconds)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "n",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -299,14 +253,10 @@
                         "--timeout",
                     ],
                     description: Some("Specify a timeout for collection run (milliseconds)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "n",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -315,14 +265,10 @@
                         "--timeout-request",
                     ],
                     description: Some("Specify a timeout for requests (milliseconds)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "n",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -331,14 +277,10 @@
                         "--timeout-script",
                     ],
                     description: Some("Specify a timeout for scripts (milliseconds)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "n",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -347,14 +289,12 @@
                         "--working-dir",
                     ],
                     description: Some("Specify the path to the working directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -363,8 +303,6 @@
                         "--no-insecure-file-read",
                     ],
                     description: Some("Prevents reading the files situated outside of the working directory"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -372,22 +310,18 @@
                         "--insecure",
                     ],
                     description: Some("Disables SSL validations"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--ssl-client-cert-list",
                     ],
                     description: Some("Specify the path to a client certificates configurations (JSON)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -396,14 +330,12 @@
                         "--ssl-client-cert",
                     ],
                     description: Some("Specify the path to a client certificate (PEM)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -412,14 +344,12 @@
                         "--ssl-client-key",
                     ],
                     description: Some("Specify the path to a client certificate private key"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -428,14 +358,9 @@
                         "--ssl-client-passphrase",
                     ],
                     description: Some("Specify the client certificate passphrase (for protected key)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "passphrase",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -444,14 +369,12 @@
                         "--ssl-extra-ca-certs",
                     ],
                     description: Some("Specify additionally trusted CA certificates (PEM)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -460,14 +383,12 @@
                         "--cookie-jar",
                     ],
                     description: Some("Specify the path to a custom cookie jar (serialized tough-cookie JSON)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -476,14 +397,12 @@
                         "--export-cookie-jar",
                     ],
                     description: Some("Exports the cookie jar to a file after completing the run"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -492,8 +411,6 @@
                         "--verbose",
                     ],
                     description: Some("Show detailed information of collection run and each request sent"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -501,37 +418,35 @@
                         "--help",
                     ],
                     description: Some("Display help for command"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        priority: Some(49.0),
+                    ),
                 ),
             ],
             arguments: [
                 (
                     name: "collection",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Display help for command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
+                    template: [
+                        Help,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                priority: Some(49.0),
+            ),
         ),
     ],
     options: [
@@ -541,8 +456,6 @@
                 "--version",
             ],
             description: Some("Output the version number"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -550,9 +463,9 @@
                 "--help",
             ],
             description: Some("Display help for command"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                priority: Some(49.0),
+            ),
         ),
     ],
-    arguments: [],
 )

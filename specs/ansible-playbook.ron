@@ -2,69 +2,51 @@
     version: 1,
     command: "ansible-playbook",
     description: Some("Runs Ansible playbooks, executing the defined tasks on the targeted hosts"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--ask-vault-pass",
             ],
             description: Some("Ask for vault password"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--flush-cache",
             ],
             description: Some("Clears the fact cache for every host in inventory"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--force-handlers",
             ],
             description: Some("Run handlers even if a task fails"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--list-hosts",
             ],
             description: Some("Outputs a list of matching hosts; does not execute"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--list-tags",
             ],
             description: Some("List all available tags"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--list-tasks",
             ],
             description: Some("List all tasks that would be executed"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--skip-tags",
             ],
             description: Some("Only run plays and tasks whose tags do not match these values"),
-            takes_value: true,
             arguments: [
                 (
                     name: "tags",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -73,14 +55,9 @@
                 "--start-at-task",
             ],
             description: Some("Start the playbook at the task matching this name one-step-at-a-time"),
-            takes_value: true,
             arguments: [
                 (
                     name: "task name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -89,30 +66,21 @@
                 "--step",
             ],
             description: Some("Execute one-step-at-a-time"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--syntax-check",
             ],
             description: Some("Perform a syntax check on the playbook, but do not execute it"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--vault-id",
             ],
             description: Some("Specify the vault identity to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "vault ID",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -121,14 +89,12 @@
                 "--vault-password-file",
             ],
             description: Some("Specify a vault password file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "vault password file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -136,18 +102,14 @@
             names: [
                 "--version",
             ],
-            description: Some("Show program\'s version number, config file location, configured module search path, module location and executable location"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Show program's version number, config file location, configured module search path, module location and executable location"),
         ),
         (
             names: [
                 "--check",
                 "-C",
             ],
-            description: Some("Don\'t make any changes; instead, try to predict some of the changes that may occur"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't make any changes; instead, try to predict some of the changes that may occur"),
         ),
         (
             names: [
@@ -155,8 +117,6 @@
                 "-D",
             ],
             description: Some("When changing (small) files and templates, show the differences in those files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -164,14 +124,12 @@
                 "-M",
             ],
             description: Some("Prepend colon-separated path(s) to module library"),
-            takes_value: true,
             arguments: [
                 (
                     name: "module path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -181,14 +139,9 @@
                 "-e",
             ],
             description: Some("Set additional variables as key=value or YAML/JSON, if filename prepend with @"),
-            takes_value: true,
             arguments: [
                 (
                     name: "extra vars",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -198,14 +151,9 @@
                 "-f",
             ],
             description: Some("Specify number of parallel processes to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "forks",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -215,8 +163,6 @@
                 "-h",
             ],
             description: Some("Show help for ansible"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -224,14 +170,9 @@
                 "-i",
             ],
             description: Some("Specify inventory host path or comma separated host list"),
-            takes_value: true,
             arguments: [
                 (
                     name: "inventory",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -241,14 +182,9 @@
                 "-l",
             ],
             description: Some("Limit selected hosts to an additional pattern"),
-            takes_value: true,
             arguments: [
                 (
                     name: "subset",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -258,14 +194,9 @@
                 "-t",
             ],
             description: Some("Only run plays and tasks tagged with these values"),
-            takes_value: true,
             arguments: [
                 (
                     name: "tags",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -275,48 +206,56 @@
                 "-v",
             ],
             description: Some("Enable verbose mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-vvv",
             ],
             description: Some("Enable very verbose mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-vvvv",
             ],
             description: Some("Enable connection debug mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--become-method",
             ],
             description: Some("Privilege escalation method to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "become method",
-                    source: Static([
-                        "sudo",
-                        "su",
-                        "pbrun",
-                        "pfexec",
-                        "doas",
-                        "dzdo",
-                        "ksu",
-                        "runas",
-                        "machinectl",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "sudo",
+                        ),
+                        (
+                            name: "su",
+                        ),
+                        (
+                            name: "pbrun",
+                        ),
+                        (
+                            name: "pfexec",
+                        ),
+                        (
+                            name: "doas",
+                        ),
+                        (
+                            name: "dzdo",
+                        ),
+                        (
+                            name: "ksu",
+                        ),
+                        (
+                            name: "runas",
+                        ),
+                        (
+                            name: "machinectl",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -325,14 +264,9 @@
                 "--become-user",
             ],
             description: Some("Privilege escalation user to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "become user",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -342,8 +276,6 @@
                 "-K",
             ],
             description: Some("Prompt for privilege escalation password"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -351,8 +283,6 @@
                 "-b",
             ],
             description: Some("Run operations with become"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -360,14 +290,12 @@
                 "--key-file",
             ],
             description: Some("Use this fole to authenticate the connection"),
-            takes_value: true,
             arguments: [
                 (
                     name: "private key",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -376,14 +304,9 @@
                 "--scp-extra-args",
             ],
             description: Some("Extra arguments to pass to (only) scp"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SCP extra args",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -392,14 +315,9 @@
                 "--sftp-extra-args",
             ],
             description: Some("Extra arguments to pass to (only) sftp"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SFTP extra args",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -408,14 +326,9 @@
                 "-ssh-extra-args",
             ],
             description: Some("Extra arguments to pass to (only) ssh"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SSH extra args",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -424,14 +337,9 @@
                 "--ssh-common-args",
             ],
             description: Some("Extra arguments to pass to sftp/scp/ssh"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SSH common args",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -441,14 +349,9 @@
                 "-T",
             ],
             description: Some("Override the connection timeout in seconds"),
-            takes_value: true,
             arguments: [
                 (
                     name: "timeout",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -458,14 +361,9 @@
                 "-c",
             ],
             description: Some("Connection type to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "connection type",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -475,8 +373,6 @@
                 "-k",
             ],
             description: Some("Ask for connection password"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -484,14 +380,9 @@
                 "-u",
             ],
             description: Some("Connect as this user"),
-            takes_value: true,
             arguments: [
                 (
                     name: "user",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -499,14 +390,15 @@
     arguments: [
         (
             name: "playbook",
-            source: Unavailable,
-            optional: false,
+            description: Some("Playbook(s)"),
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    has_dynamic_query_term: true,
+                ),
+            ],
             variadic: true,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
         ),
     ],
 )

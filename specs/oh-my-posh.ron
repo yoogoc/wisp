@@ -1,13 +1,10 @@
 (
     version: 1,
     command: "oh-my-posh",
-    description: Some(""),
     subcommands: [
         (
             name: "init",
-            aliases: [],
             description: Some("Initialize oh-my-posh for your shell"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,16 +12,17 @@
                         "-c",
                     ],
                     description: Some("The config file to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CONFIG",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The configuration to use"),
+                            template: [
+                                FilePaths,
+                                History,
+                            ],
                         ),
                     ],
+                    persistent: true,
                 ),
                 (
                     names: [
@@ -32,54 +30,59 @@
                         "-p",
                     ],
                     description: Some("Print the init script"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "SHELL",
-                    source: Static([
-                        "zsh",
-                        "fish",
-                        "pwsh",
-                        "powershell",
-                        "cmd",
-                        "bash",
-                        "shell",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "zsh",
+                        ),
+                        (
+                            name: "fish",
+                        ),
+                        (
+                            name: "pwsh",
+                        ),
+                        (
+                            name: "powershell",
+                        ),
+                        (
+                            name: "cmd",
+                        ),
+                        (
+                            name: "bash",
+                        ),
+                        (
+                            name: "shell",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "get",
-            aliases: [],
             description: Some("Get oh-my-posh values"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "VALUE",
-                    source: Static([
-                        "millis",
-                        "shell",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "millis",
+                            description: Some("Get the current timestamp in milliseconds, example usage: 'oh-my-posh get millis'"),
+                        ),
+                        (
+                            name: "shell",
+                            description: Some("Get the current shell, example usage: 'oh-my-posh get shell'"),
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "debug",
-            aliases: [],
-            description: Some("Debug oh-my-posh, example usage: \'oh-my-posh debug\'"),
-            subcommands: [],
+            description: Some("Debug oh-my-posh, example usage: 'oh-my-posh debug'"),
             options: [
                 (
                     names: [
@@ -87,49 +90,38 @@
                         "-c",
                     ],
                     description: Some("The config file to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CONFIG",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The configuration to use"),
+                            template: [
+                                FilePaths,
+                                History,
+                            ],
                         ),
                     ],
+                    persistent: true,
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "config",
-            aliases: [],
             description: Some("Interact with the oh-my-posh configuration"),
             subcommands: [
                 (
                     name: "edit",
-                    aliases: [],
-                    description: Some("Edit the config file, example usage: \'oh-my-posh config edit\'"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    description: Some("Edit the config file, example usage: 'oh-my-posh config edit'"),
                 ),
                 (
                     name: "migrate",
-                    aliases: [],
-                    description: Some("Migrate the config file, example usage: \'oh-my-posh config migrate --config ~/.config.omp.json\'"),
-                    subcommands: [],
+                    description: Some("Migrate the config file, example usage: 'oh-my-posh config migrate --config ~/.config.omp.json'"),
                     options: [
                         (
                             names: [
                                 "--write",
                                 "-w",
                             ],
-                            description: Some("Write the migrated config to the configuration file, example usage: \'oh-my-posh config migrate --write\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Write the migrated config to the configuration file, example usage: 'oh-my-posh config migrate --write'"),
                         ),
                         (
                             names: [
@@ -137,45 +129,43 @@
                                 "-f",
                             ],
                             description: Some("The file format to use"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "FORMAT",
-                                    source: Static([
-                                        "json",
-                                        "yaml",
-                                        "toml",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("The export format"),
+                                    suggestions: [
+                                        (
+                                            name: "json",
+                                        ),
+                                        (
+                                            name: "yaml",
+                                        ),
+                                        (
+                                            name: "toml",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "export",
-                    aliases: [],
-                    description: Some("Export the config file, example usage: \'oh-my-posh config export --config ~/.config.omp.toml\'"),
-                    subcommands: [],
+                    description: Some("Export the config file, example usage: 'oh-my-posh config export --config ~/.config.omp.toml'"),
                     options: [
                         (
                             names: [
                                 "--output",
                                 "-o",
                             ],
-                            description: Some("The file to output the migrated config to, example usage: \'oh-my-posh config export --output ~/.config.omp.json\'"),
-                            takes_value: true,
+                            description: Some("The file to output the migrated config to, example usage: 'oh-my-posh config export --output ~/.config.omp.json'"),
                             arguments: [
                                 (
                                     name: "OUTPUT",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("The file to write to"),
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -185,24 +175,25 @@
                                 "-f",
                             ],
                             description: Some("The file format to use"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "FORMAT",
-                                    source: Static([
-                                        "json",
-                                        "yaml",
-                                        "toml",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("The export format"),
+                                    suggestions: [
+                                        (
+                                            name: "json",
+                                        ),
+                                        (
+                                            name: "yaml",
+                                        ),
+                                        (
+                                            name: "toml",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -212,26 +203,23 @@
                         "-c",
                     ],
                     description: Some("The config file to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CONFIG",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The configuration to use"),
+                            template: [
+                                FilePaths,
+                                History,
+                            ],
                         ),
                     ],
+                    persistent: true,
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "print",
-            aliases: [],
             description: Some("Print a prompt"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -239,31 +227,29 @@
                         "-c",
                     ],
                     description: Some("The config file to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CONFIG",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The configuration to use"),
+                            template: [
+                                FilePaths,
+                                History,
+                            ],
                         ),
                     ],
+                    persistent: true,
                 ),
                 (
                     names: [
                         "--terminal-width",
                         "-w",
                     ],
-                    description: Some("The terminal width, example usage: \'oh-my-posh print primary --terminal-width 200\'"),
-                    takes_value: true,
+                    description: Some("The terminal width, example usage: 'oh-my-posh print primary --terminal-width 200'"),
                     arguments: [
                         (
                             name: "WIDTH",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The terminal width"),
+                            default: Some("0"),
                         ),
                     ],
                 ),
@@ -271,15 +257,11 @@
                     names: [
                         "--command",
                     ],
-                    description: Some("The current command for tooltips, example usage: \'oh-my-posh print tooltip --command az\'"),
-                    takes_value: true,
+                    description: Some("The current command for tooltips, example usage: 'oh-my-posh print tooltip --command az'"),
                     arguments: [
                         (
                             name: "COMMAND",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The tooltip command"),
                         ),
                     ],
                 ),
@@ -288,15 +270,12 @@
                         "--error",
                         "-e",
                     ],
-                    description: Some("The last exit code, example usage: \'oh-my-posh print primary --error 127\'"),
-                    takes_value: true,
+                    description: Some("The last exit code, example usage: 'oh-my-posh print primary --error 127'"),
                     arguments: [
                         (
                             name: "ERROR CODE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The last error code"),
+                            default: Some("0"),
                         ),
                     ],
                 ),
@@ -304,23 +283,18 @@
                     names: [
                         "--eval",
                     ],
-                    description: Some("Use eval to render the prompt, example usage: \'oh-my-posh print primary --eval\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Use eval to render the prompt, example usage: 'oh-my-posh print primary --eval'"),
                 ),
                 (
                     names: [
                         "--execution-time",
                     ],
-                    description: Some("Use last command execution time in millis, example usage: \'oh-my-posh print primary --execution-time 200\'"),
-                    takes_value: true,
+                    description: Some("Use last command execution time in millis, example usage: 'oh-my-posh print primary --execution-time 200'"),
                     arguments: [
                         (
                             name: "EXECUTION TIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The last command's execution time"),
+                            default: Some("0"),
                         ),
                     ],
                 ),
@@ -329,23 +303,20 @@
                         "--plain",
                         "-p",
                     ],
-                    description: Some("Print a prompt without ASNI codes, example usage: \'oh-my-posh print primary --plain\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Print a prompt without ASNI codes, example usage: 'oh-my-posh print primary --plain'"),
                 ),
                 (
                     names: [
                         "--pswd",
                     ],
-                    description: Some("The current working directory according to PowerShell, example usage: \'oh-my-posh print primary --pswd C:\\Users\\user\\Documents\'"),
-                    takes_value: true,
+                    description: Some("The current working directory according to PowerShell, example usage: 'oh-my-posh print primary --pswd C:\\Users\\user\\Documents'"),
                     arguments: [
                         (
                             name: "POWERSHELL WORKING DIRECTORY",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The working directory according to PowerShell"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -353,15 +324,14 @@
                     names: [
                         "--pwd",
                     ],
-                    description: Some("The current working directory, example usage: \'oh-my-posh print primary --pwd /home/user/Documents\'"),
-                    takes_value: true,
+                    description: Some("The current working directory, example usage: 'oh-my-posh print primary --pwd /home/user/Documents'"),
                     arguments: [
                         (
                             name: "WORKING DIRECTORY",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The working directory"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -369,23 +339,34 @@
                     names: [
                         "--shell",
                     ],
-                    description: Some("The current shell, example usage: \'oh-my-posh print primary --shell fish\'"),
-                    takes_value: true,
+                    description: Some("The current shell, example usage: 'oh-my-posh print primary --shell fish'"),
                     arguments: [
                         (
                             name: "SHELL",
-                            source: Static([
-                                "zsh",
-                                "fish",
-                                "pwsh",
-                                "powershell",
-                                "cmd",
-                                "bash",
-                                "shell",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The shell used"),
+                            suggestions: [
+                                (
+                                    name: "zsh",
+                                ),
+                                (
+                                    name: "fish",
+                                ),
+                                (
+                                    name: "pwsh",
+                                ),
+                                (
+                                    name: "powershell",
+                                ),
+                                (
+                                    name: "cmd",
+                                ),
+                                (
+                                    name: "bash",
+                                ),
+                                (
+                                    name: "shell",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -393,15 +374,12 @@
                     names: [
                         "--stack-count",
                     ],
-                    description: Some("The directory stack count, example usage: \'oh-my-posh print primary --stack-count 1\'"),
-                    takes_value: true,
+                    description: Some("The directory stack count, example usage: 'oh-my-posh print primary --stack-count 1'"),
                     arguments: [
                         (
                             name: "NUM",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The number of stacks"),
+                            default: Some("0"),
                         ),
                     ],
                 ),
@@ -409,30 +387,35 @@
             arguments: [
                 (
                     name: "PROMPT",
-                    source: Static([
-                        "primary",
-                        "secondary",
-                        "right",
-                        "transient",
-                        "tooltip",
-                        "valid",
-                        "error",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "primary",
+                        ),
+                        (
+                            name: "secondary",
+                        ),
+                        (
+                            name: "right",
+                        ),
+                        (
+                            name: "transient",
+                        ),
+                        (
+                            name: "tooltip",
+                        ),
+                        (
+                            name: "valid",
+                        ),
+                        (
+                            name: "error",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
-            description: Some("Display the oh-my-posh version, example usage: \'oh-my-posh version\'"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Display the oh-my-posh version, example usage: 'oh-my-posh version'"),
         ),
     ],
     options: [
@@ -442,9 +425,7 @@
                 "-h",
             ],
             description: Some("Show help for oh-my-posh"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
     ],
-    arguments: [],
 )

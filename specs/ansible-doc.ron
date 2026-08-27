@@ -2,21 +2,16 @@
     version: 1,
     command: "ansible-doc",
     description: Some("Displays information on modules installed in Ansible libraries"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--metadata-dump",
             ],
             description: Some("For internal testing only Dump json metadata for all plugins"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
+                    name: "",
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -25,14 +20,13 @@
                 "--playbook-dir",
             ],
             description: Some("Sets the relative path for many features including roles/ group_vars/ etc"),
-            takes_value: true,
             arguments: [
                 (
                     name: "BASEDIR",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Base directory"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -41,14 +35,10 @@
                 "--version",
             ],
             description: Some("Shows version number, config file location, module search path, module location, executable location and exit"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
+                    name: "",
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -58,14 +48,10 @@
                 "-F",
             ],
             description: Some("Show plugin names and their source files without summaries (implies --list)"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
+                    name: "",
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -75,14 +61,10 @@
                 "-M",
             ],
             description: Some("Prepend colon-separated path(s) to module library"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
+                    name: "",
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -92,14 +74,9 @@
                 "-E",
             ],
             description: Some("Select the entry point for role(s)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ENTRY_POINT",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -109,14 +86,10 @@
                 "-h",
             ],
             description: Some("Show help and exit"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
+                    name: "",
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -126,14 +99,10 @@
                 "-j",
             ],
             description: Some("Change output into json format"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
+                    name: "",
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -143,14 +112,11 @@
                 "-l",
             ],
             description: Some("List available plugins; a supplied argument will be used for filtering (can be a namespace or full collection name)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NAMESPACE|COLLECTION",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
+                    dangerous: true,
                 ),
             ],
         ),
@@ -160,14 +126,12 @@
                 "-r",
             ],
             description: Some("The path to the directory containing your roles"),
-            takes_value: true,
             arguments: [
                 (
                     name: "PATH",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -177,18 +141,20 @@
                 "-s",
             ],
             description: Some("Show playbook snippet for these plugin types: inventory, lookup, module"),
-            takes_value: true,
             arguments: [
                 (
                     name: "PLUGIN_TYPE",
-                    source: Static([
-                        "inventory",
-                        "lookup",
-                        "module",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "inventory",
+                        ),
+                        (
+                            name: "lookup",
+                        ),
+                        (
+                            name: "module",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -198,30 +164,57 @@
                 "-t",
             ],
             description: Some("Choose which plugin type (defaults to \"module\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "PLUGIN_TYPE",
-                    source: Static([
-                        "become",
-                        "cache",
-                        "callback",
-                        "cliconf",
-                        "connection",
-                        "httpapi",
-                        "inventory",
-                        "lookup",
-                        "netconf",
-                        "shell",
-                        "vars",
-                        "module",
-                        "strategy",
-                        "role",
-                        "keyword",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "become",
+                        ),
+                        (
+                            name: "cache",
+                        ),
+                        (
+                            name: "callback",
+                        ),
+                        (
+                            name: "cliconf",
+                        ),
+                        (
+                            name: "connection",
+                        ),
+                        (
+                            name: "httpapi",
+                        ),
+                        (
+                            name: "inventory",
+                        ),
+                        (
+                            name: "lookup",
+                        ),
+                        (
+                            name: "netconf",
+                        ),
+                        (
+                            name: "shell",
+                        ),
+                        (
+                            name: "vars",
+                        ),
+                        (
+                            name: "module",
+                        ),
+                        (
+                            name: "strategy",
+                        ),
+                        (
+                            name: "role",
+                        ),
+                        (
+                            name: "keyword",
+                        ),
+                    ],
+                    default: Some("module"),
                 ),
             ],
         ),
@@ -230,15 +223,14 @@
                 "--verbose",
             ],
             description: Some("Verbose mode (-vvv for more, -vvvv to enable connection debugging)"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
+                    name: "",
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            exclusive_on: [
+                "-v",
             ],
         ),
         (
@@ -246,33 +238,33 @@
                 "-v",
             ],
             description: Some("Verbose mode (-vvv for more, -vvvv to enable connection debugging)"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
+                    name: "",
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            repeat: Times(5),
+            exclusive_on: [
+                "--verbose",
             ],
         ),
     ],
     arguments: [
         (
             name: "plugin",
-            source: Unavailable,
-            optional: false,
+            generators: [
+                (
+                    script: [
+                        "ansible-doc",
+                        "--list",
+                        "--json",
+                    ],
+                    has_post_process: true,
+                ),
+            ],
             variadic: true,
-            imported_generator: Some((
-                script: [
-                    "ansible-doc",
-                    "--list",
-                    "--json",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
+            dangerous: true,
         ),
     ],
 )

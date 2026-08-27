@@ -2,7 +2,6 @@
     version: 1,
     command: "node",
     description: Some("Run the node interpreter"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,64 +9,60 @@
                 "--eval=...",
             ],
             description: Some("Evaluate script"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
+            presentation: (
+                insert_value: Some("-e '{cursor}'"),
+            ),
         ),
         (
             names: [
                 "--watch",
             ],
             description: Some("Watch input files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--watch-path",
             ],
             description: Some("Specify a watch directory or file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "--watch-preserve-output",
             ],
             description: Some("Disable the clearing of the console when watch mode restarts the process"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "--watch",
+                "--watch-path",
+            ],
         ),
         (
             names: [
                 "--env-file",
             ],
             description: Some("Specify a file containing environment variables"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
@@ -75,8 +70,6 @@
                 "--print",
             ],
             description: Some("Evaluate script and print result"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -84,8 +77,6 @@
                 "--check",
             ],
             description: Some("Syntax check script without executing"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -93,8 +84,6 @@
                 "--version",
             ],
             description: Some("Print Node.js version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -102,8 +91,6 @@
                 "--interactive",
             ],
             description: Some("Always enter the REPL even if stdin does not appear to be a terminal"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -111,45 +98,39 @@
                 "--help",
             ],
             description: Some("Print node command line options (currently set)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--inspect",
             ],
             description: Some("Activate inspector on host:port (default: 127.0.0.1:9229)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "[host:]port",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "--preserve-symlinks",
             ],
             description: Some("Follows symlinks to directories when examining source code and templates for translation strings"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "node script",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    has_dynamic_query_term: true,
+                ),
+            ],
+            is_script: true,
         ),
     ],
+    has_generate_spec: true,
 )

@@ -2,29 +2,22 @@
     version: 1,
     command: "xargs",
     description: Some("Execute a command with whitespace-delimited strings (from stdin) as arguments"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-0",
             ],
             description: Some("Use NUL (0x00) as a separator, instead of whitespace"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-E",
             ],
             description: Some("Use this string as a logical EOF marker"),
-            takes_value: true,
             arguments: [
                 (
                     name: "eof-str",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The string to use that marks EOF"),
                 ),
             ],
         ),
@@ -33,14 +26,10 @@
                 "-I",
             ],
             description: Some("Replace occurrences of this string with the input"),
-            takes_value: true,
             arguments: [
                 (
                     name: "replacement-str",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The string to replace"),
                 ),
             ],
         ),
@@ -49,14 +38,10 @@
                 "-J",
             ],
             description: Some("Replace an argument exactly equal to this string with the input"),
-            takes_value: true,
             arguments: [
                 (
                     name: "replacement-str",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The string to replace"),
                 ),
             ],
         ),
@@ -65,15 +50,13 @@
                 "-L",
             ],
             description: Some("Run the program each time this many lines of input are read"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            exclusive_on: [
+                "-n",
             ],
         ),
         (
@@ -81,15 +64,13 @@
                 "-n",
             ],
             description: Some("The maximum number of arguments that can be taken from stdin on each run"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            exclusive_on: [
+                "-L",
             ],
         ),
         (
@@ -97,22 +78,15 @@
                 "-o",
             ],
             description: Some("Reopen stdin as /dev/tty (useful for running interactive applications)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-P",
             ],
             description: Some("Run up to this many commands in parallel (as many as possible if 0)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "max-procs",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -121,31 +95,25 @@
                 "-p",
             ],
             description: Some("Prompt to run each command"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-r",
             ],
-            description: Some("Run the command once if there\'s no input (compatible with GNU xargs)"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Run the command once if there's no input (compatible with GNU xargs)"),
         ),
         (
             names: [
                 "-R",
             ],
             description: Some("Specify the maximum number of occurrences that -I will replace"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "-I",
             ],
         ),
         (
@@ -153,15 +121,13 @@
                 "-S",
             ],
             description: Some("Specify the maximum size in bytes that -I can use for replacements (default: 255)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "replacement-size",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "-I",
             ],
         ),
         (
@@ -169,14 +135,9 @@
                 "-s",
             ],
             description: Some("Maximum number of bytes that can be provided to the program (default: 4096)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "max-args-size",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -184,26 +145,24 @@
             names: [
                 "-t",
             ],
-            description: Some("Echo the command to stderr before it\'s executed"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Echo the command to stderr before it's executed"),
         ),
         (
             names: [
                 "-x",
             ],
             description: Some("Terminal if the arguments will not fit in the maximum line length"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "-n",
+            ],
         ),
     ],
     arguments: [
         (
             name: "utility",
-            source: Files,
+            description: Some("Run this program for each line of stdin (default: echo)"),
             optional: true,
-            variadic: false,
-            imported_generator: None,
+            is_command: true,
         ),
     ],
 )

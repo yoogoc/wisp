@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "create",
-            aliases: [],
             description: Some("Create an existing (overwrite/recreate, with potential downtime) cache cluster"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -16,16 +14,12 @@
                         "-n",
                     ],
                     description: Some("The name of the RedisEnterprise cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -33,58 +27,66 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--sku",
                     ],
                     description: Some("The type of RedisEnterprise cluster to deploy. Possible values: (Enterprise_E10, EnterpriseFlash_F300 etc.)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "sku",
-                            source: Static([
-                                "EnterpriseFlash_F1500",
-                                "EnterpriseFlash_F300",
-                                "EnterpriseFlash_F700",
-                                "Enterprise_E10",
-                                "Enterprise_E100",
-                                "Enterprise_E20",
-                                "Enterprise_E200",
-                                "Enterprise_E400",
-                                "Enterprise_E5",
-                                "Enterprise_E50",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "EnterpriseFlash_F1500",
+                                ),
+                                (
+                                    name: "EnterpriseFlash_F300",
+                                ),
+                                (
+                                    name: "EnterpriseFlash_F700",
+                                ),
+                                (
+                                    name: "Enterprise_E10",
+                                ),
+                                (
+                                    name: "Enterprise_E100",
+                                ),
+                                (
+                                    name: "Enterprise_E20",
+                                ),
+                                (
+                                    name: "Enterprise_E200",
+                                ),
+                                (
+                                    name: "Enterprise_E400",
+                                ),
+                                (
+                                    name: "Enterprise_E5",
+                                ),
+                                (
+                                    name: "Enterprise_E50",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--user-assigned-identities",
                         "--assigned-identities",
                     ],
-                    description: Some("The set of user assigned identities associated with the resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form: \'/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}. The dictionary values can be empty objects ({}) in requests"),
-                    takes_value: true,
+                    description: Some("The set of user assigned identities associated with the resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}. The dictionary values can be empty objects ({}) in requests"),
                     arguments: [
                         (
                             name: "user-assigned-identities",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -93,14 +95,9 @@
                         "--capacity",
                     ],
                     description: Some("The size of the RedisEnterprise cluster. Defaults to 2 or 3 depending on SKU. Valid values are (2, 4, 6, ...) for Enterprise SKUs and (3, 9, 15, ...) for Flash SKUs"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "capacity",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -109,17 +106,17 @@
                         "--client-protocol",
                     ],
                     description: Some("Specifies whether redis clients can connect using TLS-encrypted or plaintext redis protocols. Default is TLS-encrypted"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "client-protocol",
-                            source: Static([
-                                "Encrypted",
-                                "Plaintext",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "Encrypted",
+                                ),
+                                (
+                                    name: "Plaintext",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -128,17 +125,17 @@
                         "--clustering-policy",
                     ],
                     description: Some("Clustering policy - default is OSSCluster. Specified at create time"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "clustering-policy",
-                            source: Static([
-                                "EnterpriseCluster",
-                                "OSSCluster",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "EnterpriseCluster",
+                                ),
+                                (
+                                    name: "OSSCluster",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -147,23 +144,35 @@
                         "--eviction-policy",
                     ],
                     description: Some("Redis eviction policy - default is VolatileLRU"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "eviction-policy",
-                            source: Static([
-                                "AllKeysLFU",
-                                "AllKeysLRU",
-                                "AllKeysRandom",
-                                "NoEviction",
-                                "VolatileLFU",
-                                "VolatileLRU",
-                                "VolatileRandom",
-                                "VolatileTTL",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "AllKeysLFU",
+                                ),
+                                (
+                                    name: "AllKeysLRU",
+                                ),
+                                (
+                                    name: "AllKeysRandom",
+                                ),
+                                (
+                                    name: "NoEviction",
+                                ),
+                                (
+                                    name: "VolatileLFU",
+                                ),
+                                (
+                                    name: "VolatileLRU",
+                                ),
+                                (
+                                    name: "VolatileRandom",
+                                ),
+                                (
+                                    name: "VolatileTTL",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -172,14 +181,9 @@
                         "--group-nickname",
                     ],
                     description: Some("Name for the group of linked database resources"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "group-nickname",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -189,14 +193,9 @@
                         "--identity-resource-id",
                     ],
                     description: Some("User assigned identity to use for accessing key encryption key Url. Ex: /subscriptions//resourceGroups//providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "user-assigned-identity-resource-id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -205,18 +204,26 @@
                         "--identity-type",
                     ],
                     description: Some("Type of managed service identity (where both SystemAssigned and UserAssigned types are allowed)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "identity-type",
-                            source: Static([
-                                "None",
-                                "SystemAssigned",
-                                "UserAssigned",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "None",
+                                ),
+                                (
+                                    name: "SystemAssigned",
+                                ),
+                                (
+                                    name: "SystemAssigned",
+                                ),
+                                (
+                                    name: "UserAssigned",
+                                ),
+                                (
+                                    name: "UserAssigned",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -226,17 +233,17 @@
                         "--key-identity-type",
                     ],
                     description: Some("Only userAssignedIdentity is supported in this API version; other types may be supported in the future"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "key-encryption-identity-type",
-                            source: Static([
-                                "systemAssignedIdentity",
-                                "userAssignedIdentity",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "systemAssignedIdentity",
+                                ),
+                                (
+                                    name: "userAssignedIdentity",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -245,14 +252,9 @@
                         "--key-encryption-key-url",
                     ],
                     description: Some("Key encryption key Url, versioned only.Ex: https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "key-encryption-key-url",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -261,14 +263,9 @@
                         "--linked-databases",
                     ],
                     description: Some("List of database resources to link with this database"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "linked-databases",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -278,14 +275,9 @@
                         "-l",
                     ],
                     description: Some("Location. Values from: az account list-locations. You can configure the default location using az configure --defaults location=<location>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "location",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -293,19 +285,21 @@
                     names: [
                         "--minimum-tls-version",
                     ],
-                    description: Some("The minimum TLS version for the cluster to support, e.g. \'1.2\'"),
-                    takes_value: true,
+                    description: Some("The minimum TLS version for the cluster to support, e.g. '1.2'"),
                     arguments: [
                         (
                             name: "minimum-tls-version",
-                            source: Static([
-                                "1.0",
-                                "1.1",
-                                "1.2",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "1.0",
+                                ),
+                                (
+                                    name: "1.1",
+                                ),
+                                (
+                                    name: "1.2",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -315,14 +309,9 @@
                         "--module",
                     ],
                     description: Some("Optional set of redis modules to enable in this database - modules can only be added at creation time"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "modules",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -331,30 +320,21 @@
                         "--no-database",
                     ],
                     description: Some("Advanced. Do not automatically create a default database. Warning: the cache will not be usable until you create a database"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-wait",
                     ],
                     description: Some("Do not wait for the long-running operation to finish"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--persistence",
                     ],
                     description: Some("Persistence settings"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "persistence",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -363,14 +343,9 @@
                         "--port",
                     ],
                     description: Some("TCP port of the database endpoint. Specified at create time. Defaults to an available port"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -379,14 +354,9 @@
                         "--tags",
                     ],
                     description: Some("Space-separated tags: key[=value] [key[=value] ...]. Use \"\" to clear existing tags"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "tags",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -396,26 +366,17 @@
                         "-z",
                     ],
                     description: Some("The Availability Zones where this cluster will be deployed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "zones",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "delete",
-            aliases: [],
             description: Some("Delete a RedisEnterprise cache cluster"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -424,14 +385,9 @@
                         "-n",
                     ],
                     description: Some("The name of the RedisEnterprise cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -439,15 +395,10 @@
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -456,25 +407,41 @@
                         "--no-wait",
                     ],
                     description: Some("Do not wait for the long-running operation to finish"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "no-wait",
-                            source: Static([
-                                "0",
-                                "1",
-                                "f",
-                                "false",
-                                "n",
-                                "no",
-                                "t",
-                                "true",
-                                "y",
-                                "yes",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "0",
+                                ),
+                                (
+                                    name: "1",
+                                ),
+                                (
+                                    name: "f",
+                                ),
+                                (
+                                    name: "false",
+                                ),
+                                (
+                                    name: "n",
+                                ),
+                                (
+                                    name: "no",
+                                ),
+                                (
+                                    name: "t",
+                                ),
+                                (
+                                    name: "true",
+                                ),
+                                (
+                                    name: "y",
+                                ),
+                                (
+                                    name: "yes",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -484,14 +451,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -500,14 +462,9 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -517,18 +474,12 @@
                         "-y",
                     ],
                     description: Some("Do not prompt for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "list",
-            aliases: [],
             description: Some("List all RedisEnterprise clusters in the specified subscription"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -536,26 +487,17 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "show",
-            aliases: [],
             description: Some("Get information about a RedisEnterprise cluster"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -564,14 +506,9 @@
                         "-n",
                     ],
                     description: Some("The name of the RedisEnterprise cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -579,15 +516,10 @@
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -597,14 +529,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -613,40 +540,26 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "update",
-            aliases: [],
             description: Some("Update an existing (overwrite/recreate, with potential downtime) cache cluster"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--add",
                     ],
                     description: Some("Add an object to a list of objects by specifying a path and key value pairs. Example: --add property.listProperty <key=value, string or JSON string>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "add",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -655,15 +568,10 @@
                         "--user-assigned-identities",
                         "--assigned-identities",
                     ],
-                    description: Some("The set of user assigned identities associated with the resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form: \'/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}. The dictionary values can be empty objects ({}) in requests. Support shorthand-syntax, json-file and yaml-file. Try \"??\" to show more"),
-                    takes_value: true,
+                    description: Some("The set of user assigned identities associated with the resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}. The dictionary values can be empty objects ({}) in requests. Support shorthand-syntax, json-file and yaml-file. Try \"??\" to show more"),
                     arguments: [
                         (
                             name: "user-assigned-identities",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -672,14 +580,9 @@
                         "--capacity",
                     ],
                     description: Some("The size of the RedisEnterprise cluster. Defaults to 2 or 3 depending on SKU. Valid values are (2, 4, 6, ...) for Enterprise SKUs and (3, 9, 15, ...) for Flash SKUs"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "capacity",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -690,14 +593,9 @@
                         "-n",
                     ],
                     description: Some("The name of the RedisEnterprise cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -705,26 +603,42 @@
                     names: [
                         "--force-string",
                     ],
-                    description: Some("When using \'set\' or \'add\', preserve string literals instead of attempting to convert to JSON"),
-                    takes_value: true,
+                    description: Some("When using 'set' or 'add', preserve string literals instead of attempting to convert to JSON"),
                     arguments: [
                         (
                             name: "force-string",
-                            source: Static([
-                                "0",
-                                "1",
-                                "f",
-                                "false",
-                                "n",
-                                "no",
-                                "t",
-                                "true",
-                                "y",
-                                "yes",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "0",
+                                ),
+                                (
+                                    name: "1",
+                                ),
+                                (
+                                    name: "f",
+                                ),
+                                (
+                                    name: "false",
+                                ),
+                                (
+                                    name: "n",
+                                ),
+                                (
+                                    name: "no",
+                                ),
+                                (
+                                    name: "t",
+                                ),
+                                (
+                                    name: "true",
+                                ),
+                                (
+                                    name: "y",
+                                ),
+                                (
+                                    name: "yes",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -734,14 +648,9 @@
                         "--identity-resource-id",
                     ],
                     description: Some("User assigned identity to use for accessing key encryption key Url. Ex: /subscriptions//resourceGroups//providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "user-assigned-identity-resource-id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -750,18 +659,26 @@
                         "--identity-type",
                     ],
                     description: Some("Type of managed service identity (where both SystemAssigned and UserAssigned types are allowed)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "identity-type",
-                            source: Static([
-                                "None",
-                                "SystemAssigned",
-                                "UserAssigned",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "None",
+                                ),
+                                (
+                                    name: "SystemAssigned",
+                                ),
+                                (
+                                    name: "SystemAssigned",
+                                ),
+                                (
+                                    name: "UserAssigned",
+                                ),
+                                (
+                                    name: "UserAssigned",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -769,15 +686,10 @@
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -787,17 +699,17 @@
                         "--key-identity-type",
                     ],
                     description: Some("Only userAssignedIdentity is supported in this API version; other types may be supported in the future"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "key-encryption-identity-type",
-                            source: Static([
-                                "systemAssignedIdentity",
-                                "userAssignedIdentity",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "systemAssignedIdentity",
+                                ),
+                                (
+                                    name: "userAssignedIdentity",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -806,14 +718,9 @@
                         "--key-encryption-key-url",
                     ],
                     description: Some("Key encryption key Url, versioned only. Ex: https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "key-encryption-key-url",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -821,19 +728,21 @@
                     names: [
                         "--minimum-tls-version",
                     ],
-                    description: Some("The minimum TLS version for the cluster to support, e.g. \'1.2\'"),
-                    takes_value: true,
+                    description: Some("The minimum TLS version for the cluster to support, e.g. '1.2'"),
                     arguments: [
                         (
                             name: "minimum-tls-version",
-                            source: Static([
-                                "1.0",
-                                "1.1",
-                                "1.2",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "1.0",
+                                ),
+                                (
+                                    name: "1.1",
+                                ),
+                                (
+                                    name: "1.2",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -842,25 +751,41 @@
                         "--no-wait",
                     ],
                     description: Some("Do not wait for the long-running operation to finish"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "no-wait",
-                            source: Static([
-                                "0",
-                                "1",
-                                "f",
-                                "false",
-                                "n",
-                                "no",
-                                "t",
-                                "true",
-                                "y",
-                                "yes",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "0",
+                                ),
+                                (
+                                    name: "1",
+                                ),
+                                (
+                                    name: "f",
+                                ),
+                                (
+                                    name: "false",
+                                ),
+                                (
+                                    name: "n",
+                                ),
+                                (
+                                    name: "no",
+                                ),
+                                (
+                                    name: "t",
+                                ),
+                                (
+                                    name: "true",
+                                ),
+                                (
+                                    name: "y",
+                                ),
+                                (
+                                    name: "yes",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -869,14 +794,9 @@
                         "--remove",
                     ],
                     description: Some("Remove a property or an element from a list. Example: --remove property.list OR --remove propertyToRemove"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "remove",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -886,14 +806,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -902,14 +817,9 @@
                         "--set",
                     ],
                     description: Some("Update an object by specifying a property path and value to set. Example: --set property1.property2="),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "set",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -918,25 +828,41 @@
                         "--sku",
                     ],
                     description: Some("The type of RedisEnterprise cluster to deploy. Possible values: (Enterprise_E10, EnterpriseFlash_F300 etc.)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "sku",
-                            source: Static([
-                                "EnterpriseFlash_F1500",
-                                "EnterpriseFlash_F300",
-                                "EnterpriseFlash_F700",
-                                "Enterprise_E10",
-                                "Enterprise_E100",
-                                "Enterprise_E20",
-                                "Enterprise_E200",
-                                "Enterprise_E400",
-                                "Enterprise_E5",
-                                "Enterprise_E50",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "EnterpriseFlash_F1500",
+                                ),
+                                (
+                                    name: "EnterpriseFlash_F300",
+                                ),
+                                (
+                                    name: "EnterpriseFlash_F700",
+                                ),
+                                (
+                                    name: "Enterprise_E10",
+                                ),
+                                (
+                                    name: "Enterprise_E100",
+                                ),
+                                (
+                                    name: "Enterprise_E20",
+                                ),
+                                (
+                                    name: "Enterprise_E200",
+                                ),
+                                (
+                                    name: "Enterprise_E400",
+                                ),
+                                (
+                                    name: "Enterprise_E5",
+                                ),
+                                (
+                                    name: "Enterprise_E50",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -945,14 +871,9 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -961,14 +882,9 @@
                         "--tags",
                     ],
                     description: Some("Resource tags. Support shorthand-syntax, json-file and yaml-file. Try \"??\" to show more"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "tags",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -977,26 +893,17 @@
                         "--zones",
                     ],
                     description: Some("The Availability Zones where this cluster will be deployed. Support shorthand-syntax, json-file and yaml-file. Try \"??\" to show more"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "zones",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "wait",
-            aliases: [],
             description: Some("Place the CLI in a waiting state until a condition is met"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1005,14 +912,9 @@
                         "-n",
                     ],
                     description: Some("The name of the RedisEnterprise cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1020,23 +922,16 @@
                     names: [
                         "--created",
                     ],
-                    description: Some("Wait until created with \'provisioningState\' at \'Succeeded\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Wait until created with 'provisioningState' at 'Succeeded'"),
                 ),
                 (
                     names: [
                         "--custom",
                     ],
-                    description: Some("Wait until the condition satisfies a custom JMESPath query. E.g. provisioningState!=\'InProgress\', instanceView.statuses[?code==\'PowerState/running\']"),
-                    takes_value: true,
+                    description: Some("Wait until the condition satisfies a custom JMESPath query. E.g. provisioningState!='InProgress', instanceView.statuses[?code=='PowerState/running']"),
                     arguments: [
                         (
                             name: "custom",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1045,30 +940,21 @@
                         "--deleted",
                     ],
                     description: Some("Wait until deleted"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--exists",
                     ],
                     description: Some("Wait until the resource exists"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1077,14 +963,9 @@
                         "--interval",
                     ],
                     description: Some("Polling interval in seconds"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "interval",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1094,14 +975,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1110,14 +986,9 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1126,14 +997,9 @@
                         "--timeout",
                     ],
                     description: Some("Maximum wait in seconds"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "timeout",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1141,40 +1007,29 @@
                     names: [
                         "--updated",
                     ],
-                    description: Some("Wait until updated with provisioningState at \'Succeeded\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Wait until updated with provisioningState at 'Succeeded'"),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "database",
-            aliases: [],
             description: Some("Manage Redis Enterprise databases"),
             subcommands: [
                 (
                     name: "create",
-                    aliases: [],
                     description: Some("Create a database"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--cluster-name",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1182,33 +1037,29 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--client-protocol",
                             ],
                             description: Some("Specifies whether redis clients can connect using TLS-encrypted or plaintext redis protocols. Default is TLS-encrypted"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "client-protocol",
-                                    source: Static([
-                                        "Encrypted",
-                                        "Plaintext",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "Encrypted",
+                                        ),
+                                        (
+                                            name: "Plaintext",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1217,17 +1068,17 @@
                                 "--clustering-policy",
                             ],
                             description: Some("Clustering policy - default is OSSCluster. Specified at create time"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "clustering-policy",
-                                    source: Static([
-                                        "EnterpriseCluster",
-                                        "OSSCluster",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "EnterpriseCluster",
+                                        ),
+                                        (
+                                            name: "OSSCluster",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1236,23 +1087,35 @@
                                 "--eviction-policy",
                             ],
                             description: Some("Redis eviction policy - default is VolatileLRU"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "eviction-policy",
-                                    source: Static([
-                                        "AllKeysLFU",
-                                        "AllKeysLRU",
-                                        "AllKeysRandom",
-                                        "NoEviction",
-                                        "VolatileLFU",
-                                        "VolatileLRU",
-                                        "VolatileRandom",
-                                        "VolatileTTL",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "AllKeysLFU",
+                                        ),
+                                        (
+                                            name: "AllKeysLRU",
+                                        ),
+                                        (
+                                            name: "AllKeysRandom",
+                                        ),
+                                        (
+                                            name: "NoEviction",
+                                        ),
+                                        (
+                                            name: "VolatileLFU",
+                                        ),
+                                        (
+                                            name: "VolatileLRU",
+                                        ),
+                                        (
+                                            name: "VolatileRandom",
+                                        ),
+                                        (
+                                            name: "VolatileTTL",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1261,14 +1124,9 @@
                                 "--group-nickname",
                             ],
                             description: Some("Name for the group of linked database resources"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "group-nickname",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1279,14 +1137,9 @@
                                 "--linkeddatabase",
                             ],
                             description: Some("List of database resources to link with this database Support shorthand-syntax, json-file and yaml-file. Try \"??\" to show more. Singular flags: --linked-database --linked-databases"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "linked-databases",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1297,14 +1150,9 @@
                                 "--mods",
                             ],
                             description: Some("Optional set of redis modules to enable in this database - modules can only be added at creation time. Support shorthand-syntax, json-file and yaml-file. Try \"??\" to show more. Singular flags: --module --modules"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "modules",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1313,25 +1161,41 @@
                                 "--no-wait",
                             ],
                             description: Some("Do not wait for the long-running operation to finish"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "no-wait",
-                                    source: Static([
-                                        "0",
-                                        "1",
-                                        "f",
-                                        "false",
-                                        "n",
-                                        "no",
-                                        "t",
-                                        "true",
-                                        "y",
-                                        "yes",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "0",
+                                        ),
+                                        (
+                                            name: "1",
+                                        ),
+                                        (
+                                            name: "f",
+                                        ),
+                                        (
+                                            name: "false",
+                                        ),
+                                        (
+                                            name: "n",
+                                        ),
+                                        (
+                                            name: "no",
+                                        ),
+                                        (
+                                            name: "t",
+                                        ),
+                                        (
+                                            name: "true",
+                                        ),
+                                        (
+                                            name: "y",
+                                        ),
+                                        (
+                                            name: "yes",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1340,14 +1204,9 @@
                                 "--persistence",
                             ],
                             description: Some("Persistence settings Support shorthand-syntax, json-file and yaml-file. Try \"??\" to show more"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "persistence",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1356,40 +1215,26 @@
                                 "--port",
                             ],
                             description: Some("TCP port of the database endpoint. Specified at create time. Defaults to an available port"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "port",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Delete a single database"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--cluster-name",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1397,15 +1242,10 @@
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1414,25 +1254,41 @@
                                 "--no-wait",
                             ],
                             description: Some("Do not wait for the long-running operation to finish"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "no-wait",
-                                    source: Static([
-                                        "0",
-                                        "1",
-                                        "f",
-                                        "false",
-                                        "n",
-                                        "no",
-                                        "t",
-                                        "true",
-                                        "y",
-                                        "yes",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "0",
+                                        ),
+                                        (
+                                            name: "1",
+                                        ),
+                                        (
+                                            name: "f",
+                                        ),
+                                        (
+                                            name: "false",
+                                        ),
+                                        (
+                                            name: "n",
+                                        ),
+                                        (
+                                            name: "no",
+                                        ),
+                                        (
+                                            name: "t",
+                                        ),
+                                        (
+                                            name: "true",
+                                        ),
+                                        (
+                                            name: "y",
+                                        ),
+                                        (
+                                            name: "yes",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1442,14 +1298,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1458,14 +1309,9 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1475,48 +1321,33 @@
                                 "-y",
                             ],
                             description: Some("Do not prompt for confirmation"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "export",
-                    aliases: [],
                     description: Some("Exports a database file from target database"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--sas-uri",
                             ],
                             description: Some("SAS URI for the target directory to export to"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "sas-uri",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--cluster-name",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1524,15 +1355,10 @@
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1541,25 +1367,41 @@
                                 "--no-wait",
                             ],
                             description: Some("Do not wait for the long-running operation to finish"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "no-wait",
-                                    source: Static([
-                                        "0",
-                                        "1",
-                                        "f",
-                                        "false",
-                                        "n",
-                                        "no",
-                                        "t",
-                                        "true",
-                                        "y",
-                                        "yes",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "0",
+                                        ),
+                                        (
+                                            name: "1",
+                                        ),
+                                        (
+                                            name: "f",
+                                        ),
+                                        (
+                                            name: "false",
+                                        ),
+                                        (
+                                            name: "n",
+                                        ),
+                                        (
+                                            name: "no",
+                                        ),
+                                        (
+                                            name: "t",
+                                        ),
+                                        (
+                                            name: "true",
+                                        ),
+                                        (
+                                            name: "y",
+                                        ),
+                                        (
+                                            name: "yes",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1569,14 +1411,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1585,40 +1422,26 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "flush",
-                    aliases: [],
                     description: Some("Flushes all the keys in this database and also from its linked databases"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--cluster-name",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1626,15 +1449,10 @@
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1643,14 +1461,9 @@
                                 "--linked-ids",
                             ],
                             description: Some("The resource identifiers of all the other database resources in the georeplication group to be flushed Support shorthand-syntax, json-file and yaml-file. Try \"??\" to show more"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "linked-ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1659,25 +1472,41 @@
                                 "--no-wait",
                             ],
                             description: Some("Do not wait for the long-running operation to finish"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "no-wait",
-                                    source: Static([
-                                        "0",
-                                        "1",
-                                        "f",
-                                        "false",
-                                        "n",
-                                        "no",
-                                        "t",
-                                        "true",
-                                        "y",
-                                        "yes",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "0",
+                                        ),
+                                        (
+                                            name: "1",
+                                        ),
+                                        (
+                                            name: "f",
+                                        ),
+                                        (
+                                            name: "false",
+                                        ),
+                                        (
+                                            name: "n",
+                                        ),
+                                        (
+                                            name: "no",
+                                        ),
+                                        (
+                                            name: "t",
+                                        ),
+                                        (
+                                            name: "true",
+                                        ),
+                                        (
+                                            name: "y",
+                                        ),
+                                        (
+                                            name: "yes",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1687,14 +1516,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1703,56 +1527,38 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "force-unlink",
-                    aliases: [],
                     description: Some("Forcibly removes the link to the specified database resource"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--unlink-ids",
                             ],
                             description: Some("The resource IDs of the database resources to be unlinked. Support shorthand-syntax, json-file and yaml-file. Try \"??\" to show more"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "unlink-ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--cluster-name",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1760,15 +1566,10 @@
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1777,25 +1578,41 @@
                                 "--no-wait",
                             ],
                             description: Some("Do not wait for the long-running operation to finish"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "no-wait",
-                                    source: Static([
-                                        "0",
-                                        "1",
-                                        "f",
-                                        "false",
-                                        "n",
-                                        "no",
-                                        "t",
-                                        "true",
-                                        "y",
-                                        "yes",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "0",
+                                        ),
+                                        (
+                                            name: "1",
+                                        ),
+                                        (
+                                            name: "f",
+                                        ),
+                                        (
+                                            name: "false",
+                                        ),
+                                        (
+                                            name: "n",
+                                        ),
+                                        (
+                                            name: "no",
+                                        ),
+                                        (
+                                            name: "t",
+                                        ),
+                                        (
+                                            name: "true",
+                                        ),
+                                        (
+                                            name: "y",
+                                        ),
+                                        (
+                                            name: "yes",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1805,14 +1622,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1821,56 +1633,38 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "import",
-                    aliases: [],
                     description: Some("Imports database files to target database"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--sas-uris",
                             ],
                             description: Some("SAS URIs for the target blobs to import from Support shorthand-syntax, json-file and yaml-file. Try \"??\" to show more"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "sas-uris",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--cluster-name",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1878,15 +1672,10 @@
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1895,25 +1684,41 @@
                                 "--no-wait",
                             ],
                             description: Some("Do not wait for the long-running operation to finish"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "no-wait",
-                                    source: Static([
-                                        "0",
-                                        "1",
-                                        "f",
-                                        "false",
-                                        "n",
-                                        "no",
-                                        "t",
-                                        "true",
-                                        "y",
-                                        "yes",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "0",
+                                        ),
+                                        (
+                                            name: "1",
+                                        ),
+                                        (
+                                            name: "f",
+                                        ),
+                                        (
+                                            name: "false",
+                                        ),
+                                        (
+                                            name: "n",
+                                        ),
+                                        (
+                                            name: "no",
+                                        ),
+                                        (
+                                            name: "t",
+                                        ),
+                                        (
+                                            name: "true",
+                                        ),
+                                        (
+                                            name: "y",
+                                        ),
+                                        (
+                                            name: "yes",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1923,14 +1728,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1939,42 +1739,29 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List all databases in the specified RedisEnterprise cluster"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--cluster-name",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1982,40 +1769,27 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "list-keys",
-                    aliases: [],
                     description: Some("Retrieves the access keys for the RedisEnterprise database"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--cluster-name",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2023,15 +1797,10 @@
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2041,14 +1810,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2057,59 +1821,46 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "regenerate-key",
-                    aliases: [],
-                    description: Some("Regenerates the RedisEnterprise database\'s access keys"),
-                    subcommands: [],
+                    description: Some("Regenerates the RedisEnterprise database's access keys"),
                     options: [
                         (
                             names: [
                                 "--key-type",
                             ],
                             description: Some("Which access key to regenerate"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "key-type",
-                                    source: Static([
-                                        "Primary",
-                                        "Secondary",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "Primary",
+                                        ),
+                                        (
+                                            name: "Secondary",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--cluster-name",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2117,15 +1868,10 @@
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2134,25 +1880,41 @@
                                 "--no-wait",
                             ],
                             description: Some("Do not wait for the long-running operation to finish"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "no-wait",
-                                    source: Static([
-                                        "0",
-                                        "1",
-                                        "f",
-                                        "false",
-                                        "n",
-                                        "no",
-                                        "t",
-                                        "true",
-                                        "y",
-                                        "yes",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "0",
+                                        ),
+                                        (
+                                            name: "1",
+                                        ),
+                                        (
+                                            name: "f",
+                                        ),
+                                        (
+                                            name: "false",
+                                        ),
+                                        (
+                                            name: "n",
+                                        ),
+                                        (
+                                            name: "no",
+                                        ),
+                                        (
+                                            name: "t",
+                                        ),
+                                        (
+                                            name: "true",
+                                        ),
+                                        (
+                                            name: "y",
+                                        ),
+                                        (
+                                            name: "yes",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -2162,14 +1924,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2178,40 +1935,26 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "show",
-                    aliases: [],
                     description: Some("Get information about a database in a RedisEnterprise cluster"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--cluster-name",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2219,15 +1962,10 @@
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2237,14 +1975,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2253,40 +1986,26 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "update",
-                    aliases: [],
                     description: Some("Update a database"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--add",
                             ],
                             description: Some("Add an object to a list of objects by specifying a path and key value pairs. Example: --add property.listProperty <key=value, string or JSON string>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "add",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2295,17 +2014,17 @@
                                 "--client-protocol",
                             ],
                             description: Some("Specifies whether redis clients can connect using TLS-encrypted or plaintext redis protocols. Default is TLS-encrypted"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "client-protocol",
-                                    source: Static([
-                                        "Encrypted",
-                                        "Plaintext",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "Encrypted",
+                                        ),
+                                        (
+                                            name: "Plaintext",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -2314,14 +2033,9 @@
                                 "--cluster-name",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2330,23 +2044,35 @@
                                 "--eviction-policy",
                             ],
                             description: Some("Redis eviction policy - default is VolatileLRU"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "eviction-policy",
-                                    source: Static([
-                                        "AllKeysLFU",
-                                        "AllKeysLRU",
-                                        "AllKeysRandom",
-                                        "NoEviction",
-                                        "VolatileLFU",
-                                        "VolatileLRU",
-                                        "VolatileRandom",
-                                        "VolatileTTL",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "AllKeysLFU",
+                                        ),
+                                        (
+                                            name: "AllKeysLRU",
+                                        ),
+                                        (
+                                            name: "AllKeysRandom",
+                                        ),
+                                        (
+                                            name: "NoEviction",
+                                        ),
+                                        (
+                                            name: "VolatileLFU",
+                                        ),
+                                        (
+                                            name: "VolatileLRU",
+                                        ),
+                                        (
+                                            name: "VolatileRandom",
+                                        ),
+                                        (
+                                            name: "VolatileTTL",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -2354,26 +2080,42 @@
                             names: [
                                 "--force-string",
                             ],
-                            description: Some("When using \'set\' or \'add\', preserve string literals instead of attempting to convert to JSON"),
-                            takes_value: true,
+                            description: Some("When using 'set' or 'add', preserve string literals instead of attempting to convert to JSON"),
                             arguments: [
                                 (
                                     name: "force-string",
-                                    source: Static([
-                                        "0",
-                                        "1",
-                                        "f",
-                                        "false",
-                                        "n",
-                                        "no",
-                                        "t",
-                                        "true",
-                                        "y",
-                                        "yes",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "0",
+                                        ),
+                                        (
+                                            name: "1",
+                                        ),
+                                        (
+                                            name: "f",
+                                        ),
+                                        (
+                                            name: "false",
+                                        ),
+                                        (
+                                            name: "n",
+                                        ),
+                                        (
+                                            name: "no",
+                                        ),
+                                        (
+                                            name: "t",
+                                        ),
+                                        (
+                                            name: "true",
+                                        ),
+                                        (
+                                            name: "y",
+                                        ),
+                                        (
+                                            name: "yes",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -2381,15 +2123,10 @@
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2398,25 +2135,41 @@
                                 "--no-wait",
                             ],
                             description: Some("Do not wait for the long-running operation to finish"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "no-wait",
-                                    source: Static([
-                                        "0",
-                                        "1",
-                                        "f",
-                                        "false",
-                                        "n",
-                                        "no",
-                                        "t",
-                                        "true",
-                                        "y",
-                                        "yes",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "0",
+                                        ),
+                                        (
+                                            name: "1",
+                                        ),
+                                        (
+                                            name: "f",
+                                        ),
+                                        (
+                                            name: "false",
+                                        ),
+                                        (
+                                            name: "n",
+                                        ),
+                                        (
+                                            name: "no",
+                                        ),
+                                        (
+                                            name: "t",
+                                        ),
+                                        (
+                                            name: "true",
+                                        ),
+                                        (
+                                            name: "y",
+                                        ),
+                                        (
+                                            name: "yes",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -2425,14 +2178,9 @@
                                 "--persistence",
                             ],
                             description: Some("Persistence settings Support shorthand-syntax, json-file and yaml-file. Try \"??\" to show more"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "persistence",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2441,14 +2189,9 @@
                                 "--remove",
                             ],
                             description: Some("Remove a property or an element from a list. Example: --remove property.list OR --remove propertyToRemove"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "remove",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2458,14 +2201,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2474,14 +2212,9 @@
                                 "--set",
                             ],
                             description: Some("Update an object by specifying a property path and value to set. Example: --set property1.property2="),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "set",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2490,26 +2223,17 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "wait",
-                    aliases: [],
                     description: Some("Place the CLI in a waiting state until a condition is met"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2518,14 +2242,9 @@
                                 "-n",
                             ],
                             description: Some("The name of the RedisEnterprise cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2533,23 +2252,16 @@
                             names: [
                                 "--created",
                             ],
-                            description: Some("Wait until created with \'provisioningState\' at \'Succeeded\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Wait until created with 'provisioningState' at 'Succeeded'"),
                         ),
                         (
                             names: [
                                 "--custom",
                             ],
-                            description: Some("Wait until the condition satisfies a custom JMESPath query. E.g. provisioningState!=\'InProgress\', instanceView.statuses[?code==\'PowerState/running\']"),
-                            takes_value: true,
+                            description: Some("Wait until the condition satisfies a custom JMESPath query. E.g. provisioningState!='InProgress', instanceView.statuses[?code=='PowerState/running']"),
                             arguments: [
                                 (
                                     name: "custom",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2558,30 +2270,21 @@
                                 "--deleted",
                             ],
                             description: Some("Wait until deleted"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--exists",
                             ],
                             description: Some("Wait until the resource exists"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2590,14 +2293,9 @@
                                 "--interval",
                             ],
                             description: Some("Polling interval in seconds"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "interval",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2607,14 +2305,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2623,14 +2316,9 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2639,14 +2327,9 @@
                                 "--timeout",
                             ],
                             description: Some("Maximum wait in seconds"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "timeout",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2654,43 +2337,28 @@
                             names: [
                                 "--updated",
                             ],
-                            description: Some("Wait until updated with provisioningState at \'Succeeded\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Wait until updated with provisioningState at 'Succeeded'"),
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "operation-status",
-            aliases: [],
             description: Some("Get the status of an operation"),
             subcommands: [
                 (
                     name: "show",
-                    aliases: [],
                     description: Some("Get the status of operation"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2700,14 +2368,9 @@
                                 "-l",
                             ],
                             description: Some("Location. Values from: az account list-locations. You can configure the default location using az configure --defaults location=<location>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "location",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2718,14 +2381,9 @@
                                 "-n",
                             ],
                             description: Some("The ID of an ongoing async operation"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "operation-id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2734,27 +2392,15 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
-    options: [],
-    arguments: [],
 )

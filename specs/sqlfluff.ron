@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "lint",
-            aliases: [],
             description: Some("Lint SQL files via passing a list of files or using stdin"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,8 +13,6 @@
                         "-n",
                     ],
                     description: Some("No color - output will be without ANSI color codes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -24,14 +20,9 @@
                         "-i",
                     ],
                     description: Some("Ignore particular families of errors so that they don’t cause a failed run. -–ignore behaves somewhat like noqa comments, except it applies globally"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "error",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -41,8 +32,7 @@
                         "-v",
                     ],
                     description: Some("Verbosity, how detailed should the output be. This is stackable, so -vv is more verbose than -v. For the most verbose option try -vvvv or -vvvvv"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Times(5),
                 ),
                 (
                     names: [
@@ -50,14 +40,9 @@
                         "-e",
                     ],
                     description: Some("Exclude specific rules. This could either be the allowlist, or the general set if there is no specific allowlist"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "exclude_rules",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -67,14 +52,9 @@
                         "-r",
                     ],
                     description: Some("Narrow the search to only specific rules"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "rules",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -84,19 +64,24 @@
                         "-t",
                     ],
                     description: Some("The templater to use (default=jinja)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "templater",
-                            source: Static([
-                                "raw",
-                                "jinja",
-                                "python",
-                                "placeholders",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of templater to use, eg. raw"),
+                            suggestions: [
+                                (
+                                    name: "raw",
+                                ),
+                                (
+                                    name: "jinja",
+                                ),
+                                (
+                                    name: "python",
+                                ),
+                                (
+                                    name: "placeholders",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -106,28 +91,51 @@
                         "-d",
                     ],
                     description: Some("The dialect of SQL to lint"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dialect",
-                            source: Static([
-                                "ansi",
-                                "bigquery",
-                                "exasol",
-                                "hive",
-                                "mysql",
-                                "oracle",
-                                "postgres",
-                                "redshift",
-                                "snowflake",
-                                "spark3",
-                                "sqllite",
-                                "teradata",
-                                "tsql",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of dialect, eg. ANSI"),
+                            suggestions: [
+                                (
+                                    name: "ansi",
+                                ),
+                                (
+                                    name: "bigquery",
+                                ),
+                                (
+                                    name: "exasol",
+                                ),
+                                (
+                                    name: "hive",
+                                ),
+                                (
+                                    name: "mysql",
+                                ),
+                                (
+                                    name: "oracle",
+                                ),
+                                (
+                                    name: "postgres",
+                                ),
+                                (
+                                    name: "redshift",
+                                ),
+                                (
+                                    name: "snowflake",
+                                ),
+                                (
+                                    name: "spark3",
+                                ),
+                                (
+                                    name: "sqllite",
+                                ),
+                                (
+                                    name: "teradata",
+                                ),
+                                (
+                                    name: "tsql",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -137,20 +145,26 @@
                         "-f",
                     ],
                     description: Some("What format to return the lint result in (default=human)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "human",
-                                "json",
-                                "yaml",
-                                "github-annotation",
-                                "github-annotation-native",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "human",
+                                ),
+                                (
+                                    name: "json",
+                                ),
+                                (
+                                    name: "yaml",
+                                ),
+                                (
+                                    name: "github-annotation",
+                                ),
+                                (
+                                    name: "github-annotation-native",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -160,14 +174,9 @@
                         "-p",
                     ],
                     description: Some("The number of parallel processes to run. Positive numbers work as expected. Zero and negative numbers will work as number_of_cpus - number. e.g -1 means all cpus except one. 0 means all cpus"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "processes",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -176,36 +185,39 @@
                         "--disable-noqa",
                     ],
                     description: Some("Set this flag to ignore inline noqa comments"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--bench",
                     ],
                     description: Some("Set this flag to engage the benchmarking tool output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--logger",
                     ],
                     description: Some("Choose to limit the logging to one of the loggers"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "logger",
-                            source: Static([
-                                "templater",
-                                "lexer",
-                                "parser",
-                                "linter",
-                                "rules",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of logger to limit to, eg. templater"),
+                            suggestions: [
+                                (
+                                    name: "templater",
+                                ),
+                                (
+                                    name: "lexer",
+                                ),
+                                (
+                                    name: "parser",
+                                ),
+                                (
+                                    name: "linter",
+                                ),
+                                (
+                                    name: "rules",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -214,14 +226,9 @@
                         "--encoding",
                     ],
                     description: Some("Specify encoding to use when reading and writing files. Defaults to autodetect"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "encoding",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -230,22 +237,18 @@
                         "--ignore-local-config",
                     ],
                     description: Some("Ignore config files in default search path locations. This option allows the user to lint with the default config or can be used in conjunction with –config to only reference the custom config file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--config",
                     ],
                     description: Some("Include additional config file. By default the config is generated from the standard configuration files described in the documentation. This argument allows you to specify an additional configuration file that overrides the standard configuration files. N.B. cfg format is required"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "extra_config_path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -254,14 +257,12 @@
                         "--write-output",
                     ],
                     description: Some("Optionally provide a filename to write the results to, mostly used in tandem with –format. NB: Setting an output file re-enables normal stdout logging"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "write_output",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -270,19 +271,24 @@
                         "--annotation-level",
                     ],
                     description: Some("When format is set to github-annotation or github-annotation-native, default annotation level (default=notice). failure and error are equivalent"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "annotation-level",
-                            source: Static([
-                                "notice",
-                                "warning",
-                                "failure",
-                                "error",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Level of annotation, eg. notice"),
+                            suggestions: [
+                                (
+                                    name: "notice",
+                                ),
+                                (
+                                    name: "warning",
+                                ),
+                                (
+                                    name: "failure",
+                                ),
+                                (
+                                    name: "error",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -291,24 +297,18 @@
                         "--disregard-sqlfluffignores",
                     ],
                     description: Some("Perform the operation regardless of .sqlfluffignore configurations"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--disable-progress-bar",
                     ],
                     description: Some("Disables progress bars"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--nofail",
                     ],
                     description: Some("If set, the exit code will always be zero, regardless of violations found. This is potentially useful during rollout"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -316,26 +316,22 @@
                         "-h",
                     ],
                     description: Some("Show help for sqlfluff"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "fix",
-            aliases: [],
             description: Some("Fix SQL files"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -343,8 +339,6 @@
                         "-n",
                     ],
                     description: Some("No color - output will be without ANSI color codes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -352,14 +346,9 @@
                         "-i",
                     ],
                     description: Some("Ignore particular families of errors so that they don’t cause a failed run. -–ignore behaves somewhat like noqa comments, except it applies globally"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "errors",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -369,8 +358,7 @@
                         "-v",
                     ],
                     description: Some("Verbosity, how detailed should the output be. This is stackable, so -vv is more verbose than -v. For the most verbose option try -vvvv or -vvvvv"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Times(5),
                 ),
                 (
                     names: [
@@ -378,14 +366,9 @@
                         "-e",
                     ],
                     description: Some("Exclude specific rules. This could either be the allowlist, or the general set if there is no specific allowlist"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "exclude_rules",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -395,14 +378,9 @@
                         "-r",
                     ],
                     description: Some("Narrow the search to only specific rules"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "rules",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -412,19 +390,24 @@
                         "-t",
                     ],
                     description: Some("The templater to use (default=jinja)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "templater",
-                            source: Static([
-                                "raw",
-                                "jinja",
-                                "python",
-                                "placeholders",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of templater to use, eg. raw"),
+                            suggestions: [
+                                (
+                                    name: "raw",
+                                ),
+                                (
+                                    name: "jinja",
+                                ),
+                                (
+                                    name: "python",
+                                ),
+                                (
+                                    name: "placeholders",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -434,28 +417,51 @@
                         "-d",
                     ],
                     description: Some("The dialect of SQL to lint"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dialect",
-                            source: Static([
-                                "ansi",
-                                "bigquery",
-                                "exasol",
-                                "hive",
-                                "mysql",
-                                "oracle",
-                                "postgres",
-                                "redshift",
-                                "snowflake",
-                                "spark3",
-                                "sqllite",
-                                "teradata",
-                                "tsql",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of dialect, eg. ANSI"),
+                            suggestions: [
+                                (
+                                    name: "ansi",
+                                ),
+                                (
+                                    name: "bigquery",
+                                ),
+                                (
+                                    name: "exasol",
+                                ),
+                                (
+                                    name: "hive",
+                                ),
+                                (
+                                    name: "mysql",
+                                ),
+                                (
+                                    name: "oracle",
+                                ),
+                                (
+                                    name: "postgres",
+                                ),
+                                (
+                                    name: "redshift",
+                                ),
+                                (
+                                    name: "snowflake",
+                                ),
+                                (
+                                    name: "spark3",
+                                ),
+                                (
+                                    name: "sqllite",
+                                ),
+                                (
+                                    name: "teradata",
+                                ),
+                                (
+                                    name: "tsql",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -465,20 +471,26 @@
                         "-f",
                     ],
                     description: Some("What format to return the lint result in (default=human)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "human",
-                                "json",
-                                "yaml",
-                                "github-annotation",
-                                "github-annotation-native",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "human",
+                                ),
+                                (
+                                    name: "json",
+                                ),
+                                (
+                                    name: "yaml",
+                                ),
+                                (
+                                    name: "github-annotation",
+                                ),
+                                (
+                                    name: "github-annotation-native",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -488,14 +500,9 @@
                         "-p",
                     ],
                     description: Some("The number of parallel processes to run. Positive numbers work as expected. Zero and negative numbers will work as number_of_cpus - number. e.g -1 means all cpus except one. 0 means all cpus"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "processes",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -505,14 +512,9 @@
                         "-x",
                     ],
                     description: Some("An optional suffix to add to fixed files"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "fixed_suffix",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -521,36 +523,39 @@
                         "--disable-noqa",
                     ],
                     description: Some("Set this flag to ignore inline noqa comments"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--bench",
                     ],
                     description: Some("Set this flag to engage the benchmarking tool output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--logger",
                     ],
                     description: Some("Choose to limit the logging to one of the loggers"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "logger",
-                            source: Static([
-                                "templater",
-                                "lexer",
-                                "parser",
-                                "linter",
-                                "rules",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of logger to limit to, eg. templater"),
+                            suggestions: [
+                                (
+                                    name: "templater",
+                                ),
+                                (
+                                    name: "lexer",
+                                ),
+                                (
+                                    name: "parser",
+                                ),
+                                (
+                                    name: "linter",
+                                ),
+                                (
+                                    name: "rules",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -559,14 +564,9 @@
                         "--encoding",
                     ],
                     description: Some("Specify encoding to use when reading and writing files. Defaults to autodetect"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "encoding",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -575,22 +575,18 @@
                         "--ignore-local-config",
                     ],
                     description: Some("Ignore config files in default search path locations. This option allows the user to lint with the default config or can be used in conjunction with –config to only reference the custom config file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--config",
                     ],
                     description: Some("Include additional config file. By default the config is generated from the standard configuration files described in the documentation. This argument allows you to specify an additional configuration file that overrides the standard configuration files. N.B. cfg format is required"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "extra_config_path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -599,14 +595,12 @@
                         "--write-output",
                     ],
                     description: Some("Optionally provide a filename to write the results to, mostly used in tandem with –format. NB: Setting an output file re-enables normal stdout logging"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "write_output",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -615,42 +609,34 @@
                         "--disable-progress-bar",
                     ],
                     description: Some("Disables progress bars"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--FIX-EVEN-UNPARSABLE",
                     ],
                     description: Some("Enables fixing of files that have templating or parse errors"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--show-lint-violations",
                     ],
                     description: Some("Show lint violations"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "parse",
-            aliases: [],
             description: Some("Parse SQL files and just spit out the result"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -658,8 +644,6 @@
                         "-n",
                     ],
                     description: Some("No color - output will be without ANSI color codes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -667,14 +651,9 @@
                         "-i",
                     ],
                     description: Some("Ignore particular families of errors so that they don’t cause a failed run. -–ignore behaves somewhat like noqa comments, except it applies globally"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "errors",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -684,8 +663,7 @@
                         "-v",
                     ],
                     description: Some("Verbosity, how detailed should the output be. This is stackable, so -vv is more verbose than -v. For the most verbose option try -vvvv or -vvvvv"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Times(5),
                 ),
                 (
                     names: [
@@ -693,14 +671,9 @@
                         "-e",
                     ],
                     description: Some("Exclude specific rules. This could either be the allowlist, or the general set if there is no specific allowlist"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "exclude_rules",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -710,14 +683,9 @@
                         "-r",
                     ],
                     description: Some("Narrow the search to only specific rules"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "rules",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -727,19 +695,24 @@
                         "-t",
                     ],
                     description: Some("The templater to use (default=jinja)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "templater",
-                            source: Static([
-                                "raw",
-                                "jinja",
-                                "python",
-                                "placeholders",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of templater to use, eg. raw"),
+                            suggestions: [
+                                (
+                                    name: "raw",
+                                ),
+                                (
+                                    name: "jinja",
+                                ),
+                                (
+                                    name: "python",
+                                ),
+                                (
+                                    name: "placeholders",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -749,28 +722,51 @@
                         "-d",
                     ],
                     description: Some("The dialect of SQL to lint"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dialect",
-                            source: Static([
-                                "ansi",
-                                "bigquery",
-                                "exasol",
-                                "hive",
-                                "mysql",
-                                "oracle",
-                                "postgres",
-                                "redshift",
-                                "snowflake",
-                                "spark3",
-                                "sqllite",
-                                "teradata",
-                                "tsql",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of dialect, eg. ANSI"),
+                            suggestions: [
+                                (
+                                    name: "ansi",
+                                ),
+                                (
+                                    name: "bigquery",
+                                ),
+                                (
+                                    name: "exasol",
+                                ),
+                                (
+                                    name: "hive",
+                                ),
+                                (
+                                    name: "mysql",
+                                ),
+                                (
+                                    name: "oracle",
+                                ),
+                                (
+                                    name: "postgres",
+                                ),
+                                (
+                                    name: "redshift",
+                                ),
+                                (
+                                    name: "snowflake",
+                                ),
+                                (
+                                    name: "spark3",
+                                ),
+                                (
+                                    name: "sqllite",
+                                ),
+                                (
+                                    name: "teradata",
+                                ),
+                                (
+                                    name: "tsql",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -780,8 +776,6 @@
                         "-c",
                     ],
                     description: Some("Output only the code elements of the parse tree"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -789,8 +783,6 @@
                         "-m",
                     ],
                     description: Some("Include meta segments (indents, dedents and placeholders) in the output. This only applies when outputting json or yaml"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -798,20 +790,26 @@
                         "-f",
                     ],
                     description: Some("What format to return the lint result in (default=human)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "human",
-                                "json",
-                                "yaml",
-                                "github-annotation",
-                                "github-annotation-native",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "human",
+                                ),
+                                (
+                                    name: "json",
+                                ),
+                                (
+                                    name: "yaml",
+                                ),
+                                (
+                                    name: "github-annotation",
+                                ),
+                                (
+                                    name: "github-annotation-native",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -820,30 +818,21 @@
                         "--disable-noqa",
                     ],
                     description: Some("Set this flag to ignore inline noqa comments"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--bench",
                     ],
                     description: Some("Set this flag to engage the benchmarking tool output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--recurse",
                     ],
                     description: Some("The depth to recursively parse to (0 for unlimited)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "recurse",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -852,20 +841,27 @@
                         "--logger",
                     ],
                     description: Some("Choose to limit the logging to one of the loggers"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "logger",
-                            source: Static([
-                                "templater",
-                                "lexer",
-                                "parser",
-                                "linter",
-                                "rules",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of logger to limit to, eg. templater"),
+                            suggestions: [
+                                (
+                                    name: "templater",
+                                ),
+                                (
+                                    name: "lexer",
+                                ),
+                                (
+                                    name: "parser",
+                                ),
+                                (
+                                    name: "linter",
+                                ),
+                                (
+                                    name: "rules",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -874,14 +870,9 @@
                         "--encoding",
                     ],
                     description: Some("Specify encoding to use when reading and writing files. Defaults to autodetect"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "encoding",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -890,22 +881,18 @@
                         "--ignore-local-config",
                     ],
                     description: Some("Ignore config files in default search path locations. This option allows the user to lint with the default config or can be used in conjunction with –config to only reference the custom config file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--config",
                     ],
                     description: Some("Include additional config file. By default the config is generated from the standard configuration files described in the documentation. This argument allows you to specify an additional configuration file that overrides the standard configuration files. N.B. cfg format is required"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "extra_config_path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -914,14 +901,12 @@
                         "--write-output",
                     ],
                     description: Some("Optionally provide a filename to write the results to, mostly used in tandem with –format. NB: Setting an output file re-enables normal stdout logging"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "write_output",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -930,34 +915,26 @@
                         "--profiler",
                     ],
                     description: Some("Set this flag to engage the python profiler"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--nofail",
                     ],
                     description: Some("If set, the exit code will always be zero, regardless of violations found. This is potentially useful during rollout"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "dialects",
-            aliases: [],
             description: Some("Show the current dialects available"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -965,8 +942,6 @@
                         "-n",
                     ],
                     description: Some("No color - output will be without ANSI color codes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -974,18 +949,13 @@
                         "-v",
                     ],
                     description: Some("Verbosity, how detailed should the output be. This is stackable, so -vv is more verbose than -v. For the most verbose option try -vvvv or -vvvvv"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Times(5),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Show the version of sqlfluff"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -993,8 +963,6 @@
                         "-n",
                     ],
                     description: Some("No color - output will be without ANSI color codes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1002,18 +970,13 @@
                         "-v",
                     ],
                     description: Some("Verbosity, how detailed should the output be. This is stackable, so -vv is more verbose than -v. For the most verbose option try -vvvv or -vvvvv"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Times(5),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "rules",
-            aliases: [],
             description: Some("Show the current rules in use"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1021,8 +984,6 @@
                         "-n",
                     ],
                     description: Some("No color - output will be without ANSI color codes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1030,12 +991,9 @@
                         "-v",
                     ],
                     description: Some("Verbosity, how detailed should the output be. This is stackable, so -vv is more verbose than -v. For the most verbose option try -vvvv or -vvvvv"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Times(5),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -1044,8 +1002,7 @@
                 "--version",
             ],
             description: Some("Show the version and exit"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
@@ -1053,9 +1010,7 @@
                 "-h",
             ],
             description: Some("Show help for sqlfluff"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
     ],
-    arguments: [],
 )

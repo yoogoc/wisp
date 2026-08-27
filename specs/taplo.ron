@@ -12,38 +12,23 @@
             subcommands: [
                 (
                     name: "default",
-                    aliases: [],
                     description: Some("Print the default `.taplo.toml` configuration file"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "help",
-                    aliases: [],
                     description: Some("Print this message or the help of the given subcommand(s)"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                Help,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "schema",
-                    aliases: [],
                     description: Some("Print the JSON schema of the `.taplo.toml` configuration file"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -53,48 +38,43 @@
                         "-h",
                     ],
                     description: Some("Print help information for config"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--log-spans",
                     ],
                     description: Some("Enable logging spans"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Enable verbose logging format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--colors",
                     ],
                     description: Some("Set color values for the output"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "COLORS",
-                            source: Static([
-                                "auto",
-                                "always",
-                                "never",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "auto",
+                                ),
+                                (
+                                    name: "always",
+                                ),
+                                (
+                                    name: "never",
+                                ),
+                            ],
+                            default: Some("auto"),
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "format",
@@ -102,7 +82,6 @@
                 "fmt",
             ],
             description: Some("Format TOML documents"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -110,14 +89,13 @@
                         "-c",
                     ],
                     description: Some("Path to the Taplo configuration file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CONFIG",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
                     ],
                 ),
@@ -126,14 +104,13 @@
                         "--cache-path",
                     ],
                     description: Some("Set a cache path"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CACHE_PATH",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
                     ],
                 ),
@@ -142,14 +119,14 @@
                         "--check",
                     ],
                     description: Some("Report any files that are not correctly formatted"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CACHE_PATH",
-                            source: Files,
+                            template: [
+                                FilePaths,
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
+                            suggest_current_token: true,
                         ),
                     ],
                 ),
@@ -158,18 +135,21 @@
                         "--colors",
                     ],
                     description: Some("Set color values for the output"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "COLORS",
-                            source: Static([
-                                "auto",
-                                "always",
-                                "never",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "auto",
+                                ),
+                                (
+                                    name: "always",
+                                ),
+                                (
+                                    name: "never",
+                                ),
+                            ],
+                            default: Some("auto"),
                         ),
                     ],
                 ),
@@ -178,8 +158,6 @@
                         "--diff",
                     ],
                     description: Some("Print the differences in patch formatting to `stdout`"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -187,14 +165,15 @@
                         "--force",
                     ],
                     description: Some("Force formatting of files"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "FILES ...",
-                            source: Files,
+                            template: [
+                                FilePaths,
+                            ],
                             optional: true,
                             variadic: true,
-                            imported_generator: None,
+                            suggest_current_token: true,
                         ),
                     ],
                 ),
@@ -204,42 +183,36 @@
                         "-h",
                     ],
                     description: Some("Print help information for format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--log-spans",
                     ],
                     description: Some("Enable logging spans"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-auto-config",
                     ],
                     description: Some("Do not search for a configuration file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--option",
                         "-o",
                     ],
-                    description: Some("A formatter option given as a \'key=value\', can be set multiple times"),
-                    takes_value: true,
+                    description: Some("A formatter option given as a 'key=value', can be set multiple times"),
                     arguments: [
                         (
                             name: "OPTIONS",
-                            source: Static([
-                                "indent_tables=true",
-                                "indent_tables=false",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "indent_tables=true",
+                                ),
+                                (
+                                    name: "indent_tables=false",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -248,14 +221,13 @@
                         "--stdin-filepath",
                     ],
                     description: Some("A path to the file that the taplo will treat like stdin"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "STDIN_FILEPATH",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
                     ],
                 ),
@@ -264,26 +236,24 @@
                         "--verbose",
                     ],
                     description: Some("Enable verbose logging format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "FILES ...",
-                    source: Files,
+                    description: Some("Paths or glob patterns to TOML documents"),
+                    template: [
+                        FilePaths,
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
+                    suggest_current_token: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "get",
-            aliases: [],
             description: Some("Extract a value from the given TOML document"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -291,34 +261,37 @@
                         "-f",
                     ],
                     description: Some("Path to the TOML document"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "FILE_PATH",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--colors",
                     ],
                     description: Some("Set color values for the output"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "COLORS",
-                            source: Static([
-                                "auto",
-                                "always",
-                                "never",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "auto",
+                                ),
+                                (
+                                    name: "always",
+                                ),
+                                (
+                                    name: "never",
+                                ),
+                            ],
+                            default: Some("auto"),
                         ),
                     ],
                 ),
@@ -328,16 +301,12 @@
                         "-h",
                     ],
                     description: Some("Print help information for get"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--log-spans",
                     ],
                     description: Some("Enable logging spans"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -345,18 +314,21 @@
                         "--output-format",
                     ],
                     description: Some("The format specifying how the output is printed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "OUTPUT_FORMAT",
-                            source: Static([
-                                "value",
-                                "json",
-                                "toml",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "value",
+                                ),
+                                (
+                                    name: "json",
+                                ),
+                                (
+                                    name: "toml",
+                                ),
+                            ],
+                            default: Some("value"),
                         ),
                     ],
                 ),
@@ -366,29 +338,18 @@
                         "-s",
                     ],
                     description: Some("Strip the trailing newline from the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Enable verbose logging format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Print help information for taplo"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "lint",
@@ -397,7 +358,6 @@
                 "validate",
             ],
             description: Some("Lint a TOML documents"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -405,14 +365,13 @@
                         "-c",
                     ],
                     description: Some("Path to the Taplo configuration file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CONFIG",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
                     ],
                 ),
@@ -421,14 +380,13 @@
                         "--cache-path",
                     ],
                     description: Some("Set a cache path"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CACHE_PATH",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
                     ],
                 ),
@@ -437,18 +395,21 @@
                         "--colors",
                     ],
                     description: Some("Set color values for the output"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "COLORS",
-                            source: Static([
-                                "auto",
-                                "always",
-                                "never",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "auto",
+                                ),
+                                (
+                                    name: "always",
+                                ),
+                                (
+                                    name: "never",
+                                ),
+                            ],
+                            default: Some("auto"),
                         ),
                     ],
                 ),
@@ -457,8 +418,6 @@
                         "--default-schema-catalogs",
                     ],
                     description: Some("Use the default online catalogs for schemas"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -466,38 +425,30 @@
                         "-h",
                     ],
                     description: Some("Print help information for lint"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--log-spans",
                     ],
                     description: Some("Enable logging spans"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-schema",
                     ],
                     description: Some("Disable all schema validation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--schema",
                     ],
                     description: Some("URL to the schema to be used for validation"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "SCHEMA",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                History,
+                            ],
                         ),
                     ],
                 ),
@@ -506,68 +457,50 @@
                         "--schema-catalog",
                     ],
                     description: Some("URL to the schema catalog to be used for validation"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "SCHEMA_CATALOG",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                History,
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Enable verbose logging format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "FILES ...",
-                    source: Files,
+                    template: [
+                        FilePaths,
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
+                    suggest_current_token: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "lsp",
-            aliases: [],
             description: Some("Language server operations"),
             subcommands: [
                 (
                     name: "help",
-                    aliases: [],
                     description: Some("Print help information for lsp"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "stdio",
-                    aliases: [],
                     description: Some("Run the language server over the standard input and output"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "tcp",
-                    aliases: [],
                     description: Some("Run the language server and listen on a TCP address"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -576,18 +509,21 @@
                         "--colors",
                     ],
                     description: Some("Set color values for the output"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "COLORS",
-                            source: Static([
-                                "auto",
-                                "always",
-                                "never",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "auto",
+                                ),
+                                (
+                                    name: "always",
+                                ),
+                                (
+                                    name: "never",
+                                ),
+                            ],
+                            default: Some("auto"),
                         ),
                     ],
                 ),
@@ -597,28 +533,20 @@
                         "-h",
                     ],
                     description: Some("Print help information for lsp"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--log-spans",
                     ],
                     description: Some("Enable logging spans"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Enable verbose logging format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -628,8 +556,6 @@
                 "-h",
             ],
             description: Some("Print help information for taplo"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -637,34 +563,31 @@
                 "-V",
             ],
             description: Some("Print version information for taplo"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--verbose",
             ],
             description: Some("Enable verbose logging format"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--colors",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Static([
-                        "auto",
-                        "always",
-                        "never",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    suggestions: [
+                        (
+                            name: "auto",
+                        ),
+                        (
+                            name: "always",
+                        ),
+                        (
+                            name: "never",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -673,9 +596,6 @@
                 "--log-spans",
             ],
             description: Some("Enable logging spans"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

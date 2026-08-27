@@ -5,26 +5,20 @@
     subcommands: [
         (
             name: "help",
-            aliases: [],
             description: Some("Help about any command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
+                    template: [
+                        Help,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "info",
-            aliases: [],
             description: Some("Print configuration info"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -32,18 +26,12 @@
                         "--help",
                     ],
                     description: Some("Help for info"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Print version/build info"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -51,8 +39,6 @@
                         "--help",
                     ],
                     description: Some("Help for version"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -60,12 +46,8 @@
                         "--short",
                     ],
                     description: Some("Prints K9s version info in short format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -75,22 +57,16 @@
                 "--all-namespaces",
             ],
             description: Some("Launch K9s in all namespaces"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--as",
             ],
             description: Some("Username to impersonate for the operation"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The username you want to impersonate"),
                 ),
             ],
         ),
@@ -99,14 +75,10 @@
                 "--as-group",
             ],
             description: Some("Group to impersonate for the operation"),
-            takes_value: true,
             arguments: [
                 (
                     name: "stringArray",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The group you want to impersonate"),
                 ),
             ],
         ),
@@ -115,14 +87,13 @@
                 "--certificate-authority",
             ],
             description: Some("Path to a cert file for the certificate authority"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The path to a cert file"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -131,14 +102,13 @@
                 "--client-key",
             ],
             description: Some("Path to a client key file for TLS"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The path to a client key file"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -148,14 +118,10 @@
                 "--command",
             ],
             description: Some("Overrides the default resource to load when the application launches"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The command you want to execute"),
                 ),
             ],
         ),
@@ -164,14 +130,10 @@
                 "--context",
             ],
             description: Some("The name of the kubeconfig context to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name of the kubeconfig context"),
                 ),
             ],
         ),
@@ -180,16 +142,12 @@
                 "--crumbsless",
             ],
             description: Some("Turn K9s crumbs off"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--headless",
             ],
             description: Some("Turn K9s header off"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -197,30 +155,25 @@
                 "--help",
             ],
             description: Some("Show help for k9s"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--insecure-skip-tls-verify",
             ],
-            description: Some("If true, the server\'s caCertFile will not be checked for validity"),
-            takes_value: false,
-            arguments: [],
+            description: Some("If true, the server's caCertFile will not be checked for validity"),
         ),
         (
             names: [
                 "--kubeconfig",
             ],
             description: Some("Path to the kubeconfig file to use for CLI requests"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The path to the kubeconfig file"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -229,14 +182,14 @@
                 "--logFile",
             ],
             description: Some("Specify the log file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The path of the log file"),
+                    template: [
+                        FilePaths,
+                    ],
+                    suggest_current_token: true,
                 ),
             ],
         ),
@@ -245,21 +198,29 @@
                 "-l",
                 "--logLevel",
             ],
-            description: Some("Specify a log level (info, warn, debug, trace, error) (default \'info\')"),
-            takes_value: true,
+            description: Some("Specify a log level (info, warn, debug, trace, error) (default 'info')"),
             arguments: [
                 (
                     name: "string",
-                    source: Static([
-                        "info",
-                        "warn",
-                        "debug",
-                        "trace",
-                        "error",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The log level"),
+                    suggestions: [
+                        (
+                            name: "info",
+                        ),
+                        (
+                            name: "warn",
+                        ),
+                        (
+                            name: "debug",
+                        ),
+                        (
+                            name: "trace",
+                        ),
+                        (
+                            name: "error",
+                        ),
+                    ],
+                    default: Some("info"),
                 ),
             ],
         ),
@@ -268,8 +229,6 @@
                 "--logoless",
             ],
             description: Some("Turn K9s logo off"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -277,22 +236,21 @@
                 "--namespace",
             ],
             description: Some("If present, the namespace scope for this CLI request"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "kubectl",
-                            "get",
-                            "namespaces",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("The namespace"),
+                    generators: [
+                        (
+                            script: [
+                                "kubectl",
+                                "get",
+                                "namespaces",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
+                    debounce: true,
                 ),
             ],
         ),
@@ -301,8 +259,6 @@
                 "--readonly",
             ],
             description: Some("Sets readOnly mode by overriding readOnly configuration setting"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -310,14 +266,11 @@
                 "--refresh",
             ],
             description: Some("Specify the default refresh rate as an integer (sec) (default 2)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "int",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The refresh rate (sec)"),
+                    default: Some("2"),
                 ),
             ],
         ),
@@ -326,14 +279,10 @@
                 "--request-timeout",
             ],
             description: Some("The length of time to wait before giving up on a single server request"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The length of time to wait"),
                 ),
             ],
         ),
@@ -342,14 +291,10 @@
                 "--screen-dump-dir",
             ],
             description: Some("Sets a path to a dir for a screen dumps"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The path to a dir for a screen dumps"),
                 ),
             ],
         ),
@@ -358,14 +303,10 @@
                 "--token",
             ],
             description: Some("Bearer token for authentication to the API server"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The Bearer token"),
                 ),
             ],
         ),
@@ -374,14 +315,10 @@
                 "--user",
             ],
             description: Some("The name of the kubeconfig user to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name of the kubeconfig user"),
                 ),
             ],
         ),
@@ -390,9 +327,6 @@
                 "--write",
             ],
             description: Some("Sets write mode by overriding the readOnly configuration setting"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

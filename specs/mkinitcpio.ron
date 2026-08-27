@@ -2,7 +2,6 @@
     version: 1,
     command: "mkinitcpio",
     description: Some("Create an initial ramdisk environment"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "-h",
             ],
             description: Some("Show help for mkinitcpio"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,8 +16,6 @@
                 "-V",
             ],
             description: Some("Display version information"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -28,14 +23,12 @@
                 "-A",
             ],
             description: Some("Add additional hooks to the image"),
-            takes_value: true,
             arguments: [
                 (
                     name: "hooks",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -45,14 +38,12 @@
                 "-c",
             ],
             description: Some("Use config file to generate the ramdisk"),
-            takes_value: true,
             arguments: [
                 (
                     name: "config",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -62,14 +53,12 @@
                 "-d",
             ],
             description: Some("Set directory as the location where the initramfs is built"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -79,14 +68,12 @@
                 "-D",
             ],
             description: Some("Set directory as the location where hooks will be searched for when generating the image"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -96,14 +83,9 @@
                 "-g",
             ],
             description: Some("Generate a CPIO image as filename"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -113,14 +95,9 @@
                 "-H",
             ],
             description: Some("Output help for hookname"),
-            takes_value: true,
             arguments: [
                 (
                     name: "hookname",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -130,14 +107,9 @@
                 "-k",
             ],
             description: Some("Use kernelversion, instead of the current running kernel"),
-            takes_value: true,
             arguments: [
                 (
                     name: "kernelversion",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -147,8 +119,6 @@
                 "-L",
             ],
             description: Some("List all available hooks"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -156,8 +126,6 @@
                 "-M",
             ],
             description: Some("Display modules found via autodetection"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -165,8 +133,6 @@
                 "-n",
             ],
             description: Some("Disable color output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -174,14 +140,9 @@
                 "-U",
             ],
             description: Some("Generate a UEFI executable as filename"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -191,8 +152,6 @@
                 "-P",
             ],
             description: Some("Process all presets contained in /etc/mkinitcpio.d"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -200,21 +159,18 @@
                 "-p",
             ],
             description: Some("Build initramfs image(s) according to specified preset"),
-            takes_value: true,
             arguments: [
                 (
                     name: "preset",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "ls",
-                            "/etc/mkinitcpio.d",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "ls",
+                                "/etc/mkinitcpio.d",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -224,14 +180,9 @@
                 "-r",
             ],
             description: Some("Specifies the root directory to find modules in"),
-            takes_value: true,
             arguments: [
                 (
                     name: "root",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -241,14 +192,9 @@
                 "-S",
             ],
             description: Some("Skip hooks when generating the image"),
-            takes_value: true,
             arguments: [
                 (
                     name: "hooks",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -258,8 +204,6 @@
                 "-s",
             ],
             description: Some("Saves the build directory for the initial ramdisk"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -267,14 +211,12 @@
                 "-t",
             ],
             description: Some("Use tmpdir as the temporary build directory instead of /tmp"),
-            takes_value: true,
             arguments: [
                 (
                     name: "tmpdir",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -284,8 +226,6 @@
                 "-v",
             ],
             description: Some("Verbose output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -293,14 +233,9 @@
                 "-z",
             ],
             description: Some("Override the compression method with the compress program"),
-            takes_value: true,
             arguments: [
                 (
                     name: "compress",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -309,14 +244,9 @@
                 "--cmdline",
             ],
             description: Some("Use kernel command line with UEFI executable"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -325,14 +255,9 @@
                 "--splash",
             ],
             description: Some("UEFI executables can show a bitmap file on boot"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -341,14 +266,9 @@
                 "--uefistub",
             ],
             description: Some("UEFI stub image used for UEFI executable generation"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -357,14 +277,9 @@
                 "--kernelimage",
             ],
             description: Some("Include a kernel image for the UEFI executable"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -373,14 +288,9 @@
                 "--microcode",
             ],
             description: Some("Include microcode into the UEFI executable"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -389,17 +299,11 @@
                 "--osrelease",
             ],
             description: Some("Include a os-release file for the UEFI executable"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
     ],
-    arguments: [],
 )

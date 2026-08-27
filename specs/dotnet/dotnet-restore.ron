@@ -2,25 +2,22 @@
     version: 1,
     command: "restore",
     description: Some("The dotnet restore command uses NuGet to restore dependencies as well as project-specific tools that are specified in the project file"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--configfile",
             ],
             description: Some("The NuGet configuration file (nuget.config) to use. If specified, only the settings from this file will be used. If not specified, the hierarchy of configuration files from the current directory will be used"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -29,54 +26,42 @@
                 "--disable-parallel",
             ],
             description: Some("Disables restoring multiple projects in parallel"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--force",
             ],
             description: Some("Forces all dependencies to be resolved even if the last restore was successful. Specifying this flag is the same as deleting the project.assets.json file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-force-evaluate",
             ],
             description: Some("Forces restore to reevaluate all dependencies even if a lock file already exists"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ignore-failed-sources",
             ],
             description: Some("Only warn about failed sources if there are packages meeting the version requirement"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--interactive",
             ],
             description: Some("Allows the command to stop and wait for user input or action. For example, to complete authentication"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--lock-file-path",
             ],
             description: Some("Output location where project lock file is written. By default, this is PROJECT_ROOTpackages.lock.json"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -84,39 +69,31 @@
             names: [
                 "--locked-mode",
             ],
-            description: Some("Don\'t allow updating project lock file"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't allow updating project lock file"),
         ),
         (
             names: [
                 "--no-cache",
             ],
             description: Some("Specifies to not cache HTTP requests"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-dependencies",
             ],
             description: Some("When restoring a project with project-to-project (P2P) references, restores the root project and not the references"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--packages",
             ],
             description: Some("Specifies the directory for restored packages"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -126,14 +103,9 @@
                 "--runtime",
             ],
             description: Some("Specifies a runtime for the package restore. This is used to restore packages for runtimes not explicitly listed in the <RuntimeIdentifiers> tag in the .csproj file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "runtime",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -143,14 +115,9 @@
                 "--source",
             ],
             description: Some("Specifies the URI of the NuGet package source to use during the restore operation. This setting overrides all of the sources specified in the nuget.config files. Multiple sources can be provided by specifying this option multiple times"),
-            takes_value: true,
             arguments: [
                 (
                     name: "source",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -159,8 +126,6 @@
                 "--use-lock-file",
             ],
             description: Some("Enables project lock file to be generated and used with restore"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -168,20 +133,26 @@
                 "--verbosity",
             ],
             description: Some("Sets the verbosity level of the command. Allowed values are q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]. The default is minimal. For more information, see LoggerVerbosity"),
-            takes_value: true,
             arguments: [
                 (
                     name: "verbosity",
-                    source: Static([
-                        "quiet",
-                        "minimal",
-                        "normal",
-                        "detailed",
-                        "diagnostic",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "quiet",
+                        ),
+                        (
+                            name: "minimal",
+                        ),
+                        (
+                            name: "normal",
+                        ),
+                        (
+                            name: "detailed",
+                        ),
+                        (
+                            name: "diagnostic",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -189,14 +160,15 @@
     arguments: [
         (
             name: "root",
-            source: Unavailable,
+            description: Some("Optional path to the project file to restore"),
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    has_dynamic_query_term: true,
+                ),
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
         ),
     ],
 )

@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "connect",
-            aliases: [],
             description: Some("Onboard a connected kubernetes cluster to azure"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,16 +13,12 @@
                         "-n",
                     ],
                     description: Some("The name of the connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -32,34 +26,32 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--azure-hybrid-benefit",
                     ],
                     description: Some("Flag to enable/disable Azure Hybrid Benefit feature"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "azure-hybrid-benefit",
-                            source: Static([
-                                "False",
-                                "NotApplicable",
-                                "True",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "False",
+                                ),
+                                (
+                                    name: "NotApplicable",
+                                ),
+                                (
+                                    name: "True",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -68,14 +60,9 @@
                         "--container-log-path",
                     ],
                     description: Some("Override the default container log path to enable fluent-bit logging"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "container-log-path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -84,14 +71,9 @@
                         "--correlation-id",
                     ],
                     description: Some("A guid that is used to internally track the source of cluster onboarding. Please do not modify it unless advised"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "correlation-id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -101,14 +83,9 @@
                         "--proxy-cert",
                     ],
                     description: Some("Path to the certificate file for proxy or custom Certificate Authority"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "custom-ca-cert",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -116,15 +93,10 @@
                     names: [
                         "--custom-locations-oid",
                     ],
-                    description: Some("OID of \'custom-locations\' app"),
-                    takes_value: true,
+                    description: Some("OID of 'custom-locations' app"),
                     arguments: [
                         (
                             name: "custom-locations-oid",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -133,41 +105,71 @@
                         "--disable-auto-upgrade",
                     ],
                     description: Some("Flag to disable auto upgrade of arc agents"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--distribution",
                     ],
                     description: Some("The Kubernetes distribution which will be running on this connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "distribution",
-                            source: Static([
-                                "aks",
-                                "aks_edge_k3s",
-                                "aks_edge_k8s",
-                                "aks_engine",
-                                "aks_management",
-                                "aks_workload",
-                                "canonical",
-                                "capz",
-                                "eks",
-                                "generic",
-                                "gke",
-                                "k3s",
-                                "karbon",
-                                "kind",
-                                "minikube",
-                                "openshift",
-                                "rancher_rke",
-                                "tkg",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "aks",
+                                ),
+                                (
+                                    name: "aks_edge_k3s",
+                                ),
+                                (
+                                    name: "aks_edge_k8s",
+                                ),
+                                (
+                                    name: "aks_engine",
+                                ),
+                                (
+                                    name: "aks_management",
+                                ),
+                                (
+                                    name: "aks_workload",
+                                ),
+                                (
+                                    name: "canonical",
+                                ),
+                                (
+                                    name: "capz",
+                                ),
+                                (
+                                    name: "eks",
+                                ),
+                                (
+                                    name: "generic",
+                                ),
+                                (
+                                    name: "gke",
+                                ),
+                                (
+                                    name: "k3s",
+                                ),
+                                (
+                                    name: "karbon",
+                                ),
+                                (
+                                    name: "kind",
+                                ),
+                                (
+                                    name: "minikube",
+                                ),
+                                (
+                                    name: "openshift",
+                                ),
+                                (
+                                    name: "rancher_rke",
+                                ),
+                                (
+                                    name: "tkg",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -176,14 +178,9 @@
                         "--distribution-version",
                     ],
                     description: Some("The Kubernetes distribution version of the connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "distribution-version",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -192,17 +189,17 @@
                         "--enable-private-link",
                     ],
                     description: Some("Flag to enable/disable private link support on a connected cluster resource. Allowed values: false, true"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "enable-private-link",
-                            source: Static([
-                                "false",
-                                "true",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "false",
+                                ),
+                                (
+                                    name: "true",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -211,45 +208,101 @@
                         "--infrastructure",
                     ],
                     description: Some("The infrastructure on which the Kubernetes cluster represented by this connected cluster will be running on"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "infrastructure",
-                            source: Static([
-                                "LTSCWindows 10 Enterprise LTSC",
-                                "Windows 10 Enterprise",
-                                "Windows 10 Enterprise LTSC 2019",
-                                "Windows 10 Enterprise LTSC 2021",
-                                "Windows 10 Enterprise N",
-                                "Windows 10 Enterprise N LTSC 2019",
-                                "Windows 10 Enterprise N LTSC 2021",
-                                "Windows 10 IoT Enterprise",
-                                "Windows 10 IoT Enterprise LTSC 2019",
-                                "Windows 10 IoT Enterprise LTSC 2021",
-                                "Windows 10 Pro",
-                                "Windows 11 Enterprise",
-                                "Windows 11 Enterprise N",
-                                "Windows 11 IoT Enterprise",
-                                "Windows 11 Pro",
-                                "Windows Server 2019",
-                                "Windows Server 2019 Datacenter",
-                                "Windows Server 2019 Standard",
-                                "Windows Server 2022",
-                                "Windows Server 2022 Datacenter",
-                                "Windows Server 2022 Standard",
-                                "aws",
-                                "azure",
-                                "azure_stack_edge",
-                                "azure_stack_hci",
-                                "azure_stack_hub",
-                                "gcp",
-                                "generic",
-                                "vsphere",
-                                "windows_server",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "LTSCWindows 10 Enterprise LTSC",
+                                ),
+                                (
+                                    name: "Windows 10 Enterprise",
+                                ),
+                                (
+                                    name: "Windows 10 Enterprise LTSC 2019",
+                                ),
+                                (
+                                    name: "Windows 10 Enterprise LTSC 2021",
+                                ),
+                                (
+                                    name: "Windows 10 Enterprise N",
+                                ),
+                                (
+                                    name: "Windows 10 Enterprise N LTSC 2019",
+                                ),
+                                (
+                                    name: "Windows 10 Enterprise N LTSC 2021",
+                                ),
+                                (
+                                    name: "Windows 10 IoT Enterprise",
+                                ),
+                                (
+                                    name: "Windows 10 IoT Enterprise LTSC 2019",
+                                ),
+                                (
+                                    name: "Windows 10 IoT Enterprise LTSC 2021",
+                                ),
+                                (
+                                    name: "Windows 10 Pro",
+                                ),
+                                (
+                                    name: "Windows 11 Enterprise",
+                                ),
+                                (
+                                    name: "Windows 11 Enterprise N",
+                                ),
+                                (
+                                    name: "Windows 11 IoT Enterprise",
+                                ),
+                                (
+                                    name: "Windows 11 Pro",
+                                ),
+                                (
+                                    name: "Windows Server 2019",
+                                ),
+                                (
+                                    name: "Windows Server 2019 Datacenter",
+                                ),
+                                (
+                                    name: "Windows Server 2019 Standard",
+                                ),
+                                (
+                                    name: "Windows Server 2022",
+                                ),
+                                (
+                                    name: "Windows Server 2022 Datacenter",
+                                ),
+                                (
+                                    name: "Windows Server 2022 Standard",
+                                ),
+                                (
+                                    name: "aws",
+                                ),
+                                (
+                                    name: "azure",
+                                ),
+                                (
+                                    name: "azure_stack_edge",
+                                ),
+                                (
+                                    name: "azure_stack_hci",
+                                ),
+                                (
+                                    name: "azure_stack_hub",
+                                ),
+                                (
+                                    name: "gcp",
+                                ),
+                                (
+                                    name: "generic",
+                                ),
+                                (
+                                    name: "vsphere",
+                                ),
+                                (
+                                    name: "windows_server",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -258,14 +311,9 @@
                         "--kube-config",
                     ],
                     description: Some("Path to the kube config file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-config",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -274,14 +322,9 @@
                         "--kube-context",
                     ],
                     description: Some("Kubconfig context from current machine"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-context",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -291,14 +334,9 @@
                         "-l",
                     ],
                     description: Some("Location. Values from: az account list-locations. You can configure the default location using az configure --defaults location=<location>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "location",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -307,22 +345,15 @@
                         "--no-wait",
                     ],
                     description: Some("Do not wait for the long-running operation to finish"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--onboarding-timeout",
                     ],
                     description: Some("Time required (in seconds) for the arc-agent pods to be installed on the kubernetes cluster. Override this value if the hardware/network constraints on your cluster requires more time for installing the arc-agent pods"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "onboarding-timeout",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -332,14 +363,9 @@
                         "--pls-arm-id",
                     ],
                     description: Some("ARM resource id of the private link scope resource to which this connected cluster is associated"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "private-link-scope-resource-id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -348,14 +374,9 @@
                         "--proxy-http",
                     ],
                     description: Some("Http proxy URL to be used"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "proxy-http",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -364,14 +385,9 @@
                         "--proxy-https",
                     ],
                     description: Some("Https proxy URL to be used"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "proxy-https",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -380,14 +396,9 @@
                         "--proxy-skip-range",
                     ],
                     description: Some("List of URLs/CIDRs for which proxy should not to be used"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "proxy-skip-range",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -396,14 +407,9 @@
                         "--tags",
                     ],
                     description: Some("Space-separated tags: key[=value] [key[=value] ...]. Use \"\" to clear existing tags"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "tags",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -413,40 +419,27 @@
                         "-y",
                     ],
                     description: Some("Do not prompt for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "delete",
-            aliases: [],
             description: Some("Delete a connected kubernetes cluster along with connected cluster agents"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--force",
                     ],
                     description: Some("Force delete to remove all azure-arc resources from the cluster"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -455,14 +448,9 @@
                         "--kube-config",
                     ],
                     description: Some("Path to the kube config file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-config",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -471,14 +459,9 @@
                         "--kube-context",
                     ],
                     description: Some("Kubconfig context from current machine"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-context",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -488,14 +471,9 @@
                         "-n",
                     ],
                     description: Some("The name of the connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -504,8 +482,6 @@
                         "--no-wait",
                     ],
                     description: Some("Do not wait for the long-running operation to finish"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -513,14 +489,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -529,14 +500,9 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -546,52 +512,44 @@
                         "-y",
                     ],
                     description: Some("Do not prompt for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "disable-features",
-            aliases: [],
             description: Some("Disables the selective features on the connected cluster"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--features",
                     ],
                     description: Some("Space-separated list of features you want to disable"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "features",
-                            source: Static([
-                                "azure-rbac",
-                                "cluster-connect",
-                                "custom-locations",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "azure-rbac",
+                                ),
+                                (
+                                    name: "cluster-connect",
+                                ),
+                                (
+                                    name: "custom-locations",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -600,14 +558,9 @@
                         "--kube-config",
                     ],
                     description: Some("Path to the kube config file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-config",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -616,14 +569,9 @@
                         "--kube-context",
                     ],
                     description: Some("Kubconfig context from current machine"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-context",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -633,14 +581,9 @@
                         "-n",
                     ],
                     description: Some("The name of the connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -650,14 +593,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -666,14 +604,9 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -683,52 +616,44 @@
                         "-y",
                     ],
                     description: Some("Do not prompt for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "enable-features",
-            aliases: [],
             description: Some("Enables the selective features on the connected cluster"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--features",
                     ],
                     description: Some("Space-separated list of features you want to enable"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "features",
-                            source: Static([
-                                "azure-rbac",
-                                "cluster-connect",
-                                "custom-locations",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "azure-rbac",
+                                ),
+                                (
+                                    name: "cluster-connect",
+                                ),
+                                (
+                                    name: "custom-locations",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--app-id",
                     ],
                     description: Some("Application ID for enabling Azure RBAC. Specify when enabling azure-rbac"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "app-id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -737,14 +662,9 @@
                         "--app-secret",
                     ],
                     description: Some("Application secret for enabling Azure RBAC. Specify when enabling azure-rbac"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "app-secret",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -752,15 +672,10 @@
                     names: [
                         "--custom-locations-oid",
                     ],
-                    description: Some("OID of \'custom-locations\' app"),
-                    takes_value: true,
+                    description: Some("OID of 'custom-locations' app"),
                     arguments: [
                         (
                             name: "custom-locations-oid",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -768,15 +683,10 @@
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -785,14 +695,9 @@
                         "--kube-config",
                     ],
                     description: Some("Path to the kube config file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-config",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -801,14 +706,9 @@
                         "--kube-context",
                     ],
                     description: Some("Kubconfig context from current machine"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-context",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -818,14 +718,9 @@
                         "-n",
                     ],
                     description: Some("The name of the connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -835,14 +730,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -851,14 +741,9 @@
                         "--skip-azure-rbac-list",
                     ],
                     description: Some("Comma separated list of names of usernames/email/oid. Azure RBAC will be skipped for these users. Specify when enabling azure-rbac"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "skip-azure-rbac-list",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -867,26 +752,17 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "list",
-            aliases: [],
             description: Some("List connected kubernetes clusters"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -894,41 +770,27 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "proxy",
-            aliases: [],
             description: Some("Get access to a connected kubernetes cluster"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--file",
                         "-f",
                     ],
-                    description: Some("Kubernetes configuration file to update. If not provided, updates the file \'~/.kube/config\'. Use \'-\' to print YAML to stdout instead"),
-                    takes_value: true,
+                    description: Some("Kubernetes configuration file to update. If not provided, updates the file '~/.kube/config'. Use '-' to print YAML to stdout instead"),
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -936,15 +798,10 @@
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -953,14 +810,9 @@
                         "--kube-context",
                     ],
                     description: Some("If specified, overwrite the default context name"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-context",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -970,14 +822,9 @@
                         "-n",
                     ],
                     description: Some("The name of the connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -986,14 +833,9 @@
                         "--port",
                     ],
                     description: Some("Port used for accessing connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1003,14 +845,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1019,14 +856,9 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1035,40 +867,26 @@
                         "--token",
                     ],
                     description: Some("Service account token to use to authenticate to the kubernetes cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "token",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "show",
-            aliases: [],
             description: Some("Show details of a connected kubernetes cluster"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1078,14 +896,9 @@
                         "-n",
                     ],
                     description: Some("The name of the connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1095,14 +908,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1111,26 +919,17 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "troubleshoot",
-            aliases: [],
             description: Some("Perform diagnostic checks on an Arc enabled Kubernetes cluster"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1138,16 +937,12 @@
                         "-n",
                     ],
                     description: Some("The name of the connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -1155,30 +950,21 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--kube-config",
                     ],
                     description: Some("Path to the kube config file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-config",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1187,14 +973,9 @@
                         "--kube-context",
                     ],
                     description: Some("Kubconfig context from current machine"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-context",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1203,43 +984,34 @@
                         "--tags",
                     ],
                     description: Some("Space-separated tags: key[=value] [key[=value] ...]. Use \"\" to clear existing tags"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "tags",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "update",
-            aliases: [],
             description: Some("Update properties of the arc onboarded kubernetes cluster"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--auto-upgrade",
                     ],
                     description: Some("Flag to enable/disable auto upgrade of arc agents. By default, auto upgrade of agents is enabled"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "auto-upgrade",
-                            source: Static([
-                                "false",
-                                "true",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "false",
+                                ),
+                                (
+                                    name: "true",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1248,18 +1020,20 @@
                         "--azure-hybrid-benefit",
                     ],
                     description: Some("Flag to enable/disable Azure Hybrid Benefit feature"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "azure-hybrid-benefit",
-                            source: Static([
-                                "False",
-                                "NotApplicable",
-                                "True",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "False",
+                                ),
+                                (
+                                    name: "NotApplicable",
+                                ),
+                                (
+                                    name: "True",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1268,14 +1042,9 @@
                         "--container-log-path",
                     ],
                     description: Some("Override the default container log path to enable fluent-bit logging"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "container-log-path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1285,14 +1054,9 @@
                         "--proxy-cert",
                     ],
                     description: Some("Path to the certificate file for proxy or custom Certificate Authority"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "custom-ca-cert",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1301,41 +1065,71 @@
                         "--disable-proxy",
                     ],
                     description: Some("Disables proxy settings for agents"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--distribution",
                     ],
                     description: Some("The Kubernetes distribution which will be running on this connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "distribution",
-                            source: Static([
-                                "aks",
-                                "aks_edge_k3s",
-                                "aks_edge_k8s",
-                                "aks_engine",
-                                "aks_management",
-                                "aks_workload",
-                                "canonical",
-                                "capz",
-                                "eks",
-                                "generic",
-                                "gke",
-                                "k3s",
-                                "karbon",
-                                "kind",
-                                "minikube",
-                                "openshift",
-                                "rancher_rke",
-                                "tkg",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "aks",
+                                ),
+                                (
+                                    name: "aks_edge_k3s",
+                                ),
+                                (
+                                    name: "aks_edge_k8s",
+                                ),
+                                (
+                                    name: "aks_engine",
+                                ),
+                                (
+                                    name: "aks_management",
+                                ),
+                                (
+                                    name: "aks_workload",
+                                ),
+                                (
+                                    name: "canonical",
+                                ),
+                                (
+                                    name: "capz",
+                                ),
+                                (
+                                    name: "eks",
+                                ),
+                                (
+                                    name: "generic",
+                                ),
+                                (
+                                    name: "gke",
+                                ),
+                                (
+                                    name: "k3s",
+                                ),
+                                (
+                                    name: "karbon",
+                                ),
+                                (
+                                    name: "kind",
+                                ),
+                                (
+                                    name: "minikube",
+                                ),
+                                (
+                                    name: "openshift",
+                                ),
+                                (
+                                    name: "rancher_rke",
+                                ),
+                                (
+                                    name: "tkg",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1344,14 +1138,9 @@
                         "--distribution-version",
                     ],
                     description: Some("The Kubernetes distribution version of the connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "distribution-version",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1359,15 +1148,10 @@
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1376,14 +1160,9 @@
                         "--kube-config",
                     ],
                     description: Some("Path to the kube config file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-config",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1392,14 +1171,9 @@
                         "--kube-context",
                     ],
                     description: Some("Kubconfig context from current machine"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-context",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1409,14 +1183,9 @@
                         "-n",
                     ],
                     description: Some("The name of the connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1425,14 +1194,9 @@
                         "--proxy-http",
                     ],
                     description: Some("Http proxy URL to be used"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "proxy-http",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1441,14 +1205,9 @@
                         "--proxy-https",
                     ],
                     description: Some("Https proxy URL to be used"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "proxy-https",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1457,14 +1216,9 @@
                         "--proxy-skip-range",
                     ],
                     description: Some("List of URLs/CIDRs for which proxy should not to be used"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "proxy-skip-range",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1474,14 +1228,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1490,14 +1239,9 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1506,14 +1250,9 @@
                         "--tags",
                     ],
                     description: Some("Space-separated tags: key[=value] [key[=value] ...]. Use \"\" to clear existing tags"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "tags",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1523,32 +1262,21 @@
                         "-y",
                     ],
                     description: Some("Do not prompt for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "upgrade",
-            aliases: [],
             description: Some("Atomically upgrade onboarded agents to the specific version or default to the latest version"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--agent-version",
                     ],
                     description: Some("Version of agent to update the helm charts to"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "agent-version",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1556,15 +1284,10 @@
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1573,14 +1296,9 @@
                         "--kube-config",
                     ],
                     description: Some("Path to the kube config file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-config",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1589,14 +1307,9 @@
                         "--kube-context",
                     ],
                     description: Some("Kubconfig context from current machine"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "kube-context",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1606,14 +1319,9 @@
                         "-n",
                     ],
                     description: Some("The name of the connected cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1623,14 +1331,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1639,14 +1342,9 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1655,22 +1353,13 @@
                         "--upgrade-timeout",
                     ],
                     description: Some("Time required (in seconds) for the arc-agent pods to be upgraded on the kubernetes cluster. Override this value if the hardware/network constraints on your cluster requires more time for upgrading the arc-agent pods"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "upgrade-timeout",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
-    options: [],
-    arguments: [],
 )

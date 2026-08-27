@@ -2,7 +2,6 @@
     version: 1,
     command: "mdls",
     description: Some("Lists the metadata attributes for the specified file"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,46 +9,108 @@
                 "-name",
             ],
             description: Some("Print only the matching metadata attribute value.  Can be used multiple times"),
-            takes_value: true,
             arguments: [
                 (
                     name: "attributeName",
-                    source: Static([
-                        "_kMDItemDisplayNameWithExtensions",
-                        "kMDItemContentCreationDate",
-                        "kMDItemContentCreationDate_Ranking",
-                        "kMDItemContentModificationDate",
-                        "kMDItemContentModificationDate_Ranking",
-                        "kMDItemContentType",
-                        "kMDItemContentTypeTree",
-                        "kMDItemDateAdded",
-                        "kMDItemDateAdded_Ranking",
-                        "kMDItemDisplayName",
-                        "kMDItemDocumentIdentifier",
-                        "kMDItemFSContentChangeDate",
-                        "kMDItemFSCreationDate",
-                        "kMDItemFSCreatorCode",
-                        "kMDItemFSFinderFlags",
-                        "kMDItemFSHasCustomIcon",
-                        "kMDItemFSInvisible",
-                        "kMDItemFSIsExtensionHidden",
-                        "kMDItemFSIsStationery",
-                        "kMDItemFSLabel",
-                        "kMDItemFSName",
-                        "kMDItemFSNodeCount",
-                        "kMDItemFSOwnerGroupID",
-                        "kMDItemFSOwnerUserID",
-                        "kMDItemFSSize",
-                        "kMDItemFSTypeCode",
-                        "kMDItemInterestingDate_Ranking",
-                        "kMDItemKind",
-                        "kMDItemLogicalSize",
-                        "kMDItemPhysicalSize",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Metadata attribute name"),
+                    suggestions: [
+                        (
+                            name: "_kMDItemDisplayNameWithExtensions",
+                        ),
+                        (
+                            name: "kMDItemContentCreationDate",
+                        ),
+                        (
+                            name: "kMDItemContentCreationDate_Ranking",
+                        ),
+                        (
+                            name: "kMDItemContentModificationDate",
+                        ),
+                        (
+                            name: "kMDItemContentModificationDate_Ranking",
+                        ),
+                        (
+                            name: "kMDItemContentType",
+                        ),
+                        (
+                            name: "kMDItemContentTypeTree",
+                        ),
+                        (
+                            name: "kMDItemDateAdded",
+                        ),
+                        (
+                            name: "kMDItemDateAdded_Ranking",
+                        ),
+                        (
+                            name: "kMDItemDisplayName",
+                        ),
+                        (
+                            name: "kMDItemDocumentIdentifier",
+                        ),
+                        (
+                            name: "kMDItemFSContentChangeDate",
+                        ),
+                        (
+                            name: "kMDItemFSCreationDate",
+                        ),
+                        (
+                            name: "kMDItemFSCreatorCode",
+                        ),
+                        (
+                            name: "kMDItemFSFinderFlags",
+                        ),
+                        (
+                            name: "kMDItemFSHasCustomIcon",
+                        ),
+                        (
+                            name: "kMDItemFSInvisible",
+                        ),
+                        (
+                            name: "kMDItemFSIsExtensionHidden",
+                        ),
+                        (
+                            name: "kMDItemFSIsStationery",
+                        ),
+                        (
+                            name: "kMDItemFSLabel",
+                        ),
+                        (
+                            name: "kMDItemFSName",
+                        ),
+                        (
+                            name: "kMDItemFSNodeCount",
+                        ),
+                        (
+                            name: "kMDItemFSOwnerGroupID",
+                        ),
+                        (
+                            name: "kMDItemFSOwnerUserID",
+                        ),
+                        (
+                            name: "kMDItemFSSize",
+                        ),
+                        (
+                            name: "kMDItemFSTypeCode",
+                        ),
+                        (
+                            name: "kMDItemInterestingDate_Ranking",
+                        ),
+                        (
+                            name: "kMDItemKind",
+                        ),
+                        (
+                            name: "kMDItemLogicalSize",
+                        ),
+                        (
+                            name: "kMDItemPhysicalSize",
+                        ),
+                    ],
                 ),
+            ],
+            repeat: Many,
+            exclusive_on: [
+                "--plist",
+                "-plist",
             ],
         ),
         (
@@ -58,17 +119,28 @@
                 "-raw",
             ],
             description: Some("Print raw attribute data in the order that was requested. Fields will be separated with a ASCII NUL character, suitable for piping to xargs(1) -0"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--plist",
+                "-plist",
+            ],
         ),
         (
             names: [
                 "--nullMarker",
                 "-nullMarker",
             ],
-            description: Some("Sets a marker string to be used when a requested attribute is null. Only used in -raw mode.  Default is \'(null)\'"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Sets a marker string to be used when a requested attribute is null. Only used in -raw mode.  Default is '(null)'"),
+            exclusive_on: [
+                "--plist",
+                "-plist",
+            ],
+            depends_on: [
+                "--raw",
+                "-raw",
+            ],
+            presentation: (
+                insert_value: Some("--nullMarker \"{cursor}\""),
+            ),
         ),
         (
             names: [
@@ -76,34 +148,51 @@
                 "-plist",
             ],
             description: Some("Output attributes in XML format to file. Use - to write to stdout option. Incompatible with options -raw, -nullMarker, and -name"),
-            takes_value: true,
             arguments: [
                 (
                     name: "stdout or file",
-                    source: Static([
-                        "-",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("XML output location"),
+                    suggestions: [
+                        (
+                            name: "-",
+                            description: Some("Writes to stdout"),
+                            presentation: (
+                                priority: Some(77.0),
+                            ),
+                        ),
+                    ],
+                    template: [
+                        FilePaths,
+                    ],
                 ),
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("File to read from"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
+            ],
+            exclusive_on: [
+                "--raw",
+                "-raw",
+                "--nullMarker",
+                "-nullMarker",
+                "--name",
+                "-name",
             ],
         ),
     ],
     arguments: [
         (
             name: "file",
-            source: Files,
-            optional: false,
+            template: [
+                FilePaths,
+            ],
             variadic: true,
-            imported_generator: None,
         ),
     ],
+    parser_directives: Some((
+        flags_are_posix_noncompliant: true,
+    )),
 )

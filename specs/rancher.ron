@@ -8,39 +8,25 @@
             aliases: [
                 "app",
             ],
-            description: Some("Operations with apps. Uses helm. Flags are prepended with \'helm\' can also be accurately described by helm documentation"),
+            description: Some("Operations with apps. Uses helm. Flags are prepended with 'helm' can also be accurately described by helm documentation"),
             subcommands: [
                 (
                     name: "ls",
-                    aliases: [],
                     description: Some("List all apps in the current Rancher server"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Delete an app"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "APP_NAME/APP_ID",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The name of the app to delete"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "install",
-                    aliases: [],
                     description: Some("Install an app template"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -48,18 +34,16 @@
                                 "-a",
                             ],
                             description: Some("Path to an answers file, the format of the file is a map with key:value. This supports JSON and YAML"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "answers-file-path",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [],
-                                        has_post_process: false,
-                                        has_custom: true,
-                                    )),
+                                    generators: [
+                                        (
+                                            has_custom: true,
+                                            has_dynamic_trigger: true,
+                                            has_dynamic_query_term: true,
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -69,14 +53,12 @@
                                 "-v",
                             ],
                             description: Some("Path to a helm values file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "values-file-path",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -86,14 +68,9 @@
                                 "-n",
                             ],
                             description: Some("Namespace to install the app into"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "namespace",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -102,46 +79,33 @@
                                 "--set",
                             ],
                             description: Some("Set answers for the template, can be used multiple times. Example: --set foo=bar"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "key=value",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            repeat: Many,
                         ),
                         (
                             names: [
                                 "--set-string",
                             ],
-                            description: Some("Set string answers for the template (Skips Helm\'s type conversion), can be used multiple times. Example: --set-string foo=bar"),
-                            takes_value: true,
+                            description: Some("Set string answers for the template (Skips Helm's type conversion), can be used multiple times. Example: --set-string foo=bar"),
                             arguments: [
                                 (
                                     name: "key=value",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            repeat: Many,
                         ),
                         (
                             names: [
                                 "--version",
                             ],
                             description: Some("Version of the template to use"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "version",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -150,22 +114,15 @@
                                 "--no-prompt",
                             ],
                             description: Some("Suppress asking questions and use the default values when required answers are not provided"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--helm-timeout",
                             ],
                             description: Some("Amount of time for helm to wait for k8s commands (default is 300 secs). Example: --helm-timeout 600 (default: 300)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "seconds",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -174,60 +131,36 @@
                                 "--helm-wait",
                             ],
                             description: Some("Helm will wait for as long as timeout value, for installed resources to be ready (pods, PVCs, deployments, etc.). Example: --helm-wait"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "TEMPLATE_NAME/TEMPLATE_PATH",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Install an app template in the current Rancher server"),
                         ),
                         (
                             name: "APP_NAME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The name of the app to install"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "rollback",
-                    aliases: [],
                     description: Some("Rollback an app to a previous version"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "APP_NAME/APP_ID",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The name/id of the app to rollback"),
                         ),
                         (
                             name: "REVISION_ID/REVISION_NAME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The name/id of the revision to rollback"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "upgrade",
-                    aliases: [],
                     description: Some("Upgrade an existing app to a newer version"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "list-templates",
@@ -235,10 +168,6 @@
                         "lt",
                     ],
                     description: Some("List templates available for installation"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "show-tempate",
@@ -246,30 +175,17 @@
                         "st",
                     ],
                     description: Some("Show versions available to install for an app template"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "show-app",
                     aliases: [
                         "sa",
                     ],
-                    description: Some("Show an app\'s available versions and revisions"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    description: Some("Show an app's available versions and revisions"),
                 ),
                 (
                     name: "show-notes",
-                    aliases: [],
                     description: Some("Show contents of apps notes.txt"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -278,18 +194,18 @@
                         "--format",
                         "-o",
                     ],
-                    description: Some("Output format: \'json\', \'yaml\' or custom format"),
-                    takes_value: true,
+                    description: Some("Output format: 'json', 'yaml' or custom format"),
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "json",
-                                "yaml",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "json",
+                                ),
+                                (
+                                    name: "yaml",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -299,8 +215,6 @@
                         "-q",
                     ],
                     description: Some("Only display IDs or suppress help text"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -308,41 +222,34 @@
                         "-h",
                     ],
                     description: Some("Show help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "catalog",
-            aliases: [],
             description: Some("Operations with catalogs"),
             subcommands: [
                 (
                     name: "ls",
-                    aliases: [],
                     description: Some("List all catalogs in the current Rancher server"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--format",
                                 "-o",
                             ],
-                            description: Some("Output format: \'json\', \'yaml\' or custom format"),
-                            takes_value: true,
+                            description: Some("Output format: 'json', 'yaml' or custom format"),
                             arguments: [
                                 (
                                     name: "format",
-                                    source: Static([
-                                        "json",
-                                        "yaml",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "json",
+                                        ),
+                                        (
+                                            name: "yaml",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -352,8 +259,6 @@
                                 "-q",
                             ],
                             description: Some("Only display IDs or suppress help text"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -361,41 +266,27 @@
                                 "-h",
                             ],
                             description: Some("Show help"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--verbose",
                                 "-v",
                             ],
-                            description: None,
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Add a catalog"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--branch",
                             ],
-                            description: Some("Branch from the url to use (default: \'master\')"),
-                            takes_value: true,
+                            description: Some("Branch from the url to use (default: 'master')"),
                             arguments: [
                                 (
                                     name: "branch name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -403,15 +294,10 @@
                             names: [
                                 "--helm-version",
                             ],
-                            description: Some("Version of helm the app(s) in your catalog will use for deployment. Use \'v2\' for helm 2 or \'v3\' for helm 3 (default: \'v2\')"),
-                            takes_value: true,
+                            description: Some("Version of helm the app(s) in your catalog will use for deployment. Use 'v2' for helm 2 or 'v3' for helm 3 (default: 'v2')"),
                             arguments: [
                                 (
                                     name: "version",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -419,25 +305,15 @@
                     arguments: [
                         (
                             name: "CATALOG_NAME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The name of the catalog to add"),
                         ),
                         (
                             name: "CATALOG_URL",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The URL of the catalog to add"),
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "clusters",
@@ -445,46 +321,28 @@
                 "cluster",
             ],
             description: Some("Operations on clusters"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("https://rancher.com/docs/img/favicon.png"),
+            ),
         ),
         (
             name: "context",
-            aliases: [],
             description: Some("Operations for the context"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "globaldns",
-            aliases: [],
             description: Some("Operations on global DNS providers and entries"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "inspect",
-            aliases: [],
             description: Some("View details of resources"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "kubectl",
-            aliases: [],
             description: Some("Run kubectl commands"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("fig://icon?type=kubernetes"),
+            ),
         ),
         (
             name: "login",
@@ -492,21 +350,16 @@
                 "-l",
             ],
             description: Some("Login to a Rancher server"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--token",
                     ],
                     description: Some("API Bearer Token to authenticate Rancher CLI to your Rancher server"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "BEARER_TOKEN",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The bearer token you want to use"),
                         ),
                     ],
                 ),
@@ -514,13 +367,9 @@
             arguments: [
                 (
                     name: "SERVER_URL",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The server url you want to login to"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "machines",
@@ -528,10 +377,6 @@
                 "machine",
             ],
             description: Some("Operations on machines"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "multiclusterapps",
@@ -539,10 +384,6 @@
                 "multiclusterapp",
             ],
             description: Some("Operations with multi-cluster apps"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "namespaces",
@@ -550,10 +391,6 @@
                 "namespace",
             ],
             description: Some("Operations on namespaces"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "nodes",
@@ -561,10 +398,6 @@
                 "node",
             ],
             description: Some("Operations on nodes"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "projects",
@@ -572,97 +405,67 @@
                 "project",
             ],
             description: Some("Operations on projects"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ps",
-            aliases: [],
             description: Some("Show workloads in a project"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "server",
-            aliases: [],
             description: Some("Operations for the server"),
             subcommands: [
                 (
                     name: "current",
-                    aliases: [],
                     description: Some("Display the current server"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
-                    description: Some("⚠\u{fe0f} Delete a server from the local config"),
-                    subcommands: [],
-                    options: [],
+                    description: Some("⚠️ Delete a server from the local config"),
                     arguments: [
                         (
                             name: "SERVER_NAME",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "rancher",
-                                    "server",
-                                    "ls",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            description: Some("The name of server you want to delete"),
+                            generators: [
+                                (
+                                    script: [
+                                        "rancher",
+                                        "server",
+                                        "ls",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        dangerous: true,
+                    ),
                 ),
                 (
                     name: "ls",
-                    aliases: [],
                     description: Some("List all servers"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "switch",
-                    aliases: [],
                     description: Some("Switch to a new server"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "SERVER_NAME",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "rancher",
-                                    "server",
-                                    "ls",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            description: Some("The name of server you want to switch to"),
+                            generators: [
+                                (
+                                    script: [
+                                        "rancher",
+                                        "server",
+                                        "ls",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "settings",
@@ -673,53 +476,39 @@
             subcommands: [
                 (
                     name: "ls",
-                    aliases: [],
                     description: Some("List settings"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "get",
-                    aliases: [],
                     description: Some("Print a setting"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "SETTING_NAME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The name of setting you want to get"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "set",
-                    aliases: [],
                     description: Some("Set the value for a setting"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--format",
                                 "-o",
                             ],
-                            description: Some("Output format: \'json\', \'yaml\' or custom format"),
-                            takes_value: true,
+                            description: Some("Output format: 'json', 'yaml' or custom format"),
                             arguments: [
                                 (
                                     name: "format",
-                                    source: Static([
-                                        "json",
-                                        "yaml",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "json",
+                                        ),
+                                        (
+                                            name: "yaml",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -729,8 +518,6 @@
                                 "-q",
                             ],
                             description: Some("Only display IDs or suppress help text"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -738,76 +525,42 @@
                                 "-h",
                             ],
                             description: Some("Show help"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--default",
                             ],
-                            description: Some("Reset the setting back to it\'s default value. If the default value is (blank) it will be set to that"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Reset the setting back to it's default value. If the default value is (blank) it will be set to that"),
                         ),
                     ],
                     arguments: [
                         (
                             name: "SETTINGNAME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The name of setting you want to set"),
                         ),
                         (
                             name: "SETTING_VALUE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The value of setting you want to set"),
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ssh",
-            aliases: [],
             description: Some("SSH into a node"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "up",
-            aliases: [],
             description: Some("Apply compose config"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "wait",
-            aliases: [],
             description: Some("Wait for resources cluster, app, project, multiClusterApp"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "token",
-            aliases: [],
             description: Some("Authenticate and generate new kubeconfig token"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "help",
@@ -815,10 +568,6 @@
                 "h",
             ],
             description: Some("Shows a list of commands or help for one command"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -827,8 +576,6 @@
                 "--debug",
             ],
             description: Some("Debug logging"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -836,14 +583,13 @@
                 "-c",
             ],
             description: Some("Path to rancher config (default: `$home/.rancher`) [$RANCHER_CONFIG_DIR]"),
-            takes_value: true,
             arguments: [
                 (
                     name: "RANCHER_CONFIG_PATH",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The path to the rancher config"),
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -853,8 +599,6 @@
                 "-h",
             ],
             description: Some("Show help for rancher cli"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -862,9 +606,6 @@
                 "-v",
             ],
             description: Some("Print the version"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

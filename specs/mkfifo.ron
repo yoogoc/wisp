@@ -2,25 +2,27 @@
     version: 1,
     command: "mkfifo",
     description: Some("Make FIFOs (first-in, first-out)"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-m",
             ],
             description: Some("Set the file permission bits of newly-created fifos to mode, without respect to the current umask; the mode is specified as in chmod(1)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "MODE",
-                    source: Static([
-                        "0666",
-                        "0644",
-                        "0444",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "0666",
+                        ),
+                        (
+                            name: "0644",
+                        ),
+                        (
+                            name: "0444",
+                        ),
+                    ],
+                    default: Some("0666"),
                 ),
             ],
         ),
@@ -28,10 +30,8 @@
     arguments: [
         (
             name: "FIFO",
-            source: Files,
-            optional: false,
+            description: Some("FIFO(s) to create"),
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

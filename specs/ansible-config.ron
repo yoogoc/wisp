@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "list",
-            aliases: [],
             description: Some("List and output available configs"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,24 +13,25 @@
                         "-h",
                     ],
                     description: Some("Show help and exit"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Verbose mode (-vvv for more, -vvvv to enable connection debugging)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-v",
+                    ],
                 ),
                 (
                     names: [
                         "-v",
                     ],
                     description: Some("Verbose mode (-vvv for more, -vvvv to enable connection debugging)"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Times(4),
+                    exclusive_on: [
+                        "--verbose",
+                    ],
                 ),
                 (
                     names: [
@@ -40,14 +39,13 @@
                         "-c",
                     ],
                     description: Some("Path to configuration file, defaults to first file found in precedence"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CONFIG_FILE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Path to configuration file"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -57,28 +55,52 @@
                         "-t",
                     ],
                     description: Some("Filter down to a specific plugin type"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "TYPE",
-                            source: Static([
-                                "all",
-                                "base",
-                                "become",
-                                "cache",
-                                "callback",
-                                "cliconf",
-                                "connection",
-                                "httpapi",
-                                "inventory",
-                                "lookup",
-                                "netconf",
-                                "shell",
-                                "vars",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Plugin type"),
+                            suggestions: [
+                                (
+                                    name: "all",
+                                ),
+                                (
+                                    name: "base",
+                                ),
+                                (
+                                    name: "become",
+                                ),
+                                (
+                                    name: "cache",
+                                ),
+                                (
+                                    name: "callback",
+                                ),
+                                (
+                                    name: "cliconf",
+                                ),
+                                (
+                                    name: "connection",
+                                ),
+                                (
+                                    name: "httpapi",
+                                ),
+                                (
+                                    name: "inventory",
+                                ),
+                                (
+                                    name: "lookup",
+                                ),
+                                (
+                                    name: "netconf",
+                                ),
+                                (
+                                    name: "shell",
+                                ),
+                                (
+                                    name: "vars",
+                                ),
+                            ],
+                            default: Some("all"),
                         ),
                     ],
                 ),
@@ -86,19 +108,15 @@
             arguments: [
                 (
                     name: "args",
-                    source: Files,
+                    description: Some("Specific plugin to target, requires type of plugin to be set"),
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "dump",
-            aliases: [],
             description: Some("Shows the current settings, merges ansible.cfg if specified"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -106,24 +124,25 @@
                         "-h",
                     ],
                     description: Some("Show help and exit"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Verbose mode (-vvv for more, -vvvv to enable connection debugging)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-v",
+                    ],
                 ),
                 (
                     names: [
                         "-v",
                     ],
                     description: Some("Verbose mode (-vvv for more, -vvvv to enable connection debugging)"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Times(4),
+                    exclusive_on: [
+                        "--verbose",
+                    ],
                 ),
                 (
                     names: [
@@ -131,8 +150,6 @@
                         "--changed-only",
                     ],
                     description: Some("Only show configurations that have changed from the default"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -140,14 +157,13 @@
                         "-c",
                     ],
                     description: Some("Path to configuration file, defaults to first file found in precedence"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CONFIG_FILE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Path to configuration file"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -157,28 +173,52 @@
                         "-t",
                     ],
                     description: Some("Filter down to a specific plugin type"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "TYPE",
-                            source: Static([
-                                "all",
-                                "base",
-                                "become",
-                                "cache",
-                                "callback",
-                                "cliconf",
-                                "connection",
-                                "httpapi",
-                                "inventory",
-                                "lookup",
-                                "netconf",
-                                "shell",
-                                "vars",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Plugin type"),
+                            suggestions: [
+                                (
+                                    name: "all",
+                                ),
+                                (
+                                    name: "base",
+                                ),
+                                (
+                                    name: "become",
+                                ),
+                                (
+                                    name: "cache",
+                                ),
+                                (
+                                    name: "callback",
+                                ),
+                                (
+                                    name: "cliconf",
+                                ),
+                                (
+                                    name: "connection",
+                                ),
+                                (
+                                    name: "httpapi",
+                                ),
+                                (
+                                    name: "inventory",
+                                ),
+                                (
+                                    name: "lookup",
+                                ),
+                                (
+                                    name: "netconf",
+                                ),
+                                (
+                                    name: "shell",
+                                ),
+                                (
+                                    name: "vars",
+                                ),
+                            ],
+                            default: Some("all"),
                         ),
                     ],
                 ),
@@ -186,19 +226,15 @@
             arguments: [
                 (
                     name: "args",
-                    source: Files,
+                    description: Some("Specific plugin to target, requires type of plugin to be set"),
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "view",
-            aliases: [],
             description: Some("Displays the current config file"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -206,24 +242,25 @@
                         "-h",
                     ],
                     description: Some("Show help and exit"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Verbose mode (-vvv for more, -vvvv to enable connection debugging)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-v",
+                    ],
                 ),
                 (
                     names: [
                         "-v",
                     ],
                     description: Some("Verbose mode (-vvv for more, -vvvv to enable connection debugging)"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Times(4),
+                    exclusive_on: [
+                        "--verbose",
+                    ],
                 ),
                 (
                     names: [
@@ -231,14 +268,13 @@
                         "-c",
                     ],
                     description: Some("Path to configuration file, defaults to first file found in precedence"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CONFIG_FILE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Path to configuration file"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -248,28 +284,52 @@
                         "-t",
                     ],
                     description: Some("Filter down to a specific plugin type"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "TYPE",
-                            source: Static([
-                                "all",
-                                "base",
-                                "become",
-                                "cache",
-                                "callback",
-                                "cliconf",
-                                "connection",
-                                "httpapi",
-                                "inventory",
-                                "lookup",
-                                "netconf",
-                                "shell",
-                                "vars",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Plugin type"),
+                            suggestions: [
+                                (
+                                    name: "all",
+                                ),
+                                (
+                                    name: "base",
+                                ),
+                                (
+                                    name: "become",
+                                ),
+                                (
+                                    name: "cache",
+                                ),
+                                (
+                                    name: "callback",
+                                ),
+                                (
+                                    name: "cliconf",
+                                ),
+                                (
+                                    name: "connection",
+                                ),
+                                (
+                                    name: "httpapi",
+                                ),
+                                (
+                                    name: "inventory",
+                                ),
+                                (
+                                    name: "lookup",
+                                ),
+                                (
+                                    name: "netconf",
+                                ),
+                                (
+                                    name: "shell",
+                                ),
+                                (
+                                    name: "vars",
+                                ),
+                            ],
+                            default: Some("all"),
                         ),
                     ],
                 ),
@@ -277,19 +337,15 @@
             arguments: [
                 (
                     name: "args",
-                    source: Files,
+                    description: Some("Specific plugin to target, requires type of plugin to be set"),
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
             description: Some("Initializes a new config file (to stdout)"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -297,32 +353,31 @@
                         "-h",
                     ],
                     description: Some("Show help and exit"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Verbose mode (-vvv for more, -vvvv to enable connection debugging)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-v",
+                    ],
                 ),
                 (
                     names: [
                         "-v",
                     ],
                     description: Some("Verbose mode (-vvv for more, -vvvv to enable connection debugging)"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Times(4),
+                    exclusive_on: [
+                        "--verbose",
+                    ],
                 ),
                 (
                     names: [
                         "--disabled",
                     ],
                     description: Some("Prefixes all entries with a comment character to disable them"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -330,18 +385,23 @@
                         "-f",
                     ],
                     description: Some("Output format for init"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "FORMAT",
-                            source: Static([
-                                "ini",
-                                "env",
-                                "vars",
-                            ]),
+                            description: Some("Output format"),
+                            suggestions: [
+                                (
+                                    name: "ini",
+                                ),
+                                (
+                                    name: "env",
+                                ),
+                                (
+                                    name: "vars",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("ini"),
                         ),
                     ],
                 ),
@@ -351,14 +411,13 @@
                         "-c",
                     ],
                     description: Some("Path to configuration file, defaults to first file found in precedence"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CONFIG_FILE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Path to configuration file"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -368,28 +427,52 @@
                         "-t",
                     ],
                     description: Some("Filter down to a specific plugin type"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "TYPE",
-                            source: Static([
-                                "all",
-                                "base",
-                                "become",
-                                "cache",
-                                "callback",
-                                "cliconf",
-                                "connection",
-                                "httpapi",
-                                "inventory",
-                                "lookup",
-                                "netconf",
-                                "shell",
-                                "vars",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Plugin type"),
+                            suggestions: [
+                                (
+                                    name: "all",
+                                ),
+                                (
+                                    name: "base",
+                                ),
+                                (
+                                    name: "become",
+                                ),
+                                (
+                                    name: "cache",
+                                ),
+                                (
+                                    name: "callback",
+                                ),
+                                (
+                                    name: "cliconf",
+                                ),
+                                (
+                                    name: "connection",
+                                ),
+                                (
+                                    name: "httpapi",
+                                ),
+                                (
+                                    name: "inventory",
+                                ),
+                                (
+                                    name: "lookup",
+                                ),
+                                (
+                                    name: "netconf",
+                                ),
+                                (
+                                    name: "shell",
+                                ),
+                                (
+                                    name: "vars",
+                                ),
+                            ],
+                            default: Some("all"),
                         ),
                     ],
                 ),
@@ -397,13 +480,11 @@
             arguments: [
                 (
                     name: "args",
-                    source: Files,
+                    description: Some("Specific plugin to target, requires type of plugin to be set"),
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -412,8 +493,6 @@
                 "--version",
             ],
             description: Some("Shows version number, config file location, module search path, module location, executable location and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -421,9 +500,6 @@
                 "-h",
             ],
             description: Some("Show help and exit"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

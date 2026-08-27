@@ -2,21 +2,16 @@
     version: 1,
     command: "firefox",
     description: Some("Free open-source web browser developer by Mozilla"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--display",
             ],
             description: Some("Specify an X display to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "display",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("X display to use"),
                 ),
             ],
         ),
@@ -25,16 +20,12 @@
                 "--sync",
             ],
             description: Some("Make X calls synchronous"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--g-fatal-warnings",
             ],
             description: Some("Make all warnings fatal"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -42,8 +33,6 @@
                 "--help",
             ],
             description: Some("Print help message and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -51,30 +40,22 @@
                 "--version",
             ],
             description: Some("Print version information and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--full-version",
             ],
             description: Some("Print full version information and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-P",
             ],
             description: Some("Specify profile to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "profile",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Profile to use"),
                 ),
             ],
         ),
@@ -83,14 +64,13 @@
                 "--profile",
             ],
             description: Some("Specify profile to use by folder"),
-            takes_value: true,
             arguments: [
                 (
                     name: "profile",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Profile folder to use"),
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -99,62 +79,48 @@
                 "--migration",
             ],
             description: Some("Start with migration wizard"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ProfileManager",
             ],
             description: Some("Start with ProfileManager"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-remote",
             ],
             description: Some("Do not accept or send remote commands; implies --new-instance"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--new-instance",
+            ],
         ),
         (
             names: [
                 "--new-instance",
             ],
             description: Some("Open new instance, not a new window in running instance"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--safe-mode",
             ],
             description: Some("Disables extensions and themes for this session"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--allow-downgrade",
             ],
             description: Some("Allows downgrading a profile"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--MOZ_LOG",
             ],
             description: Some("Treated as MOZ_LOG=<modules> environment variable, overrides it"),
-            takes_value: true,
             arguments: [
                 (
                     name: "modules",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -163,14 +129,12 @@
                 "--MOZ_LOG_FILE",
             ],
             description: Some("Treated as MOZ_LOG_FILE=<file> environment variable, overrides it. If MOZ_LOG_FILE is not specified as an argument or as an environment variable, logging will be written to stdout"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -179,22 +143,19 @@
                 "--headless",
             ],
             description: Some("Run without a GUI"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--jsdebugger",
             ],
             description: Some("Open the Browser Toolbox. Defaults to the local build but can be overridden by a firefox path"),
-            takes_value: true,
             arguments: [
                 (
                     name: "folder",
-                    source: Directories,
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -203,26 +164,27 @@
                 "--wait-for-jsdebugger",
             ],
             description: Some("Spin event loop until JS debugger connects; enables debugging (some) application startup code paths"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "--jsdebugger",
+            ],
         ),
         (
             names: [
                 "--start-debugger-server",
             ],
             description: Some("Start the devtools server on a TCP port or Unix domain socket path"),
-            takes_value: true,
             arguments: [
                 (
                     name: "port or path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    template: [
+                        FilePaths,
+                    ],
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -231,78 +193,65 @@
                 "--browser",
             ],
             description: Some("Open a browser window"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--new-window",
             ],
             description: Some("Open a URL in a new window"),
-            takes_value: true,
             arguments: [
                 (
                     name: "URL",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("URL to open"),
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "--new-tab",
             ],
             description: Some("Open a URL in a new tab"),
-            takes_value: true,
             arguments: [
                 (
                     name: "URL",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("URL to open"),
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "--private-window",
             ],
             description: Some("Open a URL in a new private window"),
-            takes_value: true,
             arguments: [
                 (
                     name: "URL",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("URL to open"),
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "--preferences",
             ],
             description: Some("Open the preferences dialog"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--screenshot",
             ],
             description: Some("Take a screenshot"),
-            takes_value: true,
             arguments: [
                 (
                     name: "folder",
-                    source: Directories,
+                    description: Some("Folder to save screenshot to"),
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -311,22 +260,19 @@
                 "--window-size",
             ],
             description: Some("Size of your screenshot"),
-            takes_value: true,
             arguments: [
                 (
                     name: "width",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Width of your screenshot"),
                 ),
                 (
                     name: "height",
-                    source: Files,
+                    description: Some("Height of your screenshot"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "--screenshot",
             ],
         ),
         (
@@ -334,14 +280,10 @@
                 "--search",
             ],
             description: Some("Search for a term in your default search engine"),
-            takes_value: true,
             arguments: [
                 (
                     name: "term",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Term to search for"),
                 ),
             ],
         ),
@@ -350,70 +292,54 @@
                 "--setDefaultBrowser",
             ],
             description: Some("Set Firefox as the default browser"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--first-startup",
             ],
             description: Some("Run post-install actions before opening a new window"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--kiosk",
             ],
             description: Some("Start the browser in kiosk mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--disable-pinch",
             ],
             description: Some("Disable touch-screen and touch-pad pinch gestures"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--jsconsole",
             ],
             description: Some("Open the Browser Console"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--devtools",
             ],
             description: Some("Open DevTools on initial load"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--marionette",
             ],
             description: Some("Enable remote debugging server"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--remote-debugging-port",
             ],
             description: Some("Start the Firefox Remote Agent, which is a low-level remote debugging interface used for WebDriver"),
-            takes_value: true,
             arguments: [
                 (
                     name: "port",
-                    source: Files,
+                    description: Some("Defaults to port 9222"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("9222"),
                 ),
             ],
         ),
@@ -422,14 +348,9 @@
                 "--allow-remote-hosts",
             ],
             description: Some("Values of the Host header to allow for incoming requests"),
-            takes_value: true,
             arguments: [
                 (
                     name: "hosts",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -438,14 +359,9 @@
                 "--allow-remote-origins",
             ],
             description: Some("Values of the Origin header to allow for incoming requests"),
-            takes_value: true,
             arguments: [
                 (
                     name: "origins",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -453,10 +369,7 @@
     arguments: [
         (
             name: "URL",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            description: Some("URL to open"),
         ),
     ],
 )

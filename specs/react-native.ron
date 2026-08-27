@@ -5,25 +5,19 @@
     subcommands: [
         (
             name: "doctor",
-            aliases: [],
             description: Some("[EXPERIMENTAL] Diagnose and fix common Node.js, iOS, Android & React Native issues"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--fix",
                     ],
                     description: Some("Attempt to fix all diagnosed issues"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--contributor",
                     ],
                     description: Some("Add healthchecks required to installations required for contributing to React Native"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -31,36 +25,28 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "bundle",
-            aliases: [],
             description: Some("Builds the javascript bundle for offline use"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--entry-file",
                     ],
                     description: Some("Path to the root JS file, either absolute or relative to JS root"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -69,17 +55,23 @@
                         "--platform",
                     ],
                     description: Some("Either \"ios\" or \"android\" (default: \"ios\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "android",
-                                "ios",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "android",
+                                    presentation: (
+                                        icon: Some("https://www.android.com/static/images/fav/favicon.ico"),
+                                    ),
+                                ),
+                                (
+                                    name: "ios",
+                                    presentation: (
+                                        icon: Some("https://developer.apple.com/library/archive/Resources/1282/Images/apple2.png"),
+                                    ),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -88,14 +80,9 @@
                         "--transformer",
                     ],
                     description: Some("Specify a custom transformer to be used"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "transformer",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -104,17 +91,24 @@
                         "--dev",
                     ],
                     description: Some("If false, warnings are disabled and the bundle is minified (default: true)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "boolean",
-                            source: Static([
-                                "true",
-                                "false",
-                            ]),
+                            suggestions: [
+                                (
+                                    name: "true",
+                                    presentation: (
+                                        icon: Some("✅"),
+                                    ),
+                                ),
+                                (
+                                    name: "false",
+                                    presentation: (
+                                        icon: Some("❌"),
+                                    ),
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -123,17 +117,24 @@
                         "--minify",
                     ],
                     description: Some("Allows overriding whether bundle is minified. This defaults to false if dev is true, and true if dev is false. Disabling minification can be useful for speeding up production builds for testing purposes"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "boolean",
-                            source: Static([
-                                "true",
-                                "false",
-                            ]),
+                            suggestions: [
+                                (
+                                    name: "true",
+                                    presentation: (
+                                        icon: Some("✅"),
+                                    ),
+                                ),
+                                (
+                                    name: "false",
+                                    presentation: (
+                                        icon: Some("❌"),
+                                    ),
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -142,14 +143,9 @@
                         "--bundle-output",
                     ],
                     description: Some("File name where to store the resulting bundle, ex. /tmp/groups.bundle"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "bundle file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -158,18 +154,20 @@
                         "--bundle-encoding",
                     ],
                     description: Some("Encoding the bundle should be written in (https://nodejs.org/api/buffer.html#buffer_buffer). (default: \"utf8\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "encoding",
-                            source: Static([
-                                "utf8",
-                                "utf16le",
-                                "latin1",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "utf8",
+                                ),
+                                (
+                                    name: "utf16le",
+                                ),
+                                (
+                                    name: "latin1",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -178,22 +176,19 @@
                         "--max-workers",
                     ],
                     description: Some("Specifies the maximum number of workers the worker-pool will spawn for transforming files. This defaults to the number of the cores available on your machine"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Number of workers",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "sysctl",
-                                    "-n",
-                                    "hw.ncpu",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "sysctl",
+                                        "-n",
+                                        "hw.ncpu",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -202,14 +197,9 @@
                         "--sourcemap-output",
                     ],
                     description: Some("File name where to store the sourcemap file for resulting bundle, ex. /tmp/groups.map"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "sourcemap-output",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -217,15 +207,13 @@
                     names: [
                         "--sourcemap-sources-root",
                     ],
-                    description: Some("Path to make sourcemap\'s sources entries relative to, ex. /root/dir"),
-                    takes_value: true,
+                    description: Some("Path to make sourcemap's sources entries relative to, ex. /root/dir"),
                     arguments: [
                         (
                             name: "root",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -234,22 +222,18 @@
                         "--sourcemap-use-absolute-path",
                     ],
                     description: Some("Report SourceMapURL using its full path"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--assets-dest",
                     ],
                     description: Some("Directory name where to store assets referenced in the bundle"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -258,18 +242,26 @@
                         "--unstable-transform-profile",
                     ],
                     description: Some("Experimental, transform JS for a specific JS engine. Currently supported: hermes, hermes-canary, default"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "transform-profile",
-                            source: Static([
-                                "hermes",
-                                "hermes-canary",
-                                "default",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "hermes",
+                                    presentation: (
+                                        icon: Some("https://reactnative.dev/docs/assets/HermesLogo.svg"),
+                                    ),
+                                ),
+                                (
+                                    name: "hermes-canary",
+                                    presentation: (
+                                        icon: Some("https://reactnative.dev/docs/assets/HermesLogo.svg"),
+                                    ),
+                                ),
+                                (
+                                    name: "default",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -278,32 +270,29 @@
                         "--reset-cache",
                     ],
                     description: Some("Removes cached files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--read-global-cache",
                     ],
                     description: Some("Try to fetch transformed JS code from the global cache, if configured"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--config",
                     ],
                     description: Some("Path to the CLI configuration file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
+                    presentation: (
+                        icon: Some("🛠"),
+                    ),
                 ),
                 (
                     names: [
@@ -311,32 +300,21 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
             description: Some("Initialize a new React Native project named <projectName> in a directory of the same name"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--version",
                     ],
                     description: Some("Shortcut for `--template react-native@version`"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "version",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -345,14 +323,9 @@
                         "--template",
                     ],
                     description: Some("Uses a custom template. Valid arguments are the ones supported by `yarn add [package]` or `npm install [package]`, if you are using `--npm` option"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "template",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -361,22 +334,21 @@
                         "--npm",
                     ],
                     description: Some("Forces using npm for initialization"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        icon: Some("https://img.pngio.com/publishing-to-npm-from-kentcdodds-on-eggheadio-npm-png-800_800.png"),
+                    ),
                 ),
                 (
                     names: [
                         "--directory",
                     ],
                     description: Some("Uses a custom directory instead of `<projectName>`"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -385,14 +357,9 @@
                         "--title",
                     ],
                     description: Some("Uses a custom app title name for application"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "title",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -401,8 +368,9 @@
                         "--skip-install",
                     ],
                     description: Some("Skips dependencies installation step"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        icon: Some("⏭️"),
+                    ),
                 ),
                 (
                     names: [
@@ -410,26 +378,17 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "projectName",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "uninstall",
-            aliases: [],
             description: Some("Uninstall and unlink native dependencies"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -437,40 +396,26 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "packageName",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "start",
-            aliases: [],
             description: Some("Starts the webserver"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--port",
                     ],
                     description: Some("Port on which to listen to"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "free port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -479,14 +424,9 @@
                         "--host",
                     ],
                     description: Some("Change the default host"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "new host",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -495,14 +435,12 @@
                         "--projectRoot",
                     ],
                     description: Some("Path to a custom project root"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -511,14 +449,12 @@
                         "--watchFolders",
                     ],
                     description: Some("Specify any additional folders to be added to the watch list"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "folders",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -527,14 +463,12 @@
                         "--assetPlugins",
                     ],
                     description: Some("Specify any additional asset plugins to be used by the packager by full filepath"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "plugins",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -543,19 +477,23 @@
                         "--sourceExts",
                     ],
                     description: Some("Specify any additional source extensions to be used by the packager"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "sourceExts",
-                            source: Static([
-                                "js",
-                                "css",
-                                "png",
-                                "xml",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "js",
+                                ),
+                                (
+                                    name: "css",
+                                ),
+                                (
+                                    name: "png",
+                                ),
+                                (
+                                    name: "xml",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -564,22 +502,19 @@
                         "--max-workers",
                     ],
                     description: Some("Specifies the maximum number of workers the worker-pool will spawn for transforming files. This defaults to the number of the cores available on your machine"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Number of workers",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "sysctl",
-                                    "-n",
-                                    "hw.ncpu",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "sysctl",
+                                        "-n",
+                                        "hw.ncpu",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -588,14 +523,9 @@
                         "--transformer",
                     ],
                     description: Some("Specify a custom transformer to be used"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "transformer",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -605,8 +535,6 @@
                         "--resetCache",
                     ],
                     description: Some("Removes cached files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -614,18 +542,16 @@
                         "--customLogReporterPath",
                     ],
                     description: Some("Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "logFile",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -634,30 +560,30 @@
                         "--verbose",
                     ],
                     description: Some("Enables logging"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        icon: Some("🔊"),
+                    ),
                 ),
                 (
                     names: [
                         "--https",
                     ],
                     description: Some("Enables https connections to the server"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        icon: Some("🌐"),
+                    ),
                 ),
                 (
                     names: [
                         "--key",
                     ],
                     description: Some("Path to custom SSL key"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -666,14 +592,12 @@
                         "--cert",
                     ],
                     description: Some("Path to custom SSL cert"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -682,24 +606,20 @@
                         "--config",
                     ],
                     description: Some("Path to the CLI configuration file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        icon: Some("🛠"),
+                    ),
                 ),
                 (
                     names: [
                         "--no-interactive",
                     ],
                     description: Some("Disables interactive mode"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -707,36 +627,28 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ram-bundle",
-            aliases: [],
             description: Some("Builds javascript as a \"Random Access Module\" bundle for offline use"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--entry-file",
                     ],
                     description: Some("Path to the root JS file, either absolute or relative to JS root"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -745,17 +657,23 @@
                         "--platform",
                     ],
                     description: Some("Either \"ios\" or \"android\" (default: \"ios\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "android",
-                                "ios",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "android",
+                                    presentation: (
+                                        icon: Some("https://www.android.com/static/images/fav/favicon.ico"),
+                                    ),
+                                ),
+                                (
+                                    name: "ios",
+                                    presentation: (
+                                        icon: Some("https://developer.apple.com/library/archive/Resources/1282/Images/apple2.png"),
+                                    ),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -764,14 +682,9 @@
                         "--transformer",
                     ],
                     description: Some("Specify a custom transformer to be used"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "transformer",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -780,17 +693,24 @@
                         "--dev",
                     ],
                     description: Some("If false, warnings are disabled and the bundle is minified (default: true)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "boolean",
-                            source: Static([
-                                "true",
-                                "false",
-                            ]),
+                            suggestions: [
+                                (
+                                    name: "true",
+                                    presentation: (
+                                        icon: Some("✅"),
+                                    ),
+                                ),
+                                (
+                                    name: "false",
+                                    presentation: (
+                                        icon: Some("❌"),
+                                    ),
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -799,17 +719,24 @@
                         "--minify",
                     ],
                     description: Some("Allows overriding whether bundle is minified. This defaults to false if dev is true, and true if dev is false. Disabling minification can be useful for speeding up production builds for testing purposes"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "boolean",
-                            source: Static([
-                                "true",
-                                "false",
-                            ]),
+                            suggestions: [
+                                (
+                                    name: "true",
+                                    presentation: (
+                                        icon: Some("✅"),
+                                    ),
+                                ),
+                                (
+                                    name: "false",
+                                    presentation: (
+                                        icon: Some("❌"),
+                                    ),
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -818,14 +745,9 @@
                         "--bundle-output",
                     ],
                     description: Some("File name where to store the resulting bundle, ex. /tmp/groups.bundle"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "output file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -834,18 +756,20 @@
                         "--bundle-encoding",
                     ],
                     description: Some("Encoding the bundle should be written in (https://nodejs.org/api/buffer.html#buffer_buffer). (default: \"utf8\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "encoding",
-                            source: Static([
-                                "utf8",
-                                "utf16le",
-                                "latin1",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "utf8",
+                                ),
+                                (
+                                    name: "utf16le",
+                                ),
+                                (
+                                    name: "latin1",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -854,22 +778,19 @@
                         "--max-workers",
                     ],
                     description: Some("Specifies the maximum number of workers the worker-pool will spawn for transforming files. This defaults to the number of the cores available on your machine"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Number of workers",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "sysctl",
-                                    "-n",
-                                    "hw.ncpu",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "sysctl",
+                                        "-n",
+                                        "hw.ncpu",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -878,14 +799,9 @@
                         "--sourcemap-output",
                     ],
                     description: Some("File name where to store the sourcemap file for resulting bundle, ex. /tmp/groups.map"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "sourcemap-output",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -893,15 +809,13 @@
                     names: [
                         "--sourcemap-sources-root",
                     ],
-                    description: Some("Path to make sourcemap\'s sources entries relative to, ex. /root/dir"),
-                    takes_value: true,
+                    description: Some("Path to make sourcemap's sources entries relative to, ex. /root/dir"),
                     arguments: [
                         (
                             name: "root",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -910,22 +824,18 @@
                         "--sourcemap-use-absolute-path",
                     ],
                     description: Some("Report SourceMapURL using its full path"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--assets-dest",
                     ],
                     description: Some("Directory name where to store assets referenced in the bundle"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -934,18 +844,26 @@
                         "--unstable-transform-profile",
                     ],
                     description: Some("Experimental, transform JS for a specific JS engine. Currently supported: hermes, hermes-canary, default"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "transform-profile",
-                            source: Static([
-                                "hermes",
-                                "hermes-canary",
-                                "default",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "hermes",
+                                    presentation: (
+                                        icon: Some("https://reactnative.dev/docs/assets/HermesLogo.svg"),
+                                    ),
+                                ),
+                                (
+                                    name: "hermes-canary",
+                                    presentation: (
+                                        icon: Some("https://reactnative.dev/docs/assets/HermesLogo.svg"),
+                                    ),
+                                ),
+                                (
+                                    name: "default",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -954,40 +872,32 @@
                         "--reset-cache",
                     ],
                     description: Some("Removes cached files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--read-global-cache",
                     ],
                     description: Some("Try to fetch transformed JS code from the global cache, if configured"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--config",
                     ],
                     description: Some("Path to the CLI configuration file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        icon: Some("🛠"),
+                    ),
                 ),
                 (
                     names: [
                         "--indexed-ram-bundle",
                     ],
                     description: Some("Force the \"Indexed RAM\" bundle file format, even when building for android"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -995,32 +905,22 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "link",
-            aliases: [],
             description: Some("Links assets and optionally native modules"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--platforms",
                     ],
                     description: Some("Scope linking to specified platforms"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "list",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1029,8 +929,6 @@
                         "--all",
                     ],
                     description: Some("Link all native modules and assets"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1038,26 +936,18 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "packageName",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "upgrade",
-            aliases: [],
-            description: Some("Upgrade your app\'s template files to the specified or latest npm version using `rn-diff-purge` project. Only valid semver versions are allowed"),
-            subcommands: [],
+            description: Some("Upgrade your app's template files to the specified or latest npm version using `rn-diff-purge` project. Only valid semver versions are allowed"),
             options: [
                 (
                     names: [
@@ -1065,26 +955,18 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "version",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "info",
-            aliases: [],
             description: Some("Get relevant version info about OS, toolchain and libraries"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1092,18 +974,12 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "install",
-            aliases: [],
             description: Some("Install and link native dependencies"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1111,26 +987,17 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "packageName",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "config",
-            aliases: [],
             description: Some("Print CLI configuration"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1138,32 +1005,25 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("🛠"),
+            ),
         ),
         (
             name: "unlink",
-            aliases: [],
             description: Some("Unlink native dependency"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--platforms",
                     ],
                     description: Some("Scope unlinking to specified platforms"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "list",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1173,26 +1033,17 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "packageName",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "log-ios",
-            aliases: [],
             description: Some("Starts iOS device syslog tail"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1200,32 +1051,24 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "profile-hermes",
-            aliases: [],
             description: Some("Pull and convert a Hermes tracing profile to Chrome tracing profile, then store it in the directory <destinationDir> of the local machine"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--filename",
                     ],
                     description: Some("File name of the profile to be downloaded, eg. sampling-profiler-trace8593107139682635366.cpuprofile"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "profile",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -1234,22 +1077,18 @@
                         "--raw",
                     ],
                     description: Some("Pulls the original Hermes tracing profile without any transformation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--sourcemap-path",
                     ],
                     description: Some("The local path to your source map file, eg. /tmp/sourcemap.json"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "sourcemap-path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -1258,22 +1097,15 @@
                         "--generate-sourcemap",
                     ],
                     description: Some("Generates the JS bundle and source map"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--port",
                     ],
                     description: Some("Default: \"8081\""),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "free port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1283,26 +1115,21 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "destinationDir",
-                    source: Directories,
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "log-android",
-            aliases: [],
             description: Some("Starts logkitty"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1310,32 +1137,24 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "run-android",
-            aliases: [],
             description: Some("Builds your app and starts it on a connected Android emulator or device"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--root",
                     ],
                     description: Some("[DEPRECATED - root is discovered automatically] Override the root directory for the android build (which contains the android directory) (default: \"\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "root",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -1343,18 +1162,18 @@
                     names: [
                         "--variant",
                     ],
-                    description: Some("Specify your app\'s build variant (default: \"debug\")"),
-                    takes_value: true,
+                    description: Some("Specify your app's build variant (default: \"debug\")"),
                     arguments: [
                         (
                             name: "variant",
-                            source: Static([
-                                "debug",
-                                "release",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "debug",
+                                ),
+                                (
+                                    name: "release",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1363,14 +1182,12 @@
                         "--appFolder",
                     ],
                     description: Some("[DEPRECATED – use \"project.android.appName\" in react-native.config.js] Specify a different application folder name for the android source. If not, we assume is \"app\""),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -1379,14 +1196,9 @@
                         "--appId",
                     ],
                     description: Some("Specify an applicationId to launch after build. If not specified, `package` from AndroidManifest.xml will be used. (default: \"\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "appId",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1395,14 +1207,9 @@
                         "--appIdSuffix",
                     ],
                     description: Some("Specify an applicationIdSuffix to launch after build. (default: \"\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "appIdSuffix",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1411,14 +1218,9 @@
                         "--main-activity",
                     ],
                     description: Some("Name of the activity to start (default: \"MainActivity\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "main activity",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1427,45 +1229,38 @@
                         "--deviceId",
                     ],
                     description: Some("Builds your app and starts it on a specific device/simulator with the given device id (listed by running \"adb devices\" on the command line)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "deviceId",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "adb",
-                                    "devices",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "adb",
+                                        "devices",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
+                    presentation: (
+                        icon: Some("https://www.android.com/static/images/fav/favicon.ico"),
+                    ),
                 ),
                 (
                     names: [
                         "--no-packager",
                     ],
                     description: Some("Do not launch packager while building"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--port",
                     ],
                     description: Some("Default: 8081"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "free port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1474,14 +1269,9 @@
                         "--terminal",
                     ],
                     description: Some("Launches the Metro Bundler in a new window using the specified terminal path. (default: \"Apple_Terminal\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "terminal path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1489,33 +1279,31 @@
                     names: [
                         "--tasks",
                     ],
-                    description: Some("Run custom Gradle tasks. By default it\'s \"installDebug\""),
-                    takes_value: true,
+                    description: Some("Run custom Gradle tasks. By default it's \"installDebug\""),
                     arguments: [
                         (
                             name: "task list",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "cd android/ && ./gradlew tasks",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "cd android/ && ./gradlew tasks",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
+                    presentation: (
+                        icon: Some("https://raw.githubusercontent.com/vscode-icons/vscode-icons/master/icons/file_type_gradle.svg"),
+                    ),
                 ),
                 (
                     names: [
                         "--no-jetifier",
                     ],
-                    description: Some("Do not run \"jetifier\" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don\'t support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Do not run \"jetifier\" – the AndroidX transition tool. By default it runs before Gradle to ease working with libraries that don't support AndroidX yet. See more at: https://www.npmjs.com/package/jetifier"),
                 ),
                 (
                     names: [
@@ -1523,43 +1311,34 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "run-ios",
-            aliases: [],
             description: Some("Builds your app and starts it on iOS simulator"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--simulator",
                     ],
                     description: Some("Explicitly set simulator to use. Optionally include iOS version between parenthesis at the end to match an exact version: \"iPhone 6 (10.0)\" (default: \"iPhone 12\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "simulator",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "xcrun",
-                                    "simctl",
-                                    "list",
-                                    "--json",
-                                    "devices",
-                                    "available",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "xcrun",
+                                        "simctl",
+                                        "list",
+                                        "--json",
+                                        "devices",
+                                        "available",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1568,46 +1347,43 @@
                         "--configuration",
                     ],
                     description: Some("Explicitly set the scheme configuration to use (default: \"Debug\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "config scheme",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "xcodebuild -project ios/*.xcodeproj  -list -json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "xcodebuild -project ios/*.xcodeproj  -list -json",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
+                    presentation: (
+                        icon: Some("🛠"),
+                    ),
                 ),
                 (
                     names: [
                         "--scheme",
                     ],
                     description: Some("Explicitly set Xcode scheme to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "scheme",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "xcodebuild -project ios/*.xcodeproj  -list -json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "xcodebuild -project ios/*.xcodeproj  -list -json",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1616,14 +1392,12 @@
                         "--project-path",
                     ],
                     description: Some("Path relative to project root where the Xcode project (.xcodeproj) lives. (default: \"ios\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -1632,23 +1406,21 @@
                         "--device",
                     ],
                     description: Some("Explicitly set device to use by name"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "device name",
-                            source: Unavailable,
+                            generators: [
+                                (
+                                    script: [
+                                        "xcrun",
+                                        "xctrace",
+                                        "list",
+                                        "devices",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "xcrun",
-                                    "xctrace",
-                                    "list",
-                                    "devices",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
                         ),
                     ],
                 ),
@@ -1657,23 +1429,20 @@
                         "--udid",
                     ],
                     description: Some("Explicitly set device to use by udid"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "udid",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "xcrun",
-                                    "xctrace",
-                                    "list",
-                                    "devices",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "xcrun",
+                                        "xctrace",
+                                        "list",
+                                        "devices",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1682,30 +1451,24 @@
                         "--no-packager",
                     ],
                     description: Some("Do not launch packager while building"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--verbose",
                     ],
                     description: Some("Do not use xcpretty even if installed"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        icon: Some("🔊"),
+                    ),
                 ),
                 (
                     names: [
                         "--port",
                     ],
                     description: Some("Default: 8081"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "free port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1714,14 +1477,9 @@
                         "--terminal",
                     ],
                     description: Some("Launches the Metro Bundler in a new window using the specified terminal path. (default: \"Apple_Terminal\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "terminal path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1731,12 +1489,8 @@
                         "--help",
                     ],
                     description: Some("Output usage information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -1745,16 +1499,15 @@
                 "--version",
             ],
             description: Some("Print CLI version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--verbose",
             ],
             description: Some("Increase logging verbosity"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                icon: Some("🔊"),
+            ),
         ),
         (
             names: [
@@ -1762,9 +1515,6 @@
                 "--help",
             ],
             description: Some("Output usage information"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

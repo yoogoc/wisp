@@ -2,23 +2,18 @@
     version: 1,
     command: "iconv",
     description: Some("Character set conversion"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--help",
             ],
             description: Some("Show help for iconv"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Output version information and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -26,23 +21,24 @@
                 "--from-code",
             ],
             description: Some("Specifies the encoding of the input"),
-            takes_value: true,
             arguments: [
                 (
                     name: "encoding",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "iconv -l | command tr \' \' \'\\n\' | sort",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "iconv -l | command tr ' ' '\\n' | sort",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
+            ],
+            exclusive_on: [
+                "-l",
+                "--list",
             ],
         ),
         (
@@ -51,23 +47,24 @@
                 "--to-code",
             ],
             description: Some("Specifies the encoding of the output"),
-            takes_value: true,
             arguments: [
                 (
                     name: "encoding",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "iconv -l | command tr \' \' \'\\n\' | sort",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "iconv -l | command tr ' ' '\\n' | sort",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
+            ],
+            exclusive_on: [
+                "-l",
+                "--list",
             ],
         ),
         (
@@ -75,8 +72,10 @@
                 "-c",
             ],
             description: Some("Discard unconvertible characters"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "-l",
+                "--list",
+            ],
         ),
         (
             names: [
@@ -84,23 +83,31 @@
                 "--list",
             ],
             description: Some("List the supported encodings"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "-f",
+                "--from-code",
+                "-t",
+                "--to-code",
+                "--unicode-subst",
+                "--byte-subst",
+                "--widechar-subst",
+            ],
         ),
         (
             names: [
                 "--unicode-subst",
             ],
             description: Some("Substitution for unconvertible Unicode characters"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FORMATSTRING",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The formatstring must be a format string in the same format as for the printf command"),
                 ),
+            ],
+            requires_separator: Some("="),
+            exclusive_on: [
+                "-l",
+                "--list",
             ],
         ),
         (
@@ -108,15 +115,16 @@
                 "--byte-subst",
             ],
             description: Some("Substitution for unconvertible bytes"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FORMATSTRING",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The formatstring must be a format string in the same format as for the printf command"),
                 ),
+            ],
+            requires_separator: Some("="),
+            exclusive_on: [
+                "-l",
+                "--list",
             ],
         ),
         (
@@ -124,25 +132,26 @@
                 "--widechar-subst",
             ],
             description: Some("Substitution for unconvertible wide characters"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FORMATSTRING",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The formatstring must be a format string in the same format as for the printf command"),
                 ),
+            ],
+            requires_separator: Some("="),
+            exclusive_on: [
+                "-l",
+                "--list",
             ],
         ),
     ],
     arguments: [
         (
             name: "inputfile",
-            source: Files,
-            optional: false,
+            template: [
+                FilePaths,
+            ],
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

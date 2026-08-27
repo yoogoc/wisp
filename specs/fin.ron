@@ -5,171 +5,111 @@
     subcommands: [
         (
             name: "help",
-            aliases: [],
             description: Some("Shows help"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "addon",
-            aliases: [],
             description: Some("Addons management commands: install, remove (fin help addon)"),
             subcommands: [
                 (
                     name: "install",
-                    aliases: [],
                     description: Some("Install addon"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "Name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("See available addons in the Addons Repository https://github.com/docksal/addons"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "remove",
-                    aliases: [],
                     description: Some("Remove addon"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "Name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "alias",
-            aliases: [],
             description: Some("Manage aliases that allow fin @alias execution (fin help alias). Create/update alias with <alias_name> that links to <path>"),
             subcommands: [
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("Show aliases list"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "remove",
-                    aliases: [],
                     description: Some("Remove alias"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "alias_name",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "fin",
-                                    "alias",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "fin",
+                                        "alias",
+                                        "list",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "alias_name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "db",
-            aliases: [],
             description: Some("Manage databases (fin help db)"),
             subcommands: [
                 (
                     name: "import",
-                    aliases: [],
                     description: Some("Truncate the database and import from SQL dump file or stdin"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--progress",
                             ],
                             description: Some("Show import progess (requires pv)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-truncate",
                             ],
                             description: Some("Do no truncate database before import"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "dump",
-                    aliases: [],
                     description: Some("Dump a database into an SQL dump file or stdout"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
@@ -177,86 +117,54 @@
                         "ls",
                     ],
                     description: Some("Show list of existing databases"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "cli",
-                    aliases: [],
                     description: Some("Open command line interface to the DB server (and execute query if provided)"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "query",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "create",
-                    aliases: [],
                     description: Some("Create a database"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "drop",
-                    aliases: [],
                     description: Some("Delete a database"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "name",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "fin",
-                                    "db",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "fin",
+                                        "db",
+                                        "list",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "truncate",
-                    aliases: [],
                     description: Some("Truncate a database (defaults to the `default`)"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -264,174 +172,119 @@
                     names: [
                         "--db",
                     ],
-                    description: Some("Use another database (default is the one set with \'MYSQL_DATABASE\')"),
-                    takes_value: true,
+                    description: Some("Use another database (default is the one set with 'MYSQL_DATABASE')"),
                     arguments: [
                         (
                             name: "database",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--db-user",
                     ],
-                    description: Some("Use another mysql username (default is \'root\')"),
-                    takes_value: true,
+                    description: Some("Use another mysql username (default is 'root')"),
                     arguments: [
                         (
                             name: "user",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--db-password",
                     ],
-                    description: Some("Use another database password (default is the one set with \'MYSQL_ROOT_PASSWORD\', see fin config)"),
-                    takes_value: true,
+                    description: Some("Use another database password (default is the one set with 'MYSQL_ROOT_PASSWORD', see fin config)"),
                     arguments: [
                         (
                             name: "password",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--db-charset",
                     ],
                     description: Some("Override charset when creating a database (default is utf8)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "charset",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--db-collation",
                     ],
                     description: Some("Override collation when creating a database (default is utf8_general_ci)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "collation",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "hosts",
-            aliases: [],
             description: Some("Hosts file commands: add, remove, list (fin help hosts)"),
             subcommands: [
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Add hostname to hosts file. If none provided uses VIRTUAL_HOST"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "hostname",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "remove",
-                    aliases: [],
                     description: Some("Remove lines containing hostname from hosts file. If none provided uses VIRTUAL_HOST"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "hostname",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "fin",
-                                    "hosts",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "fin",
+                                        "hosts",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("Output hosts file"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "project",
-            aliases: [],
             description: Some("Manage project(s) (fin help project)"),
             subcommands: [
                 (
                     name: "start",
-                    aliases: [],
                     description: Some("Start project services (alias: fin start)"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        priority: Some(65.0),
+                    ),
                 ),
                 (
                     name: "up",
-                    aliases: [],
                     description: Some("Configuration re-read and start project services (alias: fin up)"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "stop",
-                    aliases: [],
                     description: Some("Stop all or specified project services (alias: fin stop)"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -439,75 +292,64 @@
                                 "-a",
                             ],
                             description: Some("Stop all services on all Docksal projects"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "service",
-                            source: Unavailable,
+                            generators: [
+                                (
+                                    script: [
+                                        "fin",
+                                        "docker",
+                                        "ps",
+                                        "--format",
+                                        "{{.Names}}",
+                                    ],
+                                    split_on: Some("\n"),
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "fin",
-                                    "docker",
-                                    "ps",
-                                    "--format",
-                                    "{{.Names}}",
-                                ],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        priority: Some(60.0),
+                    ),
                 ),
                 (
                     name: "status",
-                    aliases: [],
                     description: Some("List project services (alias: fin ps)"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "restart",
-                    aliases: [],
                     description: Some("Restart project services (alias: fin restart)"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        priority: Some(75.0),
+                    ),
                 ),
                 (
                     name: "reset",
-                    aliases: [],
                     description: Some("Recreate all or specified project services, their containers and volumes"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "service",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "fin",
-                                    "docker",
-                                    "ps",
-                                    "--format",
-                                    "{{.Names}}",
-                                ],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "fin",
+                                        "docker",
+                                        "ps",
+                                        "--format",
+                                        "{{.Names}}",
+                                    ],
+                                    split_on: Some("\n"),
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        priority: Some(70.0),
+                    ),
                 ),
                 (
                     name: "remove",
@@ -515,7 +357,6 @@
                         "rm",
                     ],
                     description: Some("Remove all project services, networks and all their volumes, or specified services only"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -523,36 +364,29 @@
                                 "-f",
                             ],
                             description: Some("Do not ask for confirmation when deleting all project services"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "service",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "fin",
-                                    "docker",
-                                    "ps",
-                                    "--format",
-                                    "{{.Names}}",
-                                ],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "fin",
+                                        "docker",
+                                        "ps",
+                                        "--format",
+                                        "{{.Names}}",
+                                    ],
+                                    split_on: Some("\n"),
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List running Docksal projects (alias: fin pl)"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -560,82 +394,60 @@
                                 "-a",
                             ],
                             description: Some("List all Docksal projects (stopped as well)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "create",
-                    aliases: [],
                     description: Some("Create a new project with a pre-configured boilerplate: Drupal, Wordpress, Magento, Laravel, Backdrop, Hugo, Gatsby, and others"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--name",
                             ],
                             description: Some("Provide project name upfront"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--choice",
                             ],
                             description: Some("Provide software choice number upfront"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "#",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--repo",
                             ],
-                            description: Some("Clone from a custom repo: name (--choice is set to \'0\' automatically)"),
-                            takes_value: true,
+                            description: Some("Clone from a custom repo: name (--choice is set to '0' automatically)"),
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--branch",
                             ],
                             description: Some("Clone from a custom repo: branch name (optional)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
@@ -643,473 +455,277 @@
                                 "-y",
                             ],
                             description: Some("Avoid confirmation"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "config",
-                    aliases: [],
                     description: Some("Show project configuration"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "build",
-                    aliases: [],
-                    description: Some("Build or rebuild services (alias for \'docker-compose build\')"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    description: Some("Build or rebuild services (alias for 'docker-compose build')"),
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ssh-key",
-            aliases: [],
             description: Some("Manage SSH keys (fin help ssh-key)"),
             subcommands: [
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Add a private SSH key from $HOME/.ssh by file name. Adds all default keys (id_rsa/id_dsa/id_ecdsa/id_ed25519) if no file name is given"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--quiet",
                             ],
                             description: Some("Suppress key already loaded notifications"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "key-name",
-                            source: Unavailable,
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "\\command ls $HOME/.ssh | \\command grep --color=never -v 'pub'",
+                                    ],
+                                    split_on: Some("\n"),
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "\\command ls $HOME/.ssh | \\command grep --color=never -v \'pub\'",
-                                ],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "ls",
-                    aliases: [],
                     description: Some("List SSH keys loaded in the docksal-ssh-agent"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "rm",
-                    aliases: [],
                     description: Some("Remove all keys from the docksal-ssh-agent"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "new",
-                    aliases: [],
                     description: Some("Generate a new SSH key pair"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "key-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "system",
-            aliases: [],
             description: Some("Manage Docksal state (fin help system)"),
             subcommands: [
                 (
                     name: "reset",
-                    aliases: [],
                     description: Some("Reset Docksal"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "start",
-                    aliases: [],
                     description: Some("Start Docksal"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "stop",
-                    aliases: [],
                     description: Some("Stop Docksal"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "status",
-                    aliases: [],
                     description: Some("Check Docksal status"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "vm",
-            aliases: [],
             description: Some("Manage Docksal VM (fin help vm)"),
             subcommands: [
                 (
                     name: "start",
-                    aliases: [],
                     description: Some("Start the machine (create if needed)"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "stop",
-                    aliases: [],
                     description: Some("Stop the machine"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "kill",
-                    aliases: [],
                     description: Some("Forcibly stop the machine"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "restart",
-                    aliases: [],
                     description: Some("Restart the machine"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "status",
-                    aliases: [],
                     description: Some("Get the status"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "ssh",
-                    aliases: [],
                     description: Some("Log into ssh or run a command via ssh"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "command",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "remove",
-                    aliases: [],
                     description: Some("Remove Docksal machine and cleanup after it"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "ip",
-                    aliases: [],
                     description: Some("Show the machine IP address"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "ls",
-                    aliases: [],
                     description: Some("List all docker machines"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "env",
-                    aliases: [],
                     description: Some("Display the commands to set up the shell for direct use of Docker client"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "mount",
-                    aliases: [],
                     description: Some("Try remounting host filesystem (NFS on macOS, SMB on Windows)"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "ram",
-                    aliases: [],
                     description: Some("Show memory size"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "megabyte",
-                            source: Files,
+                            description: Some("Set memory size. Default is 1024 (requires vm restart)"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "hdd",
-                    aliases: [],
                     description: Some("Show disk size and usage"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "stats",
-                    aliases: [],
                     description: Some("Show CPU and network usage"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "regenerate-certs",
-                    aliases: [],
                     description: Some("Regenerate TLS certificates and restart the VM"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "bash",
-            aliases: [],
-            description: Some("Open shell into service\'s container. Defaults to cli"),
-            subcommands: [],
-            options: [],
+            description: Some("Open shell into service's container. Defaults to cli"),
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "fin",
-                            "docker",
-                            "ps",
-                            "--format",
-                            "{{.Names}}",
-                        ],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "fin",
+                                "docker",
+                                "ps",
+                                "--format",
+                                "{{.Names}}",
+                            ],
+                            split_on: Some("\n"),
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "config",
-            aliases: [],
             description: Some("Show or change configuration (fin help config)"),
             subcommands: [
                 (
                     name: "show",
-                    aliases: [],
                     description: Some("Display configuration for the current project"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--show-secrets",
                             ],
                             description: Some("Do not truncate value of SECRET_* environment vars"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "env",
-                    aliases: [],
                     description: Some("Display only environment variables section"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "yml",
-                    aliases: [],
                     description: Some("Display static YML project config suitable for export (NOTE: SECRET_* values will not be hidden)"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "generate",
-                    aliases: [],
                     description: Some("Generate empty Docksal configuration for the project"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--stack",
                             ],
                             description: Some("Set non-default DOCKSAL_STACK during config generate"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "stack",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--docroot",
                             ],
                             description: Some("Set non-default DOCROOT during config generate"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "directory",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "set",
-                    aliases: [],
                     description: Some("Set value(s) for the variable(s) in project ENV file"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--global",
                             ],
                             description: Some("Set for global ENV file"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--env",
                             ],
                             description: Some("Set in environment specific project ENV file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                     ],
                     arguments: [
                         (
                             name: "VAR=VAL",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "remove",
@@ -1117,217 +733,158 @@
                         "rm",
                     ],
                     description: Some("Remove variable(s) from project ENV file"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--global",
                             ],
                             description: Some("Remove from global ENV file"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--env",
                             ],
                             description: Some("Remove from environment specific project ENV file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                     ],
                     arguments: [
                         (
                             name: "VAR",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "get",
-                    aliases: [],
                     description: Some("Get the value of the single variable from project ENV file"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--global",
                             ],
                             description: Some("Get value from global ENV file"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--env",
                             ],
                             description: Some("Get value from environment specific project ENV file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                     ],
                     arguments: [
                         (
                             name: "VAR",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "exec",
-            aliases: [],
             description: Some("Execute a command or a script in cli"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command|file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    is_command: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "exec-url",
-            aliases: [],
             description: Some("Download script from URL and run it on host (URL should be public)"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "url",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
             description: Some("Initialize a project (override it with your own automation, see fin help init)"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "image",
-            aliases: [],
             description: Some("Image management commands: registry, save, load (fin help image)"),
             subcommands: [
                 (
                     name: "registry",
-                    aliases: [],
                     description: Some("Show all Docksal images on Docker Hub"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "image name",
-                            source: Files,
+                            description: Some("Show all tags for a certain image"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "save",
-                    aliases: [],
                     description: Some("Save docker images into a tar archive"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--system",
                             ],
                             description: Some("Save Docksal system images"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--project",
+                                "--all",
+                            ],
                         ),
                         (
                             names: [
                                 "--project",
                             ],
-                            description: Some("Save current project\'s images"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Save current project's images"),
+                            exclusive_on: [
+                                "--system",
+                                "--all",
+                            ],
                         ),
                         (
                             names: [
                                 "--all",
                             ],
                             description: Some("Save all images available on the host"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--system",
+                                "--project",
+                            ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "load",
-                    aliases: [],
                     description: Some("Load docker images from a tar archive"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "logs",
-            aliases: [],
             description: Some("Show service logs (e.g., Apache logs, MySQL logs) and Unison logs (fin help logs)"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1335,38 +892,27 @@
                         "--follow",
                     ],
                     description: Some("Follow log output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Produce monochrome output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-log-prefix",
                     ],
-                    description: Some("Don\'t print prefix in logs"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't print prefix in logs"),
                 ),
                 (
                     names: [
                         "--since",
                     ],
                     description: Some("Show logs since timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1375,14 +921,9 @@
                         "--tail",
                     ],
                     description: Some("Number of lines to show from the end of the logs for each container. (default \"all\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1392,22 +933,15 @@
                         "--timestamps",
                     ],
                     description: Some("Show timestamps"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--until",
                     ],
                     description: Some("Show logs before a timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1415,23 +949,20 @@
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "fin",
-                            "docker",
-                            "ps",
-                            "--format",
-                            "{{.Names}}",
-                        ],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "fin",
+                                "docker",
+                                "ps",
+                                "--format",
+                                "{{.Names}}",
+                            ],
+                            split_on: Some("\n"),
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "run-cli",
@@ -1439,61 +970,45 @@
                 "rc",
             ],
             description: Some("Run a command in a standalone cli container in the current directory (fin help run-cli)"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--clean",
                     ],
                     description: Some("Run command with a non-persistent $HOME directory"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--clenup",
                     ],
                     description: Some("Clean the persistent $HOME directory and run command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--debug",
                     ],
                     description: Some("Print container debug output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--image",
                     ],
                     description: Some("Override default container image"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "IMAGE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "-e",
                     ],
                     description: Some("Pass environment variable(s) to the container"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VAR=VALUE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1502,110 +1017,61 @@
                         "-T",
                     ],
                     description: Some("Disable pseudo-tty allocation (useful to get clean stdout)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "share",
-            aliases: [],
             description: Some("Create temporary public url for current project using ngrok"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--host",
                     ],
                     description: Some("Override a hostname for ngrok to route to (default is $VIRTUAL_HOST)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "host",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "share-v2",
-            aliases: [],
             description: Some("Create a temporary public URL for the project using Cloudflare Tunnel"),
             subcommands: [
                 (
                     name: "start",
-                    aliases: [],
                     description: Some("Start tunnel and print public URL"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "stop",
-                    aliases: [],
                     description: Some("Stop tunnel"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "status",
-                    aliases: [],
                     description: Some("Prints tunnel status and public URL (if Active)"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "url",
-                    aliases: [],
                     description: Some("Prints tunnel public URL"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "logs",
-                    aliases: [],
                     description: Some("Prints tunnel container logs"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "vhosts",
-            aliases: [],
             description: Some("List all virtual *.docksal hosts registered in Docksal proxy"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "docker",
@@ -1613,9 +1079,6 @@
                 "d",
             ],
             description: Some("Run Docker commands directly"),
-            subcommands: [],
-            options: [],
-            arguments: [],
             load_spec: Some("docker"),
         ),
         (
@@ -1624,9 +1087,6 @@
                 "dc",
             ],
             description: Some("Run Docker Compose commands directly"),
-            subcommands: [],
-            options: [],
-            arguments: [],
             load_spec: Some("docker-compose"),
         ),
         (
@@ -1635,190 +1095,109 @@
                 "dm",
             ],
             description: Some("Run Docker Machine commands directly"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "composer",
-            aliases: [],
             description: Some("Run Composer commands"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "drush",
-            aliases: [],
             description: Some("Drush command (requires Drupal)"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "drupal",
-            aliases: [],
             description: Some("Drupal Console command (requires Drupal 8)"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "platform",
-            aliases: [],
-            description: Some("Platform.sh\'s CLI (requires docksal/cli 2.3+)"),
-            subcommands: [],
-            options: [],
+            description: Some("Platform.sh's CLI (requires docksal/cli 2.3+)"),
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "terminus",
-            aliases: [],
-            description: Some("Pantheon\'s Terminus (requires docksal/cli 2.1+)"),
-            subcommands: [],
-            options: [],
+            description: Some("Pantheon's Terminus (requires docksal/cli 2.1+)"),
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "wp",
-            aliases: [],
             description: Some("WordPress CLI command (requires WordPress)"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "cleanup",
-            aliases: [],
             description: Some("Remove all unused Docker images, unused Docksal volumes and containers"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--images",
                     ],
                     description: Some("Docker images cleanup Wizard"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--hard",
                     ],
                     description: Some("Remove ALL stopped containers even unrelated to Docksal (potentially destructive operation)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "diagnose",
-            aliases: [],
             description: Some("Show diagnostic information for troubleshooting and bug reporting"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "sysinfo",
-            aliases: [],
             description: Some("Show system information"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "update",
-            aliases: [],
             description: Some("Update Docksal"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "DOCKSAL_VERSION",
                     ],
                     description: Some("Update Docksal to the latest development version"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "develop",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "version",
@@ -1828,12 +1207,7 @@
                 "-v",
             ],
             description: Some("Print fin version. [v, -v] prints short version"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
-    options: [],
-    arguments: [],
+    has_generate_spec: true,
 )

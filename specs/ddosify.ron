@@ -2,97 +2,111 @@
     version: 1,
     command: "ddosify",
     description: Some("High-performance load testing tool, written in Golang"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-t",
             ],
             description: Some("Target website URL. Example: https://ddosify.com"),
-            takes_value: true,
             arguments: [
                 (
                     name: "URL",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            required: true,
+            presentation: (
+                priority: Some(90.0),
+                insert_value: Some("-t https://{cursor}"),
+            ),
         ),
         (
             names: [
                 "-n",
             ],
             description: Some("Total request count. Default: 100"),
-            takes_value: true,
             arguments: [
                 (
                     name: "RequestCount",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("100"),
                 ),
             ],
+            presentation: (
+                priority: Some(80.0),
+            ),
         ),
         (
             names: [
                 "-d",
             ],
             description: Some("Test duration in seconds. Default: 10"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Duration",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("10"),
                 ),
             ],
+            presentation: (
+                priority: Some(80.0),
+            ),
         ),
         (
             names: [
                 "-l",
             ],
             description: Some("Type of the request. Default: linear"),
-            takes_value: true,
             arguments: [
                 (
                     name: "RequestType",
-                    source: Static([
-                        "linear",
-                        "incremental",
-                        "waved",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "linear",
+                        ),
+                        (
+                            name: "incremental",
+                        ),
+                        (
+                            name: "waved",
+                        ),
+                    ],
+                    default: Some("linear"),
                 ),
             ],
+            presentation: (
+                priority: Some(70.0),
+            ),
         ),
         (
             names: [
                 "-m",
             ],
             description: Some("HTTP Methods. Default: GET"),
-            takes_value: true,
             arguments: [
                 (
                     name: "HTTPMethod",
-                    source: Static([
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "DELETE",
-                        "HEAD",
-                        "PATCH",
-                        "OPTIONS",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "GET",
+                        ),
+                        (
+                            name: "POST",
+                        ),
+                        (
+                            name: "PUT",
+                        ),
+                        (
+                            name: "DELETE",
+                        ),
+                        (
+                            name: "HEAD",
+                        ),
+                        (
+                            name: "PATCH",
+                        ),
+                        (
+                            name: "OPTIONS",
+                        ),
+                    ],
+                    default: Some("GET"),
                 ),
             ],
         ),
@@ -101,32 +115,28 @@
                 "-b",
             ],
             description: Some("Body for the request"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Body",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            presentation: (
+                insert_value: Some("-b '{cursor}'"),
+            ),
         ),
         (
             names: [
                 "-a",
             ],
             description: Some("Basic authentication"),
-            takes_value: true,
             arguments: [
                 (
                     name: "BasicAuth",
-                    source: Static([
-                        "username:password",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "username:password",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -135,33 +145,33 @@
                 "-h",
             ],
             description: Some("Headers of the request. You can provide multiple headers"),
-            takes_value: true,
             arguments: [
                 (
                     name: "header",
-                    source: Static([
-                        "Content-Type: application/json",
-                        "User-Agent: DdosifyLoadGenerator/0.8.1",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "Content-Type: application/json",
+                        ),
+                        (
+                            name: "User-Agent: DdosifyLoadGenerator/0.8.1",
+                        ),
+                    ],
                 ),
             ],
+            repeat: Many,
+            presentation: (
+                insert_value: Some("-h '{cursor}'"),
+            ),
         ),
         (
             names: [
                 "-T",
             ],
             description: Some("Timeout in seconds. Default: 5"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Timeout",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("5"),
                 ),
             ],
         ),
@@ -170,16 +180,14 @@
                 "-P",
             ],
             description: Some("Proxy address"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Proxy",
-                    source: Static([
-                        "http://user:pass@proxy_host.com:port",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "http://user:pass@proxy_host.com:port",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -188,17 +196,18 @@
                 "-o",
             ],
             description: Some("Test result output format. Default: stdout"),
-            takes_value: true,
             arguments: [
                 (
                     name: "OutputFormat",
-                    source: Static([
-                        "stdout",
-                        "stdout-json",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "stdout",
+                        ),
+                        (
+                            name: "stdout-json",
+                        ),
+                    ],
+                    default: Some("stdout"),
                 ),
             ],
         ),
@@ -207,14 +216,9 @@
                 "--config",
             ],
             description: Some("Config file of the load test i.e example_ddosify_config.json"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ConfigFile",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -223,25 +227,18 @@
                 "--version",
             ],
             description: Some("Prints version, git commit, built date (utc)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--debug",
             ],
             description: Some("Iterates the scenario once and prints curl-like verbose result"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--help",
             ],
             description: Some("Prints CLI flags"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

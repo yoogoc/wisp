@@ -5,53 +5,27 @@
     subcommands: [
         (
             name: "show",
-            aliases: [],
             description: Some("Show the active and installed toolchains or profiles"),
             subcommands: [
                 (
                     name: "active-toolchain",
-                    aliases: [],
                     description: Some("Show the active toolchain"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "home",
-                    aliases: [],
                     description: Some("Display the computed value of RUSTUP_HOME"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "profile",
-                    aliases: [],
                     description: Some("Show the current profile"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "keys",
-                    aliases: [],
                     description: Some("Display the known PGP keys"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "help",
-                    aliases: [],
                     description: Some("Prints this message or the help of the given subcommand(s)"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -61,34 +35,24 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "update",
-            aliases: [],
             description: Some("Update Rust toolchains and rustup"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--force",
                     ],
                     description: Some("Force an update, even if some components are missing"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--force-non-host",
                     ],
                     description: Some("Install toolchains that require an emulator. See https://github.com/rust-lang/rustup/wiki/Non-host-toolchains"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -96,42 +60,36 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-self-update",
                     ],
-                    description: Some("Don\'t perform self update when running the `rustup update` command"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't perform self update when running the `rustup update` command"),
                 ),
             ],
             arguments: [
                 (
                     name: "toolchain",
-                    source: Unavailable,
+                    description: Some("Toolchain name. For more information see `rustup help toolchain`"),
+                    generators: [
+                        (
+                            script: [
+                                "rustup",
+                                "toolchain",
+                                "list",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "rustup",
-                            "toolchain",
-                            "list",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "check",
-            aliases: [],
             description: Some("Check for updates to Rust toolchains and rustup"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -139,26 +97,19 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "toolchain",
-                    source: Files,
+                    description: Some("Toolchain name. For more information see `rustup help toolchain`"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "default",
-            aliases: [],
             description: Some("Sets the default toolchain to the one specified. If the toolchain is not already installed then it is installed first"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -166,39 +117,33 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "toolchain",
-                    source: Unavailable,
+                    description: Some("Toolchain name"),
+                    generators: [
+                        (
+                            script: [
+                                "rustup",
+                                "toolchain",
+                                "list",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rustup",
-                            "toolchain",
-                            "list",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "target",
-            aliases: [],
-            description: Some("Modify a toolchain\'s supported targets"),
+            description: Some("Modify a toolchain's supported targets"),
             subcommands: [
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List installed and available targets"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -206,8 +151,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -215,18 +158,12 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Add a target to a Rust toolchain"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -234,8 +171,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -243,30 +178,25 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--toolchain",
                             ],
-                            description: None,
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "toolchain",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "rustup",
-                                            "toolchain",
-                                            "list",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    description: Some("Toolchain name"),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "rustup",
+                                                "toolchain",
+                                                "list",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -274,27 +204,23 @@
                     arguments: [
                         (
                             name: "target",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "rustup",
-                                    "target",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            description: Some("Target triple"),
+                            generators: [
+                                (
+                                    script: [
+                                        "rustup",
+                                        "target",
+                                        "list",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "remove",
-                    aliases: [],
                     description: Some("Remove a target from a Rust toolchain"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -302,8 +228,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -311,30 +235,25 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--toolchain",
                             ],
-                            description: None,
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "toolchain",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "rustup",
-                                            "toolchain",
-                                            "list",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    description: Some("Toolchain name"),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "rustup",
+                                                "toolchain",
+                                                "list",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -342,27 +261,23 @@
                     arguments: [
                         (
                             name: "target",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "rustup",
-                                    "target",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            description: Some("Target triple"),
+                            generators: [
+                                (
+                                    script: [
+                                        "rustup",
+                                        "target",
+                                        "list",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "help",
-                    aliases: [],
                     description: Some("Prints this message or the help of the given subcommand(s)"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -370,8 +285,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -379,20 +292,14 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "subcommand",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -402,23 +309,16 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "toolchain",
-            aliases: [],
             description: Some("Modify or query the installed toolchains"),
             subcommands: [
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List installed toolchains"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -426,8 +326,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -435,18 +333,12 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "install",
-                    aliases: [],
                     description: Some("Install or update a given toolchain"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -454,8 +346,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -463,22 +353,20 @@
                                 "--target",
                             ],
                             description: Some("Add specific targets on installation"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "targets",
-                                    source: Unavailable,
-                                    optional: false,
+                                    generators: [
+                                        (
+                                            script: [
+                                                "rustup",
+                                                "target",
+                                                "list",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                     variadic: true,
-                                    imported_generator: Some((
-                                        script: [
-                                            "rustup",
-                                            "target",
-                                            "list",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
                                 ),
                             ],
                         ),
@@ -488,14 +376,10 @@
                                 "--component",
                             ],
                             description: Some("Add specific components on installation"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "components",
-                                    source: Files,
-                                    optional: false,
                                     variadic: true,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -503,19 +387,20 @@
                             names: [
                                 "--profile",
                             ],
-                            description: None,
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "profile",
-                                    source: Static([
-                                        "minimal",
-                                        "default",
-                                        "complete",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "minimal",
+                                        ),
+                                        (
+                                            name: "default",
+                                        ),
+                                        (
+                                            name: "complete",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -524,50 +409,45 @@
                                 "--allow-downgrade",
                             ],
                             description: Some("Allow rustup to downgrade the toolchain to satisfy your component choice"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--force",
                             ],
                             description: Some("Force an update, even if some components are missing"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-self-update",
                             ],
-                            description: Some("Don\'t perform self update when running the`rustup toolchain install` command"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Don't perform self update when running the`rustup toolchain install` command"),
                         ),
                     ],
                     arguments: [
                         (
                             name: "toolchain",
-                            source: Unavailable,
-                            optional: false,
+                            description: Some("Toolchain name"),
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "if command -v gh > /dev/null; then       gh api -H \"Accept: application/vnd.github+json\" /repos/rust-lang/rust/releases;     else       curl -sfL -H \"Accept: application/vnd.github+json\" https://api.github.com/repos/rust-lang/rust/releases;     fi",
+                                    ],
+                                    has_post_process: true,
+                                    cache: Some((
+                                        ttl_ms: Some(3600000),
+                                        stale_while_revalidate: true,
+                                    )),
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "if command -v gh > /dev/null; then       gh api -H \"Accept: application/vnd.github+json\" /repos/rust-lang/rust/releases;     else       curl -sfL -H \"Accept: application/vnd.github+json\" https://api.github.com/repos/rust-lang/rust/releases;     fi",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "uninstall",
-                    aliases: [],
                     description: Some("Uninstall a toolchain"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -575,34 +455,29 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "toolchain",
-                            source: Unavailable,
-                            optional: false,
+                            description: Some("Toolchain name"),
+                            generators: [
+                                (
+                                    script: [
+                                        "rustup",
+                                        "toolchain",
+                                        "list",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "rustup",
-                                    "toolchain",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "link",
-                    aliases: [],
                     description: Some("Create a custom toolchain by symlinking to a directory"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -610,33 +485,23 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "toolchain",
-                            source: Files,
-                            optional: false,
+                            description: Some("Custom toolchain name"),
                             variadic: true,
-                            imported_generator: None,
                         ),
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Path to the directory"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "help",
-                    aliases: [],
                     description: Some("Prints this message or the help of the given subcommand(s)"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -644,8 +509,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -653,20 +516,14 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "subcommand",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -676,23 +533,16 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "component",
-            aliases: [],
-            description: Some("Modify a toolchain\'s installed components"),
+            description: Some("Modify a toolchain's installed components"),
             subcommands: [
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List installed and available components"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -700,8 +550,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -709,18 +557,12 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Add a component to a Rust toolchain"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -728,8 +570,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -737,18 +577,12 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "remove",
-                    aliases: [],
                     description: Some("Remove a component from a Rust toolchain"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -756,8 +590,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -765,29 +597,18 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "help",
-                    aliases: [],
                     description: Some("Prints this message or the help of the given subcommand(s)"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "subcommand(s)",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -797,23 +618,16 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "override",
-            aliases: [],
             description: Some("Modify directory toolchain overrides"),
             subcommands: [
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List directory toolchain overrides"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -821,8 +635,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -830,18 +642,12 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "set",
-                    aliases: [],
                     description: Some("Set the override toolchain for a directory"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -849,8 +655,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -858,34 +662,28 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "toolchain",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "rustup",
-                                    "toolchain",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            description: Some("Toolchain name"),
+                            generators: [
+                                (
+                                    script: [
+                                        "rustup",
+                                        "toolchain",
+                                        "list",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "unset",
-                    aliases: [],
                     description: Some("Remove the override toolchain for a directory"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -893,8 +691,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -902,29 +698,18 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "help",
-                    aliases: [],
                     description: Some("Prints this message or the help of the given subcommand(s)"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "subcommand(s)",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -934,18 +719,12 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "run",
-            aliases: [],
             description: Some("Run a command with an environment configured for a given toolchain"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -953,49 +732,39 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--install",
                     ],
                     description: Some("Install the requested toolchain if needed"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "toolchain",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rustup",
-                            "toolchain",
-                            "list",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("Toolchain name"),
+                    generators: [
+                        (
+                            script: [
+                                "rustup",
+                                "toolchain",
+                                "list",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
+                    is_command: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "which",
-            aliases: [],
             description: Some("Display which binary will be run for a given command"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1003,90 +772,69 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--toolchain",
                     ],
                     description: Some("Toolchain name"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "toolchain",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "rustup",
-                                    "toolchain",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "rustup",
+                                        "toolchain",
+                                        "list",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "doc",
-            aliases: [],
             description: Some("Open the documentation for the current toolchain"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--alloc",
                     ],
                     description: Some("The Rust core allocation and collections library"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--book",
                     ],
                     description: Some("The Rust Programming Language book"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--cargo",
                     ],
                     description: Some("The Cargo Book"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--core",
                     ],
                     description: Some("The Rust Core Library"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--edition-guide",
                     ],
                     description: Some("The Rust Edition Guide"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--embedded-book",
                     ],
                     description: Some("The Embedded Rust Book"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1094,110 +842,85 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--nomicon",
                     ],
                     description: Some("The Dark Arts of Advanced and Unsafe Rust Programming"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--path",
                     ],
                     description: Some("Only print the path to the documentation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--proc_macro",
                     ],
                     description: Some("A support library for macro authors when defining new macros"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--reference",
                     ],
                     description: Some("The Rust Reference"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--rust-by-example",
                     ],
                     description: Some("A collection of runnable examples that illustrate various Rust concepts and standard libraries"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--rustc",
                     ],
                     description: Some("The compiler for the Rust programming language"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--rustdoc",
                     ],
                     description: Some("Generate documentation for Rust projects"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--std",
                     ],
                     description: Some("Standard library API documentation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--test",
                     ],
-                    description: Some("Support code for rustc\'s built in unit-test and micro-benchmarking framework"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Support code for rustc's built in unit-test and micro-benchmarking framework"),
                 ),
                 (
                     names: [
                         "--unstable-book",
                     ],
                     description: Some("--unstable-book"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--toolchain",
                     ],
                     description: Some("Toolchain name"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "toolchain",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "rustup",
-                                    "toolchain",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "rustup",
+                                        "toolchain",
+                                        "list",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1205,27 +928,23 @@
             arguments: [
                 (
                     name: "topic",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "find $(rustup docs --path | sed -e \"s|index\\.html|std|\") $(rustup docs --path | sed -e \"s|index\\.html|alloc|\") $(rustup docs --path | sed -e \"s|index\\.html|core|\") | grep \"\\.html\" | sed -E -e \"s|^(.*)/html/||\" -e \"s|\\.html||\" -e \"s|/|::|g\" -e \"s/constant\\.|trait\\.|struct\\.|macro\\.|fn\\.|keyword\\.|primitive\\.|type\\.|enum\\.|union\\.|traitalias\\.|::index$|^(.*)::all$//\" -e \"/^$/d\"",
-                        ],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    description: Some("Topic such as 'core', 'fn', 'usize', 'eprintln!', 'core::arch', 'alloc::format!', 'std::fs', 'std::fs::read_dir', 'std::io::Bytes', 'std::iter::Sum', 'std::io::error::Result' etc"),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "find $(rustup docs --path | sed -e \"s|index\\.html|std|\") $(rustup docs --path | sed -e \"s|index\\.html|alloc|\") $(rustup docs --path | sed -e \"s|index\\.html|core|\") | grep \"\\.html\" | sed -E -e \"s|^(.*)/html/||\" -e \"s|\\.html||\" -e \"s|/|::|g\" -e \"s/constant\\.|trait\\.|struct\\.|macro\\.|fn\\.|keyword\\.|primitive\\.|type\\.|enum\\.|union\\.|traitalias\\.|::index$|^(.*)::all$//\" -e \"/^$/d\"",
+                            ],
+                            split_on: Some("\n"),
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "man",
-            aliases: [],
             description: Some("View the man page for a given command"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1233,47 +952,37 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--toolchain",
                     ],
                     description: Some("Toolchain name"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "toolchain",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "rustup",
-                                    "toolchain",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "rustup",
+                                        "toolchain",
+                                        "list",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "self",
-            aliases: [],
             description: Some("Modify the rustup installation"),
             subcommands: [
                 (
                     name: "update",
-                    aliases: [],
                     description: Some("Download and install updates to rustup"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1281,8 +990,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1290,18 +997,12 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "uninstall",
-                    aliases: [],
                     description: Some("Uninstall rustup"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1309,8 +1010,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1318,18 +1017,12 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "upgrade-data",
-                    aliases: [],
                     description: Some("Upgrade the internal data format"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1337,8 +1030,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1346,29 +1037,18 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "help",
-                    aliases: [],
                     description: Some("Prints this message or the help of the given subcommand(s)"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "subcommand(s)",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -1378,23 +1058,16 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "set",
-            aliases: [],
             description: Some("Alter rustup settings"),
             subcommands: [
                 (
                     name: "auto-self-update",
-                    aliases: [],
                     description: Some("The rustup auto self update mode"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1402,8 +1075,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1411,30 +1082,29 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "auto-self-update-mode",
-                            source: Static([
-                                "enable",
-                                "disable",
-                                "check-only",
-                            ]),
+                            suggestions: [
+                                (
+                                    name: "enable",
+                                ),
+                                (
+                                    name: "disable",
+                                ),
+                                (
+                                    name: "check-only",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("enable"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "default-host",
-                    aliases: [],
-                    description: None,
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1442,8 +1112,6 @@
                                 "--help",
                             ],
                             description: Some("Prints help information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1451,28 +1119,23 @@
                                 "--version",
                             ],
                             description: Some("Prints version information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "host-triple",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "rustup",
-                                    "target",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "rustup",
+                                        "target",
+                                        "list",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -1482,18 +1145,12 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "completions",
-            aliases: [],
             description: Some("Generate tab-completion scripts for your shell"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1501,53 +1158,52 @@
                         "--help",
                     ],
                     description: Some("Prints help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "shell",
-                    source: Static([
-                        "zsh",
-                        "bash",
-                        "fish",
-                        "powershell",
-                        "elvish",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "zsh",
+                        ),
+                        (
+                            name: "bash",
+                        ),
+                        (
+                            name: "fish",
+                        ),
+                        (
+                            name: "powershell",
+                        ),
+                        (
+                            name: "elvish",
+                        ),
+                    ],
                 ),
                 (
                     name: "command",
-                    source: Static([
-                        "rustup",
-                        "cargo",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "rustup",
+                        ),
+                        (
+                            name: "cargo",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Prints this message or the help of the given subcommand(s)"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "subcommand",
-                    source: Files,
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -1557,8 +1213,6 @@
                 "--help",
             ],
             description: Some("Prints help information"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -1566,8 +1220,6 @@
                 "--version",
             ],
             description: Some("Prints version information"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -1575,8 +1227,6 @@
                 "--quiet",
             ],
             description: Some("Disable progress output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -1584,17 +1234,14 @@
                 "--verbose",
             ],
             description: Some("Enable verbose output"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "toolchain",
-            source: Files,
+            description: Some("Release channel (e.g. +stable) or custom toolchain to set override"),
             optional: true,
-            variadic: false,
-            imported_generator: None,
         ),
     ],
+    has_generate_spec: true,
 )

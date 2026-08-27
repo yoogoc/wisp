@@ -1,8 +1,6 @@
 (
     version: 1,
     command: "babel",
-    description: None,
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,14 +8,9 @@
                 "--filename",
             ],
             description: Some("The filename to use when reading from stdin. This will be used in source-maps, errors etc"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -26,14 +19,9 @@
                 "--presets",
             ],
             description: Some("A comma-separated list of preset names"),
-            takes_value: true,
             arguments: [
                 (
                     name: "list",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -42,14 +30,9 @@
                 "--plugins",
             ],
             description: Some("A comma-separated list of plugin names"),
-            takes_value: true,
             arguments: [
                 (
                     name: "list",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -58,14 +41,12 @@
                 "--config-file",
             ],
             description: Some("Path to a .babelrc file to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -73,18 +54,18 @@
             names: [
                 "--env-name",
             ],
-            description: Some("The name of the \'env\' to use when loading configs and plugins. Defaults to the value of BABEL_ENV, or else NODE_ENV, or else \'development\'"),
-            takes_value: true,
+            description: Some("The name of the 'env' to use when loading configs and plugins. Defaults to the value of BABEL_ENV, or else NODE_ENV, or else 'development'"),
             arguments: [
                 (
                     name: "env",
-                    source: Static([
-                        "production",
-                        "development",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "production",
+                        ),
+                        (
+                            name: "development",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -93,18 +74,24 @@
                 "--root-mode",
             ],
             description: Some("The project-root resolution mode"),
-            takes_value: true,
             arguments: [
                 (
                     name: "mode",
-                    source: Static([
-                        "root",
-                        "upward",
-                        "upward-optional",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "root",
+                            description: Some("Passes the \"root\" value through as unchanged"),
+                        ),
+                        (
+                            name: "upward",
+                            description: Some("Walks upward from the \"root\" directory, looking for a directory containing a babel.config.json file, and throws an error if a babel.config.json is not found"),
+                        ),
+                        (
+                            name: "upward-optional",
+                            description: Some("Walk upward from the \"root\" directory, looking for a directory containing a babel.config.json file, and falls back to \"root\" if a babel.config.json is not found"),
+                        ),
+                    ],
+                    default: Some("root"),
                 ),
             ],
         ),
@@ -112,18 +99,17 @@
             names: [
                 "--source-type",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "script",
-                        "module",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "script",
+                        ),
+                        (
+                            name: "module",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -132,22 +118,15 @@
                 "--no-babelrc",
             ],
             description: Some("Whether or not to look up .babelrc and .babelignore files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ignore",
             ],
             description: Some("List of glob paths to **not** compile"),
-            takes_value: true,
             arguments: [
                 (
                     name: "list",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -156,14 +135,9 @@
                 "--only",
             ],
             description: Some("List of glob paths to **only** compile"),
-            takes_value: true,
             arguments: [
                 (
                     name: "list",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -172,42 +146,38 @@
                 "--no-highlight-code",
             ],
             description: Some("Enable or disable ANSI syntax highlighting of code frames"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-comments",
             ],
             description: Some("Write comments to generated output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--retain-lines",
             ],
             description: Some("Retain line numbers. This will result in really ugly code"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--compact",
             ],
             description: Some("Do not include superfluous whitespace characters and line terminators"),
-            takes_value: true,
             arguments: [
                 (
                     name: "mode",
-                    source: Static([
-                        "true",
-                        "false",
-                        "auto",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                        (
+                            name: "auto",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -216,22 +186,15 @@
                 "--minified",
             ],
             description: Some("Save as many bytes when printing. (false by default)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--auxiliary-comment-before",
             ],
             description: Some("Print a comment before any injected non-user code"),
-            takes_value: true,
             arguments: [
                 (
                     name: "comment",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -240,14 +203,9 @@
                 "--auxiliary-comment-after",
             ],
             description: Some("Print a comment after any injected non-user code"),
-            takes_value: true,
             arguments: [
                 (
                     name: "comment",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -256,20 +214,23 @@
                 "-s",
                 "--source-maps",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "mode",
-                    source: Static([
-                        "true",
-                        "false",
-                        "inline",
-                        "both",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                        (
+                            name: "inline",
+                        ),
+                        (
+                            name: "both",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -278,14 +239,9 @@
                 "--source-map-target",
             ],
             description: Some("Set `file` on returned source map"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -294,14 +250,9 @@
                 "--source-file-name",
             ],
             description: Some("Set `sources[0]` on returned source map"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -310,14 +261,9 @@
                 "--source-root",
             ],
             description: Some("The root from which all sources are relative"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -327,14 +273,9 @@
                 "--extensions",
             ],
             description: Some("Comma separated list of extensions to compile when a directory has been the input. [js,ts,jsx,tsx]"),
-            takes_value: true,
             arguments: [
                 (
                     name: "extensions",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -343,8 +284,6 @@
                 "--keep-file-extension",
             ],
             description: Some("Preserve the file extensions of the input files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -352,16 +291,12 @@
                 "--watch",
             ],
             description: Some("Recompile files on changes"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--skip-initial-build",
             ],
             description: Some("Do not compile files before watching"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -369,14 +304,12 @@
                 "--out-file",
             ],
             description: Some("Compile all input files into a single file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -386,14 +319,12 @@
                 "--out-dir",
             ],
             description: Some("Compile an input directory of modules into an output directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -402,8 +333,9 @@
                 "--relative",
             ],
             description: Some("Compile into an output directory relative to input directory or file"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "--out-dir",
+            ],
         ),
         (
             names: [
@@ -411,68 +343,68 @@
                 "--copy-files",
             ],
             description: Some("When compiling a directory copy over non-compilable files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--include-dotfiles",
             ],
             description: Some("Include dotfiles when compiling and copying non-compilable files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-copy-ignored",
             ],
             description: Some("Exclude ignored files when copying non-compilable files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--verbose",
             ],
             description: Some("Log everything. This option conflicts with --quiet"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--quiet",
+            ],
         ),
         (
             names: [
                 "--quiet",
             ],
-            description: Some("Don\'t log anything. This option conflicts with --verbose"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't log anything. This option conflicts with --verbose"),
+            exclusive_on: [
+                "--verbose",
+            ],
         ),
         (
             names: [
                 "--delete-dir-on-start",
             ],
             description: Some("Delete the out directory before compilation"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--out-file-extension",
             ],
             description: Some("Use a specific extension for the output files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "extension",
-                    source: Static([
-                        ".es6",
-                        ".js",
-                        ".es",
-                        ".jsx",
-                        ".mjs",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: ".es6",
+                        ),
+                        (
+                            name: ".js",
+                        ),
+                        (
+                            name: ".es",
+                        ),
+                        (
+                            name: ".jsx",
+                        ),
+                        (
+                            name: ".mjs",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -482,8 +414,6 @@
                 "--version",
             ],
             description: Some("Output the version number"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -491,9 +421,9 @@
                 "--help",
             ],
             description: Some("Output usage information"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
+    presentation: (
+        icon: Some("https://raw.githubusercontent.com/babel/logo/master/babel.png"),
+    ),
 )

@@ -2,7 +2,6 @@
     version: 1,
     command: "bat",
     description: Some("A cat(1) clone with syntax highlighting and Git integration"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "--show-all",
             ],
             description: Some("Show non-printable characters"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,8 +16,6 @@
                 "--plain",
             ],
             description: Some("Show plain style, no decorations"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -28,21 +23,18 @@
                 "--language",
             ],
             description: Some("Explicitly set the language for syntax highlighting"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<language>",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bat",
-                            "--list-languages",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bat",
+                                "--list-languages",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -52,14 +44,10 @@
                 "--highlight-line",
             ],
             description: Some("Highlight the specified line ranges"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<N:M> ",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Range of line"),
                 ),
             ],
         ),
@@ -68,14 +56,14 @@
                 "--file-name",
             ],
             description: Some("Specify the name to display for a file. Useful when piping data to bat from STDIN when bat does not otherwise know the filename"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
+                    name: "",
+                    description: Some("File(s)"),
+                    template: [
+                        FilePaths,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -85,22 +73,16 @@
                 "--diff",
             ],
             description: Some("Show lines that have been added/removed/modified with respect to the Git index"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--diff-context",
             ],
-            description: Some("Include N lines of context around added/removed/modified lines when using \'--diff\'"),
-            takes_value: true,
+            description: Some("Include N lines of context around added/removed/modified lines when using '--diff'"),
             arguments: [
                 (
                     name: "<N> ",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Lines of context"),
                 ),
             ],
         ),
@@ -109,14 +91,10 @@
                 "--tabs",
             ],
             description: Some("Set the tab width to T spaces. Use a width of 0 to pass tabs through directly"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<T> ",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Spaces of tab width"),
                 ),
             ],
         ),
@@ -125,22 +103,19 @@
                 "--wrap",
             ],
             description: Some("Specify when to use colored output"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<mode>",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "bat --wrap unknow 2>&1 >/dev/null | grep possible",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "bat --wrap unknow 2>&1 >/dev/null | grep possible",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -149,14 +124,10 @@
                 "--terminal-width",
             ],
             description: Some("Explicitly set the width of the terminal instead of determining it automatically"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<width> ",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Width to wrap"),
                 ),
             ],
         ),
@@ -166,30 +137,25 @@
                 "--number",
             ],
             description: Some("Show line numbers, no other decorations"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--color",
             ],
             description: Some("Specify when to use colored output"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<when>",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "bat --color unknow  2>&1 >/dev/null | grep possible",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "bat --color unknow  2>&1 >/dev/null | grep possible",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -198,22 +164,19 @@
                 "--italic-text",
             ],
             description: Some("Specify when to use ANSI sequences for italic text in the output"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<when>",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "bat --italic-text unknow 2>&1 >/dev/null | grep possible",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "bat --italic-text unknow 2>&1 >/dev/null | grep possible",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -221,23 +184,20 @@
             names: [
                 "--decorations",
             ],
-            description: Some("Specify when to use the decorations that have been specified via \'--style\'"),
-            takes_value: true,
+            description: Some("Specify when to use the decorations that have been specified via '--style'"),
             arguments: [
                 (
                     name: "<when>",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "bat --decorations unknow 2>&1 >/dev/null | grep possible",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "bat --decorations unknow 2>&1 >/dev/null | grep possible",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -246,31 +206,26 @@
                 "-f",
                 "--force-colorization",
             ],
-            description: Some("Alias for \'--decorations=always --color=always\'"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Alias for '--decorations=always --color=always'"),
         ),
         (
             names: [
                 "--paging",
             ],
             description: Some("Specify when to use the pager"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<when>",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "bat --paging unknow  2>&1 >/dev/null | grep possible",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "bat --paging unknow  2>&1 >/dev/null | grep possible",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -279,14 +234,10 @@
                 "--pager",
             ],
             description: Some("Determine which pager is used"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<command>",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Command to pager"),
                 ),
             ],
         ),
@@ -296,14 +247,10 @@
                 "--map-syntax",
             ],
             description: Some("Map a glob pattern to an existing syntax name"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<glob:syntax>",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Full path or the filename:language that highlighted"),
                 ),
             ],
         ),
@@ -312,14 +259,10 @@
                 "--ignored-suffix",
             ],
             description: Some("Ignore extension"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<ignored-suffix>",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Extension"),
                 ),
             ],
         ),
@@ -328,21 +271,18 @@
                 "--theme",
             ],
             description: Some("Set the theme for syntax highlighting"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<theme>",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bat",
-                            "--list-themes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bat",
+                                "--list-themes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -351,16 +291,12 @@
                 "--list-themes",
             ],
             description: Some("Display a list of supported themes for syntax highlighting"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--style",
             ],
             description: Some("Display a list of supported themes for syntax highlighting"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -368,14 +304,10 @@
                 "--line-range",
             ],
             description: Some("Only print the specified range of lines for each file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "<N:M> ",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Range of line"),
                 ),
             ],
         ),
@@ -385,8 +317,6 @@
                 "--list-languages",
             ],
             description: Some("Display a list of supported languages for syntax highlighting"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -394,24 +324,18 @@
                 "--unbuffered",
             ],
             description: Some("Make output unbuffered (exists for POSIX-compliance reasons and is simply ignored)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--diagnostic",
             ],
             description: Some("Show diagnostic information for bug reports"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--acknowledgements",
             ],
             description: Some("Show acknowledgements"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -419,8 +343,6 @@
                 "--help",
             ],
             description: Some("Print help message"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -428,17 +350,16 @@
                 "--version",
             ],
             description: Some("Show version information"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
-            name: "value",
-            source: Files,
-            optional: false,
+            name: "",
+            description: Some("File(s)"),
+            template: [
+                FilePaths,
+            ],
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

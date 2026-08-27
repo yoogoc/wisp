@@ -5,56 +5,46 @@
     subcommands: [
         (
             name: "help",
-            aliases: [],
-            description: None,
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
+                    template: [
+                        Help,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("ℹ️"),
+            ),
         ),
         (
             name: "download",
-            aliases: [],
             description: Some("Download a specific version of Xcode"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--latest",
                     ],
                     description: Some("Update and then install the latest non-prerelease version available"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--latest-prerelease",
                     ],
                     description: Some("Update and then install the latest prerelease version available, including GM seeds and GMs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--aria2",
                     ],
                     description: Some("The path to an aria2 executable. Searches $PATH by default"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "aria2",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -62,23 +52,19 @@
                     names: [
                         "--no-aria2",
                     ],
-                    description: Some("Don\'t use aria2 to download Xcode, even if it\'s available"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't use aria2 to download Xcode, even if it's available"),
                 ),
                 (
                     names: [
                         "--directory",
                     ],
                     description: Some("The directory where your Xcodes are installed. Defaults to /Applications"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -87,17 +73,17 @@
                         "--data-source",
                     ],
                     description: Some("The data source for available Xcode versions. (default: xcodereleases)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dataSource",
-                            source: Static([
-                                "xcodereleases",
-                                "apple",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "xcodereleases",
+                                ),
+                                (
+                                    name: "apple",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -106,55 +92,49 @@
                         "--color",
                     ],
                     description: Some("Color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Do not color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "version",
-                    source: Unavailable,
+                    description: Some("The version to install"),
+                    generators: [
+                        (
+                            script: [
+                                "xcodes",
+                                "list",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "xcodes",
-                            "list",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("⬇️"),
+            ),
         ),
         (
             name: "install",
-            aliases: [],
             description: Some("Download and install a specific version of Xcode"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--path",
                     ],
                     description: Some("Local path to Xcode.xip"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -163,30 +143,24 @@
                         "--latest",
                     ],
                     description: Some("Update and then install the latest non-prerelease version available"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--latest-prerelease",
                     ],
                     description: Some("Update and then install the latest prerelease version available, including GM seeds and GMs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--aria2",
                     ],
                     description: Some("The path to an aria2 executable. Searches $PATH by default"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "aria2",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -194,31 +168,25 @@
                     names: [
                         "--no-aria2",
                     ],
-                    description: Some("Don\'t use aria2 to download Xcode, even if it\'s available"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't use aria2 to download Xcode, even if it's available"),
                 ),
                 (
                     names: [
                         "--experimental-unxip",
                     ],
                     description: Some("Use the experimental unxip functionality. May speed up unarchiving by up to 2-3x"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--directory",
                     ],
                     description: Some("The directory where your Xcodes are installed. Defaults to /Applications"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -227,17 +195,17 @@
                         "--data-source",
                     ],
                     description: Some("The data source for available Xcode versions. (default: xcodereleases)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dataSource",
-                            source: Static([
-                                "xcodereleases",
-                                "apple",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "xcodereleases",
+                                ),
+                                (
+                                    name: "apple",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -246,55 +214,49 @@
                         "--color",
                     ],
                     description: Some("Color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Do not color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "version",
-                    source: Unavailable,
+                    description: Some("The version to install"),
+                    generators: [
+                        (
+                            script: [
+                                "xcodes",
+                                "list",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "xcodes",
-                            "list",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("⬇️"),
+            ),
         ),
         (
             name: "installed",
-            aliases: [],
             description: Some("List the versions of Xcode that are installed"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--directory",
                     ],
                     description: Some("The directory where your Xcodes are installed. Defaults to /Applications"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -303,40 +265,33 @@
                         "--color",
                     ],
                     description: Some("Color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Do not color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("🔨"),
+            ),
         ),
         (
             name: "list",
-            aliases: [],
             description: Some("List all versions of Xcode available to install"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--directory",
                     ],
                     description: Some("The directory where your Xcodes are installed. Defaults to /Applications"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -345,17 +300,17 @@
                         "--data-source",
                     ],
                     description: Some("The data source for available Xcode versions. (default: xcodereleases)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dataSource",
-                            source: Static([
-                                "xcodereleases",
-                                "apple",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "xcodereleases",
+                                ),
+                                (
+                                    name: "apple",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -364,26 +319,21 @@
                         "--color",
                     ],
                     description: Some("Color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Do not color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("🔍"),
+            ),
         ),
         (
             name: "select",
-            aliases: [],
             description: Some("Change the selected Xcode"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -391,22 +341,18 @@
                         "--print-path",
                     ],
                     description: Some("Print the path of the selected Xcode"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--directory",
                     ],
                     description: Some("The directory where your Xcodes are installed. Defaults to /Applications"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -415,55 +361,49 @@
                         "--color",
                     ],
                     description: Some("Color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Do not color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "version-or-path",
-                    source: Unavailable,
+                    description: Some("Version or path of Xcode to select"),
+                    generators: [
+                        (
+                            script: [
+                                "xcodes",
+                                "installed",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "xcodes",
-                            "installed",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("☑️"),
+            ),
         ),
         (
             name: "uninstall",
-            aliases: [],
             description: Some("Uninstall a version of Xcode"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--directory",
                     ],
                     description: Some("The directory where your Xcodes are installed. Defaults to /Applications"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -472,55 +412,50 @@
                         "--color",
                     ],
                     description: Some("Color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Do not color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "version",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            script: [
+                                "xcodes",
+                                "installed",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "xcodes",
-                            "installed",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    dangerous: true,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("❌"),
+                dangerous: true,
+            ),
         ),
         (
             name: "update",
-            aliases: [],
             description: Some("Update the list of available versions of Xcode"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--directory",
                     ],
                     description: Some("The directory where your Xcodes are installed. Defaults to /Applications"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -529,17 +464,17 @@
                         "--data-source",
                     ],
                     description: Some("The data source for available Xcode versions. (default: xcodereleases)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dataSource",
-                            source: Static([
-                                "xcodereleases",
-                                "apple",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "xcodereleases",
+                                ),
+                                (
+                                    name: "apple",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -548,42 +483,33 @@
                         "--color",
                     ],
                     description: Some("Color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Do not color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("🔄"),
+            ),
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Print the version number of xcodes itself"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--color",
                     ],
                     description: Some("Color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Do not color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -591,38 +517,26 @@
                         "-h",
                     ],
                     description: Some("Show help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "signout",
-            aliases: [],
             description: Some("Clears the stored username and password"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--color",
                     ],
                     description: Some("Color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Do not color the output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -632,9 +546,7 @@
                 "-h",
             ],
             description: Some("Show help information"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
     ],
-    arguments: [],
 )

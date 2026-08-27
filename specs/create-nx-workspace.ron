@@ -2,21 +2,16 @@
     version: 1,
     command: "create-nx-workspace",
     description: Some("Create a new Nx workspace"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--name",
             ],
             description: Some("Workspace name (e.g., org name)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "workspace",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name of the workspace"),
                 ),
             ],
         ),
@@ -25,27 +20,95 @@
                 "--preset",
             ],
             description: Some("What to create in a new workspace (options: \"empty\", \"npm\", \"web-components\", \"angular\", \"angular-nest\", \"react\", \"react-express\", \"react-native\", \"next\", \"gatsby\", \"nest\", \"express\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "preset",
-                    source: Static([
-                        "empty",
-                        "npm",
-                        "web-components",
-                        "angular",
-                        "angular-nest",
-                        "react",
-                        "react-express",
-                        "react-native",
-                        "next",
-                        "gatsby",
-                        "nest",
-                        "express",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "empty",
+                            description: Some("Empty [an empty workspace with a layout that works best for building apps]"),
+                            presentation: (
+                                icon: Some("https://github.com/nrwl/nx/raw/master/images/nx-logo.png"),
+                            ),
+                        ),
+                        (
+                            name: "npm",
+                            description: Some("Npm [an empty workspace set up to publish npm packages (similar to and compatible with yarn workspaces)]"),
+                            presentation: (
+                                icon: Some("fig://icon?type=npm"),
+                            ),
+                        ),
+                        (
+                            name: "web-components",
+                            description: Some("Web components [a workspace with a single app built using web components]"),
+                            presentation: (
+                                icon: Some("https://web-components-resources.appspot.com/static/logo.svg"),
+                            ),
+                        ),
+                        (
+                            name: "angular",
+                            description: Some("Angular [a workspace with a single Angular application]"),
+                            presentation: (
+                                icon: Some("https://angular.io/assets/images/logos/angular/angular.svg"),
+                            ),
+                        ),
+                        (
+                            name: "angular-nest",
+                            description: Some("Angular-nest [a workspace with a full stack application (Angular + Nest)]"),
+                            presentation: (
+                                icon: Some("https://angular.io/assets/images/logos/angular/angular.svg"),
+                            ),
+                        ),
+                        (
+                            name: "react",
+                            description: Some("React [a workspace with a single React application]"),
+                            presentation: (
+                                icon: Some("https://reactjs.org/favicon.ico"),
+                            ),
+                        ),
+                        (
+                            name: "react-express",
+                            description: Some("React-express [a workspace with a full stack application (React + Express)]"),
+                            presentation: (
+                                icon: Some("https://reactjs.org/favicon.ico"),
+                            ),
+                        ),
+                        (
+                            name: "react-native",
+                            description: Some("React-native [a workspace with a single React Native application]"),
+                            presentation: (
+                                icon: Some("https://reactjs.org/favicon.ico"),
+                            ),
+                        ),
+                        (
+                            name: "next",
+                            description: Some("Next.js [a workspace with a single Next.js application]"),
+                            presentation: (
+                                icon: Some("https://nextjs.org/static/favicon/favicon.ico"),
+                            ),
+                        ),
+                        (
+                            name: "gatsby",
+                            description: Some("Gatsby [a workspace with a single Gatsby application]"),
+                            presentation: (
+                                icon: Some("https://www.gatsbyjs.com/favicon-32x32.png?v=3ad5294f3fa6c06e2d07ab07c76df2cf"),
+                            ),
+                        ),
+                        (
+                            name: "nest",
+                            description: Some("Nest [a workspace with a single Nest application]"),
+                            presentation: (
+                                icon: Some("https://nestjs.com/favicon.264d6486.ico"),
+                            ),
+                        ),
+                        (
+                            name: "express",
+                            description: Some("Express [a workspace with a single Express application]"),
+                            presentation: (
+                                icon: Some("https://expressjs.com/images/favicon.png"),
+                            ),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -54,14 +117,10 @@
                 "--appName",
             ],
             description: Some("The name of the application created by some presets"),
-            takes_value: true,
             arguments: [
                 (
                     name: "appName",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -70,17 +129,23 @@
                 "--cli",
             ],
             description: Some("CLI to power the Nx workspace (options: \"nx\", \"angular\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "cli",
-                    source: Static([
-                        "nx",
-                        "angular",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "nx",
+                            presentation: (
+                                icon: Some("https://github.com/nrwl/nx/raw/master/images/nx-logo.png"),
+                            ),
+                        ),
+                        (
+                            name: "angular",
+                            presentation: (
+                                icon: Some("https://angular.io/assets/images/logos/angular/angular.svg"),
+                            ),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -89,22 +154,60 @@
                 "--style",
             ],
             description: Some("Default style option to be used when a non-empty preset is selected options: (\"css\", \"scss\", \"less\") plus (\"styl\") for all non-Angular and (\"styled-components\", \"@emotion/styled\", \"styled-jsx\") for React, Next.js, Gatsby"),
-            takes_value: true,
             arguments: [
                 (
                     name: "style",
-                    source: Static([
-                        "css",
-                        "scss",
-                        "less",
-                        "styl",
-                        "styled-components",
-                        "@emotion/styled",
-                        "styled-jsx",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "css",
+                            description: Some("CSS"),
+                            presentation: (
+                                icon: Some("https://upload.wikimedia.org/wikipedia/commons/6/62/CSS3_logo.svg"),
+                            ),
+                        ),
+                        (
+                            name: "scss",
+                            description: Some("SASS(.scss) [ http://sass-lang.com ]"),
+                            presentation: (
+                                icon: Some("https://sass-lang.com/favicon.ico"),
+                            ),
+                        ),
+                        (
+                            name: "less",
+                            description: Some("LESS [ http://lesscss.org ]"),
+                            presentation: (
+                                icon: Some("https://lesscss.org/public/ico/favicon.ico"),
+                            ),
+                        ),
+                        (
+                            name: "styl",
+                            description: Some("Stylus(.styl) [ http://stylus-lang.com ]"),
+                            presentation: (
+                                icon: Some("https://stylus-lang.com/favicon.ico"),
+                            ),
+                        ),
+                        (
+                            name: "styled-components",
+                            description: Some("Styled-components [ https://styled-components.com ]"),
+                            presentation: (
+                                icon: Some("https://styled-components.com/favicon.png"),
+                            ),
+                        ),
+                        (
+                            name: "@emotion/styled",
+                            description: Some("Emotion [ https://emotion.sh ]"),
+                            presentation: (
+                                icon: Some("https://emotion.sh/favicons/favicon.ico"),
+                            ),
+                        ),
+                        (
+                            name: "styled-jsx",
+                            description: Some("Styled-jsx [ https://www.npmjs.com/package/styled-jsx ]"),
+                            presentation: (
+                                icon: Some("https://assets.vercel.com/image/upload/q_auto/front/favicon/vercel/favicon.ico"),
+                            ),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -113,17 +216,24 @@
                 "--interactive",
             ],
             description: Some("Enable interactive mode when using presets (boolean)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "interactive",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
+                    suggestions: [
+                        (
+                            name: "true",
+                            presentation: (
+                                icon: Some("✅"),
+                            ),
+                        ),
+                        (
+                            name: "false",
+                            presentation: (
+                                icon: Some("❌"),
+                            ),
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -133,18 +243,29 @@
                 "--pm",
             ],
             description: Some("Package manager to use (npm, yarn, pnpm)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "packageManager",
-                    source: Static([
-                        "npm",
-                        "yarn",
-                        "pnpm",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "npm",
+                            presentation: (
+                                icon: Some("fig://icon?type=npm"),
+                            ),
+                        ),
+                        (
+                            name: "yarn",
+                            presentation: (
+                                icon: Some("fig://icon?type=yarn"),
+                            ),
+                        ),
+                        (
+                            name: "pnpm",
+                            presentation: (
+                                icon: Some("https://pnpm.io/img/favicon.png"),
+                            ),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -153,17 +274,24 @@
                 "--nx-cloud",
             ],
             description: Some("Use Nx Cloud (boolean)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "nx-cloud",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
+                    suggestions: [
+                        (
+                            name: "true",
+                            presentation: (
+                                icon: Some("✅"),
+                            ),
+                        ),
+                        (
+                            name: "false",
+                            presentation: (
+                                icon: Some("❌"),
+                            ),
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -173,17 +301,12 @@
                 "-h",
             ],
             description: Some("Show help for create-nx-workspace"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "workspace",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            description: Some("The name of the workspace"),
         ),
     ],
 )

@@ -5,36 +5,19 @@
     subcommands: [
         (
             name: "version",
-            aliases: [],
             description: Some("Print the current version"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "enable",
-            aliases: [],
             description: Some("Turn on automatic backups (required root + full disk access)"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "disable",
-            aliases: [],
             description: Some("Turn off automatic backups (required root + full disk access)"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "startbackup",
-            aliases: [],
             description: Some("Begin a backup if one is not already running"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -42,8 +25,6 @@
                         "--auto",
                     ],
                     description: Some("Run the backup in a mode similar to system-scheduled backups"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -51,8 +32,6 @@
                         "--block",
                     ],
                     description: Some("Wait (block) until the backup is finished before exiting"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -60,8 +39,6 @@
                         "--rotation",
                     ],
                     description: Some("Allow automatic destination rotation during backup"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -69,49 +46,30 @@
                         "--destination",
                     ],
                     description: Some("Perform the backup to the destination corresponding to the specified ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "destination id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "stopbackup",
-            aliases: [],
             description: Some("Cancel a backup currently in progress"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "delete",
-            aliases: [],
             description: Some("Deletes backups with the specified timestamp from the backup volume mounted at the given mountpoint"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-d",
                     ],
                     description: Some("Delete from the given mount point"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "backup mount point",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -120,242 +78,174 @@
                         "-t",
                     ],
                     description: Some("Delete backups with this timestamp"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "timestamp",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "-p",
                     ],
                     description: Some("A specific path to delete (HFS backup disk)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "deleteinprogress",
-            aliases: [],
             description: Some("Delete all in-progress backups for a machine directory"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "machine directory",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "restore",
-            aliases: [],
             description: Some("Restore the item `source`, which is inside a backup, to the location `destination`. Same semantics as `cp`"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-v",
                     ],
                     description: Some("Be verbose, showing files as they are copied"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "source",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
                 ),
                 (
                     name: "destination",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "compare",
-            aliases: [],
             description: Some("Perform a backup diff"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-@",
                     ],
                     description: Some("Compare extended attributes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-a",
                     ],
                     description: Some("Compare all supported metadata"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-c",
                     ],
                     description: Some("Compare creation times"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-d",
                     ],
                     description: Some("Compare file data forks"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-e",
                     ],
                     description: Some("Compare ACLs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-f",
                     ],
                     description: Some("Compare file flags"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-g",
                     ],
                     description: Some("Compare GIDs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-h",
                     ],
                     description: Some("Unknown"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-l",
                     ],
                     description: Some("Unknown"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-m",
                     ],
                     description: Some("Compare file modes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-n",
                     ],
                     description: Some("No metadata comparison"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-s",
                     ],
                     description: Some("Compare sizes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-t",
                     ],
                     description: Some("Compare modification times"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-u",
                     ],
                     description: Some("Compare UIDs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-E",
                     ],
-                    description: Some("Don\'t take exclusions into account when comparing items inside volumes"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't take exclusions into account when comparing items inside volumes"),
                 ),
                 (
                     names: [
                         "-U",
                     ],
                     description: Some("Ignore logical volume identity (volume UUIDs) when directly comparing a local volume or volume store to a volume store"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-X",
                     ],
                     description: Some("Print output in XML property list format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-D",
                     ],
                     description: Some("Limit traversal depth to depth levels from the beginning of iteration"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "depth",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -364,465 +254,317 @@
                         "-I",
                     ],
                     description: Some("Ignore paths with a path component equal to name during iteration"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
             ],
             arguments: [
                 (
                     name: "backup or path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "path (if not backup)",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "setdestination",
-            aliases: [],
             description: Some("Configure a local HFS+ or APFS volume, AFP share, or SMB share as a backup destination (requires root + Full Disk Access)"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-a",
                     ],
                     description: Some("Add the arg to the list of destinations, instead of replacing the list"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-p",
                     ],
                     description: Some("Enter a password in a non-echoing interactive prompt"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "destination",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "removedestination",
-            aliases: [],
             description: Some("Remove the destination with the specified unique identifier from the Time Machine configuration (requires root + Full Disk Access)"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "destination id",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "destinationinfo",
-            aliases: [],
             description: Some("Print information about destinations currently configured for use with Time Machine"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-X",
                     ],
                     description: Some("Print output in XML plist format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "addexclusion",
-            aliases: [],
             description: Some("Configure an exclusion that tells Time Machine not to backup a file, directory, or volume during future backups"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-p",
                     ],
                     description: Some("Configure fixed-path exclusions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-v",
                     ],
                     description: Some("Configure volume exclusions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "item",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "removeexclusion",
-            aliases: [],
             description: Some("Configure  Time Machine to backup a file, directory, or volume during future backups"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-p",
                     ],
                     description: Some("Configure fixed-path exclusions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-v",
                     ],
                     description: Some("Configure volume exclusions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "item",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "isexcluded",
-            aliases: [],
             description: Some("Determine if a file, directory, or volume are excluded from Time Machine backups"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "item",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "inheritbackup",
-            aliases: [],
             description: Some("Claim a machine directory or sparsebundle for use by the current machine"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "machine directory or sparsebundle",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "associatedisk",
-            aliases: [],
             description: Some("Bind a volume store directory to the specified local disk, thereby reconfiguring the backup history (requires root + Full Disk Access)"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-a",
                     ],
                     description: Some("Find all volume stores in the same machine directory that match the identity of the volume backup directory"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "mount point",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "volume backup directory",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "latestbackup",
-            aliases: [],
-            description: Some("List this computer\'s latest completed backup"),
-            subcommands: [],
+            description: Some("List this computer's latest completed backup"),
             options: [
                 (
                     names: [
                         "-d",
                     ],
                     description: Some("Specify a destination volume to list backups from"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-m",
                     ],
                     description: Some("Attempt to mount the backups and list their mounted paths"),
-                    takes_value: false,
-                    arguments: [],
+                    depends_on: [
+                        "-d",
+                    ],
                 ),
                 (
                     names: [
                         "-t",
                     ],
                     description: Some("Only show the backup timestampt rather than the full name or path"),
-                    takes_value: false,
-                    arguments: [],
+                    depends_on: [
+                        "-m",
+                    ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "listbackups",
-            aliases: [],
-            description: Some("List all of this computer\'s completed backups"),
-            subcommands: [],
+            description: Some("List all of this computer's completed backups"),
             options: [
                 (
                     names: [
                         "-d",
                     ],
                     description: Some("Specify a destination volume to list backups from"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-m",
                     ],
                     description: Some("Attempt to mount the backups and list their mounted paths"),
-                    takes_value: false,
-                    arguments: [],
+                    depends_on: [
+                        "-d",
+                    ],
                 ),
                 (
                     names: [
                         "-t",
                     ],
                     description: Some("Only show the backup timestampt rather than the full name or path"),
-                    takes_value: false,
-                    arguments: [],
+                    depends_on: [
+                        "-m",
+                    ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "machinedirectory",
-            aliases: [],
             description: Some("Print the path to the current machine directory for this computer"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "calculatedrift",
-            aliases: [],
             description: Some("Analyze the backups in an HFS machine directory and determine the amount of change between each"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "machine directory",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "uniquesize",
-            aliases: [],
             description: Some("Analyze the specified path in an HFS+ backup or path to an APFS backup and determine its unique size"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
+                    template: [
+                        FilePaths,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "verifychecksums",
-            aliases: [],
             description: Some("Compute a checksum of data contained within a backup and verify the results against checksum information computed at the time of backup"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
+                    template: [
+                        FilePaths,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "localsnapshot",
-            aliases: [],
             description: Some("Create new local Time Machine snapshots of all APFS volumes included in the Time Machine backup"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "listlocalsnapshots",
-            aliases: [],
             description: Some("List local Time Machine snapshots of the specified volume"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "mount point",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "listlocalsnapshotdates",
-            aliases: [],
             description: Some("List the creation dates of all local Time Machine snapshots"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "mount point",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "deletelocalsnapshots",
-            aliases: [],
             description: Some("Delete all local Time Machine snapshots on all mounted disks for the specified date or on the given disk"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "mount point or snapshot date",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "thinlocalsnapshots",
-            aliases: [],
             description: Some("Think local Time Machine snapshots for the specified volume"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "mount point",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "purge amount (bytes)",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "urgency",
-                    source: Static([
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                    ]),
+                    suggestions: [
+                        (
+                            name: "1",
+                        ),
+                        (
+                            name: "2",
+                        ),
+                        (
+                            name: "3",
+                        ),
+                        (
+                            name: "4",
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
     ],
-    options: [],
-    arguments: [],
 )

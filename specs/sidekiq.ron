@@ -2,7 +2,6 @@
     version: 1,
     command: "sidekiq",
     description: Some("Background job framework for Ruby"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,14 +9,9 @@
                 "-c",
             ],
             description: Some("Processor threads to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "INT",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -27,14 +21,9 @@
                 "-e",
             ],
             description: Some("Application environment"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ENV",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -44,14 +33,9 @@
                 "-g",
             ],
             description: Some("Process tag for procline"),
-            takes_value: true,
             arguments: [
                 (
                     name: "TAG",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -61,21 +45,13 @@
                 "-q",
             ],
             description: Some("Queues to process with optional weights"),
-            takes_value: true,
             arguments: [
                 (
                     name: "QUEUE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "WEIGHT",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -85,14 +61,13 @@
                 "-r",
             ],
             description: Some("Location of Rails application with jobs or file to require"),
-            takes_value: true,
             arguments: [
                 (
                     name: "PATH|DIR",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -102,14 +77,9 @@
                 "-t",
             ],
             description: Some("Shutdown timeout"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -119,8 +89,6 @@
                 "-v",
             ],
             description: Some("Print more verbose output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -128,18 +96,16 @@
                 "-C",
             ],
             description: Some("Path to YAML config file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "PATH",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -149,8 +115,6 @@
                 "-h",
             ],
             description: Some("Show help for sidekiq run"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -158,9 +122,6 @@
                 "-V",
             ],
             description: Some("Print version and exit"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

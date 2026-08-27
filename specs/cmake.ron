@@ -5,23 +5,16 @@
     subcommands: [
         (
             name: "--build",
-            aliases: [],
             description: Some("Project binary directory to be built and must be first. This is required unless a preset is specified"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--preset",
                     ],
                     description: Some("Use a build preset to specify build options"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "preset",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -30,23 +23,17 @@
                         "--list-presets",
                     ],
                     description: Some("Lists the available presets. If no option is specified only configure presets will be listed. The current working directory must contain CMake preset files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--parallel",
                         "-j",
                     ],
-                    description: Some("The maximum number of concurrent processes to use when building. If <jobs> is omitted the native build tool\'s default number is used"),
-                    takes_value: true,
+                    description: Some("The maximum number of concurrent processes to use when building. If <jobs> is omitted the native build tool's default number is used"),
                     arguments: [
                         (
                             name: "jobs",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -56,14 +43,10 @@
                         "-t",
                     ],
                     description: Some("Build <tgt> instead of the default target. Multiple targets may be given, separated by spaces"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "target",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -72,14 +55,9 @@
                         "--config",
                     ],
                     description: Some("For multi-configuration tools, choose configuration <cfg>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cfg",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -88,16 +66,12 @@
                         "--clean-first",
                     ],
                     description: Some("Build target clean first, then build"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--use-stderr",
                     ],
                     description: Some("Ignored. Behavior is default in CMake >= 3.0"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -105,48 +79,36 @@
                         "-v",
                     ],
                     description: Some("Enable verbose output - if supported - including the build commands to be executed"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--",
                     ],
                     description: Some("Pass remaining options to the native tool"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "dir",
-                    source: Directories,
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "--install",
-            aliases: [],
             description: Some("Project binary directory to install. This is required and must be first"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--config",
                     ],
                     description: Some("For multi-configuration generators"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cfg",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -155,14 +117,9 @@
                         "--component",
                     ],
                     description: Some("Component-based install. Only install component specified"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cfg",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -171,14 +128,10 @@
                         "--default-directory-permissions",
                     ],
                     description: Some("Default directory install permissions"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "permissions",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Format: <u=rwx,g=rx,o=rx>"),
                         ),
                     ],
                 ),
@@ -187,14 +140,9 @@
                         "--prefix",
                     ],
                     description: Some("Override the installation prefix"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "prefix",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -203,8 +151,6 @@
                         "--strip",
                     ],
                     description: Some("Strip before installing"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -212,316 +158,215 @@
                         "-v",
                     ],
                     description: Some("Enable verbose output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "dir",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "--open",
-            aliases: [],
             description: Some("Open the generated project in the associated application. This is only supported by some generators"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "dir",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-P",
-            aliases: [],
             description: Some("Process the given cmake file as a script written in the CMake language. No configure or generate step is performed and the cache is not modified. If variables are defined using -D, this must be done before the -P argument"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "cmake script file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-E",
-            aliases: [],
             description: Some("CMake provides builtin command-line tools through the signature"),
             subcommands: [
                 (
                     name: "capabilities",
-                    aliases: [],
                     description: Some("Report cmake capabilities in JSON format. The output is a JSON object with the following keys"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "cat",
-                    aliases: [],
                     description: Some("Concatenate files and print on the standard output"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "files",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "chdir",
-                    aliases: [],
                     description: Some("Change the current working directory and run a command"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "dir",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                         (
                             name: "command",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "compare_files",
-                    aliases: [],
                     description: Some("Check if file1 is the same as file2. If fails are the same, then returns 0, if not returns 1. In case of invalid arguments, it returns 2"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--ignore-eol",
                             ],
                             description: Some("Implies line-wise comparison and ignores LF/CRLF differences"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "file1",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                         (
                             name: "file2",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "copy",
-                    aliases: [],
                     description: Some("Copy files to <destination> (either file or directory). If multiple files are specified, the <destination> must be directory and it must exist. Wildcards are not supported. copy does follow symlinks. That means it does not copy symlinks, but the files or directories it point to"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                         (
                             name: "destination",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "copy_directory",
-                    aliases: [],
                     description: Some("Copy content of <dir>... directories to <destination> directory. If <destination> directory does not exist it will be created. copy_directory does follow symlinks"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "dir",
-                            source: Directories,
-                            optional: false,
+                            template: [
+                                Folders,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                         (
                             name: "destination",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "copy_if_different",
-                    aliases: [],
                     description: Some("Copy files to <destination> (either file or directory) if they have changed. If multiple files are specified, the <destination> must be directory and it must exist. copy_if_different does follow symlinks"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                         (
                             name: "destination",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "create_symlink",
-                    aliases: [],
                     description: Some("Create a symbolic link <new> naming <old>"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "old",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                         (
                             name: "new",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "create_hardlink",
-                    aliases: [],
                     description: Some("Create a hard link <new> naming <old>"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "old",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                         (
                             name: "new",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "echo",
-                    aliases: [],
                     description: Some("Displays arguments as text"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "echo_append",
-                    aliases: [],
                     description: Some("Displays arguments as text but no new line"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "env",
-                    aliases: [],
                     description: Some("Run command in a modified environment"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--unset",
                             ],
-                            description: None,
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -529,206 +374,151 @@
                     arguments: [
                         (
                             name: "key value pair",
-                            source: Files,
+                            description: Some("Format: NAME=VALUE"),
                             optional: true,
                             variadic: true,
-                            imported_generator: None,
                         ),
                         (
                             name: "command",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "environment",
-                    aliases: [],
                     description: Some("Display the current environment variables"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "false",
-                    aliases: [],
                     description: Some("Do nothing, with an exit code of 1"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "make_directory",
-                    aliases: [],
                     description: Some("Create <dir> directories. If necessary, create parent directories too. If a directory already exists it will be silently ignored"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "dir",
-                            source: Directories,
-                            optional: false,
+                            template: [
+                                Folders,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "md5sum",
-                    aliases: [],
                     description: Some("Create MD5 checksum of files in md5sum compatible format"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "sha1sum",
-                    aliases: [],
                     description: Some("Create SHA1 checksum of files in sha1sum compatible format"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "sha224sum",
-                    aliases: [],
                     description: Some("Create SHA224 checksum of files in sha224sum compatible format"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "sha226sum",
-                    aliases: [],
                     description: Some("Create SHA226 checksum of files in sha226sum compatible format"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "sha384sum",
-                    aliases: [],
                     description: Some("Create SHA384 checksum of files in sha384sum compatible format"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "sha512sum",
-                    aliases: [],
                     description: Some("Create SHA512 checksum of files in sha512sum compatible format"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "remove",
-                    aliases: [],
                     description: Some("Remove the file(s). The planned behavior was that if any of the listed files already do not exist, the command returns a non-zero exit code, but no message is logged"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "-f",
                             ],
                             description: Some("The -f option changes the behavior to return a zero exit code (i.e. success) in such situations instead. remove does not follow symlinks. That means it remove only symlinks and not files it point to"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "remove_directory",
-                    aliases: [],
                     description: Some("Remove <dir> directories and their contents. If a directory does not exist it will be silently ignored. If <dir> is a symlink to a directory, just the symlink will be removed. Use rm instead"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "dir",
-                            source: Directories,
-                            optional: false,
+                            template: [
+                                Folders,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "rm",
-                    aliases: [],
                     description: Some("Remove the files <file> or directories dir"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -736,145 +526,108 @@
                                 "-R",
                             ],
                             description: Some("Use -r or -R to remove directories and their contents recursively. If any of the listed files/directories do not exist, the command returns a non-zero exit code, but no message is logged"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "-f",
                             ],
                             description: Some("The -f option changes the behavior to return a zero exit code (i.e. success) in such situations instead"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                         (
                             name: "dir",
-                            source: Directories,
-                            optional: false,
+                            template: [
+                                Folders,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "server",
-                    aliases: [],
                     description: Some("Launch cmake-server(7) mode"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "sleep",
-                    aliases: [],
                     description: Some("Sleep for given number of seconds"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "number",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "tar",
-                    aliases: [],
                     description: Some("Create or extract a tar or zip archive"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "c",
                             ],
                             description: Some("Create a new archive containing the specified files. If used, the pathname argument is mandatory"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "x",
                             ],
                             description: Some("Extract to disk from the archive. The <pathname>... argument could be used to extract only selected files or directories. When extracting selected files or directories, you must provide their exact names including the path, as printed by list (-t)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "t",
                             ],
                             description: Some("List archive contents. The <pathname>... argument could be used to list only selected files or directories"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "v",
                             ],
                             description: Some("Produce verbose output"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "z",
                             ],
                             description: Some("Compress the resulting archive with gzip"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "j",
                             ],
                             description: Some("Compress the resulting archive with bzip2"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "J",
                             ],
                             description: Some("Compress the resulting archive with XZ"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--zstd",
                             ],
                             description: Some("Compress the resulting archive with Zstandard"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--files-from",
                             ],
                             description: Some("Read file names from the given file, one per line. Blank lines are ignored. Lines may not start in - except for --add-file=<name> to add files whose names start in -"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "file",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -883,20 +636,26 @@
                                 "--format",
                             ],
                             description: Some("Specify the format of the archive to be created"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "format",
-                                    source: Static([
-                                        "7zip",
-                                        "gnutar",
-                                        "pax",
-                                        "paxr",
-                                        "zip",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "7zip",
+                                        ),
+                                        (
+                                            name: "gnutar",
+                                        ),
+                                        (
+                                            name: "pax",
+                                        ),
+                                        (
+                                            name: "paxr",
+                                        ),
+                                        (
+                                            name: "zip",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -905,14 +664,9 @@
                                 "--mtime",
                             ],
                             description: Some("Specify modification time recorded in tarball entries"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "date",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -921,85 +675,56 @@
                                 "--",
                             ],
                             description: Some("Stop interpreting options and treat all remaining arguments as file names, even if they start with -"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "pathname",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "time",
-                    aliases: [],
                     description: Some("Run command and display elapsed time"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "command",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            is_command: true,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "touch",
-                    aliases: [],
                     description: Some("Creates <file> if file do not exist. If <file> exists, it is changing <file> access and modification times"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "touch_nocreate",
-                    aliases: [],
                     description: Some("Touch a file if it exists but do not create it. If a file does not exist it will be silently ignored"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "true",
-                    aliases: [],
                     description: Some("Do nothing, with an exit code of 0"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -1008,14 +733,12 @@
                 "-S",
             ],
             description: Some("Path to root directory of the CMake project to build"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path-to-source",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -1023,23 +746,18 @@
             names: [
                 "--help",
             ],
-            description: None,
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-B",
             ],
-            description: Some("Path to directory which CMake will use as the root of build directory. If the directory doesn\'t already exist CMake will make it"),
-            takes_value: true,
+            description: Some("Path to directory which CMake will use as the root of build directory. If the directory doesn't already exist CMake will make it"),
             arguments: [
                 (
                     name: "path-to-source",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -1048,14 +766,12 @@
                 "-C",
             ],
             description: Some("Pre-load a script to populate the cache"),
-            takes_value: true,
             arguments: [
                 (
                     name: "initial-cache",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -1064,14 +780,10 @@
                 "-D",
             ],
             description: Some("Create or update a CMake CACHE entry"),
-            takes_value: true,
             arguments: [
                 (
                     name: "key value pair",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("<var>:<type>=<value> or <var>=<value>"),
                 ),
             ],
         ),
@@ -1080,14 +792,9 @@
                 "-U",
             ],
             description: Some("Remove matching entries from CMake CACHE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "globbing_expr",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1096,14 +803,9 @@
                 "-G",
             ],
             description: Some("Specify a build system generator"),
-            takes_value: true,
             arguments: [
                 (
                     name: "generator-name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1112,14 +814,9 @@
                 "-T",
             ],
             description: Some("Toolset specification for the generator, if supported"),
-            takes_value: true,
             arguments: [
                 (
                     name: "toolset-spec",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1128,14 +825,9 @@
                 "-A",
             ],
             description: Some("Specify platform name if supported by generator"),
-            takes_value: true,
             arguments: [
                 (
                     name: "platform-name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1144,14 +836,12 @@
                 "toolchain",
             ],
             description: Some("Specify the cross compiling toolchain file, equivalent to setting CMAKE_TOOLCHAIN_FILE variable"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path-to-file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -1160,14 +850,12 @@
                 "--install-prefix",
             ],
             description: Some("Specify the installation directory, used by the CMAKE_INSTALL_PREFIX variable. Must be an absolute path"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -1176,100 +864,93 @@
                 "-Wno-dev",
             ],
             description: Some("Suppress developer warnings"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-Wdev",
             ],
             description: Some("Enable developer warnings"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-Werror",
             ],
             description: Some("Enable the type of warnings"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "dev",
-                        "deprecated",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "dev",
+                            description: Some("Make developer warnings errors"),
+                        ),
+                        (
+                            name: "deprecated",
+                            description: Some("Make deprecated macro and function warnings errors"),
+                        ),
+                    ],
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "-Wno-error",
             ],
             description: Some("Disable the type of warnings"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "dev",
-                        "deprecated",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "dev",
+                            description: Some("Make developer warnings not errors"),
+                        ),
+                        (
+                            name: "deprecated",
+                            description: Some("Make deprecated macro and function warnings not errors"),
+                        ),
+                    ],
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "-Wdeprecated",
             ],
             description: Some("Enable deprecated functionality warnings"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-Wno-deprecated",
             ],
             description: Some("Suppress deprecated functionality warnings"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-L",
             ],
             description: Some("List non-advanced cached-variables"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-N",
             ],
             description: Some("View mode only"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--graphviz",
             ],
             description: Some("Generate graphviz of dependencies"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
+                    template: [
+                        FilePaths,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1278,14 +959,13 @@
                 "--system-information",
             ],
             description: Some("Dump information about this system"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
+                    template: [
+                        FilePaths,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1294,22 +974,32 @@
                 "--log-level",
             ],
             description: Some("Set log-level"),
-            takes_value: true,
             arguments: [
                 (
                     name: "log-level",
-                    source: Static([
-                        "ERROR",
-                        "WARNING",
-                        "NOTICE",
-                        "STATUS",
-                        "VERBOSE",
-                        "DEBUG",
-                        "TRACE",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "ERROR",
+                        ),
+                        (
+                            name: "WARNING",
+                        ),
+                        (
+                            name: "NOTICE",
+                        ),
+                        (
+                            name: "STATUS",
+                        ),
+                        (
+                            name: "VERBOSE",
+                        ),
+                        (
+                            name: "DEBUG",
+                        ),
+                        (
+                            name: "TRACE",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -1318,65 +1008,53 @@
                 "--log-context",
             ],
             description: Some("Enable the message() command outputting context attached to each message"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--debug-trycompile",
             ],
             description: Some("Do not delete the try_compile() build tree"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--debug-output",
             ],
             description: Some("Put cmake in a debug mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--debug-find",
             ],
             description: Some("Put cmake find commands in a debug mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--trace",
             ],
             description: Some("Put cmake in trace mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--trace-expand",
             ],
             description: Some("Put cmake in trace mode with variables expanded"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--trace-format",
             ],
             description: Some("Put cmake in trace mode and sets the trace output format"),
-            takes_value: true,
             arguments: [
                 (
                     name: "format",
-                    source: Static([
-                        "human",
-                        "json-v1",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "human",
+                        ),
+                        (
+                            name: "json-v1",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -1385,14 +1063,12 @@
                 "--trace-source",
             ],
             description: Some("Put cmake in trace mode, but output only lines of a specified file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -1401,14 +1077,12 @@
                 "--trace-redirect",
             ],
             description: Some("Put cmake in trace mode and redirect trace output to a file instead of stderr"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -1417,46 +1091,33 @@
                 "--warn-uninitialized",
             ],
             description: Some("Warn about uninitialized values"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--warn-unused-vars",
             ],
             description: Some("Does nothing. In CMake versions 3.2 and below this enabled warnings about unused variables. In CMake versions 3.3 through 3.18 the option was broken. In CMake 3.19 and above the option has been removed"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-warn-unused-cli",
             ],
-            description: Some("Don\'t warn about command line options. Don\'t find variables that are declared on the command line, but not used"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't warn about command line options. Don't find variables that are declared on the command line, but not used"),
         ),
         (
             names: [
                 "--check-system-vars",
             ],
             description: Some("Find problems with variable usage in system files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--preset",
             ],
             description: Some("Reads a preset from <path-to-source>/CMakePresets.json and <path-to-source>/CMakeUserPresets.json. The preset may specify the generator and the build directory, and a list of variables and other arguments to pass to CMake. The current working directory must contain CMake preset files. The CMake GUI can also recognize CMakePresets.json and CMakeUserPresets.json files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "preset",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1465,19 +1126,24 @@
                 "--list-presets",
             ],
             description: Some("Lists the available presets"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "configure",
-                        "build",
-                        "test",
-                        "all",
-                    ]),
+                    suggestions: [
+                        (
+                            name: "configure",
+                        ),
+                        (
+                            name: "build",
+                        ),
+                        (
+                            name: "test",
+                        ),
+                        (
+                            name: "all",
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1485,10 +1151,9 @@
     arguments: [
         (
             name: "path-to-source | path-to-existing-build",
-            source: Directories,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            template: [
+                Folders,
+            ],
         ),
     ],
 )

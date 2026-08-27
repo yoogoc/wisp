@@ -1,8 +1,7 @@
 (
     version: 1,
     command: "clean",
-    description: Some("The dotnet clean command cleans the output of the previous build. It\'s implemented as an MSBuild target, so the project is evaluated when the command is run. Only the outputs created during the build are cleaned. Both intermediate (obj) and final output (bin) folders are cleaned"),
-    subcommands: [],
+    description: Some("The dotnet clean command cleans the output of the previous build. It's implemented as an MSBuild target, so the project is evaluated when the command is run. Only the outputs created during the build are cleaned. Both intermediate (obj) and final output (bin) folders are cleaned"),
     options: [
         (
             names: [
@@ -10,17 +9,17 @@
                 "--configuration",
             ],
             description: Some("Defines the build configuration. The default for most projects is Debug, but you can override the build configuration settings in your project. This option is only required when cleaning if you specified it during build time"),
-            takes_value: true,
             arguments: [
                 (
                     name: "configuration",
-                    source: Static([
-                        "Debug",
-                        "Release",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "Debug",
+                        ),
+                        (
+                            name: "Release",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -30,14 +29,9 @@
                 "--framework",
             ],
             description: Some("The framework that was specified at build time. The framework must be defined in the project file. If you specified the framework at build time, you must specify the framework when cleaning"),
-            takes_value: true,
             arguments: [
                 (
                     name: "framework",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -46,16 +40,12 @@
                 "--interactive",
             ],
             description: Some("Allows the command to stop and wait for user input or action. For example, to complete authentication. Available since .NET Core 3.0 SDK"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--nologo",
             ],
-            description: Some("Doesn\'t display the startup banner or the copyright message. Available since .NET Core 3.0 SDK"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Doesn't display the startup banner or the copyright message. Available since .NET Core 3.0 SDK"),
         ),
         (
             names: [
@@ -63,14 +53,12 @@
                 "--output",
             ],
             description: Some("The directory that contains the build artifacts to clean. Specify the -f|--framework <FRAMEWORK> switch with the output directory switch if you specified the framework when the project was built"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -80,8 +68,6 @@
                 "--runtime",
             ],
             description: Some("Cleans the output folder of the specified runtime. This is used when a self-contained deployment was created"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -89,20 +75,26 @@
                 "--verbosity",
             ],
             description: Some("Sets the verbosity level of the command. Allowed values are q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]. Not supported in every command. See specific command page to determine if this option is available"),
-            takes_value: true,
             arguments: [
                 (
                     name: "verbosity",
-                    source: Static([
-                        "quiet",
-                        "minimal",
-                        "normal",
-                        "detailed",
-                        "diagnostic",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "quiet",
+                        ),
+                        (
+                            name: "minimal",
+                        ),
+                        (
+                            name: "normal",
+                        ),
+                        (
+                            name: "detailed",
+                        ),
+                        (
+                            name: "diagnostic",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -110,14 +102,15 @@
     arguments: [
         (
             name: "project",
-            source: Unavailable,
+            description: Some("The MSBuild project or solution to clean. If a project or solution file is not specified, MSBuild searches the current working directory for a file that has a file extension that ends in proj or sln, and uses that file"),
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    has_dynamic_query_term: true,
+                ),
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
         ),
     ],
 )

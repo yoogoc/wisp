@@ -2,7 +2,6 @@
     version: 1,
     command: "shred",
     description: Some("Overwrite a file to hide its contents, and optionally delete it"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "-f",
             ],
             description: Some("Change permissions to allow writing if necessary"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,18 +16,21 @@
                 "-n",
             ],
             description: Some("Overwrite N times instead of the default (3)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "N",
-                    source: Static([
-                        "3",
-                        "5",
-                        "7",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "3",
+                        ),
+                        (
+                            name: "5",
+                        ),
+                        (
+                            name: "7",
+                        ),
+                    ],
+                    default: Some("3"),
                 ),
             ],
         ),
@@ -39,17 +39,21 @@
                 "--random-source",
             ],
             description: Some("Get random bytes from FILE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Static([
-                        "/dev/urandom",
-                        "/dev/random",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "/dev/urandom",
+                        ),
+                        (
+                            name: "/dev/random",
+                        ),
+                    ],
+                    template: [
+                        FilePaths,
+                    ],
+                    default: Some("/dev/urandom"),
                 ),
             ],
         ),
@@ -59,18 +63,20 @@
                 "-s",
             ],
             description: Some("Shred this many bytes (suffixes like K, M, G accepted)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "N",
-                    source: Static([
-                        "1K",
-                        "1M",
-                        "1G",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "1K",
+                        ),
+                        (
+                            name: "1M",
+                        ),
+                        (
+                            name: "1G",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -79,18 +85,22 @@
                 "--remove",
             ],
             description: Some("Like -u but give control on HOW to delete"),
-            takes_value: true,
             arguments: [
                 (
                     name: "HOW",
-                    source: Static([
-                        "unlink",
-                        "wipe",
-                        "wipesync",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("'unlink' => use a standard unlink call, 'wipe' => also first obfuscate bytes in the name, 'wipesync' => also sync each obfuscated byte to the device"),
+                    suggestions: [
+                        (
+                            name: "unlink",
+                        ),
+                        (
+                            name: "wipe",
+                        ),
+                        (
+                            name: "wipesync",
+                        ),
+                    ],
+                    default: Some("wipesync"),
                 ),
             ],
         ),
@@ -100,8 +110,6 @@
                 "-v",
             ],
             description: Some("Show progress"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -109,8 +117,6 @@
                 "-x",
             ],
             description: Some("Do not round file sizes up to the next full block; this is the default for non-regular files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -118,33 +124,28 @@
                 "-z",
             ],
             description: Some("Add a final overwrite with zeros to hide shredding"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--help",
             ],
             description: Some("Display this help and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Output version information and exit"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "FILE",
-            source: Files,
-            optional: false,
+            description: Some("File(s) to shred"),
+            template: [
+                FilePaths,
+            ],
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

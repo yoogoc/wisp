@@ -5,84 +5,65 @@
     subcommands: [
         (
             name: "config",
-            aliases: [],
             description: Some("Get or set configurations"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "name",
-                    source: Files,
+                    description: Some("Setting name. Leave it blank if you want to show all configurations"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "value",
-                    source: Files,
+                    description: Some("New value of a setting. Leave it blank if you just want to show a single configuration"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Displays a help for each command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
+                    description: Some("The command to display help for"),
+                    template: [
+                        Help,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
             description: Some("Create a new Hexo folder"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--no-clone",
                     ],
                     description: Some("Copy files instead of cloning from GitHub"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-install",
                     ],
                     description: Some("Skip npm install"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "destination",
-                    source: Directories,
+                    description: Some("Folder path. Initialize in current folder if not specified"),
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "new",
-            aliases: [],
             description: Some("Create a new article"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -90,14 +71,13 @@
                         "--path",
                     ],
                     description: Some("Post path. Customize the path of the post"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The path of the post"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -107,8 +87,6 @@
                         "--replace",
                     ],
                     description: Some("Replace the current post if it existed"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -116,14 +94,10 @@
                         "--slug",
                     ],
                     description: Some("Post slug. Customize the URL of the post"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "slug",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The slug of the post"),
                         ),
                     ],
                 ),
@@ -131,30 +105,29 @@
             arguments: [
                 (
                     name: "layout",
-                    source: Static([
-                        "post",
-                        "page",
-                        "draft",
-                    ]),
+                    description: Some("The layout to use"),
+                    suggestions: [
+                        (
+                            name: "post",
+                        ),
+                        (
+                            name: "page",
+                        ),
+                        (
+                            name: "draft",
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "title",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The title of the post"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "generate",
-            aliases: [],
             description: Some("Generate static files"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -162,8 +135,6 @@
                         "--deploy",
                     ],
                     description: Some("Deploy after generation finishes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -171,8 +142,6 @@
                         "--force",
                     ],
                     description: Some("Force regenerate"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -180,8 +149,6 @@
                         "--watch",
                     ],
                     description: Some("Watch file changes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -189,8 +156,6 @@
                         "--bail",
                     ],
                     description: Some("Raise an error if any unhandled exception is thrown during generation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -198,62 +163,55 @@
                         "--concurrency",
                     ],
                     description: Some("Maximum number of files to be generated in parallel. Default is infinity"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "concurrency",
-                            source: Files,
+                            description: Some("The number of files to generate in parallel"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "publish",
-            aliases: [],
             description: Some("Publish a draft"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "layout",
-                    source: Static([
-                        "post",
-                        "page",
-                        "draft",
-                    ]),
+                    description: Some("The layout to use"),
+                    suggestions: [
+                        (
+                            name: "post",
+                        ),
+                        (
+                            name: "page",
+                        ),
+                        (
+                            name: "draft",
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "filename",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "hexo list post | grep -E ^Draft",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("The name of the post"),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "hexo list post | grep -E ^Draft",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "server",
-            aliases: [],
             description: Some("Start a local server. By default, this is at http://localhost:4000/"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -261,14 +219,10 @@
                         "--ip",
                     ],
                     description: Some("Override the default server IP. Bind to all IP address by default"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "ip",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The IP address to bind to"),
                         ),
                     ],
                 ),
@@ -278,14 +232,10 @@
                         "--port",
                     ],
                     description: Some("Override default port"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Only serve static files"),
                         ),
                     ],
                 ),
@@ -295,8 +245,6 @@
                         "--static",
                     ],
                     description: Some("Serve static files from the given directory"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -304,20 +252,28 @@
                         "--log",
                     ],
                     description: Some("Enable logger. Override logger format"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "combined",
-                                "common",
-                                "tiny",
-                                "dev",
-                                "short",
-                            ]),
+                            description: Some("The morgan logger format. Can be predefined or customized"),
+                            suggestions: [
+                                (
+                                    name: "combined",
+                                ),
+                                (
+                                    name: "common",
+                                ),
+                                (
+                                    name: "tiny",
+                                ),
+                                (
+                                    name: "dev",
+                                ),
+                                (
+                                    name: "short",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -327,26 +283,18 @@
                         "--open",
                     ],
                     description: Some("Immediately open the server url in your default web browser"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "deploy",
-            aliases: [],
             description: Some("Deploy your website"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--setup",
                     ],
                     description: Some("Setup without deployment"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -354,26 +302,18 @@
                         "--generate",
                     ],
                     description: Some("Generate static files before deploying"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "render",
-            aliases: [],
             description: Some("Render files with renderer plugins (e.g. Markdown) and save them at the specified path"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--engine",
                     ],
                     description: Some("Specify render engine"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -381,14 +321,13 @@
                         "--output",
                     ],
                     description: Some("Output destination. Result will be printed in the terminal if the output destination is not set"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "output directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The path to output directory"),
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -397,78 +336,63 @@
                         "--pretty",
                     ],
                     description: Some("Prettify JSON output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
+                    description: Some("The file to render"),
+                    template: [
+                        FilePaths,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "migrate",
-            aliases: [],
             description: Some("Migrate content from other blog systems"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "type",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The type of migration. check https://hexo.io/docs/migration for more details"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "clean",
-            aliases: [],
             description: Some("Clean the cache file (`db.json`) and generated files (`public`)"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "list",
-            aliases: [],
             description: Some("List all routes"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "post",
-                        "route",
-                        "page",
-                        "tag",
-                        "category",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The type of routes to list"),
+                    suggestions: [
+                        (
+                            name: "post",
+                        ),
+                        (
+                            name: "route",
+                        ),
+                        (
+                            name: "page",
+                        ),
+                        (
+                            name: "tag",
+                        ),
+                        (
+                            name: "category",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Display version information"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -477,65 +401,58 @@
                 "--config",
             ],
             description: Some("Uses a custom config file (instead of `_config.yml`). Also accepts a comma-separated list (no spaces) of JSON or YAML config files that will combine the files into a single `_multiconfig.yml`"),
-            takes_value: true,
             arguments: [
                 (
                     name: "config file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
                 "--safe",
             ],
             description: Some("Disable loading plugins and scripts"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--debug",
             ],
             description: Some("Log verbose messages to the terminal and to `debug.log`"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--silent",
             ],
             description: Some("Silence output to the terminal"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--draft",
             ],
             description: Some("Display draft posts (stored in the `source/_drafts` folder)"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--cwd",
             ],
             description: Some("Customize the path of current working directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
+            persistent: true,
         ),
     ],
-    arguments: [],
 )

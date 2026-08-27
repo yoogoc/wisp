@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "generate-templates",
-            aliases: [],
             description: Some("Generate \".ejs\" templates needed for generate api"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,14 +13,12 @@
                         "-o",
                     ],
                     description: Some("Output path of generated templates"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Path",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -32,25 +28,24 @@
                         "-m",
                     ],
                     description: Some("Generate templates needed to separate files for http client, data contracts, and routes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--http-client",
                     ],
                     description: Some("Http client type"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Http client",
-                            source: Static([
-                                "fetch",
-                                "axios",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "fetch",
+                                ),
+                                (
+                                    name: "axios",
+                                ),
+                            ],
+                            default: Some("fetch"),
                         ),
                     ],
                 ),
@@ -60,8 +55,9 @@
                         "-c",
                     ],
                     description: Some("Clean output folder before generate template"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        dangerous: true,
+                    ),
                 ),
                 (
                     names: [
@@ -69,12 +65,8 @@
                         "-r",
                     ],
                     description: Some("Rewrite content in existing templates"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -84,8 +76,6 @@
                 "-v",
             ],
             description: Some("Output the current version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -93,14 +83,12 @@
                 "-p",
             ],
             description: Some("Path/url to swagger scheme"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -110,14 +98,12 @@
                 "-o",
             ],
             description: Some("Output path of typescript api file (default: \"./\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -127,14 +113,9 @@
                 "-n",
             ],
             description: Some("Name of output typescript api file (default: \"Api.ts\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -144,14 +125,12 @@
                 "-t",
             ],
             description: Some("Path to folder containing templates"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -161,8 +140,6 @@
                 "-d",
             ],
             description: Some("Use \"default\" response status code as success response too"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -170,110 +147,81 @@
                 "-r",
             ],
             description: Some("Generate additional information about request responses"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--union-enums",
             ],
             description: Some("Generate all \"enum\" types as union types (T1 | T2 | TN)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--add-readonly",
             ],
             description: Some("Generate readonly properties"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--route-types",
             ],
             description: Some("Generate type definitions for API routes"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-client",
             ],
             description: Some("Do not generate an API class"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--enum-names-as-values",
             ],
-            description: Some("Use values in \'x-enumNames\' as enum values (not only as keys)"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Use values in 'x-enumNames' as enum values (not only as keys)"),
         ),
         (
             names: [
                 "--extract-request-params",
             ],
             description: Some("Extract request params to data contract"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--extract-request-body",
             ],
             description: Some("Extract request body type to data contract"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--extract-response-body",
             ],
             description: Some("Extract response body type to data contract"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--extract-response-error",
             ],
             description: Some("Extract response error type to data contract"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--modular",
             ],
             description: Some("Generate separated files for http client, data contracts, and routes"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--js",
             ],
             description: Some("Generate js api module with declaration file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--module-name-index",
             ],
             description: Some("Determines which path index should be used for routes separation"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Index",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -282,78 +230,58 @@
                 "--module-name-first-tag",
             ],
             description: Some("Splits routes based on the first tag"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--disableStrictSSL",
             ],
             description: Some("Disabled strict SSL"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--disableProxy",
             ],
             description: Some("Disabled proxy"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--axios",
             ],
             description: Some("Generate axios http client"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--unwrap-response-data",
             ],
             description: Some("Unwrap the data item from the response"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--disable-throw-on-error",
             ],
             description: Some("Do not throw an error when response.ok is not true (default: false)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--single-http-client",
             ],
             description: Some("Ability to send HttpClient instance to Api constructor (default: false)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--silent",
             ],
             description: Some("Output only errors to console"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--default-response",
             ],
             description: Some("Default type for empty response schema"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Type",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -362,14 +290,9 @@
                 "--type-prefix",
             ],
             description: Some("Data contract name prefix"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Prefix",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -378,14 +301,9 @@
                 "--type-suffix",
             ],
             description: Some("Data contract name suffix"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Suffix",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -394,22 +312,15 @@
                 "--clean-output",
             ],
             description: Some("Clean output folder before generate api. WARNING: May cause data loss (default: false)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--api-class-name",
             ],
             description: Some("Name of the api class"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -418,40 +329,30 @@
                 "--patch",
             ],
             description: Some("Fix up small errors in the swagger source definition (default: false)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--debug",
             ],
             description: Some("Additional information about processes inside this tool (default: false)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--another-array-type",
             ],
             description: Some("Generate array types as Array<Type> (by default Type[]) (default: false)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--sort-types",
             ],
             description: Some("Sort fields and types (default: false)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--extract-enums",
             ],
             description: Some("Extract all enums from inline interface\type content to typescript enum construction (default: false)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -459,9 +360,10 @@
                 "-h",
             ],
             description: Some("Show help for swagger-typescript-api"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
     ],
-    arguments: [],
+    presentation: (
+        icon: Some("https://static1.smartbear.co/swagger/media/assets/swagger_fav.png"),
+    ),
 )

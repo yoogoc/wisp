@@ -2,7 +2,6 @@
     version: 1,
     command: "broot",
     description: Some("Broot lets you explore file hierarchies with a tree-like view, manipulate files, launch actions, and define your own shortcuts. broot is best launched as br: this shell function gives you access to more commands, especially cd. The br shell function is interactively installed on first broot launch. Flags and options can be classically passed on launch but also written in the configuration file. Each flag has a counter-flag so that you can cancel at command line a flag which has been set in the configuration file"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,17 +9,21 @@
                 "-d",
             ],
             description: Some("Show the last modified date of files and directories"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-dates",
+                "-D",
+            ],
         ),
         (
             names: [
                 "--no-dates",
                 "-D",
             ],
-            description: Some("Don\'t show the last modified date"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't show the last modified date"),
+            exclusive_on: [
+                "--dates",
+                "-d",
+            ],
         ),
         (
             names: [
@@ -28,8 +31,10 @@
                 "-f",
             ],
             description: Some("Only show folders"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-only-folders",
+                "-F",
+            ],
         ),
         (
             names: [
@@ -37,16 +42,16 @@
                 "-F",
             ],
             description: Some("Show folders and files alike"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--only-folders",
+                "-f",
+            ],
         ),
         (
             names: [
                 "--show-root-fs",
             ],
             description: Some("Show filesystem info on top"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -54,25 +59,27 @@
                 "-g",
             ],
             description: Some("Show git statuses on files and stats of repository"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-show-git-info",
+                "-G",
+            ],
         ),
         (
             names: [
                 "--no-show-git-info",
                 "-G",
             ],
-            description: Some("Don\'t show git statuses on files nor stats"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't show git statuses on files nor stats"),
+            exclusive_on: [
+                "--show-git-info",
+                "-g",
+            ],
         ),
         (
             names: [
                 "--git-status",
             ],
             description: Some("Only show files having an interesting git status, including hidden ones"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -80,17 +87,21 @@
                 "-h",
             ],
             description: Some("Show hidden files"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-hidden",
+                "-H",
+            ],
         ),
         (
             names: [
                 "--no-hidden",
                 "-H",
             ],
-            description: Some("Don\'t show hidden files"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't show hidden files"),
+            exclusive_on: [
+                "--hidden",
+                "-h",
+            ],
         ),
         (
             names: [
@@ -98,17 +109,21 @@
                 "-i",
             ],
             description: Some("Show files which should be ignored according to git"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-show-gitignored",
+                "-I",
+            ],
         ),
         (
             names: [
                 "--no-show-gitignored",
                 "-I",
             ],
-            description: Some("Don\'t show gitignored files"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't show gitignored files"),
+            exclusive_on: [
+                "--show-gitignored",
+                "-i",
+            ],
         ),
         (
             names: [
@@ -116,59 +131,70 @@
                 "-p",
             ],
             description: Some("Show permissions with owner and group"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-permissions",
+                "-P",
+            ],
         ),
         (
             names: [
                 "--no-permissions",
                 "-P",
             ],
-            description: Some("Don\'t show permissions"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't show permissions"),
+            exclusive_on: [
+                "--permissions",
+                "-p",
+            ],
         ),
         (
             names: [
                 "--sizes",
                 "-s",
             ],
-            description: Some("Show the sizes of files and directories. When this mode is on, children aren\'t shown so that the biggest entries at the selected level can be sorted first"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Show the sizes of files and directories. When this mode is on, children aren't shown so that the biggest entries at the selected level can be sorted first"),
+            exclusive_on: [
+                "--no-sizes",
+                "-S",
+            ],
         ),
         (
             names: [
                 "--no-sizes",
                 "-S",
             ],
-            description: Some("Don\'t show sizes"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't show sizes"),
+            exclusive_on: [
+                "--sizes",
+                "-s",
+            ],
         ),
         (
             names: [
                 "--sort-by-count",
             ],
             description: Some("Sort by count (only show one level of the tree)"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-sort",
+            ],
         ),
         (
             names: [
                 "--sort-by-date",
             ],
             description: Some("Sort by date (only show one level of the tree)"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-sort",
+            ],
         ),
         (
             names: [
                 "--sort-by-size",
             ],
             description: Some("Sort by size (only show one level of the tree)"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-sort",
+            ],
         ),
         (
             names: [
@@ -176,16 +202,17 @@
                 "-w",
             ],
             description: Some("Sort by size, show ignored and hidden files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-sort",
             ],
-            description: Some("Don\'t sort"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't sort"),
+            exclusive_on: [
+                "--sort-by-count",
+                "--sort-by-date",
+                "--sort-by-size",
+            ],
         ),
         (
             names: [
@@ -193,51 +220,54 @@
                 "-t",
             ],
             description: Some("Trim the root: remove elements which would exceed the screen size. This removes the scrollbar"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-trim-root",
+                "-T",
+            ],
         ),
         (
             names: [
                 "--no-trim-root",
                 "-T",
             ],
-            description: Some("Don\'t trim the root (still trim the deeper levels). A scrollbar may be used when there are too many elements to show on screen"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't trim the root (still trim the deeper levels). A scrollbar may be used when there are too many elements to show on screen"),
+            exclusive_on: [
+                "--trim-root",
+                "-t",
+            ],
         ),
         (
             names: [
                 "--install",
             ],
             description: Some("Install or reinstall the br shell function"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--get-root",
             ],
             description: Some("Ask for the current root of the remote broot"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--color",
             ],
             description: Some("Controls styling of the output (default: auto). If set to auto, all styling is removed when output is piped"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Static([
-                        "yes",
-                        "no",
-                        "auto",
-                    ]),
+                    name: "",
+                    suggestions: [
+                        (
+                            name: "yes",
+                        ),
+                        (
+                            name: "no",
+                        ),
+                        (
+                            name: "auto",
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -246,8 +276,6 @@
                 "--help",
             ],
             description: Some("Prints a help page, with more or less the same content as this man page"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -255,22 +283,15 @@
                 "-v",
             ],
             description: Some("Prints the version of broot"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--outcmd",
             ],
             description: Some("Where to write a command if broot produces one"),
-            takes_value: true,
             arguments: [
                 (
                     name: "cmd-export-path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -280,14 +301,9 @@
                 "-c",
             ],
             description: Some("Semicolon separated commands to execute on start of broot"),
-            takes_value: true,
             arguments: [
                 (
                     name: "commands",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -296,14 +312,9 @@
                 "--conf",
             ],
             description: Some("Semicolon separated paths to specific config files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "conf",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -311,15 +322,10 @@
             names: [
                 "--height",
             ],
-            description: Some("Height to use if you don\'t want to fill the screen or for file export (by default the terminal height is used)"),
-            takes_value: true,
+            description: Some("Height to use if you don't want to fill the screen or for file export (by default the terminal height is used)"),
             arguments: [
                 (
                     name: "height",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -329,14 +335,13 @@
                 "-o",
             ],
             description: Some("Where to write the produced path, if any"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file-export-path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
+                    suggest_current_token: true,
                 ),
             ],
         ),
@@ -345,18 +350,20 @@
                 "--set-install-state",
             ],
             description: Some("Set the installation state. This is mostly useful in installation scripts to override the normal installation process"),
-            takes_value: true,
             arguments: [
                 (
                     name: "state",
-                    source: Static([
-                        "undefined",
-                        "refused",
-                        "installed",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "undefined",
+                        ),
+                        (
+                            name: "refused",
+                        ),
+                        (
+                            name: "installed",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -365,18 +372,20 @@
                 "--print-shell-function",
             ],
             description: Some("Print to stdout the br function for the given shell. This can be used in your own installation process overriden the standard one"),
-            takes_value: true,
             arguments: [
                 (
                     name: "shell",
-                    source: Static([
-                        "bash",
-                        "fish",
-                        "zsh",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "bash",
+                        ),
+                        (
+                            name: "fish",
+                        ),
+                        (
+                            name: "zsh",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -385,14 +394,9 @@
                 "--listen",
             ],
             description: Some("Listen for commands"),
-            takes_value: true,
             arguments: [
                 (
                     name: "listen",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -401,14 +405,9 @@
                 "--send",
             ],
             description: Some("Send commands to a remote broot then quits"),
-            takes_value: true,
             arguments: [
                 (
                     name: "send",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -416,10 +415,7 @@
     arguments: [
         (
             name: "ROOT",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            description: Some("Sets the root directory"),
         ),
     ],
 )
