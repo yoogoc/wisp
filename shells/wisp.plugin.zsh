@@ -27,7 +27,7 @@ typeset -gi _WISP_GRID_COLUMNS="${COLUMNS:-80}"
 typeset -gi _WISP_GRID_ROWS="${LINES:-24}"
 
 if zmodload -e zsh/system && zmodload -e zsh/zselect; then
-  exec {_WISP_TTY_FD}<>/dev/tty 2>/dev/null || _WISP_TTY_FD=-1
+  sysopen -rw -u _WISP_TTY_FD /dev/tty 2>/dev/null || _WISP_TTY_FD=-1
 fi
 
 function _wisp_terminal_name() {
