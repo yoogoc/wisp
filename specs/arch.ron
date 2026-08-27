@@ -2,44 +2,72 @@
     version: 1,
     command: "arch",
     description: Some("Print architecture type or run select architecture"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-32",
             ],
             description: Some("Add the native 32-bit architecture to the list of architectures"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-64",
             ],
             description: Some("Add the native 64-bit architecture to the list of architectures"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-arch",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "arch_name",
-                    source: Static([
-                        "i386",
-                        "x86_64",
-                        "x86_64h",
-                        "arm64",
-                        "arm64e",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "i386",
+                            description: Some("32-bit intel"),
+                            presentation: (
+                                icon: Some("fig://icon?type=cpu"),
+                            ),
+                        ),
+                        (
+                            name: "x86_64",
+                            description: Some("64-bit intel"),
+                            presentation: (
+                                icon: Some("fig://icon?type=cpu"),
+                            ),
+                        ),
+                        (
+                            name: "x86_64h",
+                            description: Some("64-bit intel (haswell)"),
+                            presentation: (
+                                icon: Some("fig://icon?type=cpu"),
+                            ),
+                        ),
+                        (
+                            name: "arm64",
+                            description: Some("64-bit arm"),
+                            presentation: (
+                                icon: Some("fig://icon?type=cpu"),
+                            ),
+                        ),
+                        (
+                            name: "arm64e",
+                            description: Some("64-bit arm (Apple Silicon)"),
+                            presentation: (
+                                icon: Some("fig://icon?type=cpu"),
+                            ),
+                        ),
+                    ],
                 ),
+            ],
+            repeat: Many,
+            exclusive_on: [
+                "-i386",
+                "-x86_64",
+                "-x86_64h",
+                "-arm64",
+                "-arm64e",
             ],
         ),
         (
@@ -47,97 +75,115 @@
                 "-i386",
             ],
             description: Some("32-bit intel"),
-            takes_value: false,
-            arguments: [],
+            repeat: Many,
+            exclusive_on: [
+                "-arch",
+            ],
+            presentation: (
+                icon: Some("fig://icon?type=cpu"),
+            ),
         ),
         (
             names: [
                 "-x86_64",
             ],
             description: Some("64-bit intel"),
-            takes_value: false,
-            arguments: [],
+            repeat: Many,
+            exclusive_on: [
+                "-arch",
+            ],
+            presentation: (
+                icon: Some("fig://icon?type=cpu"),
+            ),
         ),
         (
             names: [
                 "-x86_64h",
             ],
             description: Some("64-bit intel (haswell)"),
-            takes_value: false,
-            arguments: [],
+            repeat: Many,
+            exclusive_on: [
+                "-arch",
+            ],
+            presentation: (
+                icon: Some("fig://icon?type=cpu"),
+            ),
         ),
         (
             names: [
                 "-arm64",
             ],
             description: Some("64-bit arm"),
-            takes_value: false,
-            arguments: [],
+            repeat: Many,
+            exclusive_on: [
+                "-arch",
+            ],
+            presentation: (
+                icon: Some("fig://icon?type=cpu"),
+            ),
         ),
         (
             names: [
                 "-arm64e",
             ],
             description: Some("64-bit arm (Apple Silicon)"),
-            takes_value: false,
-            arguments: [],
+            repeat: Many,
+            exclusive_on: [
+                "-arch",
+            ],
+            presentation: (
+                icon: Some("fig://icon?type=cpu"),
+            ),
         ),
         (
             names: [
                 "-c",
             ],
             description: Some("Clear the environment that will be passed to the command"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-d",
             ],
-            description: Some("Delete the named environment variable from the command\'s environment"),
-            takes_value: true,
+            description: Some("Delete the named environment variable from the command's environment"),
             arguments: [
                 (
                     name: "envname",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "-e",
             ],
-            description: Some("Assign the given value to the variable in the command\'s environment"),
-            takes_value: true,
+            description: Some("Assign the given value to the variable in the command's environment"),
             arguments: [
                 (
                     name: "envname=value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "-h",
             ],
             description: Some("Print a help message and exit"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "program",
-            source: Files,
-            optional: false,
+            template: [
+                FilePaths,
+            ],
             variadic: true,
-            imported_generator: None,
+            is_command: true,
         ),
     ],
+    parser_directives: Some((
+        flags_are_posix_noncompliant: true,
+        options_must_precede_arguments: true,
+    )),
 )

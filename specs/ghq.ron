@@ -1,13 +1,11 @@
 (
     version: 1,
     command: "ghq",
-    description: Some("\'ghq\' provides a way to organize remote repository clones, like go get does. When you clone a remote repository by ghq get, ghq makes a directory under a specific root directory (by default ~/ghq) using the remote repository URL’s host and path"),
+    description: Some("'ghq' provides a way to organize remote repository clones, like go get does. When you clone a remote repository by ghq get, ghq makes a directory under a specific root directory (by default ~/ghq) using the remote repository URL’s host and path"),
     subcommands: [
         (
             name: "get",
-            aliases: [],
             description: Some("Clone/sync with a remote repository"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,24 +13,18 @@
                         "--update",
                     ],
                     description: Some("Update local repository if cloned already (default: false)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-p",
                     ],
                     description: Some("Clone with SSH (default: false)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--shallow",
                     ],
                     description: Some("Do a shallow clone (default: false)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -40,22 +32,15 @@
                         "--look",
                     ],
                     description: Some("Look after get (default: false)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--vcs",
                     ],
                     description: Some("Specify vcs backend for cloning"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "vcs",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -65,16 +50,12 @@
                         "--silent",
                     ],
                     description: Some("Clone or update silently (default: false)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-recursive",
                     ],
                     description: Some("Prevent recursive fetching (default: false)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -82,14 +63,9 @@
                         "--branch",
                     ],
                     description: Some("Specify branch name. This flag implies --single-branch on Git"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "branch",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -99,34 +75,23 @@
                         "--parallel",
                     ],
                     description: Some("Import parallelly (default: false)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--bare",
                     ],
                     description: Some("Do a bare clone (default: false)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "<repository URL>|<project>|<user>/<project>|<host>/<user>/<project>",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "list",
-            aliases: [],
             description: Some("List local repositories"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -134,22 +99,15 @@
                         "--exact",
                     ],
                     description: Some("Perform an exact match (default: false)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--vcs",
                     ],
                     description: Some("Specify vcs backend for matching"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "vcs",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -159,66 +117,51 @@
                         "--full-path",
                     ],
                     description: Some("Print full paths (default: false)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--unique",
+                    ],
                 ),
                 (
                     names: [
                         "--unique",
                     ],
                     description: Some("Print unique subpaths (default: false)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--full-path",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "query",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "root",
-            aliases: [],
-            description: Some("Show repositories\' root"),
-            subcommands: [],
+            description: Some("Show repositories' root"),
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("Show all roots (default: false)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "create",
-            aliases: [],
             description: Some("Create a new repository"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--vcs",
                     ],
                     description: Some("Specify vcs backend explicitly"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "vcs",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -226,13 +169,8 @@
             arguments: [
                 (
                     name: "<project>|<user>/<project>|<host>/<user>/<project>",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -244,8 +182,10 @@
                 "help",
             ],
             description: Some("Show help"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
+            exclusive_on: [
+                "--version",
+            ],
         ),
         (
             names: [
@@ -253,9 +193,9 @@
                 "--version",
             ],
             description: Some("Print the version"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--help",
+            ],
         ),
     ],
-    arguments: [],
 )

@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "clone",
-            aliases: [],
             description: Some("Clone a repository"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,14 +13,9 @@
                         "-b",
                     ],
                     description: Some("The branch to checkout after cloning"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "branch",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -30,59 +23,66 @@
             arguments: [
                 (
                     name: "url|slug",
-                    source: Static([
-                        "https://github.com/",
-                        "https://gitlab.com/",
-                        "https://bitbucket.com/",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "https://github.com/",
+                            presentation: (
+                                icon: Some("https://github.com/fluidicon.png"),
+                            ),
+                        ),
+                        (
+                            name: "https://gitlab.com/",
+                            presentation: (
+                                icon: Some("https://about.gitlab.com/ico/favicon-32x32.png"),
+                            ),
+                        ),
+                        (
+                            name: "https://bitbucket.com/",
+                            presentation: (
+                                icon: Some("https://wac-cdn.atlassian.com/assets/img/favicons/bitbucket/favicon-32x32.png"),
+                            ),
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "open",
-            aliases: [],
             description: Some("Open a git repository in GitHub Desktop"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "path",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            template: [
+                                Folders,
+                            ],
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Show the help page for a command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Static([
-                        "clone",
-                        "open",
-                        "help",
-                    ]),
+                    suggestions: [
+                        (
+                            name: "clone",
+                        ),
+                        (
+                            name: "open",
+                        ),
+                        (
+                            name: "help",
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -91,18 +91,21 @@
                 "--help",
             ],
             description: Some("Show the help page for a command"),
-            takes_value: true,
             arguments: [
                 (
                     name: "command",
-                    source: Static([
-                        "clone",
-                        "open",
-                        "help",
-                    ]),
+                    suggestions: [
+                        (
+                            name: "clone",
+                        ),
+                        (
+                            name: "open",
+                        ),
+                        (
+                            name: "help",
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -110,14 +113,14 @@
     arguments: [
         (
             name: "path",
-            source: Unavailable,
+            generators: [
+                (
+                    template: [
+                        Folders,
+                    ],
+                ),
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: false,
-            )),
         ),
     ],
 )

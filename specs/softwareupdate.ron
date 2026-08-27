@@ -9,10 +9,6 @@
                 "--list",
             ],
             description: Some("List all appropriate update labels"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-d",
@@ -20,10 +16,6 @@
                 "--download",
             ],
             description: Some("Download Only"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-i",
@@ -31,7 +23,6 @@
                 "--install",
             ],
             description: Some("Install"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -39,8 +30,10 @@
                         "--all",
                     ],
                     description: Some("All appropriate updates"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-r",
+                        "--recommended",
+                    ],
                 ),
                 (
                     names: [
@@ -48,8 +41,6 @@
                         "--restart",
                     ],
                     description: Some("Automatically restart (or shut down) if required to complete installation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -57,116 +48,78 @@
                         "--recommended",
                     ],
                     description: Some("Only recommended updates"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-a",
+                        "--all",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "label",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            script: [
+                                "softwareupdate",
+                                "--list",
+                            ],
+                            script_timeout_ms: Some(20000),
+                            has_post_process: true,
+                            cache: Some((
+                                ttl_ms: Some(7200000),
+                                stale_while_revalidate: true,
+                            )),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "softwareupdate",
-                            "--list",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "--list-full-installers",
-            aliases: [],
             description: Some("List the available macOS Installers"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "--fetch-full-installer",
-            aliases: [],
             description: Some("Install the latest recommended macOS Installer"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "--full-installer-version",
-            aliases: [],
             description: Some("The version of macOS to install"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "version",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "--install-rosetta",
-            aliases: [],
             description: Some("Install Rosetta 2"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "--background",
-            aliases: [],
             description: Some("Trigger a background scan and update operation"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "--dump-state",
-            aliases: [],
             description: Some("Log the internal state of the SU daemon to /var/log/install.log"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "--evaluate-products",
-            aliases: [],
             description: Some("Evaluate a list of product keys specified by the --products option"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "--history",
-            aliases: [],
             description: Some("Show the install history.  By default, only displays updates installed by softwareupdate"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("Include all processes in history (including App installs)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -175,56 +128,50 @@
                 "--no-scan",
             ],
             description: Some("Do not scan when listing or installing updates (use available updates previously scanned)"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--product-types",
             ],
             description: Some("Limit a scan to a particular product type only - ignoring all others"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
                 "--products",
             ],
             description: Some("A comma-separated (no spaces) list of product keys to operate on"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--force",
             ],
             description: Some("Force an operation to complete.  Use with --background to trigger a background scan regardless of \"Automatically check\" pref"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
+            presentation: (
+                dangerous: true,
+            ),
         ),
         (
             names: [
                 "--agree-to-license",
             ],
             description: Some("Agree to the software license agreement without user interaction"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--verbose",
             ],
             description: Some("Enable verbose output"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
@@ -232,9 +179,6 @@
                 "-h",
             ],
             description: Some("Show help for softwareupdate"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

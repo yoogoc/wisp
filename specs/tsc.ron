@@ -2,69 +2,55 @@
     version: 1,
     command: "tsc",
     description: Some("CLI tool for TypeScript compiler"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--all",
             ],
             description: Some("Show all compiler options"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--generateTrace",
             ],
             description: Some("Generates an event trace and a list of types"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--help",
             ],
             description: Some("Gives local information for help on the CLI"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--init",
             ],
             description: Some("Initializes a TypeScript project and creates a tsconfig.json file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--listFilesOnly",
             ],
             description: Some("Print names of files that are part of the compilation and then stop processing"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--locale",
             ],
             description: Some("Set the language of the messaging from TypeScript. This does not affect emit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--project",
             ],
             description: Some("Compile the project given the path to its configuration file, or to a folder with a tsconfig.json"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -73,70 +59,55 @@
                 "--showConfig",
             ],
             description: Some("Print the final configuration instead of building"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--version",
             ],
-            description: Some("Print the compiler\'s version"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Print the compiler's version"),
         ),
         (
             names: [
                 "--build",
             ],
             description: Some("Build one or more projects and their dependencies, if out of date"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--clean",
             ],
             description: Some("Delete the outputs of all projects"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--dry",
             ],
-            description: Some("Show what would be built (or deleted, if specified with \'--clean\')"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Show what would be built (or deleted, if specified with '--clean')"),
         ),
         (
             names: [
                 "--force",
             ],
             description: Some("Build all projects, including those that appear to be up to date"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--verbose",
             ],
             description: Some("Enable verbose logging"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--excludeDirectories",
             ],
             description: Some("Remove a list of directories from the watch process"),
-            takes_value: true,
             arguments: [
                 (
                     name: "dir",
-                    source: Directories,
-                    optional: false,
+                    template: [
+                        Folders,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -144,15 +115,14 @@
             names: [
                 "--excludeFiles",
             ],
-            description: Some("Remove a list of files from the watch mode\'s processing"),
-            takes_value: true,
+            description: Some("Remove a list of files from the watch mode's processing"),
             arguments: [
                 (
                     name: "files",
-                    source: Files,
-                    optional: false,
+                    template: [
+                        FilePaths,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -161,18 +131,20 @@
                 "--fallbackPolling",
             ],
             description: Some("Specify what approach the watcher should use if the system runs out of native file watchers"),
-            takes_value: true,
             arguments: [
                 (
                     name: "approach",
-                    source: Static([
-                        "fixedPollingInterval",
-                        "priorityPollingInterval",
-                        "dynamicPriorityPolling",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "fixedPollingInterval",
+                        ),
+                        (
+                            name: "priorityPollingInterval",
+                        ),
+                        (
+                            name: "dynamicPriorityPolling",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -181,34 +153,32 @@
                 "--synchronousWatchDirectory",
             ],
             description: Some("Synchronously call callbacks and update the state of directory watchers on platforms that don`t support recursive watching natively"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--watch",
             ],
             description: Some("Watch input files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--watchDirectory",
             ],
             description: Some("Specify how directories are watched on systems that lack recursive file-watching functionality"),
-            takes_value: true,
             arguments: [
                 (
                     name: "approach",
-                    source: Static([
-                        "fixedPollingInterval",
-                        "dynamicPriorityPolling",
-                        "useFsEvents",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "fixedPollingInterval",
+                        ),
+                        (
+                            name: "dynamicPriorityPolling",
+                        ),
+                        (
+                            name: "useFsEvents",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -217,20 +187,26 @@
                 "--watchFile",
             ],
             description: Some("Specify how the TypeScript watch mode works"),
-            takes_value: true,
             arguments: [
                 (
                     name: "approach",
-                    source: Static([
-                        "fixedPollingInterval",
-                        "priorityPollingInterval",
-                        "dynamicPriorityPolling",
-                        "useFsEvents",
-                        "useFsEventsOnParentDirectory",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "fixedPollingInterval",
+                        ),
+                        (
+                            name: "priorityPollingInterval",
+                        ),
+                        (
+                            name: "dynamicPriorityPolling",
+                        ),
+                        (
+                            name: "useFsEvents",
+                        ),
+                        (
+                            name: "useFsEventsOnParentDirectory",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -239,70 +215,54 @@
                 "--allowJs",
             ],
             description: Some("Allow JavaScript files to be a part of your program. Use the checkJS option to get errors from these files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--allowSyntheticDefaultImports",
             ],
-            description: Some("Allow \'import x from y\' when a module doesn\'t have a default export"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Allow 'import x from y' when a module doesn't have a default export"),
         ),
         (
             names: [
                 "--allowUmdGlobalAccess",
             ],
             description: Some("Allow accessing UMD globals from modules"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--allowUnreachableCode",
             ],
             description: Some("Disable error reporting for unreachable code"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--allowUnusedLabels",
             ],
             description: Some("Disable error reporting for unused label"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--alwaysStrict",
             ],
-            description: Some("Ensure \'use strict\' is always emitted"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Ensure 'use strict' is always emitted"),
         ),
         (
             names: [
                 "--assumeChangesOnlyAffectDirectDependencies",
             ],
             description: Some("Have recompiles in projects that use incremental and watch mode assume that changes within a file will only affect files directly depending on it"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--baseUrl",
             ],
             description: Some("Specify the base directory to resolve non-relative module names"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directory",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -311,38 +271,30 @@
                 "--checkJs",
             ],
             description: Some("Enable error reporting in type-checked JavaScript files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--composite",
             ],
             description: Some("Enable constraints that allow a TypeScript project to be used with project references"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--declaration",
             ],
             description: Some("Generate .d.ts files from TypeScript and JavaScript files in your project"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--declarationDir",
             ],
             description: Some("Specify the output directory for generated declaration files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -351,162 +303,128 @@
                 "--declarationMap",
             ],
             description: Some("Create sourcemaps for d.ts files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--diagnostics",
             ],
             description: Some("Output compiler performance information after building"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--disableReferencedProjectLoad",
             ],
             description: Some("Reduce the number of projects loaded automatically by TypeScript"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--disableSizeLimit",
             ],
             description: Some("Remove the 20mb cap on total source code size for JavaScript files in the TypeScript language server"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--disableSolutionSearching",
             ],
             description: Some("Opt a project out of multi-project reference checking when editing"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--disableSourceOfProjectReferenceRedirect",
             ],
             description: Some("Disable preferring source files instead of declaration files when referencing composite projects"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--downlevelIteration",
             ],
             description: Some("Emit more compliant, but verbose and less performant JavaScript for iteration"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--emitBOM",
             ],
             description: Some("Emit a UTF-8 Byte Order Mark (BOM) in the beginning of output files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--emitDeclarationOnly",
             ],
             description: Some("Only output d.ts files and not JavaScript files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--emitDecoratorMetadata",
             ],
             description: Some("Emit design-type metadata for decorated declarations in source files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--esModuleInterop",
             ],
             description: Some("Emit additional JavaScript to ease support for importing CommonJS modules. This enables allowSyntheticDefaultImports for type compatibility"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--exactOptionalPropertyTypes",
             ],
             description: Some("Differentiate between undefined and not present when type checking"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--experimentalDecorators",
             ],
             description: Some("Enable experimental support for TC39 stage 2 draft decorators"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--explainFiles",
             ],
             description: Some("Print files read during the compilation including why it was included"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--extendedDiagnostics",
             ],
             description: Some("Output more detailed compiler performance information after building"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--forceConsistentCasingInFileNames",
             ],
             description: Some("Ensure that casing is correct in imports"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--generateCpuProfile",
             ],
             description: Some("Emit a v8 CPU profile of the compiler run for debugging"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--importHelpers",
             ],
             description: Some("Allow importing helper functions from tslib once per project, instead of including them per-file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--importsNotUsedAsValues",
             ],
             description: Some("Specify emit/checking behavior for imports that are only used for types"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "remove",
-                        "preserve",
-                        "error",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "remove",
+                        ),
+                        (
+                            name: "preserve",
+                        ),
+                        (
+                            name: "error",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -515,52 +433,50 @@
                 "--incremental",
             ],
             description: Some("Save .tsbuildinfo files to allow for incremental compilation of projects"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--inlineSourceMap",
             ],
             description: Some("Include sourcemap files inside the emitted JavaScript"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--inlineSources",
             ],
             description: Some("Include source code in the sourcemaps inside the emitted JavaScript"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--isolatedModules",
             ],
             description: Some("Ensure that each file can be safely transpiled without relying on other imports"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--jsx",
             ],
             description: Some("Specify what JSX code is generated"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "react",
-                        "react-jsx",
-                        "react-jsxdev",
-                        "react-native",
-                        "preserve",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "react",
+                        ),
+                        (
+                            name: "react-jsx",
+                        ),
+                        (
+                            name: "react-jsxdev",
+                        ),
+                        (
+                            name: "react-native",
+                        ),
+                        (
+                            name: "preserve",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -568,15 +484,11 @@
             names: [
                 "--jsxFactory",
             ],
-            description: Some("Specify the JSX factory function used when targeting React JSX emit, e.g. \'React.createElement\' or \'h\'"),
-            takes_value: true,
+            description: Some("Specify the JSX factory function used when targeting React JSX emit, e.g. 'React.createElement' or 'h'"),
             arguments: [
                 (
                     name: "JSX factory function",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("React.createElement"),
                 ),
             ],
         ),
@@ -584,15 +496,10 @@
             names: [
                 "--jsxFragmentFactory",
             ],
-            description: Some("Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. \'React.Fragment\' or \'Fragment\'"),
-            takes_value: true,
+            description: Some("Specify the JSX Fragment reference used for fragments when targeting React JSX emit e.g. 'React.Fragment' or 'Fragment'"),
             arguments: [
                 (
                     name: "JSX fragment",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -601,14 +508,10 @@
                 "--jsxImportSource",
             ],
             description: Some("Specify module specifier used to import the JSX factory functions when using jsx: react-jsx*"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("react"),
                 ),
             ],
         ),
@@ -617,22 +520,19 @@
                 "--keyofStringsOnly",
             ],
             description: Some("Make keyof only return strings instead of string, numbers or symbols. Legacy option"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--lib",
             ],
             description: Some("Specify a set of bundled library declaration files that describe the target runtime environment"),
-            takes_value: true,
             arguments: [
                 (
                     name: "list",
-                    source: Files,
-                    optional: false,
+                    template: [
+                        FilePaths,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -641,30 +541,24 @@
                 "--listEmittedFiles",
             ],
             description: Some("Print the names of emitted files after a compilation"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--listFiles",
             ],
             description: Some("Print all of the files read during the compilation"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--mapRoot",
             ],
             description: Some("Specify the location where debugger should locate map files instead of generated locations"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -673,15 +567,14 @@
                 "--maxNodeModuleJsDepth",
             ],
             description: Some("Specify the maximum folder depth used for checking JavaScript files from node_modules. Only applicable with allowJs"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("0"),
                 ),
+            ],
+            depends_on: [
+                "--allowJs",
             ],
         ),
         (
@@ -689,24 +582,39 @@
                 "--module",
             ],
             description: Some("Specify what module code is generated"),
-            takes_value: true,
             arguments: [
                 (
                     name: "module",
-                    source: Static([
-                        "ES6",
-                        "ES2015",
-                        "ES2020",
-                        "None",
-                        "UMD",
-                        "AMD",
-                        "System",
-                        "ESNext",
-                        "CommonJS",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "ES6",
+                        ),
+                        (
+                            name: "ES2015",
+                        ),
+                        (
+                            name: "ES2020",
+                        ),
+                        (
+                            name: "None",
+                        ),
+                        (
+                            name: "UMD",
+                        ),
+                        (
+                            name: "AMD",
+                        ),
+                        (
+                            name: "System",
+                        ),
+                        (
+                            name: "ESNext",
+                        ),
+                        (
+                            name: "CommonJS",
+                        ),
+                    ],
+                    default: Some("CommonJS"),
                 ),
             ],
         ),
@@ -715,14 +623,9 @@
                 "--moduleResolution",
             ],
             description: Some("Specify how TypeScript looks up a file from a given module specifier"),
-            takes_value: true,
             arguments: [
                 (
                     name: "module",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -731,14 +634,9 @@
                 "--newLine",
             ],
             description: Some("Set the newline character for emitting files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "character",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -747,150 +645,114 @@
                 "--noEmit",
             ],
             description: Some("Disable emitting file from a compilation"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noEmitHelpers",
             ],
             description: Some("Disable generating custom helper functions like __extends in compiled output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noEmitOnError",
             ],
             description: Some("Disable emitting files if any type checking errors are reported"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noErrorTruncation",
             ],
             description: Some("Disable truncating types in error messages"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noFallthroughCasesInSwitch",
             ],
             description: Some("Enable error reporting for fallthrough cases in switch statements"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noImplicitAny",
             ],
             description: Some("Enable error reporting for expressions and declarations with an implied any type"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noImplicitOverride",
             ],
             description: Some("Ensure overriding members in derived classes are marked with an override modifier"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noImplicitReturns",
             ],
             description: Some("Enable error reporting for codepaths that do not explicitly return in a function"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noImplicitThis",
             ],
             description: Some("Enable error reporting when this is given the type any"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noImplicitUseStrict",
             ],
-            description: Some("Disable adding \'use strict\' directives in emitted JavaScript files"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Disable adding 'use strict' directives in emitted JavaScript files"),
         ),
         (
             names: [
                 "--noLib",
             ],
             description: Some("Disable including any library files, including the default lib.d.ts"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noPropertyAccessFromIndexSignature",
             ],
             description: Some("Enforces using indexed accessors for keys declared using an indexed type"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noResolve",
             ],
             description: Some("Disallow imports, requires or <reference>s from expanding the number of files TypeScript should add to a project"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noStrictGenericChecks",
             ],
             description: Some("Disable strict checking of generic signatures in function types"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noUncheckedIndexedAccess",
             ],
             description: Some("Add undefined to a type when accessed using an index"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noUnusedLocals",
             ],
-            description: Some("Enable error reporting when a local variables aren\'t read"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Enable error reporting when a local variables aren't read"),
         ),
         (
             names: [
                 "--noUnusedParameters",
             ],
-            description: Some("Raise an error when a function parameter isn\'t read"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Raise an error when a function parameter isn't read"),
         ),
         (
             names: [
                 "--outDir",
             ],
             description: Some("Specify an output folder for all emitted files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -899,14 +761,12 @@
                 "--outFile",
             ],
             description: Some("Specify a file that bundles all outputs into one JavaScript file. If declaration is true, also designates a file that bundles all .d.ts output"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -915,14 +775,9 @@
                 "--paths",
             ],
             description: Some("Specify a set of entries that re-map imports to additional lookup locations"),
-            takes_value: true,
             arguments: [
                 (
                     name: "object",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -931,14 +786,10 @@
                 "--plugins",
             ],
             description: Some("Specify a list of language service plugins to include"),
-            takes_value: true,
             arguments: [
                 (
                     name: "plugins",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -947,46 +798,34 @@
                 "--preserveConstEnums",
             ],
             description: Some("Disable erasing const enum declarations in generated code"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--preserveSymlinks",
             ],
             description: Some("Disable resolving symlinks to their realpath. This correlates to the same flag in node"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--preserveWatchOutput",
             ],
             description: Some("Disable wiping the console in watch mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--pretty",
             ],
             description: Some("Enable color and formatting in output to make compiler errors easier to read"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--reactNamespace",
             ],
             description: Some("Specify the object invoked for createElement. This only applies when targeting react JSX emit"),
-            takes_value: true,
             arguments: [
                 (
                     name: "object",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("React"),
                 ),
             ],
         ),
@@ -995,30 +834,24 @@
                 "--removeComments",
             ],
             description: Some("Disable emitting comments"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--resolveJsonModule",
             ],
             description: Some("Enable importing .json files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--rootDir",
             ],
             description: Some("Specify the root folder within your source files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -1027,14 +860,13 @@
                 "--rootDirs",
             ],
             description: Some("Allow multiple folders to be treated as one when resolving modules"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Directories,
-                    optional: false,
+                    template: [
+                        Folders,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1043,38 +875,31 @@
                 "--skipDefaultLibCheck",
             ],
             description: Some("Skip type checking .d.ts files that are included with TypeScript"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--skipLibCheck",
             ],
             description: Some("Skip type checking all .d.ts files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--sourceMap",
             ],
             description: Some("Create source map files for emitted JavaScript files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--sourceRoot",
             ],
             description: Some("Specify the root path for debuggers to find the reference source code"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -1083,90 +908,93 @@
                 "--strict",
             ],
             description: Some("Enable all strict type checking options"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--strictBindCallApply",
             ],
             description: Some("Check that the arguments for bind, call, and apply methods match the original function"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--strictFunctionTypes",
             ],
             description: Some("When assigning functions, check to ensure parameters and the return values are subtype-compatible"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--strictNullChecks",
             ],
             description: Some("When type checking, take into account null and undefined"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--strictPropertyInitialization",
             ],
             description: Some("Check for class properties that are declared but not set in the constructor"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--stripInternal",
             ],
             description: Some("Disable emitting declarations that have @internal in their JSDoc comments"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--suppressExcessPropertyErrors",
             ],
             description: Some("Disable reporting of excess property errors during the creation of object literals"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--suppressImplicitAnyIndexErrors",
             ],
             description: Some("Suppress noImplicitAny errors when indexing objects that lack index signatures"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--target",
             ],
             description: Some("Set the JavaScript language version for emitted JavaScript and include compatible library declarations"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Static([
-                        "ES3",
-                        "ES5",
-                        "ES6",
-                        "ES2015",
-                        "ES7",
-                        "ES2016",
-                        "ES2017",
-                        "ES2018",
-                        "ES2019",
-                        "ES2020",
-                        "ESNext",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    suggestions: [
+                        (
+                            name: "ES3",
+                        ),
+                        (
+                            name: "ES5",
+                        ),
+                        (
+                            name: "ES6",
+                        ),
+                        (
+                            name: "ES2015",
+                        ),
+                        (
+                            name: "ES7",
+                        ),
+                        (
+                            name: "ES2016",
+                        ),
+                        (
+                            name: "ES2017",
+                        ),
+                        (
+                            name: "ES2018",
+                        ),
+                        (
+                            name: "ES2019",
+                        ),
+                        (
+                            name: "ES2020",
+                        ),
+                        (
+                            name: "ESNext",
+                        ),
+                    ],
+                    default: Some("ES3"),
                 ),
             ],
         ),
@@ -1175,22 +1003,18 @@
                 "--traceResolution",
             ],
             description: Some("Log paths used during the moduleResolution process"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tsBuildInfoFile",
             ],
             description: Some("Specify the folder for .tsbuildinfo incremental compilation files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -1199,14 +1023,13 @@
                 "--typeRoots",
             ],
             description: Some("Specify multiple folders that act like ./node_modules/@types"),
-            takes_value: true,
             arguments: [
                 (
                     name: "folders",
-                    source: Directories,
-                    optional: false,
+                    template: [
+                        Folders,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1215,14 +1038,10 @@
                 "--types",
             ],
             description: Some("Specify type package names to be included without being referenced in a source file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "package names",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1231,29 +1050,25 @@
                 "--useDefineForClassFields",
             ],
             description: Some("Emit ECMAScript-standard-compliant class fields"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--useUnknownInCatchVariables",
             ],
             description: Some("Default catch clause variables as unknown instead of any"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "tsc script",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    has_dynamic_query_term: true,
+                ),
+            ],
+            is_script: true,
         ),
     ],
 )

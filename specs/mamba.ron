@@ -5,60 +5,54 @@
     subcommands: [
         (
             name: "activate",
-            aliases: [],
             description: Some("Activate an environment"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--stack",
                     ],
                     description: Some("Stack the environment being activated on top of the previous active environment"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-stack",
+                    ],
                 ),
                 (
                     names: [
                         "--no-stack",
                     ],
-                    description: Some("Do not stack the environment. Overrides \'auto_stack\' setting"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Do not stack the environment. Overrides 'auto_stack' setting"),
+                    exclusive_on: [
+                        "--stack",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "environment",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "conda",
-                            "env",
-                            "list",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "conda",
+                                "env",
+                                "list",
+                            ],
+                            script_timeout_ms: Some(10000),
+                            has_post_process: true,
+                            cache: Some((
+                                stale_while_revalidate: true,
+                            )),
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "deactivate",
-            aliases: [],
             description: Some("Deactivate an environment"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "clean",
-            aliases: [],
             description: Some("Remove unused packages and caches"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -66,8 +60,6 @@
                         "--all",
                     ],
                     description: Some("Remove index cache, lock files, unused cache packages, and tarballs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -75,8 +67,6 @@
                         "--index-cache",
                     ],
                     description: Some("Remove index cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -84,8 +74,6 @@
                         "--packages",
                     ],
                     description: Some("Remove unused packages from writable package caches"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -93,8 +81,6 @@
                         "--tarballs",
                     ],
                     description: Some("Remove cached package tarballs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -102,8 +88,6 @@
                         "--force-pkgs-dirs",
                     ],
                     description: Some("Remove all writable package caches"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -111,16 +95,12 @@
                         "--logfiles",
                     ],
                     description: Some("Remove log files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--locks",
                     ],
                     description: Some("Remove lock files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -128,14 +108,13 @@
                         "--tempfiles",
                     ],
                     description: Some("Remove temporary files that could not be deleted earlier due to being in-use. Argument is path(s) to prefix(es) where files should be found and removed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
+                            template: [
+                                FilePaths,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -145,16 +124,12 @@
                         "--dry-run",
                     ],
                     description: Some("Only display what would have been done"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Report all output as json. Suitable for using conda programmatically"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -162,8 +137,6 @@
                         "--quiet",
                     ],
                     description: Some("Do not display progress bar"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -171,8 +144,7 @@
                         "--verbose",
                     ],
                     description: Some("Can be used multiple times. Once for INFO, twice for DEBUG, three times for TRACE"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Many,
                 ),
                 (
                     names: [
@@ -180,18 +152,12 @@
                         "--yes",
                     ],
                     description: Some("Do not ask for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "compare",
-            aliases: [],
             description: Some("Compare packages between conda environments"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -199,16 +165,14 @@
                         "--name",
                     ],
                     description: Some("Name of environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "environment",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("-n '{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -216,14 +180,12 @@
                         "--prefix",
                     ],
                     description: Some("Full path to environment location (i.e. prefix)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -233,16 +195,12 @@
                         "--help",
                     ],
                     description: Some("Show this help message and exit"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Report all output as json. Suitable for using conda programmatically"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -250,8 +208,6 @@
                         "--verbose",
                     ],
                     description: Some("Use once for info, twice for debug, three times for trace"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -259,48 +215,44 @@
                         "--quiet",
                     ],
                     description: Some("Do not display progress bar"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Path to the environment file that is to be compared against"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "create",
-            aliases: [],
             description: Some("Create a new conda environment from a list of specified packages"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--clone",
                     ],
                     description: Some("Path to (or name of) existing local environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "env",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "conda",
-                                    "env",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "conda",
+                                        "env",
+                                        "list",
+                                    ],
+                                    script_timeout_ms: Some(10000),
+                                    has_post_process: true,
+                                    cache: Some((
+                                        stale_while_revalidate: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -309,14 +261,12 @@
                         "--file",
                     ],
                     description: Some("Read package versions from the given file. Repeated file specifications can be passed (e.g. --file=file1 --file=file2)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -325,8 +275,6 @@
                         "--dev",
                     ],
                     description: Some("Use sys.executable -m conda in wrapper scripts instead of CONDA_EXE. This is mainly for use during tests where we test new conda source against old Python versions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -334,16 +282,14 @@
                         "--name",
                     ],
                     description: Some("Name of environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "environment",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("-n '{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -351,14 +297,12 @@
                         "--prefix",
                     ],
                     description: Some("Full path to environment location (i.e. prefix)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -367,15 +311,10 @@
                         "-c",
                         "--channel",
                     ],
-                    description: Some("They are given (including local directories using the \'file://\' syntax or simply a path like \'/home/conda/mychan\' or \'../mychan\'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use \'defaults\' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
-                    takes_value: true,
+                    description: Some("They are given (including local directories using the 'file://' syntax or simply a path like '/home/conda/mychan' or '../mychan'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use 'defaults' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
                     arguments: [
                         (
                             name: "channel",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -383,89 +322,73 @@
                     names: [
                         "--use-local",
                     ],
-                    description: Some("Use locally built packages. Identical to \'-c local\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Use locally built packages. Identical to '-c local'"),
                 ),
                 (
                     names: [
                         "--override-channels",
                     ],
                     description: Some("Do not search default or .condarc channels. Requires --channel"),
-                    takes_value: false,
-                    arguments: [],
+                    depends_on: [
+                        "--channel",
+                    ],
                 ),
                 (
                     names: [
                         "--repodata-fn",
                     ],
                     description: Some("Specify name of repodata on remote server. Conda will try whatever you specify, but will ultimately fall back to repodata.json if your specs are not satisfiable with what you specify here. This is used to employ repodata that is reduced in time scope. You may pass this flag more than once. Leftmost entries are tried first, and the fallback to repodata.json is added for you automatically"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "repodata",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--strict-channel-priority",
                     ],
                     description: Some("Packages in lower priority channels are not considered if a package with the same name appears in a higher priority channel"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-channel-priority",
                     ],
                     description: Some("Package version takes precedence over channel priority. Overrides the value given by conda config --show channel_priority"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-deps",
                     ],
                     description: Some("Do not install, update, remove, or change dependencies. This WILL lead to broken environments and inconsistent behavior. Use at your own risk"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        dangerous: true,
+                    ),
                 ),
                 (
                     names: [
                         "--only-deps",
                     ],
                     description: Some("Only install dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-pin",
                     ],
                     description: Some("Ignore pinned file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-default-packages",
                     ],
                     description: Some("Ignore create_default_packages in the .condarc file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--copy",
                     ],
                     description: Some("Install all packages using copies instead of hard- or soft-linking"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -473,25 +396,19 @@
                         "--use-index-cache",
                     ],
                     description: Some("Use cache of channel index files, even if it has expired"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-k",
                         "--insecure",
                     ],
-                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                 ),
                 (
                     names: [
                         "--offline",
                     ],
-                    description: Some("Offline mode. Don\'t connect to the Internet"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Offline mode. Don't connect to the Internet"),
                 ),
                 (
                     names: [
@@ -499,16 +416,12 @@
                         "--dry-run",
                     ],
                     description: Some("Only display what would have been done"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Report all output as json. Suitable for using conda programmatically"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -516,8 +429,6 @@
                         "--quiet",
                     ],
                     description: Some("Do not display progress bar"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -525,8 +436,7 @@
                         "--verbose",
                     ],
                     description: Some("Can be used multiple times. Once for INFO, twice for DEBUG, three times for TRACE"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Many,
                 ),
                 (
                     names: [
@@ -534,42 +444,32 @@
                         "--yes",
                     ],
                     description: Some("Do not ask for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--download-only",
                     ],
                     description: Some("Solve an environment and ensure package caches are populated, but exit prior to unlinking and linking packages into the prefix"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--show-channel-urls",
                     ],
                     description: Some("Show channel urls. Overrides the value given by conda config --show show_channel_urls"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "package_spec",
-                    source: Files,
+                    description: Some("Packages to install or update in the conda environment"),
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "info",
-            aliases: [],
             description: Some("Display information about current conda install"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -577,16 +477,12 @@
                         "--all",
                     ],
                     description: Some("Show all information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--base",
                     ],
                     description: Some("Display base environment path"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -594,8 +490,6 @@
                         "--envs",
                     ],
                     description: Some("List all known conda environments"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -603,24 +497,18 @@
                         "--system",
                     ],
                     description: Some("List environment variables"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--unsafe-channels",
                     ],
                     description: Some("Display list of channels with tokens exposed"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Report all output as json. Suitable for using conda programmatically"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -628,8 +516,6 @@
                         "--verbose",
                     ],
                     description: Some("Use once for info, twice for debug, three times for trace"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -637,41 +523,25 @@
                         "--quiet",
                     ],
                     description: Some("Do not display progress bar"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
             description: Some("Initialize conda for shell interaction. [Experimental]"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "install",
-            aliases: [],
             description: Some("Installs a list of packages into a specified conda environment"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--revision",
                     ],
                     description: Some("Revert to the specified REVISION"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "revision",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -680,14 +550,12 @@
                         "--file",
                     ],
                     description: Some("Read package versions from the given file. Repeated file specifications can be passed (e.g. --file=file1 --file=file2)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -696,8 +564,6 @@
                         "--dev",
                     ],
                     description: Some("Use sys.executable -m conda in wrapper scripts instead of CONDA_EXE. This is mainly for use during tests where we test new conda source against old Python versions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -705,16 +571,14 @@
                         "--name",
                     ],
                     description: Some("Name of environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "environment",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("-n '{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -722,14 +586,12 @@
                         "--prefix",
                     ],
                     description: Some("Full path to environment location (i.e. prefix)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -738,15 +600,10 @@
                         "-c",
                         "--channel",
                     ],
-                    description: Some("They are given (including local directories using the \'file://\' syntax or simply a path like \'/home/conda/mychan\' or \'../mychan\'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use \'defaults\' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
-                    takes_value: true,
+                    description: Some("They are given (including local directories using the 'file://' syntax or simply a path like '/home/conda/mychan' or '../mychan'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use 'defaults' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
                     arguments: [
                         (
                             name: "channel",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -754,31 +611,22 @@
                     names: [
                         "--use-local",
                     ],
-                    description: Some("Use locally built packages. Identical to \'-c local\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Use locally built packages. Identical to '-c local'"),
                 ),
                 (
                     names: [
                         "--override-channels",
                     ],
                     description: Some("Do not search default or .condarc channels. Requires --channel"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--repodata-fn",
                     ],
                     description: Some("Specify name of repodata on remote server. Conda will try whatever you specify, but will ultimately fall back to repodata.json if your specs are not satisfiable with what you specify here. This is used to employ repodata that is reduced in time scope. You may pass this flag more than once. Leftmost entries are tried first, and the fallback to repodata.json is added for you automatically"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "repodata",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -787,48 +635,36 @@
                         "--strict-channel-priority",
                     ],
                     description: Some("Packages in lower priority channels are not considered if a package with the same name appears in a higher priority channel"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-channel-priority",
                     ],
                     description: Some("Package version takes precedence over channel priority. Overrides the value given by conda config --show channel_priority"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-deps",
                     ],
                     description: Some("Do not install, update, remove, or change dependencies. This WILL lead to broken environments and inconsistent behavior. Use at your own risk"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--only-deps",
                     ],
                     description: Some("Only install dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-pin",
                     ],
                     description: Some("Ignore pinned file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--force-reinstall",
                     ],
                     description: Some("Ensure that any user-requested package for the current operation is uninstalled and reinstalled, even if that package already exists in the environment"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -836,25 +672,19 @@
                         "--no-update-deps",
                     ],
                     description: Some("Do not update or change already-installed dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--update-deps",
                     ],
                     description: Some("Update dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-S",
                         "--satisfied-skip-solve",
                     ],
-                    description: Some("Exit early and do not run the solver if the requested specs are satisfied. Also skips aggressive updates as configured by \'aggressive_update_packages\'. Similar to the default behavior of \'pip install\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Exit early and do not run the solver if the requested specs are satisfied. Also skips aggressive updates as configured by 'aggressive_update_packages'. Similar to the default behavior of 'pip install'"),
                 ),
                 (
                     names: [
@@ -862,24 +692,18 @@
                         "--all",
                     ],
                     description: Some("Update all installed packages in the environment"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--update-specs",
                     ],
                     description: Some("Update based on provided specifications"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--copy",
                     ],
                     description: Some("Install all packages using copies instead of hard- or soft-linking"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -887,16 +711,12 @@
                         "--mkdir",
                     ],
                     description: Some("Create the environment directory if necessary"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--clobber",
                     ],
                     description: Some("Allow clobbering of overlapping file paths within packages, and suppress related warnings"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -904,25 +724,19 @@
                         "--use-index-cache",
                     ],
                     description: Some("Use cache of channel index files, even if it has expired"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-k",
                         "--insecure",
                     ],
-                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                 ),
                 (
                     names: [
                         "--offline",
                     ],
-                    description: Some("Offline mode. Don\'t connect to the Internet"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Offline mode. Don't connect to the Internet"),
                 ),
                 (
                     names: [
@@ -930,16 +744,12 @@
                         "--dry-run",
                     ],
                     description: Some("Only display what would have been done"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Report all output as json. Suitable for using conda programmatically"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -947,8 +757,6 @@
                         "--quiet",
                     ],
                     description: Some("Do not display progress bar"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -956,8 +764,7 @@
                         "--verbose",
                     ],
                     description: Some("Can be used multiple times. Once for INFO, twice for DEBUG, three times for TRACE"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Many,
                 ),
                 (
                     names: [
@@ -965,54 +772,45 @@
                         "--yes",
                     ],
                     description: Some("Do not ask for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--download-only",
                     ],
                     description: Some("Solve an environment and ensure package caches are populated, but exit prior to unlinking and linking packages into the prefix"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--show-channel-urls",
                     ],
                     description: Some("Show channel urls. Overrides the value given by conda config --show show_channel_urls"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "package spec",
-                    source: Unavailable,
-                    optional: false,
+                    description: Some("Packages to install or update in the conda environment"),
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            script_timeout_ms: Some(10000),
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: true,
-                        has_custom: true,
-                    )),
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "list",
-            aliases: [],
             description: Some("List linked packages in a conda environment"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--show-channel-urls",
                     ],
                     description: Some("Show channel urls. Overrides the value given by conda config --show show_channel_urls"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1020,8 +818,6 @@
                         "--canonical",
                     ],
                     description: Some("Output canonical names of packages only. Implies --no-pip"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1029,24 +825,18 @@
                         "--full-name",
                     ],
                     description: Some("Only search for full names, i.e., ^<regex>$"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--explicit",
                     ],
                     description: Some("List explicitly all installed conda packaged with URL (output may be used by conda create --file)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--md5",
                     ],
                     description: Some("Add MD5 hashsum when using --explicit"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1054,8 +844,6 @@
                         "--export",
                     ],
                     description: Some("Output requirement string only (output may be used by conda create --file)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1063,16 +851,12 @@
                         "--revisions",
                     ],
                     description: Some("List the revision history and exit"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-pip",
                     ],
                     description: Some("Do not include pip-only installed packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1080,16 +864,14 @@
                         "--name",
                     ],
                     description: Some("Name of environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "environment",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("-n '{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -1097,14 +879,12 @@
                         "--prefix",
                     ],
                     description: Some("Full path to environment location (i.e. prefix)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -1113,8 +893,6 @@
                         "--json",
                     ],
                     description: Some("Report all output as json. Suitable for using conda programmatically"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1122,8 +900,6 @@
                         "--verbose",
                     ],
                     description: Some("Use once for info, twice for debug, three times for trace"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1131,26 +907,19 @@
                         "--quiet",
                     ],
                     description: Some("Do not display progress bar"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "regex",
-                    source: Files,
+                    description: Some("List only packages matching this regular expression"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "package",
-            aliases: [],
             description: Some("Low-level conda package utility. (EXPERIMENTAL)"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1158,14 +927,10 @@
                         "--which",
                     ],
                     description: Some("Given some PATH print which conda package the file came from"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Path",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1175,8 +940,6 @@
                         "--reset",
                     ],
                     description: Some("Remove all untracked files and exit"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1184,22 +947,15 @@
                         "--untracked",
                     ],
                     description: Some("Display all untracked files and exit"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--pkg-name",
                     ],
                     description: Some("Package name of the created package"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "package_name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1208,14 +964,9 @@
                         "--pkg-version",
                     ],
                     description: Some("Package version of the created package"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "package_version",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1224,14 +975,9 @@
                         "--pkg-build",
                     ],
                     description: Some("Package build number of the created package"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "package_build",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1241,16 +987,14 @@
                         "--name",
                     ],
                     description: Some("Name of environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "environment",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("-n '{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -1258,34 +1002,26 @@
                         "--prefix",
                     ],
                     description: Some("Full path to environment location (i.e. prefix)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "remove",
-            aliases: [],
             description: Some("Remove a list of packages from a specified conda environment"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--dev",
                     ],
                     description: Some("Use sys.executable -m conda in wrapper scripts instead of CONDA_EXE. This is mainly for use during tests where we test new conda source against old Python versions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1293,16 +1029,14 @@
                         "--name",
                     ],
                     description: Some("Name of environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "environment",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("-n '{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -1310,14 +1044,12 @@
                         "--prefix",
                     ],
                     description: Some("Full path to environment location (i.e. prefix)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -1326,15 +1058,10 @@
                         "-c",
                         "--channel",
                     ],
-                    description: Some("They are given (including local directories using the \'file://\' syntax or simply a path like \'/home/conda/mychan\' or \'../mychan\'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use \'defaults\' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
-                    takes_value: true,
+                    description: Some("They are given (including local directories using the 'file://' syntax or simply a path like '/home/conda/mychan' or '../mychan'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use 'defaults' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
                     arguments: [
                         (
                             name: "channel",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1342,31 +1069,22 @@
                     names: [
                         "--use-local",
                     ],
-                    description: Some("Use locally built packages. Identical to \'-c local\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Use locally built packages. Identical to '-c local'"),
                 ),
                 (
                     names: [
                         "--override-channels",
                     ],
                     description: Some("Do not search default or .condarc channels. Requires --channel"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--repodata-fn",
                     ],
                     description: Some("Specify name of repodata on remote server. Conda will try whatever you specify, but will ultimately fall back to repodata.json if your specs are not satisfiable with what you specify here. This is used to employ repodata that is reduced in time scope. You may pass this flag more than once. Leftmost entries are tried first, and the fallback to repodata.json is added for you automatically"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "repodata",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1375,16 +1093,12 @@
                         "--all",
                     ],
                     description: Some("Remove all packages, i.e., the entire environment"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--features",
                     ],
                     description: Some("Remove features (instead of packages)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1392,16 +1106,12 @@
                         "--force",
                     ],
                     description: Some("Forces removal of a package without removing packages that depend on it. Using this option will usually leave your environment in a broken and inconsistent state"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-pin",
                     ],
                     description: Some("Ignore pinned file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1409,25 +1119,19 @@
                         "--use-index-cache",
                     ],
                     description: Some("Use cache of channel index files, even if it has expired"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-k",
                         "--insecure",
                     ],
-                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                 ),
                 (
                     names: [
                         "--offline",
                     ],
-                    description: Some("Offline mode. Don\'t connect to the Internet"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Offline mode. Don't connect to the Internet"),
                 ),
                 (
                     names: [
@@ -1435,16 +1139,12 @@
                         "--dry-run",
                     ],
                     description: Some("Only display what would have been done"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Report all output as json. Suitable for using conda programmatically"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1452,8 +1152,6 @@
                         "--quiet",
                     ],
                     description: Some("Do not display progress bar"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1461,8 +1159,7 @@
                         "--verbose",
                     ],
                     description: Some("Can be used multiple times. Once for INFO, twice for DEBUG, three times for TRACE"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Many,
                 ),
                 (
                     names: [
@@ -1470,42 +1167,38 @@
                         "--yes",
                     ],
                     description: Some("Do not ask for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "conda",
+                                "list",
+                                "--json",
+                            ],
+                            script_timeout_ms: Some(10000),
+                            has_post_process: true,
+                            cache: Some((
+                                stale_while_revalidate: true,
+                            )),
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "conda",
-                            "list",
-                            "--json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "uninstall",
-            aliases: [],
             description: Some("Alias for remove"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--dev",
                     ],
                     description: Some("Use sys.executable -m conda in wrapper scripts instead of CONDA_EXE. This is mainly for use during tests where we test new conda source against old Python versions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1513,16 +1206,14 @@
                         "--name",
                     ],
                     description: Some("Name of environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "environment",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("-n '{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -1530,14 +1221,12 @@
                         "--prefix",
                     ],
                     description: Some("Full path to environment location (i.e. prefix)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -1546,15 +1235,10 @@
                         "-c",
                         "--channel",
                     ],
-                    description: Some("They are given (including local directories using the \'file://\' syntax or simply a path like \'/home/conda/mychan\' or \'../mychan\'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use \'defaults\' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
-                    takes_value: true,
+                    description: Some("They are given (including local directories using the 'file://' syntax or simply a path like '/home/conda/mychan' or '../mychan'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use 'defaults' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
                     arguments: [
                         (
                             name: "channel",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1562,31 +1246,22 @@
                     names: [
                         "--use-local",
                     ],
-                    description: Some("Use locally built packages. Identical to \'-c local\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Use locally built packages. Identical to '-c local'"),
                 ),
                 (
                     names: [
                         "--override-channels",
                     ],
                     description: Some("Do not search default or .condarc channels. Requires --channel"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--repodata-fn",
                     ],
                     description: Some("Specify name of repodata on remote server. Conda will try whatever you specify, but will ultimately fall back to repodata.json if your specs are not satisfiable with what you specify here. This is used to employ repodata that is reduced in time scope. You may pass this flag more than once. Leftmost entries are tried first, and the fallback to repodata.json is added for you automatically"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "repodata",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1595,16 +1270,12 @@
                         "--all",
                     ],
                     description: Some("Remove all packages, i.e., the entire environment"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--features",
                     ],
                     description: Some("Remove features (instead of packages)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1612,16 +1283,12 @@
                         "--force",
                     ],
                     description: Some("Forces removal of a package without removing packages that depend on it. Using this option will usually leave your environment in a broken and inconsistent state"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-pin",
                     ],
                     description: Some("Ignore pinned file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1629,25 +1296,19 @@
                         "--use-index-cache",
                     ],
                     description: Some("Use cache of channel index files, even if it has expired"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-k",
                         "--insecure",
                     ],
-                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                 ),
                 (
                     names: [
                         "--offline",
                     ],
-                    description: Some("Offline mode. Don\'t connect to the Internet"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Offline mode. Don't connect to the Internet"),
                 ),
                 (
                     names: [
@@ -1655,16 +1316,12 @@
                         "--dry-run",
                     ],
                     description: Some("Only display what would have been done"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Report all output as json. Suitable for using conda programmatically"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1672,8 +1329,6 @@
                         "--quiet",
                     ],
                     description: Some("Do not display progress bar"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1681,8 +1336,7 @@
                         "--verbose",
                     ],
                     description: Some("Can be used multiple times. Once for INFO, twice for DEBUG, three times for TRACE"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Many,
                 ),
                 (
                     names: [
@@ -1690,34 +1344,32 @@
                         "--yes",
                     ],
                     description: Some("Do not ask for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "conda",
+                                "list",
+                                "--json",
+                            ],
+                            script_timeout_ms: Some(10000),
+                            has_post_process: true,
+                            cache: Some((
+                                stale_while_revalidate: true,
+                            )),
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "conda",
-                            "list",
-                            "--json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "run",
-            aliases: [],
             description: Some("Run an executable in a conda environment"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1725,16 +1377,14 @@
                         "--name",
                     ],
                     description: Some("Name of environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "environment",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("-n '{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -1742,14 +1392,12 @@
                         "--prefix",
                     ],
                     description: Some("Full path to environment location (i.e. prefix)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -1759,38 +1407,30 @@
                         "--verbose",
                     ],
                     description: Some("Use once for info, twice for debug, three times for trace"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--dev",
                     ],
                     description: Some("Sets `CONDA_EXE` to `python -m conda`, assuming the CWD contains the root of conda development sources"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--debug-wrapper-scripts",
                     ],
                     description: Some("When this is set, where implemented, the shell wrapper scripts will echo to stderr a lot of debugging information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--cwd",
                     ],
                     description: Some("Current working directory for command to run in. Defaults to cwd"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -1798,43 +1438,33 @@
                     names: [
                         "--no-capture-output",
                     ],
-                    description: Some("Don\'t capture stdout/stderr"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't capture stdout/stderr"),
                 ),
                 (
                     names: [
                         "--live-stream",
                     ],
                     description: Some("Display the output for the subprocess stdout and stderr on real time"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "executable",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "search",
-            aliases: [],
             description: Some("Search for packages and display associated information. The input is a MatchSpec, a query language for conda packages"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--envs",
                     ],
-                    description: Some("Search all of the current user\'s environments. If run as Administrator (on Windows) or UID 0 (on unix), search all known environments on the system"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Search all of the current user's environments. If run as Administrator (on Windows) or UID 0 (on unix), search all known environments on the system"),
                 ),
                 (
                     names: [
@@ -1842,23 +1472,16 @@
                         "--info",
                     ],
                     description: Some("Provide detailed information about each package"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--subdir",
                         "--platform",
                     ],
-                    description: Some("Search the given subdir. Should be formatted like \'osx-64\', \'linux-32\', \'win-64\', and so on. The default is to search the current platform"),
-                    takes_value: true,
+                    description: Some("Search the given subdir. Should be formatted like 'osx-64', 'linux-32', 'win-64', and so on. The default is to search the current platform"),
                     arguments: [
                         (
                             name: "platform",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1867,15 +1490,10 @@
                         "-c",
                         "--channel",
                     ],
-                    description: Some("They are given (including local directories using the \'file://\' syntax or simply a path like \'/home/conda/mychan\' or \'../mychan\'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use \'defaults\' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
-                    takes_value: true,
+                    description: Some("They are given (including local directories using the 'file://' syntax or simply a path like '/home/conda/mychan' or '../mychan'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use 'defaults' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
                     arguments: [
                         (
                             name: "channel",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1883,31 +1501,25 @@
                     names: [
                         "--use-local",
                     ],
-                    description: Some("Use locally built packages. Identical to \'-c local\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Use locally built packages. Identical to '-c local'"),
                 ),
                 (
                     names: [
                         "--override-channels",
                     ],
                     description: Some("Do not search default or .condarc channels. Requires --channel"),
-                    takes_value: false,
-                    arguments: [],
+                    depends_on: [
+                        "--channel",
+                    ],
                 ),
                 (
                     names: [
                         "--repodata-fn",
                     ],
                     description: Some("Specify name of repodata on remote server. Conda will try whatever you specify, but will ultimately fall back to repodata.json if your specs are not satisfiable with what you specify here. This is used to employ repodata that is reduced in time scope. You may pass this flag more than once. Leftmost entries are tried first, and the fallback to repodata.json is added for you automatically"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "repodata",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1917,33 +1529,25 @@
                         "--use-index-cache",
                     ],
                     description: Some("Use cache of channel index files, even if it has expired"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-k",
                         "--insecure",
                     ],
-                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                 ),
                 (
                     names: [
                         "--offline",
                     ],
-                    description: Some("Offline mode. Don\'t connect to the Internet"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Offline mode. Don't connect to the Internet"),
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Report all output as json. Suitable for using conda programmatically"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1951,8 +1555,6 @@
                         "--verbose",
                     ],
                     description: Some("Use once for info, twice for debug, three times for trace"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1960,40 +1562,29 @@
                         "--quiet",
                     ],
                     description: Some("Do not display progress bar"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "query",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "update",
-            aliases: [],
             description: Some("Updates conda packages to the latest compatible version"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--file",
                     ],
                     description: Some("Read package versions from the given file. Repeated file specifications can be passed (e.g. --file=file1 --file=file2)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -2003,16 +1594,14 @@
                         "--name",
                     ],
                     description: Some("Name of environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "environment",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("-n '{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -2020,14 +1609,12 @@
                         "--prefix",
                     ],
                     description: Some("Full path to environment location (i.e. prefix)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -2036,15 +1623,10 @@
                         "-c",
                         "--channel",
                     ],
-                    description: Some("They are given (including local directories using the \'file://\' syntax or simply a path like \'/home/conda/mychan\' or \'../mychan\'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use \'defaults\' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
-                    takes_value: true,
+                    description: Some("They are given (including local directories using the 'file://' syntax or simply a path like '/home/conda/mychan' or '../mychan'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use 'defaults' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
                     arguments: [
                         (
                             name: "channel",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -2052,31 +1634,22 @@
                     names: [
                         "--use-local",
                     ],
-                    description: Some("Use locally built packages. Identical to \'-c local\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Use locally built packages. Identical to '-c local'"),
                 ),
                 (
                     names: [
                         "--override-channels",
                     ],
                     description: Some("Do not search default or .condarc channels. Requires --channel"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--repodata-fn",
                     ],
                     description: Some("Specify name of repodata on remote server. Conda will try whatever you specify, but will ultimately fall back to repodata.json if your specs are not satisfiable with what you specify here. This is used to employ repodata that is reduced in time scope. You may pass this flag more than once. Leftmost entries are tried first, and the fallback to repodata.json is added for you automatically"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "repodata",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -2085,48 +1658,36 @@
                         "--strict-channel-priority",
                     ],
                     description: Some("Packages in lower priority channels are not considered if a package with the same name appears in a higher priority channel"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-channel-priority",
                     ],
                     description: Some("Package version takes precedence over channel priority. Overrides the value given by conda config --show channel_priority"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-deps",
                     ],
                     description: Some("Do not install, update, remove, or change dependencies. This WILL lead to broken environments and inconsistent behavior. Use at your own risk"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--only-deps",
                     ],
                     description: Some("Only install dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-pin",
                     ],
                     description: Some("Ignore pinned file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--force-reinstall",
                     ],
                     description: Some("Ensure that any user-requested package for the current operation is uninstalled and reinstalled, even if that package already exists in the environment"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2134,25 +1695,19 @@
                         "--no-update-deps",
                     ],
                     description: Some("Do not update or change already-installed dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--update-deps",
                     ],
                     description: Some("Update dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-S",
                         "--satisfied-skip-solve",
                     ],
-                    description: Some("Exit early and do not run the solver if the requested specs are satisfied. Also skips aggressive updates as configured by \'aggressive_update_packages\'. Similar to the default behavior of \'pip install\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Exit early and do not run the solver if the requested specs are satisfied. Also skips aggressive updates as configured by 'aggressive_update_packages'. Similar to the default behavior of 'pip install'"),
                 ),
                 (
                     names: [
@@ -2160,32 +1715,24 @@
                         "--all",
                     ],
                     description: Some("Update all installed packages in the environment"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--update-specs",
                     ],
                     description: Some("Update based on provided specifications"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--copy",
                     ],
                     description: Some("Install all packages using copies instead of hard- or soft-linking"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--clobber",
                     ],
                     description: Some("Allow clobbering of overlapping file paths within packages, and suppress related warnings"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2193,25 +1740,19 @@
                         "--use-index-cache",
                     ],
                     description: Some("Use cache of channel index files, even if it has expired"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-k",
                         "--insecure",
                     ],
-                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                 ),
                 (
                     names: [
                         "--offline",
                     ],
-                    description: Some("Offline mode. Don\'t connect to the Internet"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Offline mode. Don't connect to the Internet"),
                 ),
                 (
                     names: [
@@ -2219,16 +1760,12 @@
                         "--dry-run",
                     ],
                     description: Some("Only display what would have been done"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Report all output as json. Suitable for using conda programmatically"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2236,8 +1773,6 @@
                         "--quiet",
                     ],
                     description: Some("Do not display progress bar"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2245,8 +1780,7 @@
                         "--verbose",
                     ],
                     description: Some("Can be used multiple times. Once for INFO, twice for DEBUG, three times for TRACE"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Many,
                 ),
                 (
                     names: [
@@ -2254,66 +1788,65 @@
                         "--yes",
                     ],
                     description: Some("Do not ask for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--download-only",
                     ],
                     description: Some("Solve an environment and ensure package caches are populated, but exit prior to unlinking and linking packages into the prefix"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--show-channel-urls",
                     ],
                     description: Some("Show channel urls. Overrides the value given by conda config --show show_channel_urls"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Static([
-                        "mamba",
-                    ]),
-                    optional: false,
+                    suggestions: [
+                        (
+                            name: "mamba",
+                            description: Some("Update mamba"),
+                            presentation: (
+                                icon: Some("⭐️"),
+                            ),
+                        ),
+                    ],
+                    generators: [
+                        (
+                            script: [
+                                "conda",
+                                "list",
+                                "--json",
+                            ],
+                            script_timeout_ms: Some(10000),
+                            has_post_process: true,
+                            cache: Some((
+                                stale_while_revalidate: true,
+                            )),
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "conda",
-                            "list",
-                            "--json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "upgrade",
-            aliases: [],
             description: Some("Alias for update"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--file",
                     ],
                     description: Some("Read package versions from the given file. Repeated file specifications can be passed (e.g. --file=file1 --file=file2)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -2323,16 +1856,14 @@
                         "--name",
                     ],
                     description: Some("Name of environment"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "environment",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("-n '{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -2340,14 +1871,12 @@
                         "--prefix",
                     ],
                     description: Some("Full path to environment location (i.e. prefix)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -2356,15 +1885,10 @@
                         "-c",
                         "--channel",
                     ],
-                    description: Some("They are given (including local directories using the \'file://\' syntax or simply a path like \'/home/conda/mychan\' or \'../mychan\'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use \'defaults\' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
-                    takes_value: true,
+                    description: Some("They are given (including local directories using the 'file://' syntax or simply a path like '/home/conda/mychan' or '../mychan'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use 'defaults' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
                     arguments: [
                         (
                             name: "channel",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -2372,31 +1896,22 @@
                     names: [
                         "--use-local",
                     ],
-                    description: Some("Use locally built packages. Identical to \'-c local\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Use locally built packages. Identical to '-c local'"),
                 ),
                 (
                     names: [
                         "--override-channels",
                     ],
                     description: Some("Do not search default or .condarc channels. Requires --channel"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--repodata-fn",
                     ],
                     description: Some("Specify name of repodata on remote server. Conda will try whatever you specify, but will ultimately fall back to repodata.json if your specs are not satisfiable with what you specify here. This is used to employ repodata that is reduced in time scope. You may pass this flag more than once. Leftmost entries are tried first, and the fallback to repodata.json is added for you automatically"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "repodata",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -2405,48 +1920,36 @@
                         "--strict-channel-priority",
                     ],
                     description: Some("Packages in lower priority channels are not considered if a package with the same name appears in a higher priority channel"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-channel-priority",
                     ],
                     description: Some("Package version takes precedence over channel priority. Overrides the value given by conda config --show channel_priority"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-deps",
                     ],
                     description: Some("Do not install, update, remove, or change dependencies. This WILL lead to broken environments and inconsistent behavior. Use at your own risk"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--only-deps",
                     ],
                     description: Some("Only install dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-pin",
                     ],
                     description: Some("Ignore pinned file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--force-reinstall",
                     ],
                     description: Some("Ensure that any user-requested package for the current operation is uninstalled and reinstalled, even if that package already exists in the environment"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2454,25 +1957,19 @@
                         "--no-update-deps",
                     ],
                     description: Some("Do not update or change already-installed dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--update-deps",
                     ],
                     description: Some("Update dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-S",
                         "--satisfied-skip-solve",
                     ],
-                    description: Some("Exit early and do not run the solver if the requested specs are satisfied. Also skips aggressive updates as configured by \'aggressive_update_packages\'. Similar to the default behavior of \'pip install\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Exit early and do not run the solver if the requested specs are satisfied. Also skips aggressive updates as configured by 'aggressive_update_packages'. Similar to the default behavior of 'pip install'"),
                 ),
                 (
                     names: [
@@ -2480,32 +1977,24 @@
                         "--all",
                     ],
                     description: Some("Update all installed packages in the environment"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--update-specs",
                     ],
                     description: Some("Update based on provided specifications"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--copy",
                     ],
                     description: Some("Install all packages using copies instead of hard- or soft-linking"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--clobber",
                     ],
                     description: Some("Allow clobbering of overlapping file paths within packages, and suppress related warnings"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2513,25 +2002,19 @@
                         "--use-index-cache",
                     ],
                     description: Some("Use cache of channel index files, even if it has expired"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-k",
                         "--insecure",
                     ],
-                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                 ),
                 (
                     names: [
                         "--offline",
                     ],
-                    description: Some("Offline mode. Don\'t connect to the Internet"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Offline mode. Don't connect to the Internet"),
                 ),
                 (
                     names: [
@@ -2539,16 +2022,12 @@
                         "--dry-run",
                     ],
                     description: Some("Only display what would have been done"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Report all output as json. Suitable for using conda programmatically"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2556,8 +2035,6 @@
                         "--quiet",
                     ],
                     description: Some("Do not display progress bar"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2565,8 +2042,7 @@
                         "--verbose",
                     ],
                     description: Some("Can be used multiple times. Once for INFO, twice for DEBUG, three times for TRACE"),
-                    takes_value: false,
-                    arguments: [],
+                    repeat: Many,
                 ),
                 (
                     names: [
@@ -2574,72 +2050,67 @@
                         "--yes",
                     ],
                     description: Some("Do not ask for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--download-only",
                     ],
                     description: Some("Solve an environment and ensure package caches are populated, but exit prior to unlinking and linking packages into the prefix"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--show-channel-urls",
                     ],
                     description: Some("Show channel urls. Overrides the value given by conda config --show show_channel_urls"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Static([
-                        "mamba",
-                    ]),
-                    optional: false,
+                    suggestions: [
+                        (
+                            name: "mamba",
+                            description: Some("Update mamba"),
+                            presentation: (
+                                icon: Some("⭐️"),
+                            ),
+                        ),
+                    ],
+                    generators: [
+                        (
+                            script: [
+                                "conda",
+                                "list",
+                                "--json",
+                            ],
+                            script_timeout_ms: Some(10000),
+                            has_post_process: true,
+                            cache: Some((
+                                stale_while_revalidate: true,
+                            )),
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "conda",
-                            "list",
-                            "--json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "repoquery",
-            aliases: [],
             description: Some("Query repositories using mamba"),
             subcommands: [
                 (
                     name: "search",
-                    aliases: [],
                     description: Some("Search for packages and display associated information. The input is a MatchSpec, a query language for conda packages"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "-c",
                                 "--channel",
                             ],
-                            description: Some("They are given (including local directories using the \'file://\' syntax or simply a path like \'/home/conda/mychan\' or \'../mychan\'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use \'defaults\' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
-                            takes_value: true,
+                            description: Some("They are given (including local directories using the 'file://' syntax or simply a path like '/home/conda/mychan' or '../mychan'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use 'defaults' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
                             arguments: [
                                 (
                                     name: "channel",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2647,31 +2118,22 @@
                             names: [
                                 "--use-local",
                             ],
-                            description: Some("Use locally built packages. Identical to \'-c local\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Use locally built packages. Identical to '-c local'"),
                         ),
                         (
                             names: [
                                 "--override-channels",
                             ],
                             description: Some("Do not search default or .condarc channels. Requires --channel"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--repodata-fn",
                             ],
                             description: Some("Specify name of repodata on remote server. Conda will try whatever you specify, but will ultimately fall back to repodata.json if your specs are not satisfiable with what you specify here. This is used to employ repodata that is reduced in time scope. You may pass this flag more than once. Leftmost entries are tried first, and the fallback to repodata.json is added for you automatically"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "repodata",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2681,25 +2143,19 @@
                                 "--use-index-cache",
                             ],
                             description: Some("Use cache of channel index files, even if it has expired"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "-k",
                                 "--insecure",
                             ],
-                            description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                         ),
                         (
                             names: [
                                 "--offline",
                             ],
-                            description: Some("Offline mode. Don\'t connect to the Internet"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Offline mode. Don't connect to the Internet"),
                         ),
                         (
                             names: [
@@ -2707,33 +2163,25 @@
                                 "--use-index-cache",
                             ],
                             description: Some("Use cache of channel index files, even if it has expired"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "-k",
                                 "--insecure",
                             ],
-                            description: Some("Allow conda to perform \'insecure SSL\' connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Allow conda to perform 'insecure SSL' connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                         ),
                         (
                             names: [
                                 "--offline",
                             ],
-                            description: Some("Offline mode. Don\'t connect to the Internet"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Offline mode. Don't connect to the Internet"),
                         ),
                         (
                             names: [
                                 "--json",
                             ],
                             description: Some("Report all output as json. Suitable for using conda programmatically"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2741,8 +2189,7 @@
                                 "--verbose",
                             ],
                             description: Some("Can be used multiple times. Once for INFO, twice for DEBUG, three times for TRACE"),
-                            takes_value: false,
-                            arguments: [],
+                            repeat: Times(3),
                         ),
                         (
                             names: [
@@ -2750,51 +2197,47 @@
                                 "--quiet",
                             ],
                             description: Some("Do not display progress bar"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "package",
-                            source: Static([
-                                "xtensor>=0.18",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "conda",
-                                    "list",
-                                    "--json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            suggestions: [
+                                (
+                                    name: "xtensor>=0.18",
+                                    description: Some("Search for xtensor version which is more than 0.18"),
+                                ),
+                            ],
+                            generators: [
+                                (
+                                    script: [
+                                        "conda",
+                                        "list",
+                                        "--json",
+                                    ],
+                                    script_timeout_ms: Some(10000),
+                                    has_post_process: true,
+                                    cache: Some((
+                                        stale_while_revalidate: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "depends",
-                    aliases: [],
                     description: Some("List dependencies for a package"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "-c",
                                 "--channel",
                             ],
-                            description: Some("They are given (including local directories using the \'file://\' syntax or simply a path like \'/home/conda/mychan\' or \'../mychan\'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use \'defaults\' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
-                            takes_value: true,
+                            description: Some("They are given (including local directories using the 'file://' syntax or simply a path like '/home/conda/mychan' or '../mychan'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use 'defaults' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
                             arguments: [
                                 (
                                     name: "channel",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2802,31 +2245,22 @@
                             names: [
                                 "--use-local",
                             ],
-                            description: Some("Use locally built packages. Identical to \'-c local\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Use locally built packages. Identical to '-c local'"),
                         ),
                         (
                             names: [
                                 "--override-channels",
                             ],
                             description: Some("Do not search default or .condarc channels. Requires --channel"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--repodata-fn",
                             ],
                             description: Some("Specify name of repodata on remote server. Conda will try whatever you specify, but will ultimately fall back to repodata.json if your specs are not satisfiable with what you specify here. This is used to employ repodata that is reduced in time scope. You may pass this flag more than once. Leftmost entries are tried first, and the fallback to repodata.json is added for you automatically"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "repodata",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2836,25 +2270,19 @@
                                 "--use-index-cache",
                             ],
                             description: Some("Use cache of channel index files, even if it has expired"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "-k",
                                 "--insecure",
                             ],
-                            description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                         ),
                         (
                             names: [
                                 "--offline",
                             ],
-                            description: Some("Offline mode. Don\'t connect to the Internet"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Offline mode. Don't connect to the Internet"),
                         ),
                         (
                             names: [
@@ -2862,33 +2290,25 @@
                                 "--use-index-cache",
                             ],
                             description: Some("Use cache of channel index files, even if it has expired"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "-k",
                                 "--insecure",
                             ],
-                            description: Some("Allow conda to perform \'insecure SSL\' connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Allow conda to perform 'insecure SSL' connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                         ),
                         (
                             names: [
                                 "--offline",
                             ],
-                            description: Some("Offline mode. Don\'t connect to the Internet"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Offline mode. Don't connect to the Internet"),
                         ),
                         (
                             names: [
                                 "--json",
                             ],
                             description: Some("Report all output as json. Suitable for using conda programmatically"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2896,8 +2316,7 @@
                                 "--verbose",
                             ],
                             description: Some("Can be used multiple times. Once for INFO, twice for DEBUG, three times for TRACE"),
-                            takes_value: false,
-                            arguments: [],
+                            repeat: Times(3),
                         ),
                         (
                             names: [
@@ -2905,51 +2324,47 @@
                                 "--quiet",
                             ],
                             description: Some("Do not display progress bar"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "package",
-                            source: Static([
-                                "xtensor",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "conda",
-                                    "list",
-                                    "--json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            suggestions: [
+                                (
+                                    name: "xtensor",
+                                    description: Some("List dependencies for xtensor package"),
+                                ),
+                            ],
+                            generators: [
+                                (
+                                    script: [
+                                        "conda",
+                                        "list",
+                                        "--json",
+                                    ],
+                                    script_timeout_ms: Some(10000),
+                                    has_post_process: true,
+                                    cache: Some((
+                                        stale_while_revalidate: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "whoneeds",
-                    aliases: [],
                     description: Some("List packages that require a given package"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "-c",
                                 "--channel",
                             ],
-                            description: Some("They are given (including local directories using the \'file://\' syntax or simply a path like \'/home/conda/mychan\' or \'../mychan\'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use \'defaults\' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
-                            takes_value: true,
+                            description: Some("They are given (including local directories using the 'file://' syntax or simply a path like '/home/conda/mychan' or '../mychan'). Then, the defaults or channels from .condarc are searched (unless --override-channels is given). You can use 'defaults' to get the default packages for conda. You can also use any name and the .condarc channel_alias value will be prepended. The default channel_alias is http://conda.anaconda.org/"),
                             arguments: [
                                 (
                                     name: "channel",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2957,31 +2372,22 @@
                             names: [
                                 "--use-local",
                             ],
-                            description: Some("Use locally built packages. Identical to \'-c local\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Use locally built packages. Identical to '-c local'"),
                         ),
                         (
                             names: [
                                 "--override-channels",
                             ],
                             description: Some("Do not search default or .condarc channels. Requires --channel"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--repodata-fn",
                             ],
                             description: Some("Specify name of repodata on remote server. Conda will try whatever you specify, but will ultimately fall back to repodata.json if your specs are not satisfiable with what you specify here. This is used to employ repodata that is reduced in time scope. You may pass this flag more than once. Leftmost entries are tried first, and the fallback to repodata.json is added for you automatically"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "repodata",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2991,25 +2397,19 @@
                                 "--use-index-cache",
                             ],
                             description: Some("Use cache of channel index files, even if it has expired"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "-k",
                                 "--insecure",
                             ],
-                            description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Allow conda to perform insecure SSL connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                         ),
                         (
                             names: [
                                 "--offline",
                             ],
-                            description: Some("Offline mode. Don\'t connect to the Internet"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Offline mode. Don't connect to the Internet"),
                         ),
                         (
                             names: [
@@ -3017,33 +2417,25 @@
                                 "--use-index-cache",
                             ],
                             description: Some("Use cache of channel index files, even if it has expired"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "-k",
                                 "--insecure",
                             ],
-                            description: Some("Allow conda to perform \'insecure SSL\' connections and transfers. Equivalent to setting \'ssl_verify\' to \'false\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Allow conda to perform 'insecure SSL' connections and transfers. Equivalent to setting 'ssl_verify' to 'false'"),
                         ),
                         (
                             names: [
                                 "--offline",
                             ],
-                            description: Some("Offline mode. Don\'t connect to the Internet"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Offline mode. Don't connect to the Internet"),
                         ),
                         (
                             names: [
                                 "--json",
                             ],
                             description: Some("Report all output as json. Suitable for using conda programmatically"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -3051,8 +2443,7 @@
                                 "--verbose",
                             ],
                             description: Some("Can be used multiple times. Once for INFO, twice for DEBUG, three times for TRACE"),
-                            takes_value: false,
-                            arguments: [],
+                            repeat: Times(3),
                         ),
                         (
                             names: [
@@ -3060,62 +2451,50 @@
                                 "--quiet",
                             ],
                             description: Some("Do not display progress bar"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "package",
-                            source: Static([
-                                "xtl",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "xtl",
+                                    description: Some("List packages that require xtl package"),
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "env",
-            aliases: [],
             description: Some("Manage environments"),
             subcommands: [
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List environments"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "environment",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "conda",
-                                    "env",
-                                    "list",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "conda",
+                                        "env",
+                                        "list",
+                                    ],
+                                    script_timeout_ms: Some(10000),
+                                    has_post_process: true,
+                                    cache: Some((
+                                        stale_while_revalidate: true,
+                                    )),
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -3125,8 +2504,6 @@
                 "-h",
             ],
             description: Some("Show help for mamba and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -3134,9 +2511,6 @@
                 "-V",
             ],
             description: Some("Show the conda version number and exit"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

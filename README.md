@@ -161,9 +161,26 @@ flowchart LR
 
 ## Completion specs
 
-Static command metadata lives in [`specs/`](specs) as data-only RON, one file per command: the complete `@withfig/autocomplete` 2.692.3 snapshot, 1,484 modules, including recursive subcommands, aliases, options, arguments, static suggestions, path templates, versioned specs, and `loadSpec` references. A spec's id is its path below `specs/`, so `az/2.53.0/network.ron` is the spec `az/2.53.0/network`. `crates/wisp-core/build.rs` compresses every one of those files into a single container that the binary embeds, and the daemon inflates a document only when a command is first completed, so it never deserializes the roughly 240 MB data set at startup.
+Static command metadata lives in [`specs/`](specs) as data-only RON, one file per command: the complete `@withfig/autocomplete` 2.692.3 snapshot, 1,484 modules. Every field a Fig spec carries declaratively is kept -- recursive subcommands, aliases, persistent and mutually exclusive options, option separators, arguments, static suggestions, path templates, display metadata, versioned specs, and `loadSpec` references. [`tools/fig-import`](tools/fig-import) regenerates the tree from a newer snapshot. A spec's id is its path below `specs/`, so `az/2.53.0/network.ron` is the spec `az/2.53.0/network`. `crates/wisp-core/build.rs` compresses every one of those files into a single container that the binary embeds, and the daemon inflates a document only when a command is first completed, so it never deserializes the roughly 190 MB data set at startup.
 
-Imported static Fig generator argv is stored as RON IR and executed directly without an implicit shell. Its output parser is also declarative (`Lines` or mapped JSON). JavaScript `postProcess` and `custom` callbacks remain inert unless they are replaced by a reviewed Rust/RON adapter. Built-in dynamic generators—such as Git branches and running Docker containers—remain registered in Rust. The original Fig MIT notice and import coverage report live in [`specs/`](specs).
+Fig hands a generator's output to a JavaScript `postProcess` or `custom`
+callback. Wisp ships no JavaScript runtime, so it replaces the callback with
+data. A generator's imported script runs, and a rule in
+[`crates/wisp-core/src/generators.ron`](crates/wisp-core/src/generators.ron) --
+each one a transcription of what the matching Fig callback does -- says how to
+read the output; anything unmatched falls back to the generator's own `splitOn`
+and then to a shape detector that handles JSON, newline-delimited JSON, and
+plain lines. A generator may only spawn a program on that file's `allowed` list,
+so an imported spec still cannot execute an arbitrary command; results are
+cached per working directory and abandoned if the script outruns its timeout.
+
+Where Fig's generator is pure JavaScript with no script at all, the same file
+maps the command path to something Wisp can read instead: `npm run` takes its
+suggestions from `package.json`, `make` from the makefile, `ssh` from
+`~/.ssh/config` and `known_hosts`. Fig's prebuilt templates are native too --
+file paths, folders, shell history, and the sibling subcommands of `help`.
+
+The original Fig license and the import coverage report live in [`specs/`](specs).
 
 ## Positioning and calibration
 

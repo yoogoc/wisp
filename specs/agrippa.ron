@@ -1,16 +1,10 @@
 (
     version: 1,
     command: "agrippa",
-    description: Some(""),
     subcommands: [
         (
             name: "init",
-            aliases: [],
             description: Some("Generates a basic .agripparc.json file, with some default values for options that agrippa accepts"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "generate",
@@ -18,26 +12,33 @@
                 "gen",
             ],
             description: Some("This is the core of the CLI - this command generates a new React component, based on the name and options passed to it"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--props",
                     ],
                     description: Some("Determines which prop declaration/validation solution to generate. Defaults to `ts` if `typescript` flag is `true`, `none` otherwise"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Static([
-                                "ts",
-                                "jsdoc",
-                                "prop-types",
-                                "none",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            suggestions: [
+                                (
+                                    name: "ts",
+                                    description: Some("Generate a TypeScript interface for props (this requires the typescript option to be true)"),
+                                ),
+                                (
+                                    name: "jsdoc",
+                                    description: Some("Generates JSDoc type hints for props (a @typedef and a @type)"),
+                                ),
+                                (
+                                    name: "prop-types",
+                                    description: Some("Generates prop-types for props"),
+                                ),
+                                (
+                                    name: "none",
+                                    description: Some("Generates no props"),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -46,14 +47,9 @@
                         "--children",
                     ],
                     description: Some("Whether the component is meant to have children or not. Defaults to `false`"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -63,14 +59,9 @@
                         "--ts",
                     ],
                     description: Some("Option to generate Typescript components, defaults to `true` if the CLI manages to find a `tsconfig.json` file, false otherwise"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -79,14 +70,9 @@
                         "--import-react",
                     ],
                     description: Some("Option to import React at the top of the component. Defaults to `true` if the CLI manages to find a `tsconfig.json` file and it has a `jsx` field under `compilerOptions` with `react-jsx` or `react-jsxdev` as the value, `false` otherwise"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -95,17 +81,17 @@
                         "--export-type",
                     ],
                     description: Some("Whether to export the component as a named export or a default export. Defaults to `named`"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Static([
-                                "named",
-                                "default",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            suggestions: [
+                                (
+                                    name: "named",
+                                ),
+                                (
+                                    name: "default",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -114,17 +100,17 @@
                         "--declaration",
                     ],
                     description: Some("Whether to declare the component as a `const` with an arrow function, or as a `function` declaration. Defaults to `const`"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Static([
-                                "const",
-                                "function",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            suggestions: [
+                                (
+                                    name: "const",
+                                ),
+                                (
+                                    name: "function",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -133,14 +119,9 @@
                         "--memo",
                     ],
                     description: Some("Generates a component as a memo component. Defaults to `false`"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -148,15 +129,10 @@
                     names: [
                         "--react-native",
                     ],
-                    description: Some("Generates a React Native component. Defaults to `true` if `react-native` is a dependency in the project\'s `package.json`, `false` otherwise"),
-                    takes_value: true,
+                    description: Some("Generates a React Native component. Defaults to `true` if `react-native` is a dependency in the project's `package.json`, `false` otherwise"),
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -165,21 +141,35 @@
                         "--styling",
                     ],
                     description: Some("Which styling solution to generate. Defaults to `none`"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Static([
-                                "none",
-                                "css",
-                                "scss",
-                                "jss",
-                                "mui",
-                                "react-native",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            suggestions: [
+                                (
+                                    name: "none",
+                                    description: Some("Generates no style"),
+                                ),
+                                (
+                                    name: "css",
+                                    description: Some("Generates a `css` file"),
+                                ),
+                                (
+                                    name: "scss",
+                                    description: Some("Generates a `scss` file"),
+                                ),
+                                (
+                                    name: "jss",
+                                    description: Some("Generates a `useStyles` hook above the component with `react-jss`'s `createUseStyles`"),
+                                ),
+                                (
+                                    name: "mui",
+                                    description: Some("Generates a `useStyles` hook above the component with `material-ui`'s `makeStyles`. Note that this generates styles for `material-ui` v4"),
+                                ),
+                                (
+                                    name: "react-native",
+                                    description: Some("Generates a React Native `StyleSheet`"),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -188,14 +178,9 @@
                         "--styling-module",
                     ],
                     description: Some("Whether to generate a scoped `module` stylesheet. This option is only relevant for `css` or `scss` styling, and will be ignored for other values. Defaults to `true`"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -204,14 +189,14 @@
                         "--base-dir",
                     ],
                     description: Some("Path to a base directory which components should be generated inside of (directly or nested). Defaults to the current working directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Directories,
+                            template: [
+                                Folders,
+                            ],
                             optional: true,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -220,31 +205,32 @@
                         "--dest",
                         "--destination",
                     ],
-                    description: Some("Allows the user to generate the component at a path relative to `baseDir`. It\'s mostly used to augment or modify the generation path in the command-line when creating the component itself. `dest` is resolved relative to `baseDir`"),
-                    takes_value: true,
+                    description: Some("Allows the user to generate the component at a path relative to `baseDir`. It's mostly used to augment or modify the generation path in the command-line when creating the component itself. `dest` is resolved relative to `baseDir`"),
                     arguments: [
                         (
                             name: "path",
-                            source: Directories,
+                            template: [
+                                Folders,
+                            ],
                             optional: true,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--allow-outside-base",
                     ],
                     description: Some("Overrides default Agrippa behaviour to allow components to be specified outside `baseDir`. Defaults to current working directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Directories,
+                            template: [
+                                Folders,
+                            ],
                             optional: true,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -253,14 +239,9 @@
                         "--flat",
                     ],
                     description: Some("By default, Agrippa generates a dedicated directory for the generated component; this directory has the same name as the component, and will contain the component file (as `index.tsx` or `index.jsx`), and the style file (if one is generated). Defaults to `false`"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -268,15 +249,10 @@
                     names: [
                         "--separate-index",
                     ],
-                    description: Some("In the `separateIndex` generation scheme, Agrippa creates one file for the component\'s code, and one `index` file, whose purpose is to allow importing exports from the component\'s directory elegantly (the import path can then be `<path>/<to>/<directory>/Component` instead of `<path>/<to>/<directory>/Component/Component`). Defaults to `true`"),
-                    takes_value: true,
+                    description: Some("In the `separateIndex` generation scheme, Agrippa creates one file for the component's code, and one `index` file, whose purpose is to allow importing exports from the component's directory elegantly (the import path can then be `<path>/<to>/<directory>/Component` instead of `<path>/<to>/<directory>/Component/Component`). Defaults to `true`"),
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -286,14 +262,10 @@
                         "--postCommand",
                     ],
                     description: Some("Allows a custom command to be run after having generated a component. This allows for some cool functionality, such as opening an IDE at the newly generated files automatically or linting them. Defaults to `none`"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            is_command: true,
                         ),
                     ],
                 ),
@@ -302,14 +274,9 @@
                         "--overwrite",
                     ],
                     description: Some("By default, Agrippa prevents the generation of a component over an existing components, to prevent a loss of code. `--overwrite` tells Agrippa to replace existing files, if any are found. Defaults to `false`"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -317,15 +284,10 @@
                     names: [
                         "--debug",
                     ],
-                    description: Some("The `debug` flag makes Agrippa print out additional debug information. It\'s quite useful when debugging. Defaults to `false`"),
-                    takes_value: true,
+                    description: Some("The `debug` flag makes Agrippa print out additional debug information. It's quite useful when debugging. Defaults to `false`"),
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
@@ -333,23 +295,13 @@
             arguments: [
                 (
                     name: "component",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
     ],
-    options: [],
     arguments: [
         (
-            name: "component\'s name",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            name: "component's name",
         ),
     ],
 )

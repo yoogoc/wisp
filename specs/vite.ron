@@ -5,23 +5,16 @@
     subcommands: [
         (
             name: "build",
-            aliases: [],
             description: Some("Build for production"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--target",
                     ],
                     description: Some("Transpile target (must be a valid esbuild target)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "target",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -30,14 +23,12 @@
                         "--outDir",
                     ],
                     description: Some("Output directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dir",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -46,14 +37,12 @@
                         "--assetsDir",
                     ],
                     description: Some("Directory under outDir to place assets in"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dir",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -62,14 +51,9 @@
                         "--assetsInlineLimit",
                     ],
                     description: Some("Static asset base64 inline threshold in bytes"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "number",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -78,14 +62,13 @@
                         "--ssr",
                     ],
                     description: Some("Build specified entry for server-side rendering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "entry",
-                            source: Files,
+                            template: [
+                                FilePaths,
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -94,25 +77,24 @@
                         "--sourcemap",
                     ],
                     description: Some("Output sourcemaps for build"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--minify",
                     ],
                     description: Some("Enable minification"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "minifier",
-                            source: Static([
-                                "terser",
-                                "esbuild",
-                            ]),
+                            suggestions: [
+                                (
+                                    name: "terser",
+                                ),
+                                (
+                                    name: "esbuild",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -121,14 +103,10 @@
                         "--manifest",
                     ],
                     description: Some("Emit build manifest json"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -137,14 +115,10 @@
                         "--ssrManifest",
                     ],
                     description: Some("Emit ssr manifest json"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -152,9 +126,7 @@
                     names: [
                         "--emptyOutDir",
                     ],
-                    description: Some("Force empty outDir when it\'s outside of root"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Force empty outDir when it's outside of root"),
                 ),
                 (
                     names: [
@@ -162,66 +134,58 @@
                         "--watch",
                     ],
                     description: Some("Rebuilds when modules have changed on disk"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "root",
-                    source: Directories,
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("🛠"),
+            ),
         ),
         (
             name: "optimize",
-            aliases: [],
             description: Some("Pre-bundle dependencies"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--force",
                     ],
                     description: Some("For the optimizer to re-bundle"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "root",
-                    source: Directories,
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("📦"),
+            ),
         ),
         (
             name: "preview",
-            aliases: [],
             description: Some("Locally preview the production build"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--host",
                     ],
                     description: Some("Specify the hostname"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "host",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -230,14 +194,9 @@
                         "--port",
                     ],
                     description: Some("Specify the port"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -246,22 +205,19 @@
                         "--https",
                     ],
                     description: Some("Use TLS + HTTP/2"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--open",
                     ],
                     description: Some("Open browser on startup"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "browser",
-                            source: Files,
+                            template: [
+                                FilePaths,
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -270,20 +226,20 @@
                         "--strictPort",
                     ],
                     description: Some("Exit if the port is already in use"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "root",
-                    source: Directories,
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("✨"),
+            ),
         ),
     ],
     options: [
@@ -293,22 +249,17 @@
                 "--help",
             ],
             description: Some("Show help message"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--host",
             ],
             description: Some("Specify the hostname"),
-            takes_value: true,
             arguments: [
                 (
                     name: "host",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -317,14 +268,9 @@
                 "--port",
             ],
             description: Some("Specify the port"),
-            takes_value: true,
             arguments: [
                 (
                     name: "port",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -333,22 +279,19 @@
                 "--https",
             ],
             description: Some("Use TLS + HTTP/2"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--open",
             ],
             description: Some("Open browser on startup"),
-            takes_value: true,
             arguments: [
                 (
                     name: "browser",
-                    source: Files,
+                    template: [
+                        FilePaths,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -357,24 +300,18 @@
                 "--cors",
             ],
             description: Some("Enable CORS"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--strictPort",
             ],
             description: Some("Exit if the port is already in use"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--force",
             ],
             description: Some("For the optimizer to re-bundle"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -382,32 +319,28 @@
                 "--config",
             ],
             description: Some("Use the specified config file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
                 "--base",
             ],
             description: Some("Public base path"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("/"),
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
@@ -415,29 +348,45 @@
                 "--logLevel",
             ],
             description: Some("Set the log level"),
-            takes_value: true,
             arguments: [
                 (
                     name: "level",
-                    source: Static([
-                        "info",
-                        "warn",
-                        "error",
-                        "silent",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "info",
+                            presentation: (
+                                icon: Some("💬"),
+                            ),
+                        ),
+                        (
+                            name: "warn",
+                            presentation: (
+                                icon: Some("⚠️"),
+                            ),
+                        ),
+                        (
+                            name: "error",
+                            presentation: (
+                                icon: Some("💥"),
+                            ),
+                        ),
+                        (
+                            name: "silent",
+                            presentation: (
+                                icon: Some("🤫"),
+                            ),
+                        ),
+                    ],
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
                 "--clearScreen",
             ],
             description: Some("Enable screen clearing when logging"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
@@ -445,16 +394,13 @@
                 "--debug",
             ],
             description: Some("Show debug logs"),
-            takes_value: true,
             arguments: [
                 (
                     name: "feat",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
@@ -462,16 +408,12 @@
                 "--filter",
             ],
             description: Some("Filter debug logs"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filter",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
@@ -479,23 +421,21 @@
                 "--mode",
             ],
             description: Some("Set env mode"),
-            takes_value: true,
             arguments: [
                 (
                     name: "mode",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "ls",
-                            "-l1A",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "ls",
+                                "-l1A",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
@@ -503,17 +443,18 @@
                 "--version",
             ],
             description: Some("Display version number"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "root",
-            source: Directories,
+            template: [
+                Folders,
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: None,
         ),
     ],
+    presentation: (
+        icon: Some("https://vitejs.dev/logo.svg"),
+    ),
 )

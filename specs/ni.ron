@@ -2,68 +2,56 @@
     version: 1,
     command: "ni",
     description: Some("Use the right package manager - install"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-g",
             ],
-            description: Some("Operates in \'global\' mode, so that packages are installed into the prefix folder instead of the current working directory"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Operates in 'global' mode, so that packages are installed into the prefix folder instead of the current working directory"),
         ),
         (
             names: [
                 "-D",
             ],
             description: Some("Package will appear in your `devDependencies`"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-P",
             ],
             description: Some("Save package to your `peerDependencies`"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-O",
             ],
             description: Some("Save package to your `optionalDependencies`"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--frozen",
             ],
-            description: Some("Don\'t generate a lockfile and fail if an update is needed"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't generate a lockfile and fail if an update is needed"),
         ),
         (
             names: [
                 "-C",
             ],
             description: Some("Change directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The directory to move"),
+                    template: [
+                        Folders,
+                    ],
                 ),
                 (
                     name: "target",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The target directory"),
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -73,21 +61,24 @@
                 "--help",
             ],
             description: Some("Output usage information"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "package",
-            source: Unavailable,
-            optional: false,
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    query_term: Some(AfterLast("@")),
+                    cache: Some((
+                        ttl_ms: Some(172800000),
+                        stale_while_revalidate: true,
+                    )),
+                ),
+            ],
             variadic: true,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
+            debounce: true,
         ),
     ],
 )

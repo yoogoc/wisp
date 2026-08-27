@@ -5,45 +5,43 @@
     subcommands: [
         (
             name: "build",
-            aliases: [],
             description: Some("Build or rebuild services"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--build-arg",
                     ],
                     description: Some("Set build-time variables for services"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "key=value",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_dynamic_script: true,
+                                    split_on: Some("\n"),
+                                ),
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--compress",
                     ],
                     description: Some("Compress the build context using gzip. DEPRECATED"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
                         "--force-rm",
                     ],
                     description: Some("Always remove intermediate containers. DEPRECATED"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
@@ -51,59 +49,62 @@
                         "-m",
                     ],
                     description: Some("Set memory limit for the build container. Not supported on buildkit yet"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "memory",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
                         "--no-cache",
                     ],
                     description: Some("Do not use cache when building the image"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-rm",
                     ],
                     description: Some("Do not remove intermediate containers after a successful build. DEPRECATED"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
                         "--parallel",
                     ],
                     description: Some("Build images in parallel. DEPRECATED"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
                         "--progress",
                     ],
                     description: Some("Set type of progress output (auto, tty, plain, quiet)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "progress",
-                            source: Static([
-                                "auto",
-                                "tty",
-                                "plain",
-                                "quiet",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "auto",
+                                ),
+                                (
+                                    name: "tty",
+                                ),
+                                (
+                                    name: "plain",
+                                ),
+                                (
+                                    name: "quiet",
+                                ),
+                            ],
+                            default: Some("auto"),
                         ),
                     ],
                 ),
@@ -112,31 +113,22 @@
                         "--pull",
                     ],
                     description: Some("Always attempt to pull a newer version of the image"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--quiet",
                         "-q",
                     ],
-                    description: Some("Don\'t print anything to STDOUT"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't print anything to STDOUT"),
                 ),
                 (
                     names: [
                         "--ssh",
                     ],
-                    description: Some("Set SSH authentications used when building service images. (use \'default\' for using your default SSH Agent)"),
-                    takes_value: true,
+                    description: Some("Set SSH authentications used when building service images. (use 'default' for using your default SSH Agent)"),
                     arguments: [
                         (
                             name: "ssh",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -144,42 +136,41 @@
             arguments: [
                 (
                     name: "services",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "config",
             aliases: [
                 "convert",
             ],
-            description: Some("Converts the compose file to platform\'s canonical format"),
-            subcommands: [],
+            description: Some("Converts the compose file to platform's canonical format"),
             options: [
                 (
                     names: [
                         "--format",
                     ],
                     description: Some("Format the output. Values: [yaml | json]"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "yaml",
-                                "json",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "yaml",
+                                ),
+                                (
+                                    name: "json",
+                                ),
+                            ],
+                            default: Some("yaml"),
                         ),
                     ],
                 ),
@@ -188,14 +179,9 @@
                         "--hash",
                     ],
                     description: Some("Print the service config hash, one per line"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "hash",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -204,24 +190,18 @@
                         "--images",
                     ],
                     description: Some("Print the image names, one per line"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-interpolate",
                     ],
-                    description: Some("Don\'t interpolate environment variables"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't interpolate environment variables"),
                 ),
                 (
                     names: [
                         "--no-normalize",
                     ],
-                    description: Some("Don\'t normalize compose model"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't normalize compose model"),
                 ),
                 (
                     names: [
@@ -229,14 +209,13 @@
                         "-o",
                     ],
                     description: Some("Save to file (default to stdout)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "output",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
                     ],
                 ),
@@ -245,71 +224,58 @@
                         "--profiles",
                     ],
                     description: Some("Print the profile names, one per line"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--quiet",
                         "-q",
                     ],
-                    description: Some("Only validate the configuration, don\'t print anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Only validate the configuration, don't print anything"),
                 ),
                 (
                     names: [
                         "--resolve-image-digests",
                     ],
                     description: Some("Pin image tags to digests"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--services",
                     ],
                     description: Some("Print the service names, one per line"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--volumes",
                     ],
                     description: Some("Print the volume names, one per line"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "services",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "cp",
-            aliases: [],
             description: Some("Copy files/folders between a service container and the local filesystem"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("Copy to all the containers of the service"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
@@ -317,8 +283,6 @@
                         "-a",
                     ],
                     description: Some("Archive mode (copy all uid/gid information)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -326,22 +290,16 @@
                         "-L",
                     ],
                     description: Some("Always follow symbol link in SRC_PATH"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--index",
                     ],
                     description: Some("Index of the container if there are multiple instances of a service"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "index",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("0"),
                         ),
                     ],
                 ),
@@ -349,102 +307,73 @@
             arguments: [
                 (
                     name: "source path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "dest path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "create",
-            aliases: [],
             description: Some("Creates containers for a service"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--build",
                     ],
                     description: Some("Build images before starting containers"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--force-recreate",
                     ],
-                    description: Some("Recreate containers even if their configuration and image haven\'t changed"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Recreate containers even if their configuration and image haven't changed"),
                 ),
                 (
                     names: [
                         "--no-build",
                     ],
-                    description: Some("Don\'t build an image, even if it\'s missing"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't build an image, even if it's missing"),
                 ),
                 (
                     names: [
                         "--no-recreate",
                     ],
-                    description: Some("If containers already exist, don\'t recreate them. Incompatible with --force-recreate"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("If containers already exist, don't recreate them. Incompatible with --force-recreate"),
                 ),
             ],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "down",
-            aliases: [],
             description: Some("Stop and remove containers, networks"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--remove-orphans",
                     ],
                     description: Some("Remove containers for services not defined in the Compose file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--rmi",
                     ],
-                    description: Some("Remove images used by services. \"local\" remove only images that don\'t have a custom tag (\"local\"|\"all\")"),
-                    takes_value: true,
+                    description: Some("Remove images used by services. \"local\" remove only images that don't have a custom tag (\"local\"|\"all\")"),
                     arguments: [
                         (
                             name: "rmi",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -454,14 +383,10 @@
                         "-t",
                     ],
                     description: Some("Specify a shutdown timeout in seconds"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "timeout",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("10"),
                         ),
                     ],
                 ),
@@ -471,48 +396,37 @@
                         "-v",
                     ],
                     description: Some("Remove named volumes declared in the `volumes` section of the Compose file and anonymous volumes attached to containers"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "events",
-            aliases: [],
             description: Some("Receive real time events from containers"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Output events as a stream of json objects"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "exec",
-            aliases: [],
             description: Some("Execute a command in a running container"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -520,8 +434,6 @@
                         "-d",
                     ],
                     description: Some("Detached mode: Run command in the background"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -529,30 +441,22 @@
                         "-e",
                     ],
                     description: Some("Set environment variables"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "key=value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--index",
                     ],
                     description: Some("Index of the container if there are multiple instances of a service [default: 1]"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "index",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("1"),
                         ),
                     ],
                 ),
@@ -562,8 +466,9 @@
                         "-i",
                     ],
                     description: Some("Keep STDIN open even if not attached"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
@@ -571,16 +476,12 @@
                         "-T",
                     ],
                     description: Some("Disable pseudo-TTY allocation. By default `docker compose exec` allocates a TTY"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--privileged",
                     ],
                     description: Some("Give extended privileges to the process"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -588,8 +489,9 @@
                         "-t",
                     ],
                     description: Some("Allocate a pseudo-TTY"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
@@ -597,14 +499,9 @@
                         "-u",
                     ],
                     description: Some("Run the command as this user"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "user",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -614,14 +511,12 @@
                         "-w",
                     ],
                     description: Some("Path to workdir directory for this command"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "workdir",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -629,30 +524,23 @@
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                 ),
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
+                    is_command: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "images",
-            aliases: [],
             description: Some("List images used by the created containers"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -660,30 +548,25 @@
                         "-q",
                     ],
                     description: Some("Only display IDs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "kill",
-            aliases: [],
             description: Some("Force stop service containers"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -691,14 +574,10 @@
                         "-s",
                     ],
                     description: Some("SIGNAL to send to the container"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "signal",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("SIGKILL"),
                         ),
                     ],
                 ),
@@ -706,23 +585,20 @@
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "logs",
-            aliases: [],
             description: Some("View output from containers"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -730,38 +606,27 @@
                         "-f",
                     ],
                     description: Some("Follow log output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Produce monochrome output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-log-prefix",
                     ],
-                    description: Some("Don\'t print prefix in logs"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't print prefix in logs"),
                 ),
                 (
                     names: [
                         "--since",
                     ],
                     description: Some("Show logs since timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "since",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -770,16 +635,15 @@
                         "--tail",
                     ],
                     description: Some("Number of lines to show from the end of the logs for each container"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "lines",
-                            source: Static([
-                                "all",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "all",
+                                ),
+                            ],
+                            default: Some("all"),
                         ),
                     ],
                 ),
@@ -789,22 +653,15 @@
                         "-t",
                     ],
                     description: Some("Show timestamps"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--until",
                     ],
                     description: Some("Show logs before a timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m for 42 minutes)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "timestamp",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -812,23 +669,20 @@
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "ls",
-            aliases: [],
             description: Some("List running compose projects"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -836,22 +690,15 @@
                         "-a",
                     ],
                     description: Some("Show all stopped Compose projects"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filter output based on conditions provided"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "filter",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -860,17 +707,18 @@
                         "--format",
                     ],
                     description: Some("Format the output. Values: [pretty | json]"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "pretty",
-                                "json",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "pretty",
+                                ),
+                                (
+                                    name: "json",
+                                ),
+                            ],
+                            default: Some("pretty"),
                         ),
                     ],
                 ),
@@ -880,53 +728,39 @@
                         "-q",
                     ],
                     description: Some("Only display IDs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "pause",
-            aliases: [],
             description: Some("Pause services"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "port",
-            aliases: [],
             description: Some("Print the public port for a port binding"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--index",
                     ],
                     description: Some("Index of the container if service has multiple replicas"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "index",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("1"),
                         ),
                     ],
                 ),
@@ -935,17 +769,18 @@
                         "--protocol",
                     ],
                     description: Some("Tcp or udp"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "protocol",
-                            source: Static([
-                                "tcp",
-                                "udp",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "tcp",
+                                ),
+                                (
+                                    name: "udp",
+                                ),
+                            ],
+                            default: Some("tcp"),
                         ),
                     ],
                 ),
@@ -953,30 +788,21 @@
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                 ),
                 (
                     name: "private_port",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "ps",
-            aliases: [],
             description: Some("List containers"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -984,22 +810,15 @@
                         "-a",
                     ],
                     description: Some("Show all stopped containers (including those created by the run command)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filter services by a property (supported filters: status)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "filter",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1008,17 +827,18 @@
                         "--format",
                     ],
                     description: Some("Format the output. Values: [pretty | json]"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "pretty",
-                                "json",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "pretty",
+                                ),
+                                (
+                                    name: "json",
+                                ),
+                            ],
+                            default: Some("pretty"),
                         ),
                     ],
                 ),
@@ -1028,94 +848,96 @@
                         "-q",
                     ],
                     description: Some("Only display IDs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--services",
                     ],
                     description: Some("Display services"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--status",
                     ],
                     description: Some("Filter services by status. Values: [paused | restarting | removing | running | dead | created | exited]"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "status",
-                            source: Static([
-                                "paused",
-                                "restarting",
-                                "removing",
-                                "running",
-                                "dead",
-                                "created",
-                                "exited",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "paused",
+                                ),
+                                (
+                                    name: "restarting",
+                                ),
+                                (
+                                    name: "removing",
+                                ),
+                                (
+                                    name: "running",
+                                ),
+                                (
+                                    name: "dead",
+                                ),
+                                (
+                                    name: "created",
+                                ),
+                                (
+                                    name: "exited",
+                                ),
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
             ],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "pull",
-            aliases: [],
             description: Some("Pull service images"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--ignore-pull-failures",
                     ],
                     description: Some("Pull what it can and ignores images with pull failures"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--include-deps",
                     ],
                     description: Some("Also pull services declared as dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-parallel",
                     ],
                     description: Some("DEPRECATED disable parallel pulling"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
                         "--parallel",
                     ],
                     description: Some("DEPRECATED pull multiple images in parallel"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
@@ -1123,60 +945,50 @@
                         "-q",
                     ],
                     description: Some("Pull without printing progress information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "push",
-            aliases: [],
             description: Some("Push service images"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--ignore-push-failures",
                     ],
                     description: Some("Push what it can and ignores images with push failures"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "restart",
-            aliases: [],
             description: Some("Restart containers"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1184,14 +996,10 @@
                         "-t",
                     ],
                     description: Some("Specify a shutdown timeout in seconds"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "timeout",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("10"),
                         ),
                     ],
                 ),
@@ -1199,23 +1007,20 @@
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "rm",
-            aliases: [],
             description: Some("Removes stopped service containers"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1223,17 +1028,16 @@
                         "-a",
                     ],
                     description: Some("Deprecated - no effect"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
                         "--force",
                         "-f",
                     ],
-                    description: Some("Don\'t ask to confirm removal"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't ask to confirm removal"),
                 ),
                 (
                     names: [
@@ -1241,8 +1045,6 @@
                         "-s",
                     ],
                     description: Some("Stop the containers, if required, before removing"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1250,30 +1052,25 @@
                         "-v",
                     ],
                     description: Some("Remove any anonymous volumes attached to containers"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "run",
-            aliases: [],
             description: Some("Run a one-off command on a service"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1281,22 +1078,15 @@
                         "-d",
                     ],
                     description: Some("Run container in background and print container ID"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--entrypoint",
                     ],
                     description: Some("Override the entrypoint of the image"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "entrypoint",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1306,16 +1096,12 @@
                         "-e",
                     ],
                     description: Some("Set environment variables"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "env",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
@@ -1323,8 +1109,6 @@
                         "-i",
                     ],
                     description: Some("Keep STDIN open even if not attached"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1332,30 +1116,21 @@
                         "-l",
                     ],
                     description: Some("Add or override a label"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "label",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--name",
                     ],
                     description: Some("Assign a name to the container"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1365,57 +1140,43 @@
                         "-T",
                     ],
                     description: Some("Disable pseudo-TTY allocation (default: auto-detected)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-deps",
                     ],
-                    description: Some("Don\'t start linked services"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't start linked services"),
                 ),
                 (
                     names: [
                         "--publish",
                         "-p",
                     ],
-                    description: Some("Publish a container\'s port(s) to the host"),
-                    takes_value: true,
+                    description: Some("Publish a container's port(s) to the host"),
                     arguments: [
                         (
                             name: "publish",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--quiet-pull",
                     ],
                     description: Some("Pull without printing progress information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--rm",
                     ],
                     description: Some("Automatically remove the container when it exits"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--service-ports",
                     ],
-                    description: Some("Run command with the service\'s ports enabled and mapped to the host"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Run command with the service's ports enabled and mapped to the host"),
                 ),
                 (
                     names: [
@@ -1423,16 +1184,15 @@
                         "-t",
                     ],
                     description: Some("Allocate a pseudo-TTY"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        hidden: true,
+                    ),
                 ),
                 (
                     names: [
                         "--use-aliases",
                     ],
-                    description: Some("Use the service\'s network useAliases in the network(s) the container connects to"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Use the service's network useAliases in the network(s) the container connects to"),
                 ),
                 (
                     names: [
@@ -1440,14 +1200,9 @@
                         "-u",
                     ],
                     description: Some("Run as specified username or uid"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "user",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1457,16 +1212,12 @@
                         "-v",
                     ],
                     description: Some("Bind mount a volume"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "volume",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
@@ -1474,14 +1225,12 @@
                         "-w",
                     ],
                     description: Some("Working directory inside the container"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "workdir",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -1489,51 +1238,39 @@
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                 ),
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    is_command: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "start",
-            aliases: [],
             description: Some("Start services"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "stop",
-            aliases: [],
             description: Some("Stop services"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1541,14 +1278,10 @@
                         "-t",
                     ],
                     description: Some("Specify a shutdown timeout in seconds"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "timeout",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("10"),
                         ),
                     ],
                 ),
@@ -1556,113 +1289,90 @@
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "top",
-            aliases: [],
             description: Some("Display the running processes"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "unpause",
-            aliases: [],
             description: Some("Unpause services"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "up",
-            aliases: [],
             description: Some("Create and start containers"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--abort-on-container-exit",
                     ],
                     description: Some("Stops all containers if any container was stopped. Incompatible with -d"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--always-recreate-deps",
                     ],
                     description: Some("Recreate dependent containers. Incompatible with --no-recreate"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--attach",
                     ],
                     description: Some("Attach to service output"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "attach",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--attach-dependencies",
                     ],
                     description: Some("Attach to dependent containers"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--build",
                     ],
                     description: Some("Build images before starting containers"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1670,22 +1380,15 @@
                         "-d",
                     ],
                     description: Some("Detached mode: Run containers in the background"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--exit-code-from",
                     ],
                     description: Some("Return the exit code of the selected service container. Implies --abort-on-container-exit"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "exit-code-from",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1693,73 +1396,55 @@
                     names: [
                         "--force-recreate",
                     ],
-                    description: Some("Recreate containers even if their configuration and image haven\'t changed"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Recreate containers even if their configuration and image haven't changed"),
                 ),
                 (
                     names: [
                         "--no-build",
                     ],
-                    description: Some("Don\'t build an image, even if it\'s missing"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't build an image, even if it's missing"),
                 ),
                 (
                     names: [
                         "--no-color",
                     ],
                     description: Some("Produce monochrome output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-deps",
                     ],
-                    description: Some("Don\'t start linked services"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't start linked services"),
                 ),
                 (
                     names: [
                         "--no-log-prefix",
                     ],
-                    description: Some("Don\'t print prefix in logs"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't print prefix in logs"),
                 ),
                 (
                     names: [
                         "--no-recreate",
                     ],
-                    description: Some("If containers already exist, don\'t recreate them. Incompatible with --force-recreate"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("If containers already exist, don't recreate them. Incompatible with --force-recreate"),
                 ),
                 (
                     names: [
                         "--no-start",
                     ],
-                    description: Some("Don\'t start the services after creating them"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't start the services after creating them"),
                 ),
                 (
                     names: [
                         "--quiet-pull",
                     ],
                     description: Some("Pull without printing progress information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--remove-orphans",
                     ],
                     description: Some("Remove containers for services not defined in the Compose file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1767,24 +1452,18 @@
                         "-V",
                     ],
                     description: Some("Recreate anonymous volumes instead of retrieving data from the previous containers"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--scale",
                     ],
                     description: Some("Scale SERVICE to NUM instances. Overrides the `scale` setting in the Compose file if present"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "scale",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
@@ -1792,14 +1471,10 @@
                         "-t",
                     ],
                     description: Some("Use this timeout in seconds for container shutdown when attached or when containers are already running"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "timeout",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("10"),
                         ),
                     ],
                 ),
@@ -1808,30 +1483,25 @@
                         "--wait",
                     ],
                     description: Some("Wait for services to be running|healthy. Implies detached mode"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Show the Docker Compose version information"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1839,17 +1509,17 @@
                         "-f",
                     ],
                     description: Some("Format the output. Values: [pretty | json]. (Default: pretty)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "pretty",
-                                "json",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "pretty",
+                                ),
+                                (
+                                    name: "json",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1857,13 +1527,9 @@
                     names: [
                         "--short",
                     ],
-                    description: Some("Shows only Compose\'s version number"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Shows only Compose's version number"),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -1872,18 +1538,21 @@
                 "--ansi",
             ],
             description: Some("Control when to print ANSI control characters (\"never\"|\"always\"|\"auto\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ansi",
-                    source: Static([
-                        "never",
-                        "always",
-                        "auto",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "never",
+                        ),
+                        (
+                            name: "always",
+                        ),
+                        (
+                            name: "auto",
+                        ),
+                    ],
+                    default: Some("auto"),
                 ),
             ],
         ),
@@ -1892,22 +1561,18 @@
                 "--compatibility",
             ],
             description: Some("Run compose in backward compatibility mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--env-file",
             ],
             description: Some("Specify an alternate environment file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "env-file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -1917,58 +1582,54 @@
                 "-f",
             ],
             description: Some("Compose configuration files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "--no-ansi",
             ],
             description: Some("Do not print ANSI control characters (DEPRECATED)"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                hidden: true,
+            ),
         ),
         (
             names: [
                 "--profile",
             ],
             description: Some("Specify a profile to enable"),
-            takes_value: true,
             arguments: [
                 (
                     name: "profile",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_dynamic_script: true,
+                            split_on: Some("\n"),
+                        ),
+                    ],
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "--project-directory",
             ],
             description: Some("Specify an alternate working directory (default: the path of the, first specified, Compose file)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "project-directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -1978,14 +1639,9 @@
                 "-p",
             ],
             description: Some("Project name"),
-            takes_value: true,
             arguments: [
                 (
                     name: "project-name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1994,25 +1650,23 @@
                 "--verbose",
             ],
             description: Some("Show more output"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                hidden: true,
+            ),
         ),
         (
             names: [
                 "--workdir",
             ],
             description: Some("DEPRECATED! USE --project-directory INSTEAD. Specify an alternate working directory (default: the path of the, first specified, Compose file)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "workdir",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            presentation: (
+                hidden: true,
+            ),
         ),
     ],
-    arguments: [],
 )

@@ -1,22 +1,19 @@
 (
     version: 1,
     command: "nginx",
-    description: Some("Nginx (pronounced ``engine x\'\') is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server.  It is known for its high performance, stability, rich feature set, simple configuration, and low resource consumption"),
-    subcommands: [],
+    description: Some("Nginx (pronounced ``engine x'') is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server.  It is known for its high performance, stability, rich feature set, simple configuration, and low resource consumption"),
     options: [
         (
             names: [
                 "-c",
             ],
             description: Some("Use an alternative configuration file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -25,16 +22,14 @@
                 "-e",
             ],
             description: Some("Use an alternative error log file.  Special value stderr indicates that the standard error output should be used"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Static([
-                        "stderr",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "stderr",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -43,14 +38,10 @@
                 "-g",
             ],
             description: Some("Set global configuration directives"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directives",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("For all directives visit https://nginx.org/en/docs/dirindex.html"),
                 ),
             ],
         ),
@@ -59,14 +50,9 @@
                 "-p",
             ],
             description: Some("Set the prefix path.  The default value is %%PREFIX%%"),
-            takes_value: true,
             arguments: [
                 (
                     name: "prefix",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -75,40 +61,30 @@
                 "-q",
             ],
             description: Some("Suppress non-error messages during configuration testing"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-T",
             ],
             description: Some("Same as -t, but additionally dump configuration files to standard output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-t",
             ],
             description: Some("Do not run, just test the configuration file.  nginx checks the configuration file syntax and then tries to open files referenced in the configuration file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-V",
             ],
             description: Some("Print the nginx version, compiler version, and configure script parameters"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-v",
             ],
             description: Some("Print the nginx version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -116,38 +92,41 @@
                 "-h",
             ],
             description: Some("Print help"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-s",
             ],
             description: Some("Send a signal to the master process.  The argument signal can be one of: stop, quit, reopen, reload"),
-            takes_value: true,
             arguments: [
                 (
                     name: "signal",
-                    source: Static([
-                        "stop",
-                        "quit",
-                        "reopen",
-                        "reload",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "stop",
+                            description: Some("Sends SIGTERM"),
+                        ),
+                        (
+                            name: "quit",
+                            description: Some("Sends SIGQUIT"),
+                        ),
+                        (
+                            name: "reopen",
+                            description: Some("Sends SIGUSR1"),
+                        ),
+                        (
+                            name: "reload",
+                            description: Some("Sends SIGHUP"),
+                        ),
+                    ],
                 ),
             ],
         ),
     ],
     arguments: [
         (
-            name: "value",
-            source: Files,
-            optional: false,
+            name: "",
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

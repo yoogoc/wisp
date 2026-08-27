@@ -2,7 +2,6 @@
     version: 1,
     command: "sftp",
     description: Some("OpenSSH secure file transfer"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,56 +9,46 @@
                 "-h",
             ],
             description: Some("Show help for sftp"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-4",
             ],
             description: Some("Forces scp to use IPv4 addresses only"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-6",
             ],
             description: Some("Forces scp to use IPv6 addresses only"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-A",
             ],
             description: Some("Allows forwarding of ssh-agent(1) to the remote system. The default is not to forward an authentication agent"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-a",
             ],
             description: Some("Attempt to continue interrupted transfers rather than overwriting\nexisting partial or complete copies of files.  If the partial\ncontents differ from those being transferred, then the resultant\nfile is likely to be corrupt"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-B",
             ],
             description: Some("Specify the size of the buffer that sftp uses when transferring\nfiles.  Larger buffers require fewer round trips at the cost of\nhigher memory consumption.  The default is 32768 bytes"),
-            takes_value: true,
             arguments: [
                 (
                     name: "buffer_size",
-                    source: Static([
-                        "32768",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The buffer size"),
+                    suggestions: [
+                        (
+                            name: "32768",
+                        ),
+                    ],
+                    default: Some("32768"),
                 ),
             ],
         ),
@@ -68,14 +57,13 @@
                 "-b",
             ],
             description: Some("Batch mode reads a series of commands from an input batchfile\ninstead of stdin.  Since it lacks user interaction it should be\nused in conjunction with non-interactive authentication to obviate\nthe need to enter a password at connection time (see sshd(8) and\nssh-keygen(1) for details)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "batchfile",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The batch file"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -84,22 +72,16 @@
                 "-C",
             ],
             description: Some("Compression enable. Passes the -C flag to ssh(1) to enable compression"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-c",
             ],
             description: Some("Selects the cipher to use for encrypting the data transfer. This option is directly passed to ssh(1)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "cipher",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The selected cipher specification"),
                 ),
             ],
         ),
@@ -108,14 +90,10 @@
                 "-D",
             ],
             description: Some("Connect directly to a local sftp server (rather than via ssh(1)).\nThis option may be useful in debugging the client and server"),
-            takes_value: true,
             arguments: [
                 (
                     name: "sftp_server_path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Path to the SFTP server"),
                 ),
             ],
         ),
@@ -124,14 +102,10 @@
                 "-F",
             ],
             description: Some("Specifies an alternative per-user configuration file for ssh. This option is directly passed to ssh(1)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ssh_config",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The selected ssh config"),
                 ),
             ],
         ),
@@ -140,22 +114,16 @@
                 "-f",
             ],
             description: Some("Requests that files be flushed to disk immediately after transfer"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-i",
             ],
             description: Some("Selects the file from which the identity (private key) for public key authentication is read. This option is directly passed to ssh(1)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "identity_file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Specified identity file"),
                 ),
             ],
         ),
@@ -164,14 +132,10 @@
                 "-J",
             ],
             description: Some("Connect to the target host by first making an scp connection to the\njump host described by destination and then establishing a TCP\nforwarding to the ultimate destination from there.  Multiple jump\nhops may be specified separated by comma characters.  This is a\nshortcut to specify a ProxyJump configuration directive.  This\noption is directly passed to ssh(1)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "destination",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Scp destination"),
                 ),
             ],
         ),
@@ -180,14 +144,10 @@
                 "-l",
             ],
             description: Some("Limits the used bandwidth, specified in Kbit/s"),
-            takes_value: true,
             arguments: [
                 (
                     name: "limit",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Limit bandwidth in Kbit/s"),
                 ),
             ],
         ),
@@ -196,92 +156,224 @@
                 "-N",
             ],
             description: Some("Disables quiet mode, e.g. to override the implicit quiet mode set by the -b flag"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-o",
             ],
             description: Some("Can be used to pass options to ssh in the format used in\nssh_config(5).  This is useful for specifying options for which\nthere is no separate scp command-line flag.  For full details of\nthe options listed below, and their possible values, see\nssh_config(5)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "option",
-                    source: Static([
-                        "AddressFamily",
-                        "BatchMode",
-                        "BindAddress",
-                        "ChallengeResponseAuthentication",
-                        "CheckHostIP",
-                        "Cipher",
-                        "Ciphers",
-                        "ClearAllForwardings",
-                        "Compression",
-                        "CompressionLevel",
-                        "ConnectionAttempts",
-                        "ConnectTimeout",
-                        "ControlMaster",
-                        "ControlPath",
-                        "ControlPersist",
-                        "DynamicForward",
-                        "EscapeChar",
-                        "ExitOnForwardFailure",
-                        "ForwardAgent",
-                        "ForwardX11",
-                        "ForwardX11Timeout",
-                        "ForwardX11Trusted",
-                        "GatewayPorts",
-                        "GlobalKnownHostsFile",
-                        "GSSAPIAuthentication",
-                        "GSSAPIDelegateCredentials",
-                        "HashKnownHosts",
-                        "Host",
-                        "HostbasedAuthentication",
-                        "HostKeyAlgorithms",
-                        "HostKeyAlias",
-                        "HostName",
-                        "IdentityFile",
-                        "IdentitiesOnly",
-                        "IPQoS",
-                        "KbdInteractiveAuthentication",
-                        "KbdInteractiveDevices",
-                        "KexAlgorithms",
-                        "LocalCommand",
-                        "LocalForward",
-                        "LogLevel",
-                        "MACs",
-                        "NoHostAuthenticationForLocalhost",
-                        "NumberOfPasswordPrompts",
-                        "PasswordAuthentication",
-                        "PermitLocalCommand",
-                        "PKCS11Provider",
-                        "Port",
-                        "PreferredAuthentications",
-                        "Protocol",
-                        "ProxyCommand",
-                        "PubkeyAuthentication",
-                        "RekeyLimit",
-                        "RequestTTY",
-                        "RhostsRSAAuthentication",
-                        "RSAAuthentication",
-                        "SendEnv",
-                        "ServerAliveInterval",
-                        "ServerAliveCountMax",
-                        "StrictHostKeyChecking",
-                        "TCPKeepAlive",
-                        "Tunnel",
-                        "TunnelDevice",
-                        "UsePrivilegedPort",
-                        "User",
-                        "UserKnownHostsFile",
-                        "VerifyHostKeyDNS",
-                        "VisualHostKey",
-                        "XAuthLocation",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "AddressFamily",
+                        ),
+                        (
+                            name: "BatchMode",
+                        ),
+                        (
+                            name: "BindAddress",
+                        ),
+                        (
+                            name: "ChallengeResponseAuthentication",
+                        ),
+                        (
+                            name: "CheckHostIP",
+                        ),
+                        (
+                            name: "Cipher",
+                        ),
+                        (
+                            name: "Ciphers",
+                        ),
+                        (
+                            name: "ClearAllForwardings",
+                        ),
+                        (
+                            name: "Compression",
+                        ),
+                        (
+                            name: "CompressionLevel",
+                        ),
+                        (
+                            name: "ConnectionAttempts",
+                        ),
+                        (
+                            name: "ConnectTimeout",
+                        ),
+                        (
+                            name: "ControlMaster",
+                        ),
+                        (
+                            name: "ControlPath",
+                        ),
+                        (
+                            name: "ControlPersist",
+                        ),
+                        (
+                            name: "DynamicForward",
+                        ),
+                        (
+                            name: "EscapeChar",
+                        ),
+                        (
+                            name: "ExitOnForwardFailure",
+                        ),
+                        (
+                            name: "ForwardAgent",
+                        ),
+                        (
+                            name: "ForwardX11",
+                        ),
+                        (
+                            name: "ForwardX11Timeout",
+                        ),
+                        (
+                            name: "ForwardX11Trusted",
+                        ),
+                        (
+                            name: "GatewayPorts",
+                        ),
+                        (
+                            name: "GlobalKnownHostsFile",
+                        ),
+                        (
+                            name: "GSSAPIAuthentication",
+                        ),
+                        (
+                            name: "GSSAPIDelegateCredentials",
+                        ),
+                        (
+                            name: "HashKnownHosts",
+                        ),
+                        (
+                            name: "Host",
+                        ),
+                        (
+                            name: "HostbasedAuthentication",
+                        ),
+                        (
+                            name: "HostKeyAlgorithms",
+                        ),
+                        (
+                            name: "HostKeyAlias",
+                        ),
+                        (
+                            name: "HostName",
+                        ),
+                        (
+                            name: "IdentityFile",
+                        ),
+                        (
+                            name: "IdentitiesOnly",
+                        ),
+                        (
+                            name: "IPQoS",
+                        ),
+                        (
+                            name: "KbdInteractiveAuthentication",
+                        ),
+                        (
+                            name: "KbdInteractiveDevices",
+                        ),
+                        (
+                            name: "KexAlgorithms",
+                        ),
+                        (
+                            name: "LocalCommand",
+                        ),
+                        (
+                            name: "LocalForward",
+                        ),
+                        (
+                            name: "LogLevel",
+                        ),
+                        (
+                            name: "MACs",
+                        ),
+                        (
+                            name: "NoHostAuthenticationForLocalhost",
+                        ),
+                        (
+                            name: "NumberOfPasswordPrompts",
+                        ),
+                        (
+                            name: "PasswordAuthentication",
+                        ),
+                        (
+                            name: "PermitLocalCommand",
+                        ),
+                        (
+                            name: "PKCS11Provider",
+                        ),
+                        (
+                            name: "Port",
+                        ),
+                        (
+                            name: "PreferredAuthentications",
+                        ),
+                        (
+                            name: "Protocol",
+                        ),
+                        (
+                            name: "ProxyCommand",
+                        ),
+                        (
+                            name: "PubkeyAuthentication",
+                        ),
+                        (
+                            name: "RekeyLimit",
+                        ),
+                        (
+                            name: "RequestTTY",
+                        ),
+                        (
+                            name: "RhostsRSAAuthentication",
+                        ),
+                        (
+                            name: "RSAAuthentication",
+                        ),
+                        (
+                            name: "SendEnv",
+                        ),
+                        (
+                            name: "ServerAliveInterval",
+                        ),
+                        (
+                            name: "ServerAliveCountMax",
+                        ),
+                        (
+                            name: "StrictHostKeyChecking",
+                        ),
+                        (
+                            name: "TCPKeepAlive",
+                        ),
+                        (
+                            name: "Tunnel",
+                        ),
+                        (
+                            name: "TunnelDevice",
+                        ),
+                        (
+                            name: "UsePrivilegedPort",
+                        ),
+                        (
+                            name: "User",
+                        ),
+                        (
+                            name: "UserKnownHostsFile",
+                        ),
+                        (
+                            name: "VerifyHostKeyDNS",
+                        ),
+                        (
+                            name: "VisualHostKey",
+                        ),
+                        (
+                            name: "XAuthLocation",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -290,14 +382,9 @@
                 "-P",
             ],
             description: Some("Specifies the port to connect to on the remote host.  Note that\nthis option is written with a capital ‘P’, because -p is already\nreserved for preserving the times and modes of the file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "port",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -306,32 +393,28 @@
                 "-p",
             ],
             description: Some("Preserves modification times, access times, and modes from the original file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-q",
             ],
             description: Some("Quiet mode: disables the progress meter as well as warning and diagnostic messages from ssh(1)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-R",
             ],
             description: Some("Specify how many requests may be outstanding at any one time.\nIncreasing this may slightly improve file transfer speed but will\nincrease memory usage.  The default is 64 outstanding requests"),
-            takes_value: true,
             arguments: [
                 (
                     name: "num_requests",
-                    source: Static([
-                        "64",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The number of requests"),
+                    suggestions: [
+                        (
+                            name: "64",
+                        ),
+                    ],
+                    default: Some("64"),
                 ),
             ],
         ),
@@ -340,22 +423,15 @@
                 "-r",
             ],
             description: Some("Recursively copy entire directories.  Note that scp follows symbolic links encountered in the tree traversal"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-S",
             ],
             description: Some("Name of program to use for the encrypted connection.  The program must understand ssh(1) options"),
-            takes_value: true,
             arguments: [
                 (
                     name: "program",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -364,14 +440,10 @@
                 "-s",
             ],
             description: Some("Specifies the SSH2 subsystem or the path for an sftp server on the\nremote host.  A path is useful when the remote sshd(8) does not\nhave an sftp subsystem configured"),
-            takes_value: true,
             arguments: [
                 (
                     name: "subsystem | sftp_server",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Path to the SFTP server"),
                 ),
             ],
         ),
@@ -380,32 +452,53 @@
                 "-v",
             ],
             description: Some("Verbose mode.  Causes scp and ssh(1) to print debugging messages about their progress. This is helpful in debugging connection, authentication, and configuration problems"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "sources",
-            source: Unavailable,
-            optional: false,
+            description: Some("File or directory, local or remote ([user@]host:[path])"),
+            generators: [
+                (
+                    has_custom: true,
+                    trigger: Some(OnMatch([
+                            "@",
+                        ])),
+                ),
+                (
+                    has_custom: true,
+                ),
+                (
+                    template: [
+                        History,
+                        FilePaths,
+                        Folders,
+                    ],
+                ),
+            ],
             variadic: true,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
         ),
         (
             name: "target",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
+            description: Some("File or directory, local or remote ([user@]host:[path])"),
+            generators: [
+                (
+                    has_custom: true,
+                    trigger: Some(OnMatch([
+                            "@",
+                        ])),
+                ),
+                (
+                    has_custom: true,
+                ),
+                (
+                    template: [
+                        History,
+                        FilePaths,
+                        Folders,
+                    ],
+                ),
+            ],
         ),
     ],
 )

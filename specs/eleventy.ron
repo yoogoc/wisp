@@ -2,7 +2,6 @@
     version: 1,
     command: "eleventy",
     description: Some("Eleventy is a simpler static site generator"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,55 +9,43 @@
                 "--help",
             ],
             description: Some("Show help message and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-v",
                 "--version",
             ],
-            description: Some("Show program\'s version number and exit"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Show program's version number and exit"),
         ),
         (
             names: [
                 "--quiet",
             ],
             description: Some("Don’t print all written files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--watch",
             ],
             description: Some("Wait for files to change and automatically rewrite"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--dryrun",
             ],
             description: Some("Don’t write any files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--input",
             ],
             description: Some("Input template files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Template File",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -67,14 +54,12 @@
                 "--output",
             ],
             description: Some("Write HTML output to this folder"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -83,22 +68,19 @@
                 "--serve",
             ],
             description: Some("Run web server on port and watch them too"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "--port",
+            ],
         ),
         (
             names: [
                 "--port",
             ],
             description: Some("Run Web Server on specified port"),
-            takes_value: true,
             arguments: [
                 (
                     name: "port",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("8080"),
                 ),
             ],
         ),
@@ -107,18 +89,20 @@
                 "--formats",
             ],
             description: Some("Whitelist only certain template types"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Template Names Separated by ,",
-                    source: Static([
-                        "md",
-                        "html",
-                        "ejs",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "md",
+                        ),
+                        (
+                            name: "html",
+                        ),
+                        (
+                            name: "ejs",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -127,14 +111,12 @@
                 "--config",
             ],
             description: Some("Override the eleventy config file path"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Config File",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -143,25 +125,25 @@
                 "--pathprefix",
             ],
             description: Some("Change all url template filters to use this subdirectory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Subdirectory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
     ],
     arguments: [
         (
-            name: "value",
-            source: Directories,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            name: "",
+            template: [
+                Folders,
+            ],
         ),
     ],
+    presentation: (
+        icon: Some("https://www.11ty.dev/favicon.ico"),
+    ),
 )

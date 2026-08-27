@@ -9,21 +9,18 @@
                 "c",
             ],
             description: Some("Compiles an input file into a supported output format"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--root",
                     ],
                     description: Some("Configures the project root (for absolute paths)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "root",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -32,33 +29,33 @@
                         "--font-path",
                     ],
                     description: Some("Adds additional directories to search for fonts"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "font_paths",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--diagnostic-format",
                     ],
                     description: Some("The format to emit diagnostics in"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "diagnostic_format",
-                            source: Static([
-                                "human",
-                                "short",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "human",
+                                ),
+                                (
+                                    name: "short",
+                                ),
+                            ],
+                            default: Some("human"),
                         ),
                     ],
                 ),
@@ -68,18 +65,20 @@
                         "--format",
                     ],
                     description: Some("The format of the output file, inferred from the extension by default"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "pdf",
-                                "png",
-                                "svg",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "pdf",
+                                ),
+                                (
+                                    name: "png",
+                                ),
+                                (
+                                    name: "svg",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -88,14 +87,11 @@
                         "--open",
                     ],
                     description: Some("Opens the output file using the default viewer after compilation"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "open",
-                            source: Files,
                             optional: true,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -104,14 +100,10 @@
                         "--ppi",
                     ],
                     description: Some("The PPI (pixels per inch) to use for PNG export"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "ppi",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("144.0"),
                         ),
                     ],
                 ),
@@ -120,14 +112,14 @@
                         "--flamegraph",
                     ],
                     description: Some("Produces a flamegraph of the compilation process"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "flamegraph",
-                            source: Files,
+                            template: [
+                                FilePaths,
+                            ],
                             optional: true,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -137,31 +129,32 @@
                         "--help",
                     ],
                     description: Some("Print help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "input",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("Path to input Typst file"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "output",
-                    source: Files,
+                    description: Some("Path to output file (PDF, PNG, or SVG)"),
+                    template: [
+                        FilePaths,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("📄"),
+            ),
         ),
         (
             name: "watch",
@@ -169,21 +162,18 @@
                 "w",
             ],
             description: Some("Watches an input file and recompiles on changes"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--root",
                     ],
                     description: Some("Configures the project root (for absolute paths)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "root",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -192,33 +182,33 @@
                         "--font-path",
                     ],
                     description: Some("Adds additional directories to search for fonts"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "font_paths",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--diagnostic-format",
                     ],
                     description: Some("The format to emit diagnostics in"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "diagnostic_format",
-                            source: Static([
-                                "human",
-                                "short",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "human",
+                                ),
+                                (
+                                    name: "short",
+                                ),
+                            ],
+                            default: Some("human"),
                         ),
                     ],
                 ),
@@ -228,18 +218,20 @@
                         "--format",
                     ],
                     description: Some("The format of the output file, inferred from the extension by default"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "pdf",
-                                "png",
-                                "svg",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "pdf",
+                                ),
+                                (
+                                    name: "png",
+                                ),
+                                (
+                                    name: "svg",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -248,14 +240,11 @@
                         "--open",
                     ],
                     description: Some("Opens the output file using the default viewer after compilation"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "open",
-                            source: Files,
                             optional: true,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -264,14 +253,10 @@
                         "--ppi",
                     ],
                     description: Some("The PPI (pixels per inch) to use for PNG export"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "ppi",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("144.0"),
                         ),
                     ],
                 ),
@@ -280,14 +265,14 @@
                         "--flamegraph",
                     ],
                     description: Some("Produces a flamegraph of the compilation process"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "flamegraph",
-                            source: Files,
+                            template: [
+                                FilePaths,
+                            ],
                             optional: true,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -297,51 +282,48 @@
                         "--help",
                     ],
                     description: Some("Print help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "input",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("Path to input Typst file"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "output",
-                    source: Files,
+                    description: Some("Path to output file (PDF, PNG, or SVG)"),
+                    template: [
+                        FilePaths,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("🔄"),
+            ),
         ),
         (
             name: "query",
-            aliases: [],
             description: Some("Processes an input file to extract provided metadata"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--root",
                     ],
                     description: Some("Configures the project root (for absolute paths)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "root",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -350,33 +332,33 @@
                         "--font-path",
                     ],
                     description: Some("Adds additional directories to search for fonts"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "font_paths",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--diagnostic-format",
                     ],
                     description: Some("The format to emit diagnostics in"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "diagnostic_format",
-                            source: Static([
-                                "human",
-                                "short",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "human",
+                                ),
+                                (
+                                    name: "short",
+                                ),
+                            ],
+                            default: Some("human"),
                         ),
                     ],
                 ),
@@ -385,14 +367,9 @@
                         "--field",
                     ],
                     description: Some("Extracts just one field from all retrieved elements"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "field",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -401,17 +378,18 @@
                         "--format",
                     ],
                     description: Some("The format to serialize in"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "json",
-                                "yaml",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "json",
+                                ),
+                                (
+                                    name: "yaml",
+                                ),
+                            ],
+                            default: Some("json"),
                         ),
                     ],
                 ),
@@ -420,8 +398,6 @@
                         "--one",
                     ],
                     description: Some("Expects and retrieves exactly one element"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -429,61 +405,53 @@
                         "--help",
                     ],
                     description: Some("Print help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "input",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("Path to input Typst file"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "selector",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Defines which elements to retrieve"),
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("🔍"),
+            ),
         ),
         (
             name: "fonts",
-            aliases: [],
             description: Some("Lists all discovered fonts in system and custom font paths"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--font-path",
                     ],
                     description: Some("Adds additional directories to search for fonts"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "font_paths",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--variants",
                     ],
                     description: Some("Also lists style variants of each font family"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -491,34 +459,33 @@
                         "--help",
                     ],
                     description: Some("Print help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("🔤"),
+            ),
         ),
         (
             name: "update",
-            aliases: [],
             description: Some("Self update the Typst CLI (disabled)"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--force",
                     ],
                     description: Some("Forces a downgrade to an older version (required for downgrading)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--revert",
+                    ],
                 ),
                 (
                     names: [
                         "--revert",
                     ],
                     description: Some("Reverts to the version from before the last update (only possible if `typst update` has previously ran)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--force",
+                    ],
                 ),
                 (
                     names: [
@@ -526,84 +493,69 @@
                         "--help",
                     ],
                     description: Some("Print help"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "version",
-                    source: Files,
+                    description: Some("Which version to update to (defaults to latest)"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("🆙"),
+            ),
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Print this message or the help of the given subcommand(s)"),
             subcommands: [
                 (
                     name: "compile",
-                    aliases: [],
                     description: Some("Compiles an input file into a supported output format"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("📄"),
+                    ),
                 ),
                 (
                     name: "watch",
-                    aliases: [],
                     description: Some("Watches an input file and recompiles on changes"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("🔄"),
+                    ),
                 ),
                 (
                     name: "query",
-                    aliases: [],
                     description: Some("Processes an input file to extract provided metadata"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("🔍"),
+                    ),
                 ),
                 (
                     name: "fonts",
-                    aliases: [],
                     description: Some("Lists all discovered fonts in system and custom font paths"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("🔤"),
+                    ),
                 ),
                 (
                     name: "update",
-                    aliases: [],
                     description: Some("Self update the Typst CLI (disabled)"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("🆙"),
+                    ),
                 ),
                 (
                     name: "help",
-                    aliases: [],
                     description: Some("Print this message or the help of the given subcommand(s)"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("ℹ️"),
+                    ),
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("ℹ️"),
+            ),
         ),
     ],
     options: [
@@ -612,14 +564,12 @@
                 "--cert",
             ],
             description: Some("Path to a custom CA certificate to use when making network requests"),
-            takes_value: true,
             arguments: [
                 (
                     name: "cert",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -629,8 +579,7 @@
                 "--verbosity",
             ],
             description: Some("Sets the level of logging verbosity: -v = warning & error, -vv = info, -vvv = debug, -vvvv = trace"),
-            takes_value: false,
-            arguments: [],
+            repeat: Times(4),
         ),
         (
             names: [
@@ -638,8 +587,6 @@
                 "--help",
             ],
             description: Some("Print help"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -647,9 +594,9 @@
                 "--version",
             ],
             description: Some("Print version"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
+    presentation: (
+        icon: Some("📄"),
+    ),
 )

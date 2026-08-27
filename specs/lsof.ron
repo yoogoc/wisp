@@ -2,7 +2,6 @@
     version: 1,
     command: "lsof",
     description: Some("List open files"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -11,38 +10,27 @@
                 "--help",
             ],
             description: Some("Help"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-a",
             ],
             description: Some("Apply AND to the selections (defaults to OR)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-b",
             ],
             description: Some("Avoid kernel blocks"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-c",
             ],
             description: Some("Select the listing of files for processes executing a command"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string or regexp (optional ending with /i /b /x)",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -51,14 +39,9 @@
                 "+c",
             ],
             description: Some("COMMAND width (9)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -67,14 +50,12 @@
                 "+d",
             ],
             description: Some("Search for all open instances/files/directories of directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -83,14 +64,9 @@
                 "-d",
             ],
             description: Some("Specify a list of file descriptors (FDs) to exclude from or include in the output listing"),
-            takes_value: true,
             arguments: [
                 (
                     name: "File descriptor number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -99,14 +75,12 @@
                 "+D",
             ],
             description: Some("Search tree for all open instances/files/directories of directory. *SLOW?*"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -115,18 +89,24 @@
                 "+f",
             ],
             description: Some("Enable path name arguments to be interpreted"),
-            takes_value: true,
             arguments: [
                 (
                     name: "flags",
-                    source: Static([
-                        "c",
-                        "g",
-                        "G",
-                    ]),
+                    suggestions: [
+                        (
+                            name: "c",
+                            description: Some("File structure use count"),
+                        ),
+                        (
+                            name: "g",
+                            description: Some("File flag abbreviations"),
+                        ),
+                        (
+                            name: "G",
+                            description: Some("File flags in hexadecimal"),
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -135,18 +115,23 @@
                 "-f",
             ],
             description: Some("Inhibit path name arguments to be interpreted"),
-            takes_value: true,
             arguments: [
                 (
                     name: "flags",
-                    source: Static([
-                        "c",
-                        "g",
-                        "G",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "c",
+                            description: Some("File structure use count"),
+                        ),
+                        (
+                            name: "g",
+                            description: Some("File flag abbreviations"),
+                        ),
+                        (
+                            name: "G",
+                            description: Some("File flags in hexadecimal"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -155,42 +140,120 @@
                 "-F",
             ],
             description: Some("Select fields to output"),
-            takes_value: true,
             arguments: [
                 (
                     name: "options",
-                    source: Static([
-                        "a",
-                        "c",
-                        "C",
-                        "d",
-                        "D",
-                        "f",
-                        "G",
-                        "i",
-                        "k",
-                        "K",
-                        "l",
-                        "L",
-                        "m",
-                        "M",
-                        "n",
-                        "o",
-                        "p",
-                        "g",
-                        "P",
-                        "r",
-                        "R",
-                        "s",
-                        "S",
-                        "t",
-                        "T",
-                        "u",
-                        "0",
-                    ]),
-                    optional: false,
+                    suggestions: [
+                        (
+                            name: "a",
+                            description: Some("Access: r = read; w = write; u = read/write"),
+                        ),
+                        (
+                            name: "c",
+                            description: Some("Command name"),
+                        ),
+                        (
+                            name: "C",
+                            description: Some("File struct share count"),
+                        ),
+                        (
+                            name: "d",
+                            description: Some("Device character code"),
+                        ),
+                        (
+                            name: "D",
+                            description: Some("Major/minor device number as 0x<hex>"),
+                        ),
+                        (
+                            name: "f",
+                            description: Some("File descriptor (always selected)"),
+                        ),
+                        (
+                            name: "G",
+                            description: Some("File flaGs"),
+                        ),
+                        (
+                            name: "i",
+                            description: Some("Inode number"),
+                        ),
+                        (
+                            name: "k",
+                            description: Some("Link count"),
+                        ),
+                        (
+                            name: "K",
+                            description: Some("Task ID (TID)"),
+                        ),
+                        (
+                            name: "l",
+                            description: Some("Lock: r/R = read; w/W = write; u = read/write"),
+                        ),
+                        (
+                            name: "L",
+                            description: Some("Login name"),
+                        ),
+                        (
+                            name: "m",
+                            description: Some("Marker between repeated output"),
+                        ),
+                        (
+                            name: "M",
+                            description: Some("Task comMand name"),
+                        ),
+                        (
+                            name: "n",
+                            description: Some("Comment, name, Internet addresses"),
+                        ),
+                        (
+                            name: "o",
+                            description: Some("File offset as 0t<dec> or 0x<hex>"),
+                        ),
+                        (
+                            name: "p",
+                            description: Some("Process ID (PID)"),
+                        ),
+                        (
+                            name: "g",
+                            description: Some("Process group ID (PGID)"),
+                        ),
+                        (
+                            name: "P",
+                            description: Some("Protocol name"),
+                        ),
+                        (
+                            name: "r",
+                            description: Some("Raw device number as 0x<hex>"),
+                        ),
+                        (
+                            name: "R",
+                            description: Some("PaRent PID"),
+                        ),
+                        (
+                            name: "s",
+                            description: Some("File size"),
+                        ),
+                        (
+                            name: "S",
+                            description: Some("Stream module and device names"),
+                        ),
+                        (
+                            name: "t",
+                            description: Some("File type"),
+                        ),
+                        (
+                            name: "T",
+                            description: Some("TCP/TPI info"),
+                        ),
+                        (
+                            name: "u",
+                            description: Some("User ID (UID)"),
+                        ),
+                        (
+                            name: "0",
+                            description: Some("(zero) use NUL field terminator instead of N"),
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -199,22 +262,16 @@
                 "-F?",
             ],
             description: Some("Show fields for -F"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-g",
             ],
             description: Some("Exclude or select by process group IDs (PGID)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "PGID",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Process Group ID (comma separated)"),
                 ),
             ],
         ),
@@ -223,23 +280,41 @@
                 "-i",
             ],
             description: Some("Selects files by [46][protocol][@hostname|hostaddr][:service|port]"),
-            takes_value: true,
             arguments: [
                 (
                     name: "options",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "echo",
-                            "echo",
-                            "ifconfig",
-                            "echo",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "echo",
+                            ],
+                            has_post_process: true,
+                        ),
+                        (
+                            script: [
+                                "echo",
+                            ],
+                            has_post_process: true,
+                        ),
+                        (
+                            script: [
+                                "ifconfig",
+                            ],
+                            has_post_process: true,
+                            trigger: Some(OnMatch([
+                                    "@",
+                                ])),
+                        ),
+                        (
+                            script: [
+                                "echo",
+                            ],
+                            has_post_process: true,
+                            trigger: Some(OnMatch([
+                                    ":",
+                                ])),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -248,22 +323,16 @@
                 "-l",
             ],
             description: Some("Inhibit conversion of user IDs to login names"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "+L",
             ],
             description: Some("Enable listing of file link counts"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -272,14 +341,10 @@
                 "-L",
             ],
             description: Some("Disable listing of file link counts"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -288,62 +353,46 @@
                 "+M",
             ],
             description: Some("Enable portMap registration"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-M",
             ],
             description: Some("Disable portMap registration"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-n",
             ],
             description: Some("No host names"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-N",
             ],
             description: Some("Select NFS files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-o",
             ],
             description: Some("List file offset"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-O",
             ],
             description: Some("No overhead *RISKY*"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-p",
             ],
             description: Some("Exclude or select process identification numbers (PIDs)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "PIDs",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("PIDs to select or exclude ( with ^)"),
                 ),
             ],
         ),
@@ -352,22 +401,16 @@
                 "-P",
             ],
             description: Some("No port names"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "+r",
             ],
             description: Some("Repeat every t seconds (15) until no files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "time (seconds)",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Time per repeat"),
                 ),
             ],
         ),
@@ -376,14 +419,10 @@
                 "-r",
             ],
             description: Some("Repeat every t seconds (15) forever"),
-            takes_value: true,
             arguments: [
                 (
                     name: "time (seconds)",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Time per repeat"),
                 ),
             ],
         ),
@@ -392,22 +431,16 @@
                 "-R",
             ],
             description: Some("List parent PID"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-s",
             ],
             description: Some("List file size or exclude/select protocol"),
-            takes_value: true,
             arguments: [
                 (
                     name: "protocol:state",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -416,14 +449,10 @@
                 "-S",
             ],
             description: Some("Stat timeout in seconds (lstat/readlink/stat)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "timeout (seconds)",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -432,20 +461,31 @@
                 "-T",
             ],
             description: Some("Disable TCP/TPI info"),
-            takes_value: true,
             arguments: [
                 (
                     name: "info",
-                    source: Static([
-                        "f",
-                        "q",
-                        "s",
-                        "w",
-                        "",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "f",
+                            description: Some("Selects reporting of socket options/states/values and tcp flag values"),
+                        ),
+                        (
+                            name: "q",
+                            description: Some("Selects queue length reporting"),
+                        ),
+                        (
+                            name: "s",
+                            description: Some("Selects connection state reporting"),
+                        ),
+                        (
+                            name: "w",
+                            description: Some("Selects window size reporting"),
+                        ),
+                        (
+                            name: "",
+                            description: Some("Disables info"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -454,22 +494,15 @@
                 "-t",
             ],
             description: Some("Specify terse listing"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-u",
             ],
             description: Some("Exclude/select login|UID set"),
-            takes_value: true,
             arguments: [
                 (
                     name: "UIDs",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -478,57 +511,49 @@
                 "-U",
             ],
             description: Some("Select Unix socket"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-v",
             ],
             description: Some("List version info"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-V",
             ],
             description: Some("Verbose search"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "+w",
             ],
             description: Some("Enable warnings"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-w",
             ],
             description: Some("Disable warnings"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-x",
             ],
             description: Some("Cross over +d|+D File systems or symbolic links"),
-            takes_value: true,
             arguments: [
                 (
                     name: "cross-over option",
-                    source: Static([
-                        "f",
-                        "l",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "f",
+                            description: Some("File system mount point cross-over processing"),
+                        ),
+                        (
+                            name: "l",
+                            description: Some("Symbolic link cross-over processing"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -537,17 +562,17 @@
                 "-X",
             ],
             description: Some("File descriptor table only"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "names",
-            source: Directories,
+            description: Some("Select named files or files on named file systems"),
+            template: [
+                Folders,
+            ],
             optional: true,
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

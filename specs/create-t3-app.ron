@@ -2,23 +2,18 @@
     version: 1,
     command: "create-t3-app",
     description: Some("A CLI for creating web applications with the t3 stack"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--noGit",
             ],
             description: Some("Explicitly tell the CLI to not initialize a new git repo in the project (default: false)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--noInstall",
             ],
-            description: Some("Explicitly tell the CLI to not run the package manager\'s install command (default: false)"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Explicitly tell the CLI to not run the package manager's install command (default: false)"),
         ),
         (
             names: [
@@ -26,92 +21,126 @@
                 "--default",
             ],
             description: Some("Bypass the CLI and use all default options to bootstrap a new t3-app (default: false)"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                priority: Some(76.0),
+            ),
         ),
         (
             names: [
                 "--CI",
             ],
-            description: Some("Boolean value if we\'re running in CI (default: false)"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Boolean value if we're running in CI (default: false)"),
+            presentation: (
+                priority: Some(49.0),
+            ),
         ),
         (
             names: [
                 "--tailwind",
             ],
             description: Some("Experimental: Boolean value if we should install Tailwind CSS. Must be used in conjunction with `--CI`"),
-            takes_value: true,
             arguments: [
                 (
                     name: "boolean",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "true",
+                            description: Some("Install Tailwind CSS"),
+                        ),
+                        (
+                            name: "false",
+                            description: Some("Do not install Tailwind CSS"),
+                        ),
+                    ],
                 ),
             ],
+            depends_on: [
+                "--CI",
+            ],
+            presentation: (
+                priority: Some(49.0),
+            ),
         ),
         (
             names: [
                 "--nextAuth",
             ],
             description: Some("Experimental: Boolean value if we should install NextAuth.js. Must be used in conjunction with `--CI`"),
-            takes_value: true,
             arguments: [
                 (
                     name: "boolean",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "true",
+                            description: Some("Install NextAuth.js"),
+                        ),
+                        (
+                            name: "false",
+                            description: Some("Do not install NextAuth.js"),
+                        ),
+                    ],
                 ),
             ],
+            depends_on: [
+                "--CI",
+            ],
+            presentation: (
+                priority: Some(49.0),
+            ),
         ),
         (
             names: [
                 "--prisma",
             ],
             description: Some("Experimental: Boolean value if we should install Prisma. Must be used in conjunction with `--CI`"),
-            takes_value: true,
             arguments: [
                 (
                     name: "boolean",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "true",
+                            description: Some("Install Prisma"),
+                        ),
+                        (
+                            name: "false",
+                            description: Some("Do not install Prisma"),
+                        ),
+                    ],
                 ),
             ],
+            depends_on: [
+                "--CI",
+            ],
+            presentation: (
+                priority: Some(49.0),
+            ),
         ),
         (
             names: [
                 "--trpc",
             ],
             description: Some("Experimental: Boolean value if we should install tRPC. Must be used in conjunction with `--CI`"),
-            takes_value: true,
             arguments: [
                 (
                     name: "boolean",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "true",
+                            description: Some("Install tRPC"),
+                        ),
+                        (
+                            name: "false",
+                            description: Some("Do not install tRPC"),
+                        ),
+                    ],
                 ),
             ],
+            depends_on: [
+                "--CI",
+            ],
+            presentation: (
+                priority: Some(49.0),
+            ),
         ),
         (
             names: [
@@ -119,17 +148,19 @@
                 "--import-alias",
             ],
             description: Some("Explicitly tell the CLI to use a custom import alias"),
-            takes_value: true,
             arguments: [
                 (
                     name: "alias",
-                    source: Static([
-                        "~/",
-                        "@/",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "~/",
+                            description: Some("Use the ~/ alias"),
+                        ),
+                        (
+                            name: "@/",
+                            description: Some("Use the @/ alias"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -139,8 +170,6 @@
                 "--version",
             ],
             description: Some("Display the version number"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -148,17 +177,20 @@
                 "-h",
             ],
             description: Some("Display help for command"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "dir",
-            source: Directories,
+            description: Some("The name of the application, as well as the name of the directory to create"),
+            template: [
+                Folders,
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: None,
+            suggest_current_token: true,
         ),
     ],
+    presentation: (
+        icon: Some("https://create.t3.gg/favicon.svg"),
+    ),
 )

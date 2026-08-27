@@ -5,20 +5,16 @@
     subcommands: [
         (
             name: "help",
-            aliases: [],
             description: Some("Help about any command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
+                    template: [
+                        Help,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "install",
@@ -26,21 +22,16 @@
                 "i",
             ],
             description: Some("Install a gem into the local repository"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--platform",
                     ],
                     description: Some("Specify the platform of gem to install"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PLATFORM",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform of gem"),
                         ),
                     ],
                 ),
@@ -48,23 +39,19 @@
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "cert",
-            aliases: [],
             description: Some("Manage RubyGems certificates and signing settings"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -72,14 +59,13 @@
                         "--add",
                     ],
                     description: Some("Add a trusted certificate"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CERT",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The trusted certificate"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -89,14 +75,11 @@
                         "--list",
                     ],
                     description: Some("List trusted certificates where the subject contains FILTER"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "FILTER",
-                            source: Files,
+                            description: Some("The filter"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -106,14 +89,10 @@
                         "--remove",
                     ],
                     description: Some("Remove trusted certificates where the subject contains FILTER"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "FILTER",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The filter"),
                         ),
                     ],
                 ),
@@ -123,14 +102,10 @@
                         "--build",
                     ],
                     description: Some("Build private key and self-signed certificate for EMAIL_ADDR"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "EMAIL_ADDR",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The email address"),
                         ),
                     ],
                 ),
@@ -140,14 +115,13 @@
                         "--certificate",
                     ],
                     description: Some("Signing certificate for --sign"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CERT",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The certificate"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -157,14 +131,13 @@
                         "--private-key",
                     ],
                     description: Some("Key for --sign or --build"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "KEY",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The key"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -174,14 +147,10 @@
                         "--key-algorithm",
                     ],
                     description: Some("Select which key algorithm to use for --build"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "ALGORITHM",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The algorithm"),
                         ),
                     ],
                 ),
@@ -191,14 +160,13 @@
                         "--sign",
                     ],
                     description: Some("Signs CERT with the key from -K and the certificate from -C"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CERT",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The certificate"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -208,14 +176,10 @@
                         "--days",
                     ],
                     description: Some("Days before the certificate expires"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "NUMBER_OF_DAYS",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The number of days"),
                         ),
                     ],
                 ),
@@ -225,83 +189,85 @@
                         "--re-sign",
                     ],
                     description: Some("Re-signs the certificate from -C with the key from -K"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "check",
-            aliases: [],
             description: Some("Check a gem repository for added or missing files"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-a",
                         "--alien",
                     ],
-                    description: Some("Report \'unmanaged\' or rogue files in the gem repository"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Report 'unmanaged' or rogue files in the gem repository"),
+                    exclusive_on: [
+                        "--no-alien",
+                    ],
                 ),
                 (
                     names: [
                         "--no-alien",
                     ],
-                    description: Some("Report \'managed\' or rogue files in the gem repository"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Report 'managed' or rogue files in the gem repository"),
+                    exclusive_on: [
+                        "--alien",
+                    ],
                 ),
                 (
                     names: [
                         "--doctor",
                     ],
                     description: Some("Clean up uninstalled gems and broken specifications"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-doctor",
+                    ],
                 ),
                 (
                     names: [
                         "--no-doctor",
                     ],
                     description: Some("Do not clean up uninstalled gems and broken specifications"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--doctor",
+                    ],
                 ),
                 (
                     names: [
                         "--dry-run",
                     ],
                     description: Some("Do not remove files, only report what would be removed"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-dry-run",
+                    ],
                 ),
                 (
                     names: [
                         "--no-dry-run",
                     ],
                     description: Some("Remove files"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--dry-run",
+                    ],
                 ),
                 (
                     names: [
                         "--gems",
                     ],
                     description: Some("Check installed gems for problems"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-gems",
+                    ],
                 ),
                 (
                     names: [
                         "--no-gems",
                     ],
                     description: Some("Check not installed gems for problems"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--gems",
+                    ],
                 ),
                 (
                     names: [
@@ -309,14 +275,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to check"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The version of the gem"),
                         ),
                     ],
                 ),
@@ -324,23 +286,20 @@
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "cleanup",
-            aliases: [],
             description: Some("Clean up old versions of installed gems"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -349,8 +308,6 @@
                         "--dry-run",
                     ],
                     description: Some("Do not uninstall gems"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -358,54 +315,56 @@
                         "--check-development",
                     ],
                     description: Some("Check development dependencies while uninstalling (default: true)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-check-development",
+                    ],
                 ),
                 (
                     names: [
                         "--no-check-development",
                     ],
                     description: Some("Do not check development dependencies while uninstalling"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--check-development",
+                    ],
                 ),
                 (
                     names: [
                         "--user-install",
                     ],
                     description: Some("Cleanup in user’s home directory instead of GEM_HOME"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-user-install",
+                    ],
                 ),
                 (
                     names: [
                         "--no-user-install",
                     ],
                     description: Some("Cleanup in GEM_HOME instead of user’s home directory"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--user-install",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
+                    description: Some("Name of gem to cleanup"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "contents",
-            aliases: [],
             description: Some("Display the contents of the installed gems"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -413,14 +372,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to contents"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The version of the gem"),
                         ),
                     ],
                 ),
@@ -429,8 +384,6 @@
                         "--all",
                     ],
                     description: Some("Contents for all gems"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -438,14 +391,12 @@
                         "--spec-dir",
                     ],
                     description: Some("Search for gems under specific paths"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DIR",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -455,70 +406,73 @@
                         "--lib-only",
                     ],
                     description: Some("Only return files in the Gem’s lib_dirs"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-lib-only",
+                    ],
                 ),
                 (
                     names: [
                         "--no-lib-only",
                     ],
                     description: Some("Not only return files in the Gem’s lib_dirs"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--lib-only",
+                    ],
                 ),
                 (
                     names: [
                         "--prefix",
                     ],
                     description: Some("Don’t include installed path prefix"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-prefix",
+                    ],
                 ),
                 (
                     names: [
                         "--no-prefix",
                     ],
                     description: Some("Include installed path prefix"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--prefix",
+                    ],
                 ),
                 (
                     names: [
                         "--show-install-dir",
                     ],
                     description: Some("Show only the gem install dir"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-show-install-dir",
+                    ],
                 ),
                 (
                     names: [
                         "--no-show-install-dir",
                     ],
                     description: Some("Do not show only the gem install dir"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--show-install-dir",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("Name of gem to list contents for"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "dependency",
-            aliases: [],
             description: Some("Show the dependencies of an installed gem"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -526,14 +480,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to dependency"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The version of gem"),
                         ),
                     ],
                 ),
@@ -542,14 +492,10 @@
                         "--platform",
                     ],
                     description: Some("Specify the platform of gem to dependency"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PLATFORM",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform of gem"),
                         ),
                     ],
                 ),
@@ -558,16 +504,18 @@
                         "--prerelease",
                     ],
                     description: Some("Allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-prerelease",
+                    ],
                 ),
                 (
                     names: [
                         "--no-prerelease",
                     ],
                     description: Some("Do not allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--prerelease",
+                    ],
                 ),
                 (
                     names: [
@@ -575,24 +523,24 @@
                         "--reverse-dependencies",
                     ],
                     description: Some("Include reverse dependencies in the output"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-reverse-dependencies",
+                    ],
                 ),
                 (
                     names: [
                         "--no-reverse-dependencies",
                     ],
                     description: Some("Do not include reverse dependencies in the output"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--reverse-dependencies",
+                    ],
                 ),
                 (
                     names: [
                         "--pipe",
                     ],
                     description: Some("Pipe Format (name --version ver)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -600,8 +548,10 @@
                         "--local",
                     ],
                     description: Some("Restrict operations to the LOCAL domain"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--remote",
+                        "--both",
+                    ],
                 ),
                 (
                     names: [
@@ -609,8 +559,10 @@
                         "--remote",
                     ],
                     description: Some("Restrict operations to the REMOTE domain"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--local",
+                        "--both",
+                    ],
                 ),
                 (
                     names: [
@@ -618,8 +570,10 @@
                         "--both",
                     ],
                     description: Some("Allow LOCAL and REMOTE operations"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--remote",
+                        "--local",
+                    ],
                 ),
                 (
                     names: [
@@ -627,14 +581,10 @@
                         "--bulk-threshold",
                     ],
                     description: Some("Threshold for switching to bulk synchronization (default 1000)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "COUNT",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The threshold"),
                         ),
                     ],
                 ),
@@ -643,8 +593,6 @@
                         "--clear-sources",
                     ],
                     description: Some("Clear the gem sources"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -652,14 +600,10 @@
                         "--source",
                     ],
                     description: Some("Append URL to list of remote gem sources"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The URL"),
                         ),
                     ],
                 ),
@@ -669,15 +613,15 @@
                         "--http-proxy",
                     ],
                     description: Some("Use HTTP proxy for remote operations"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
+                            description: Some("The URL"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
+                    ],
+                    exclusive_on: [
+                        "--no-http-proxy",
                     ],
                 ),
                 (
@@ -685,50 +629,57 @@
                         "--no-http-proxy",
                     ],
                     description: Some("Do not use HTTP proxy for remote operations"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--http-proxy",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "REGEXP",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Show dependencies for gems whose names start with REGEXP"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "environment",
-            aliases: [],
             description: Some("Display information about the RubyGems environment"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Static([
-                        "home",
-                        "path",
-                        "user_gemhome",
-                        "version",
-                        "remotesources",
-                        "platform",
-                    ]),
+                    name: "",
+                    suggestions: [
+                        (
+                            name: "home",
+                            description: Some("Display the path where gems are installed. Aliases: gemhome, gemdir, GEM_HOME"),
+                        ),
+                        (
+                            name: "path",
+                            description: Some("Display path used to search for gems. Aliases: gempath, GEM_PATH"),
+                        ),
+                        (
+                            name: "user_gemhome",
+                            description: Some("Display the path where gems are installed when --user-install is given. Aliases: user_gemdir"),
+                        ),
+                        (
+                            name: "version",
+                            description: Some("Display the gem format version"),
+                        ),
+                        (
+                            name: "remotesources",
+                            description: Some("Display the remote gem servers"),
+                        ),
+                        (
+                            name: "platform",
+                            description: Some("Display the supported gem platforms"),
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "fetch",
-            aliases: [],
             description: Some("Download a gem and place it in the current directory"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -736,14 +687,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to fetch"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The version of the gem"),
                         ),
                     ],
                 ),
@@ -752,14 +699,10 @@
                         "--platform",
                     ],
                     description: Some("Specify the platform of gem to fetch"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PLATFORM",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform of gem"),
                         ),
                     ],
                 ),
@@ -768,32 +711,36 @@
                         "--prerelease",
                     ],
                     description: Some("Allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-prerelease",
+                    ],
                 ),
                 (
                     names: [
                         "--no-prerelease",
                     ],
                     description: Some("Do not allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--prerelease",
+                    ],
                 ),
                 (
                     names: [
                         "--suggestions",
                     ],
                     description: Some("Suggest alternates when gems are not found"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-suggestions",
+                    ],
                 ),
                 (
                     names: [
                         "--no-suggestions",
                     ],
                     description: Some("Do not suggest alternates when gems are not found"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--suggestions",
+                    ],
                 ),
                 (
                     names: [
@@ -801,14 +748,10 @@
                         "--bulk-threshold",
                     ],
                     description: Some("Threshold for switching to bulk synchronization (default 1000)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "COUNT",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The threshold"),
                         ),
                     ],
                 ),
@@ -818,14 +761,10 @@
                         "--source",
                     ],
                     description: Some("Append URL to list of remote gem sources"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The URL"),
                         ),
                     ],
                 ),
@@ -834,8 +773,6 @@
                         "--clear-sources",
                     ],
                     description: Some("Clear the gem sources"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -843,15 +780,15 @@
                         "--http-proxy",
                     ],
                     description: Some("Use HTTP proxy for remote operations"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
+                            description: Some("The URL"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
+                    ],
+                    exclusive_on: [
+                        "--no-http-proxy",
                     ],
                 ),
                 (
@@ -859,30 +796,28 @@
                         "--no-http-proxy",
                     ],
                     description: Some("Do not use HTTP proxy for remote operations"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--http-proxy",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("Name of gem to download"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "generate_index",
-            aliases: [],
             description: Some("Generates the index files for a gem server directory"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -890,58 +825,55 @@
                         "--directory",
                     ],
                     description: Some("Repository base dir containing gems subdir"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DIRNAME",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
+                            filter_strategy: Fuzzy,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--modern",
                     ],
                     description: Some("Generate indexes for RubyGems (always true)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-modern",
+                    ],
                 ),
                 (
                     names: [
                         "--no-modern",
                     ],
                     description: Some("Do not generate indexes for RubyGems"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--modern",
+                    ],
                 ),
                 (
                     names: [
                         "--update",
                     ],
                     description: Some("Update modern indexes with gems added since the last update"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "info",
-            aliases: [],
             description: Some("Show information for the given gem"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-I",
                     ],
                     description: Some("Equivalent to --no-installed"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--installed",
+                    ],
                 ),
                 (
                     names: [
@@ -949,8 +881,6 @@
                         "--all",
                     ],
                     description: Some("Display all gem versions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -958,24 +888,24 @@
                         "--exact",
                     ],
                     description: Some("Name of gem(s) to query on matches the provided STRING"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--prerelease",
                     ],
                     description: Some("Allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-prerelease",
+                    ],
                 ),
                 (
                     names: [
                         "--no-prerelease",
                     ],
                     description: Some("Do not allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--prerelease",
+                    ],
                 ),
                 (
                     names: [
@@ -983,8 +913,9 @@
                         "--installed",
                     ],
                     description: Some("Check for installed gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-installed",
+                    ],
                 ),
                 (
                     names: [
@@ -992,8 +923,9 @@
                         "--no-installed",
                     ],
                     description: Some("Check for not installed gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--installed",
+                    ],
                 ),
                 (
                     names: [
@@ -1001,14 +933,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to list for use with --installed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The version of gem"),
                         ),
                     ],
                 ),
@@ -1017,38 +945,37 @@
                         "--versions",
                     ],
                     description: Some("Display only gem names"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-versions",
+                    ],
                 ),
                 (
                     names: [
                         "--no-versions",
                     ],
                     description: Some("Display not only gem names"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--versions",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("Name of the gem to print information about"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "lock",
-            aliases: [],
             description: Some("Generate a lockdown list of gems"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1056,43 +983,34 @@
                         "--strict",
                     ],
                     description: Some("Fail if unable to satisfy a dependency"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-strict",
+                    ],
                 ),
                 (
                     names: [
                         "--no-strict",
                     ],
                     description: Some("Do not fail if unable to satisfy a dependency"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--strict",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "GEMNAME-VERSION",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name and the version of gem to lock, ex: rails-1.0.0"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "mirror",
-            aliases: [],
             description: Some("Mirror all gem files (requires rubygems-mirror)"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "open",
-            aliases: [],
             description: Some("Open gem sources in editor"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1100,14 +1018,10 @@
                         "--editor",
                     ],
                     description: Some("Prepends COMMAND to gem path. Could be used to specify editor"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "COMMAND",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The prepends command to gem path"),
                         ),
                     ],
                 ),
@@ -1117,14 +1031,10 @@
                         "--version",
                     ],
                     description: Some("Opens specific gem version"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The specify version of gem"),
                         ),
                     ],
                 ),
@@ -1132,50 +1042,48 @@
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("Name of the gem to print information about"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "pristine",
-            aliases: [],
             description: Some("Restores installed gems to pristine condition from files located in the gem cache"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("Restore all installed gems to pristine condition"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--skip",
                     ],
                     description: Some("Restore all installed gems to pristine condition"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "GEMNAME",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            description: Some("Name of the gem to print information about"),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                ),
+                            ],
+                            debounce: true,
                         ),
+                    ],
+                    requires_separator: Some("="),
+                    depends_on: [
+                        "--all",
                     ],
                 ),
                 (
@@ -1183,32 +1091,30 @@
                         "--extensions",
                     ],
                     description: Some("Restore gems with extensions in addition to regular gems"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-extensions",
+                    ],
                 ),
                 (
                     names: [
                         "--no-extensions",
                     ],
                     description: Some("Do not restore gems with extensions in addition to regular gems"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--extensions",
+                    ],
                 ),
                 (
                     names: [
                         "--only-executables",
                     ],
                     description: Some("Only restore executables"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--only-plugins",
                     ],
                     description: Some("Only restore plugins"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1216,16 +1122,18 @@
                         "--env-shebang",
                     ],
                     description: Some("Rewrite executables with a shebang of /usr/bin/env"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-env-shebang",
+                    ],
                 ),
                 (
                     names: [
                         "--no-env-shebang",
                     ],
                     description: Some("Do not rewrite executables with a shebang of /usr/bin/env"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--env-shebang",
+                    ],
                 ),
                 (
                     names: [
@@ -1233,14 +1141,13 @@
                         "--install-dir",
                     ],
                     description: Some("Gem repository to get binstubs and plugins installed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DIR",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
+                            filter_strategy: Fuzzy,
                         ),
                     ],
                 ),
@@ -1250,14 +1157,13 @@
                         "--bindir",
                     ],
                     description: Some("Directory where executables are located"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DIR",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
+                            filter_strategy: Fuzzy,
                         ),
                     ],
                 ),
@@ -1267,14 +1173,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to restore to pristine condition"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The specify version of gem"),
                         ),
                     ],
                 ),
@@ -1282,23 +1184,21 @@
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
+                    description: Some("Name of the gem to print information about"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "query",
-            aliases: [],
             description: Some("Query gem information in local or remote repositories"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1306,14 +1206,10 @@
                         "--name-matches",
                     ],
                     description: Some("Name of gem(s) to query on matches the provided REGEXP"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "REGEXP",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The rule of the regexp"),
                         ),
                     ],
                 ),
@@ -1322,8 +1218,9 @@
                         "-I",
                     ],
                     description: Some("Equivalent to --no-installed"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--installed",
+                    ],
                 ),
                 (
                     names: [
@@ -1331,16 +1228,18 @@
                         "--details",
                     ],
                     description: Some("Display detailed information of gem(s)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-details",
+                    ],
                 ),
                 (
                     names: [
                         "--no-details",
                     ],
                     description: Some("Do not display detailed information of gem(s)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--details",
+                    ],
                 ),
                 (
                     names: [
@@ -1348,8 +1247,6 @@
                         "--all",
                     ],
                     description: Some("Display all gem versions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1357,24 +1254,24 @@
                         "--exact",
                     ],
                     description: Some("Name of gem(s) to query on matches the provided STRING"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--prerelease",
                     ],
                     description: Some("Allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-prerelease",
+                    ],
                 ),
                 (
                     names: [
                         "--no-prerelease",
                     ],
                     description: Some("Do not allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--prerelease",
+                    ],
                 ),
                 (
                     names: [
@@ -1382,8 +1279,9 @@
                         "--installed",
                     ],
                     description: Some("Check for installed gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-installed",
+                    ],
                 ),
                 (
                     names: [
@@ -1391,8 +1289,9 @@
                         "--no-installed",
                     ],
                     description: Some("Check for not installed gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--installed",
+                    ],
                 ),
                 (
                     names: [
@@ -1400,14 +1299,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to list for use with --installed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The version of gem"),
                         ),
                     ],
                 ),
@@ -1416,16 +1311,18 @@
                         "--versions",
                     ],
                     description: Some("Display only gem names"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-versions",
+                    ],
                 ),
                 (
                     names: [
                         "--no-versions",
                     ],
                     description: Some("Display not only gem names"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--versions",
+                    ],
                 ),
                 (
                     names: [
@@ -1433,8 +1330,10 @@
                         "--local",
                     ],
                     description: Some("Restrict operations to the LOCAL domain"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--remote",
+                        "--both",
+                    ],
                 ),
                 (
                     names: [
@@ -1442,8 +1341,10 @@
                         "--remote",
                     ],
                     description: Some("Restrict operations to the REMOTE domain"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--local",
+                        "--both",
+                    ],
                 ),
                 (
                     names: [
@@ -1451,8 +1352,10 @@
                         "--both",
                     ],
                     description: Some("Allow LOCAL and REMOTE operations"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--remote",
+                        "--local",
+                    ],
                 ),
                 (
                     names: [
@@ -1460,14 +1363,10 @@
                         "--bulk-threshold",
                     ],
                     description: Some("Threshold for switching to bulk synchronization (default 1000)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "COUNT",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The threshold"),
                         ),
                     ],
                 ),
@@ -1476,8 +1375,6 @@
                         "--clear-sources",
                     ],
                     description: Some("Clear the gem sources"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1485,14 +1382,10 @@
                         "--source",
                     ],
                     description: Some("Append URL to list of remote gem sources"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The URL"),
                         ),
                     ],
                 ),
@@ -1502,15 +1395,15 @@
                         "--http-proxy",
                     ],
                     description: Some("Use HTTP proxy for remote operations"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
+                            description: Some("The URL"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
+                    ],
+                    exclusive_on: [
+                        "--no-http-proxy",
                     ],
                 ),
                 (
@@ -1518,74 +1411,75 @@
                         "--no-http-proxy",
                     ],
                     description: Some("Do not use HTTP proxy for remote operations"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--http-proxy",
+                    ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "rdoc",
-            aliases: [],
             description: Some("Generates RDoc for pre-installed gems"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("Generate RDoc/RI documentation for all installed gems"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--rdoc",
                     ],
                     description: Some("Generate RDoc HTML"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-rdoc",
+                    ],
                 ),
                 (
                     names: [
                         "--no-rdoc",
                     ],
                     description: Some("Do not generate RDoc HTML"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--rdoc",
+                    ],
                 ),
                 (
                     names: [
                         "--ri",
                     ],
                     description: Some("Generate RI data"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-ri",
+                    ],
                 ),
                 (
                     names: [
                         "--no-ri",
                     ],
                     description: Some("Do not generate RI data"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--ri",
+                    ],
                 ),
                 (
                     names: [
                         "--overwrite",
                     ],
                     description: Some("Overwrite installed documents"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-overwrite",
+                    ],
                 ),
                 (
                     names: [
                         "--no-overwrite",
                     ],
                     description: Some("Do not overwrite installed documents"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--overwrite",
+                    ],
                 ),
                 (
                     names: [
@@ -1593,14 +1487,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to rdoc"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The specify version of gem"),
                         ),
                     ],
                 ),
@@ -1608,31 +1498,30 @@
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
+                    description: Some("Gem to generate documentation for (unless –all)"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "search",
-            aliases: [],
             description: Some("Display remote gems whose name matches REGEXP"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-I",
                     ],
                     description: Some("Equivalent to --no-installed"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--installed",
+                    ],
                 ),
                 (
                     names: [
@@ -1640,16 +1529,18 @@
                         "--details",
                     ],
                     description: Some("Display detailed information of gem(s)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-details",
+                    ],
                 ),
                 (
                     names: [
                         "--no-details",
                     ],
                     description: Some("Do not display detailed information of gem(s)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--details",
+                    ],
                 ),
                 (
                     names: [
@@ -1657,8 +1548,6 @@
                         "--all",
                     ],
                     description: Some("Display all gem versions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1666,24 +1555,24 @@
                         "--exact",
                     ],
                     description: Some("Name of gem(s) to query on matches the provided STRING"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--prerelease",
                     ],
                     description: Some("Allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-prerelease",
+                    ],
                 ),
                 (
                     names: [
                         "--no-prerelease",
                     ],
                     description: Some("Do not allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--prerelease",
+                    ],
                 ),
                 (
                     names: [
@@ -1691,8 +1580,9 @@
                         "--installed",
                     ],
                     description: Some("Check for installed gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-installed",
+                    ],
                 ),
                 (
                     names: [
@@ -1700,8 +1590,9 @@
                         "--no-installed",
                     ],
                     description: Some("Check for not installed gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--installed",
+                    ],
                 ),
                 (
                     names: [
@@ -1709,14 +1600,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to list for use with --installed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The version of gem"),
                         ),
                     ],
                 ),
@@ -1725,16 +1612,18 @@
                         "--versions",
                     ],
                     description: Some("Display only gem names"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-versions",
+                    ],
                 ),
                 (
                     names: [
                         "--no-versions",
                     ],
                     description: Some("Display not only gem names"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--versions",
+                    ],
                 ),
                 (
                     names: [
@@ -1742,8 +1631,10 @@
                         "--local",
                     ],
                     description: Some("Restrict operations to the LOCAL domain"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--remote",
+                        "--both",
+                    ],
                 ),
                 (
                     names: [
@@ -1751,8 +1642,10 @@
                         "--remote",
                     ],
                     description: Some("Restrict operations to the REMOTE domain"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--local",
+                        "--both",
+                    ],
                 ),
                 (
                     names: [
@@ -1760,8 +1653,10 @@
                         "--both",
                     ],
                     description: Some("Allow LOCAL and REMOTE operations"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--remote",
+                        "--local",
+                    ],
                 ),
                 (
                     names: [
@@ -1769,14 +1664,10 @@
                         "--bulk-threshold",
                     ],
                     description: Some("Threshold for switching to bulk synchronization (default 1000)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "COUNT",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The threshold"),
                         ),
                     ],
                 ),
@@ -1785,8 +1676,6 @@
                         "--clear-sources",
                     ],
                     description: Some("Clear the gem sources"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1794,14 +1683,10 @@
                         "--source",
                     ],
                     description: Some("Append URL to list of remote gem sources"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The URL"),
                         ),
                     ],
                 ),
@@ -1811,15 +1696,15 @@
                         "--http-proxy",
                     ],
                     description: Some("Use HTTP proxy for remote operations"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
+                            description: Some("The URL"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
+                    ],
+                    exclusive_on: [
+                        "--no-http-proxy",
                     ],
                 ),
                 (
@@ -1827,40 +1712,32 @@
                         "--no-http-proxy",
                     ],
                     description: Some("Do not use HTTP proxy for remote operations"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--http-proxy",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "REGEXP",
-                    source: Files,
+                    description: Some("Regexp to look for in gem name"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "signin",
-            aliases: [],
             description: Some("Sign in to any gemcutter-compatible host. It defaults to https://rubygems.org"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--host",
                     ],
                     description: Some("Use another gemcutter-compatible host (e.g. https://rubygems.org)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "HOST",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The host"),
                         ),
                     ],
                 ),
@@ -1869,35 +1746,22 @@
                         "--otp",
                     ],
                     description: Some("Digit code for multifactor authentication You can also use the environment variable GEM_HOST_OTP_CODE"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CODE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The GEM host otp code"),
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "signout",
-            aliases: [],
             description: Some("Sign out from all the current sessions"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "sources",
-            aliases: [],
             description: Some("Manage the sources and cache file RubyGems uses to search for gems"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1905,14 +1769,10 @@
                         "--add",
                     ],
                     description: Some("Add source"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "SOURCE_URI",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The source URI"),
                         ),
                     ],
                 ),
@@ -1922,8 +1782,6 @@
                         "--list",
                     ],
                     description: Some("List sources"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1931,14 +1789,10 @@
                         "--remove",
                     ],
                     description: Some("Remove source"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "SOURCE_URI",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The source URI"),
                         ),
                     ],
                 ),
@@ -1948,8 +1802,6 @@
                         "--clear-all",
                     ],
                     description: Some("Remove all sources (clear the cache)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1957,25 +1809,25 @@
                         "--update",
                     ],
                     description: Some("Update source cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-f",
                         "--force",
                     ],
-                    description: Some("Do not show any confirmation prompts and behave as if \'yes\' was always answered"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Do not show any confirmation prompts and behave as if 'yes' was always answered"),
+                    exclusive_on: [
+                        "--no-force",
+                    ],
                 ),
                 (
                     names: [
                         "--no-force",
                     ],
-                    description: Some("Show any confirmation prompts and behave as if \'yes\' was always answered"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Show any confirmation prompts and behave as if 'yes' was always answered"),
+                    exclusive_on: [
+                        "--force",
+                    ],
                 ),
                 (
                     names: [
@@ -1983,15 +1835,15 @@
                         "--http-proxy",
                     ],
                     description: Some("Use HTTP proxy for remote operations"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
+                            description: Some("The URL"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
+                    ],
+                    exclusive_on: [
+                        "--no-http-proxy",
                     ],
                 ),
                 (
@@ -1999,18 +1851,15 @@
                         "--no-http-proxy",
                     ],
                     description: Some("Do not use HTTP proxy for remote operations"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--http-proxy",
+                    ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "specification",
-            aliases: [],
             description: Some("Display gem specification (in yaml)"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -2018,14 +1867,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to examine"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The version of gem"),
                         ),
                     ],
                 ),
@@ -2034,14 +1879,10 @@
                         "--platform",
                     ],
                     description: Some("Specify the platform of gem to specification"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PLATFORM",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform of gem"),
                         ),
                     ],
                 ),
@@ -2050,110 +1891,91 @@
                         "--prerelease",
                     ],
                     description: Some("Allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-prerelease",
+                    ],
                 ),
                 (
                     names: [
                         "--no-prerelease",
                     ],
                     description: Some("Do not allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--prerelease",
+                    ],
                 ),
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("Output specifications for all versions of the gem"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--ruby",
                     ],
                     description: Some("Output ruby format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--yaml",
                     ],
                     description: Some("Output YAML format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--marshal",
                     ],
                     description: Some("Output Marshal format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "GEMFILE",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("Name of gem to show the gemspec for"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
+                    debounce: true,
                 ),
                 (
                     name: "FIELD",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name of gemspec field to show"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "stale",
-            aliases: [],
             description: Some("List gems along with access times"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "unpack",
-            aliases: [],
             description: Some("Unpack an installed gem to the current directory"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--target",
                     ],
                     description: Some("Target directory for unpacking"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DIR",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
+                            filter_strategy: Fuzzy,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--spec",
                     ],
                     description: Some("Unpack the gem specification"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2161,14 +1983,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to unpack"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The specify version of gem"),
                         ),
                     ],
                 ),
@@ -2176,23 +1994,20 @@
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("Name of gem to unpack"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "yank",
-            aliases: [],
             description: Some("Remove a pushed gem from the index"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -2200,14 +2015,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to dependency"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The version of gem"),
                         ),
                     ],
                 ),
@@ -2216,14 +2027,10 @@
                         "--platform",
                     ],
                     description: Some("Specify the platform of gem to dependency"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PLATFORM",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform of gem"),
                         ),
                     ],
                 ),
@@ -2232,14 +2039,10 @@
                         "--host",
                     ],
                     description: Some("Use another gemcutter-compatible host (e.g. https://rubygems.org)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "HOST",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The host"),
                         ),
                     ],
                 ),
@@ -2249,14 +2052,10 @@
                         "--key",
                     ],
                     description: Some("Use the given API key"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "KEYNAME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The API key"),
                         ),
                     ],
                 ),
@@ -2265,14 +2064,10 @@
                         "--otp",
                     ],
                     description: Some("Digit code for multifactor authentication You can also use the environment variable GEM_HOST_OTP_CODE"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CODE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The GEM host otp code"),
                         ),
                     ],
                 ),
@@ -2280,23 +2075,20 @@
             arguments: [
                 (
                     name: "GEM",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("Name of gem"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "uninstall",
-            aliases: [],
             description: Some("Uninstall gems from the local repository"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -2304,8 +2096,6 @@
                         "--all",
                     ],
                     description: Some("Uninstall all matching versions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2313,8 +2103,6 @@
                         "--ignore-dependencies",
                     ],
                     description: Some("Ignore dependency requirements while uninstalling"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2322,8 +2110,6 @@
                         "--check-development",
                     ],
                     description: Some("Check development dependencies while uninstalling (default: false)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2331,8 +2117,6 @@
                         "--executables",
                     ],
                     description: Some("Uninstall applicable executables without confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2340,14 +2124,13 @@
                         "--install-dir",
                     ],
                     description: Some("Directory to uninstall gem from"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DIR",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
+                            filter_strategy: Fuzzy,
                         ),
                     ],
                 ),
@@ -2357,14 +2140,13 @@
                         "--bindir",
                     ],
                     description: Some("Directory to remove executables from"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DIR",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
+                            filter_strategy: Fuzzy,
                         ),
                     ],
                 ),
@@ -2373,32 +2155,24 @@
                         "--user-install",
                     ],
                     description: Some("Uninstall from user’s home directory in addition to GEM_HOME"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--format-executable",
                     ],
                     description: Some("Assume executable names match Ruby’s prefix and suffix"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--force",
                     ],
                     description: Some("Uninstall all versions of the named gems ignoring dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--abort-on-dependent",
                     ],
                     description: Some("Prevent uninstalling gems that are depended on by other gems"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2406,14 +2180,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to uninstall"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The specify version of gem"),
                         ),
                     ],
                 ),
@@ -2422,14 +2192,10 @@
                         "--platform",
                     ],
                     description: Some("Specify the platform of gem to uninstall"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PLATFORM",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform of gem"),
                         ),
                     ],
                 ),
@@ -2438,30 +2204,24 @@
                         "--vendor",
                     ],
                     description: Some("Uninstall gem from the vendor directory. Only for use by gem repackagers"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "list",
-            aliases: [],
             description: Some("Display local gems whose name matches REGEXP"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -2469,16 +2229,18 @@
                         "--details",
                     ],
                     description: Some("Display detailed information of gem(s)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-details",
+                    ],
                 ),
                 (
                     names: [
                         "--no-details",
                     ],
                     description: Some("Do not display detailed information of gem(s)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--details",
+                    ],
                 ),
                 (
                     names: [
@@ -2486,16 +2248,18 @@
                         "--update-sources",
                     ],
                     description: Some("[Deprecated] Update local source cache"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-update-sources",
+                    ],
                 ),
                 (
                     names: [
                         "--no-update-sources",
                     ],
                     description: Some("[Deprecated] Do not update local source cache"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--update-sources",
+                    ],
                 ),
                 (
                     names: [
@@ -2503,8 +2267,6 @@
                         "--all",
                     ],
                     description: Some("Display all gem versions"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2512,24 +2274,24 @@
                         "--exact",
                     ],
                     description: Some("Name of gem(s) to query on matches the provided STRING"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--prerelease",
                     ],
                     description: Some("Allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-prerelease",
+                    ],
                 ),
                 (
                     names: [
                         "--no-prerelease",
                     ],
                     description: Some("Do not allow prerelease versions of a gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--prerelease",
+                    ],
                 ),
                 (
                     names: [
@@ -2537,8 +2299,9 @@
                         "--installed",
                     ],
                     description: Some("Check for installed gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-installed",
+                    ],
                 ),
                 (
                     names: [
@@ -2546,8 +2309,9 @@
                         "--no-installed",
                     ],
                     description: Some("Check for not installed gem"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--installed",
+                    ],
                 ),
                 (
                     names: [
@@ -2555,14 +2319,10 @@
                         "--version",
                     ],
                     description: Some("Specify version of gem to list for use with --installed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The version of gem"),
                         ),
                     ],
                 ),
@@ -2571,16 +2331,18 @@
                         "--versions",
                     ],
                     description: Some("Display only gem names"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-versions",
+                    ],
                 ),
                 (
                     names: [
                         "--no-versions",
                     ],
                     description: Some("Display not only gem names"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--versions",
+                    ],
                 ),
                 (
                     names: [
@@ -2588,8 +2350,10 @@
                         "--local",
                     ],
                     description: Some("Restrict operations to the LOCAL domain"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--remote",
+                        "--both",
+                    ],
                 ),
                 (
                     names: [
@@ -2597,8 +2361,10 @@
                         "--remote",
                     ],
                     description: Some("Restrict operations to the REMOTE domain"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--local",
+                        "--both",
+                    ],
                 ),
                 (
                     names: [
@@ -2606,8 +2372,10 @@
                         "--both",
                     ],
                     description: Some("Allow LOCAL and REMOTE operations"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--remote",
+                        "--local",
+                    ],
                 ),
                 (
                     names: [
@@ -2615,14 +2383,10 @@
                         "--bulk-threshold",
                     ],
                     description: Some("Threshold for switching to bulk synchronization (default 1000)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "COUNT",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The threshold"),
                         ),
                     ],
                 ),
@@ -2631,8 +2395,6 @@
                         "--clear-sources",
                     ],
                     description: Some("Clear the gem sources"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2640,14 +2402,10 @@
                         "--source",
                     ],
                     description: Some("Append URL to list of remote gem sources"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The URL"),
                         ),
                     ],
                 ),
@@ -2657,15 +2415,15 @@
                         "--http-proxy",
                     ],
                     description: Some("Use HTTP proxy for remote operations"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
+                            description: Some("The URL"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
+                    ],
+                    exclusive_on: [
+                        "--no-http-proxy",
                     ],
                 ),
                 (
@@ -2673,40 +2431,32 @@
                         "--no-http-proxy",
                     ],
                     description: Some("Do not use HTTP proxy for remote operations"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--http-proxy",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "REGEXP",
-                    source: Files,
+                    description: Some("Regexp to look for in gem name"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "build",
-            aliases: [],
             description: Some("Build a gem from a gemspec"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--platform",
                     ],
                     description: Some("Specify the platform of gem to build"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PLATFORM",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform of gem"),
                         ),
                     ],
                 ),
@@ -2715,16 +2465,12 @@
                         "--force",
                     ],
                     description: Some("Skip validation of the spec"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--strict",
                     ],
                     description: Some("Consider warnings as errors when validating the spec"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2732,14 +2478,10 @@
                         "--output",
                     ],
                     description: Some("Output gem with the given filename"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "FILE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The filename"),
                         ),
                     ],
                 ),
@@ -2748,14 +2490,13 @@
                         "-C",
                     ],
                     description: Some("Run as if gem build was started in <PATH> instead of the current working directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PATH",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The filename"),
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -2763,33 +2504,23 @@
             arguments: [
                 (
                     name: "GEMSPEC_FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Gemspec file name to build a gem for"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "push",
-            aliases: [],
             description: Some("Push a gem up to the gem server"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--host",
                     ],
                     description: Some("Use another gemcutter-compatible host (e.g. https://rubygems.org)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "HOST",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The host"),
                         ),
                     ],
                 ),
@@ -2799,14 +2530,10 @@
                         "--key",
                     ],
                     description: Some("Use the given API key"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "KEYNAME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The API key"),
                         ),
                     ],
                 ),
@@ -2815,14 +2542,10 @@
                         "--otp",
                     ],
                     description: Some("Digit code for multifactor authentication You can also use the environment variable GEM_HOST_OTP_CODE"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CODE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The GEM host otp code"),
                         ),
                     ],
                 ),
@@ -2832,15 +2555,15 @@
                         "--http-proxy",
                     ],
                     description: Some("Use HTTP proxy for remote operations"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
+                            description: Some("The URL"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
+                    ],
+                    exclusive_on: [
+                        "--no-http-proxy",
                     ],
                 ),
                 (
@@ -2848,35 +2571,25 @@
                         "--no-http-proxy",
                     ],
                     description: Some("Do not use HTTP proxy for remote operations"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--http-proxy",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "GEM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Built gem to push up"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "server",
-            aliases: [],
             description: Some("Starts up a web server that hosts the RDoc (requires rubygems-server)"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "owner",
-            aliases: [],
             description: Some("Manage gem owners of a gem on the push server"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -2884,14 +2597,10 @@
                         "--add",
                     ],
                     description: Some("Add an owner by user identifier"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "NEW_OWNER",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The new owner"),
                         ),
                     ],
                 ),
@@ -2901,14 +2610,10 @@
                         "--remove",
                     ],
                     description: Some("Remove an owner by user identifier"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "OLD_OWNER",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The old owner"),
                         ),
                     ],
                 ),
@@ -2917,14 +2622,10 @@
                         "--host",
                     ],
                     description: Some("Use another gemcutter-compatible host (e.g. https://rubygems.org)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "HOST",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The host"),
                         ),
                     ],
                 ),
@@ -2934,14 +2635,10 @@
                         "--key",
                     ],
                     description: Some("Use the given API key"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "KEYNAME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The API key"),
                         ),
                     ],
                 ),
@@ -2950,14 +2647,10 @@
                         "--otp",
                     ],
                     description: Some("Digit code for multifactor authentication You can also use the environment variable GEM_HOST_OTP_CODE"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "CODE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The GEM host otp code"),
                         ),
                     ],
                 ),
@@ -2965,23 +2658,19 @@
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "which",
-            aliases: [],
             description: Some("Find the location of a library file you can require"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -2989,8 +2678,6 @@
                         "--all",
                     ],
                     description: Some("Show all matching files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -2998,66 +2685,48 @@
                         "--gems-first",
                     ],
                     description: Some("Search gems before non-gems"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "outdated",
-            aliases: [],
             description: Some("Display all gems that need updates"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--platform",
                     ],
                     description: Some("Specify the platform of gem to outdated"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PLATFORM",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "update",
-            aliases: [],
             description: Some("Update installed gems to the latest version"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--system",
                     ],
                     description: Some("Update the RubyGems system software"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "VERSION",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -3066,14 +2735,9 @@
                         "--platform",
                     ],
                     description: Some("Update the RubyGems system software"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PLATFORM",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -3082,8 +2746,6 @@
                         "--prerelease",
                     ],
                     description: Some("Allow prerelease versions of a gem as update targets"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -3091,14 +2753,12 @@
                         "-i",
                     ],
                     description: Some("Gem repository directory to get installed gems"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DIR",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -3108,14 +2768,12 @@
                         "-n",
                     ],
                     description: Some("Directory where executables will be placed when the gem is installed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DIR",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -3124,17 +2782,17 @@
                         "--document",
                     ],
                     description: Some("Generate documentation for installed gems"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "TYPES",
-                            source: Static([
-                                "rdoc",
-                                "ri",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "rdoc",
+                                ),
+                                (
+                                    name: "ri",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -3143,14 +2801,12 @@
                         "--build-root",
                     ],
                     description: Some("Temporary installation root. Useful for building packages. Do not use this when installing remote gems"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DIR",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -3159,8 +2815,6 @@
                         "--vendor",
                     ],
                     description: Some("Install gem into the vendor directory. Only for use by gem repackagers"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -3168,8 +2822,6 @@
                         "-N",
                     ],
                     description: Some("Disable documentation generation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -3177,8 +2829,6 @@
                         "-E",
                     ],
                     description: Some("Rewrite the shebang line on installed scripts to use /usr/bin/env"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -3186,8 +2836,6 @@
                         "-f",
                     ],
                     description: Some("Force gem to install, bypassing dependency checks"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -3195,8 +2843,6 @@
                         "-w",
                     ],
                     description: Some("Use bin wrappers for executables. Not available on dosish platforms"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -3204,14 +2850,9 @@
                         "-P",
                     ],
                     description: Some("Specify gem trust policy"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "POLICY",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -3220,64 +2861,48 @@
                         "--ignore-dependencies",
                     ],
                     description: Some("Do not install any required dependent gems"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--format-executable",
                     ],
                     description: Some("Make installed executable names match Ruby"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--user-install",
                     ],
-                    description: Some("Install in user\'s home directory instead of GEM_HOME"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Install in user's home directory instead of GEM_HOME"),
                 ),
                 (
                     names: [
                         "--development",
                     ],
                     description: Some("Install additional development dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--development-all",
                     ],
                     description: Some("Install development dependencies for all gems (including dev deps themselves)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--conservative",
                     ],
-                    description: Some("Don\'t attempt to upgrade gems already meeting version requirement"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't attempt to upgrade gems already meeting version requirement"),
                 ),
                 (
                     names: [
                         "--minimal-deps",
                     ],
-                    description: Some("Don\'t upgrade any dependencies that already meet version requirements"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't upgrade any dependencies that already meet version requirements"),
                 ),
                 (
                     names: [
                         "--post-install-message",
                     ],
                     description: Some("Print post install message"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -3285,14 +2910,12 @@
                         "-g",
                     ],
                     description: Some("Read from a gem dependencies API file and install the listed gems"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "FILE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -3301,14 +2924,9 @@
                         "--without",
                     ],
                     description: Some("Omit the named groups (comma separated) when installing from a gem dependencies file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "GROUPS",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -3316,45 +2934,38 @@
                     names: [
                         "--default",
                     ],
-                    description: Some("Add the gem\'s full specification to specifications/default and extract only its bin"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Add the gem's full specification to specifications/default and extract only its bin"),
                 ),
                 (
                     names: [
                         "--explain",
                     ],
                     description: Some("Rather than install the gems, indicate which would be installed"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--lock",
                     ],
                     description: Some("Create a lock file (when used with -g/--file)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--suggestions",
                     ],
                     description: Some("Suggest alternates when gems are not found"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-suggestions",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "GEMNAME",
-                    source: Files,
+                    description: Some("The gem(s) you want to update"),
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -3364,8 +2975,7 @@
                 "-h",
             ],
             description: Some("Show help for gem"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
@@ -3373,16 +2983,20 @@
                 "--verbose",
             ],
             description: Some("Set the verbose level of output"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
+            exclusive_on: [
+                "--no-verbose",
+            ],
         ),
         (
             names: [
                 "--no-verbose",
             ],
             description: Some("Do not set the verbose level of output"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
+            exclusive_on: [
+                "--verbose",
+            ],
         ),
         (
             names: [
@@ -3390,56 +3004,51 @@
                 "--quiet",
             ],
             description: Some("Silence command progress meter"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--silent",
             ],
             description: Some("Silence RubyGems output"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "-config-file",
             ],
             description: Some("Use this config file instead of default"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The config file"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
                 "--backtrace",
             ],
             description: Some("Show stack backtrace on errors"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--debug",
             ],
             description: Some("Turn on Ruby debugging"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--norc",
             ],
             description: Some("Avoid loading any .gemrc file"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
@@ -3447,9 +3056,6 @@
                 "--version",
             ],
             description: Some("Show the gem version"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

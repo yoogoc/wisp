@@ -2,7 +2,6 @@
     version: 1,
     command: "wasm-bindgen",
     description: Some("Generate bindings between WebAssembly and JavaScript"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "-h",
             ],
             description: Some("Show help for wasm-bindgen"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,22 +16,19 @@
                 "-v",
             ],
             description: Some("Show version for wasm-bindgen"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--out-dir",
             ],
             description: Some("Output directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Target directory to emit JS bindings, TS definitions, .wasm binaries, etc"),
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -43,14 +37,14 @@
                 "--out-name",
             ],
             description: Some("Set a custom output filename (Without extension. Defaults to crate name)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Output filename"),
+                    template: [
+                        FilePaths,
+                    ],
+                    suggest_current_token: true,
                 ),
             ],
         ),
@@ -59,20 +53,31 @@
                 "--target",
             ],
             description: Some("What type of output to generate"),
-            takes_value: true,
             arguments: [
                 (
                     name: "target",
-                    source: Static([
-                        "web",
-                        "bundler",
-                        "nodejs",
-                        "no-modules",
-                        "deno",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "web",
+                            description: Some("Directly loadable in a web browser"),
+                        ),
+                        (
+                            name: "bundler",
+                            description: Some("Suitable for loading in bundlers like Webpack"),
+                        ),
+                        (
+                            name: "nodejs",
+                            description: Some("Loadable via require as a Node.js module"),
+                        ),
+                        (
+                            name: "no-modules",
+                            description: Some("Like web, but older and doesn't use ES modules"),
+                        ),
+                        (
+                            name: "deno",
+                            description: Some("Loadable using imports from Deno modules"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -81,14 +86,9 @@
                 "--no-modules-global",
             ],
             description: Some("Name of global to assign generated bindings to"),
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -97,98 +97,82 @@
                 "--browser",
             ],
             description: Some("Hint that JS should only be compatible with a browser"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--typescript",
             ],
             description: Some("Output a TypeScript definition file (on by default)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-typescript",
             ],
-            description: Some("Don\'t emit a *.d.ts file"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't emit a *.d.ts file"),
         ),
         (
             names: [
                 "--omit-imports",
             ],
-            description: Some("Don\'t emit imports in generated JavaScript"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't emit imports in generated JavaScript"),
         ),
         (
             names: [
                 "--debug",
             ],
             description: Some("Include otherwise-extraneous debug checks in output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-demangle",
             ],
-            description: Some("Don\'t demangle Rust symbol names"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't demangle Rust symbol names"),
         ),
         (
             names: [
                 "--keep-debug",
             ],
             description: Some("Keep debug sections in wasm files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--remove-name-section",
             ],
             description: Some("Remove the debugging `name` section of the file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--remove-producers-section",
             ],
             description: Some("Remove the telemetry `producers` section"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--omit-default-module-path",
             ],
-            description: Some("Don\'t add WebAssembly fallback imports in generated JavaScript"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't add WebAssembly fallback imports in generated JavaScript"),
         ),
         (
             names: [
                 "--encode-into",
             ],
             description: Some("Whether or not to use TextEncoder#encodeInto()"),
-            takes_value: true,
             arguments: [
                 (
                     name: "option",
-                    source: Static([
-                        "test",
-                        "always",
-                        "never",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "test",
+                        ),
+                        (
+                            name: "always",
+                            description: Some("Always use TextEncoder#encodeInto()"),
+                        ),
+                        (
+                            name: "never",
+                            description: Some("Never use TextEncoder#encodeInto()"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -197,53 +181,44 @@
                 "--nodejs",
             ],
             description: Some("Deprecated, use `--target nodejs`"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--web",
             ],
             description: Some("Deprecated, use `--target web`"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-modules",
             ],
             description: Some("Deprecated, use `--target no-modules`"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--weak-refs",
             ],
             description: Some("Enable usage of the JS weak references proposal"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--reference-types",
             ],
             description: Some("Enable usage of WebAssembly reference types"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "input",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
+            description: Some("File name to output the compiled binary bindings"),
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    has_dynamic_query_term: true,
+                ),
+            ],
+            is_script: true,
         ),
     ],
 )

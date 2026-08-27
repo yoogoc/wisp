@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "create",
-            aliases: [],
             description: Some("Create a Flux v1 Kubernetes configuration (This command is for Flux v1, to use the newer Flux v2, run \"az k8s-configuration flux create\")"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,16 +13,12 @@
                         "-c",
                     ],
                     description: Some("Name of the Kubernetes cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -32,20 +26,23 @@
                         "-t",
                     ],
                     description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-type",
-                            source: Static([
-                                "connectedClusters",
-                                "managedClusters",
-                                "provisionedClusters",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "connectedClusters",
+                                ),
+                                (
+                                    name: "managedClusters",
+                                ),
+                                (
+                                    name: "provisionedClusters",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -53,16 +50,12 @@
                         "-n",
                     ],
                     description: Some("Name of the configuration"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -70,16 +63,12 @@
                         "-u",
                     ],
                     description: Some("Url of the source control repository"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "repository-url",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -87,35 +76,32 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--scope",
                     ],
-                    description: Some("Specify scope of the operator to be \'namespace\' or \'cluster\'"),
-                    takes_value: true,
+                    description: Some("Specify scope of the operator to be 'namespace' or 'cluster'"),
                     arguments: [
                         (
                             name: "scope",
-                            source: Static([
-                                "cluster",
-                                "namespace",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "cluster",
+                                ),
+                                (
+                                    name: "namespace",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -123,17 +109,17 @@
                         "--enable-hop",
                     ],
                     description: Some("Enable support for Helm chart deployments"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "enable-helm-operator",
-                            source: Static([
-                                "false",
-                                "true",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "false",
+                                ),
+                                (
+                                    name: "true",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -143,14 +129,9 @@
                         "--hop-chart-version",
                     ],
                     description: Some("Chart version of the Helm Operator (if enabled)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "helm-operator-chart-version",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -160,14 +141,9 @@
                         "--hop-params",
                     ],
                     description: Some("Chart values for the Helm Operator (if enabled)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "helm-operator-params",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -176,14 +152,9 @@
                         "--https-key",
                     ],
                     description: Some("Specify HTTPS token/password for private repository sync"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "https-key",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -192,14 +163,9 @@
                         "--https-user",
                     ],
                     description: Some("Specify HTTPS username for private repository sync"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "https-user",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -208,14 +174,9 @@
                         "--operator-instance-name",
                     ],
                     description: Some("Instance name of the Operator"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "operator-instance-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -224,14 +185,9 @@
                         "--operator-namespace",
                     ],
                     description: Some("Namespace in which to install the Operator"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "operator-namespace",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -240,14 +196,9 @@
                         "--operator-params",
                     ],
                     description: Some("Parameters for the Operator"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "operator-params",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -255,15 +206,10 @@
                     names: [
                         "--operator-type",
                     ],
-                    description: Some("Type of the operator. Valid value is \'flux\'"),
-                    takes_value: true,
+                    description: Some("Type of the operator. Valid value is 'flux'"),
                     arguments: [
                         (
                             name: "operator-type",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -272,14 +218,9 @@
                         "--ssh-known-hosts",
                     ],
                     description: Some("Specify Base64-encoded known_hosts contents containing public SSH keys required to access private Git instances"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "ssh-known-hosts",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -288,14 +229,9 @@
                         "--ssh-known-hosts-file",
                     ],
                     description: Some("Specify file path to known_hosts contents containing public SSH keys required to access private Git instances"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "ssh-known-hosts-file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -304,14 +240,9 @@
                         "--ssh-private-key",
                     ],
                     description: Some("Specify Base64-encoded private ssh key for private repository sync"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "ssh-private-key",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -320,26 +251,17 @@
                         "--ssh-private-key-file",
                     ],
                     description: Some("Specify file path to private ssh key for private repository sync"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "ssh-private-key-file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "delete",
-            aliases: [],
             description: Some("Delete a Flux v1 Kubernetes configuration (This command is for Flux v1, to use the newer Flux v2, run \"az k8s-configuration flux delete\")"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -347,16 +269,12 @@
                         "-c",
                     ],
                     description: Some("Name of the Kubernetes cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -364,20 +282,23 @@
                         "-t",
                     ],
                     description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-type",
-                            source: Static([
-                                "connectedClusters",
-                                "managedClusters",
-                                "provisionedClusters",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "connectedClusters",
+                                ),
+                                (
+                                    name: "managedClusters",
+                                ),
+                                (
+                                    name: "provisionedClusters",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -385,16 +306,12 @@
                         "-n",
                     ],
                     description: Some("Name of the configuration"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -402,16 +319,12 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -419,18 +332,12 @@
                         "-y",
                     ],
                     description: Some("Do not prompt for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "list",
-            aliases: [],
             description: Some("List Flux v1 Kubernetes configurations (This command is for Flux v1, to use the newer Flux v2, run \"az k8s-configuration flux list\")"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -438,16 +345,12 @@
                         "-c",
                     ],
                     description: Some("Name of the Kubernetes cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -455,20 +358,23 @@
                         "-t",
                     ],
                     description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-type",
-                            source: Static([
-                                "connectedClusters",
-                                "managedClusters",
-                                "provisionedClusters",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "connectedClusters",
+                                ),
+                                (
+                                    name: "managedClusters",
+                                ),
+                                (
+                                    name: "provisionedClusters",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -476,26 +382,18 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "show",
-            aliases: [],
             description: Some("Show details of a Flux v1 Kubernetes configuration (This command is for Flux v1, to use the newer Flux v2, run \"az k8s-configuration flux show\")"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -503,16 +401,12 @@
                         "-c",
                     ],
                     description: Some("Name of the Kubernetes cluster"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -520,20 +414,23 @@
                         "-t",
                     ],
                     description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cluster-type",
-                            source: Static([
-                                "connectedClusters",
-                                "managedClusters",
-                                "provisionedClusters",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "connectedClusters",
+                                ),
+                                (
+                                    name: "managedClusters",
+                                ),
+                                (
+                                    name: "provisionedClusters",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -541,16 +438,12 @@
                         "-n",
                     ],
                     description: Some("Name of the configuration"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -558,31 +451,22 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "flux",
-            aliases: [],
             description: Some("Commands to manage Flux v2 Kubernetes configurations"),
             subcommands: [
                 (
                     name: "create",
-                    aliases: [],
                     description: Some("Create a Flux v2 Kubernetes configuration"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -590,16 +474,12 @@
                                 "-c",
                             ],
                             description: Some("Name of the Kubernetes cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -607,20 +487,23 @@
                                 "-t",
                             ],
                             description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-type",
-                                    source: Static([
-                                        "connectedClusters",
-                                        "managedClusters",
-                                        "provisionedClusters",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "connectedClusters",
+                                        ),
+                                        (
+                                            name: "managedClusters",
+                                        ),
+                                        (
+                                            name: "provisionedClusters",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -628,16 +511,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the flux configuration"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -645,16 +524,12 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -662,30 +537,21 @@
                                 "-u",
                             ],
                             description: Some("URL of the source to reconcile"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "url",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--account-key",
                             ],
                             description: Some("The Azure Blob Shared Key for authentication"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "account-key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -694,14 +560,9 @@
                                 "--branch",
                             ],
                             description: Some("Branch within the git source to reconcile with the cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "branch",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -710,14 +571,9 @@
                                 "--bucket-access-key",
                             ],
                             description: Some("Access Key ID used to authenticate with the bucket"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "bucket-access-key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -726,22 +582,15 @@
                                 "--bucket-insecure",
                             ],
                             description: Some("Communicate with a bucket without TLS"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--bucket-name",
                             ],
                             description: Some("Name of the S3 bucket to sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "bucket-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -750,14 +599,9 @@
                                 "--bucket-secret-key",
                             ],
                             description: Some("Secret Key used to authenticate with the bucket"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "bucket-secret-key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -767,14 +611,9 @@
                                 "--cluster-rp",
                             ],
                             description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-resource-provider",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -783,14 +622,9 @@
                                 "--commit",
                             ],
                             description: Some("Commit within the git source to reconcile with the cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "commit",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -799,14 +633,9 @@
                                 "--container-name",
                             ],
                             description: Some("Name of the Azure Blob Storage container to sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "container-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -815,14 +644,9 @@
                                 "--https-ca-cert",
                             ],
                             description: Some("Base64-encoded HTTPS CA certificate for TLS communication with private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "https-ca-cert",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -831,14 +655,9 @@
                                 "--https-ca-cert-file",
                             ],
                             description: Some("File path to HTTPS CA certificate file for TLS communication with private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "https-ca-cert-file",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -847,14 +666,9 @@
                                 "--https-key",
                             ],
                             description: Some("HTTPS token/password for private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "https-key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -863,14 +677,9 @@
                                 "--https-user",
                             ],
                             description: Some("HTTPS username for private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "https-user",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -880,14 +689,9 @@
                                 "--interval",
                             ],
                             description: Some("Time between reconciliations of the source on the cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "sync-interval",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -896,18 +700,20 @@
                                 "--kind",
                             ],
                             description: Some("Source kind to reconcile"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "kind",
-                                    source: Static([
-                                        "azblob",
-                                        "bucket",
-                                        "git",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "azblob",
+                                        ),
+                                        (
+                                            name: "bucket",
+                                        ),
+                                        (
+                                            name: "git",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -916,14 +722,9 @@
                                 "--known-hosts",
                             ],
                             description: Some("Base64-encoded known_hosts data containing public SSH keys required to access private Git instances"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "known-hosts",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -932,14 +733,9 @@
                                 "--known-hosts-file",
                             ],
                             description: Some("File path to known_hosts contents containing public SSH keys required to access private Git instances"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "known-hosts-file",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -948,15 +744,10 @@
                                 "--kustomization",
                                 "-k",
                             ],
-                            description: Some("Define kustomizations to sync sources with parameters [\'name\', \'path\', \'depends_on\', \'timeout\', \'sync_interval\', \'retry_interval\', \'prune\', \'force\']"),
-                            takes_value: true,
+                            description: Some("Define kustomizations to sync sources with parameters ['name', 'path', 'depends_on', 'timeout', 'sync_interval', 'retry_interval', 'prune', 'force']"),
                             arguments: [
                                 (
                                     name: "kustomization",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -966,14 +757,9 @@
                                 "--local-ref",
                             ],
                             description: Some("Local reference to a kubernetes secret in the configuration namespace to use for communication to the source"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "local-auth-ref",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -983,14 +769,9 @@
                                 "--mi-client-id",
                             ],
                             description: Some("The client ID of the managed identity for authentication with Azure Blob"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "managed-identity-client-id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1000,14 +781,9 @@
                                 "--ns",
                             ],
                             description: Some("Namespace to deploy the configuration"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "namespace",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1016,22 +792,15 @@
                                 "--no-wait",
                             ],
                             description: Some("Do not wait for the long-running operation to finish"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--sas-token",
                             ],
                             description: Some("The Azure Blob SAS Token for authentication"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "sas-token",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1040,18 +809,18 @@
                                 "--scope",
                                 "-s",
                             ],
-                            description: Some("Specify scope of the operator to be \'namespace\' or \'cluster\'"),
-                            takes_value: true,
+                            description: Some("Specify scope of the operator to be 'namespace' or 'cluster'"),
                             arguments: [
                                 (
                                     name: "scope",
-                                    source: Static([
-                                        "cluster",
-                                        "namespace",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "cluster",
+                                        ),
+                                        (
+                                            name: "namespace",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1060,14 +829,9 @@
                                 "--semver",
                             ],
                             description: Some("Semver range within the git source to reconcile with the cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "semver",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1077,14 +841,9 @@
                                 "--sp-client-cert",
                             ],
                             description: Some("The Base64 encoded client certificate for authenticating a service principal with Azure Blob"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "service-principal-client-certificate",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1094,14 +853,9 @@
                                 "--sp-cert-password",
                             ],
                             description: Some("The password for the client certificate used to authenticate a service principal with Azure Blob"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "service-principal-client-certificate-password",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1111,8 +865,6 @@
                                 "--sp-cert-send-chain",
                             ],
                             description: Some("Specify whether to include x5c header in client claims when acquiring a token to enable subject name / issuer based authentication for the client certificate"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1120,14 +872,9 @@
                                 "--sp-client-id",
                             ],
                             description: Some("The client ID for authenticating a service principal with Azure Blob, required for this authentication method"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "service-principal-client-id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1137,14 +884,9 @@
                                 "--sp-client-secret",
                             ],
                             description: Some("The client secret for authenticating a service principal with Azure Blob"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "service-principal-client-secret",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1154,14 +896,9 @@
                                 "--sp-tenant-id",
                             ],
                             description: Some("The tenant ID for authenticating a service principal with Azure Blob, required for this authentication method"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "service-principal-tenant-id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1170,14 +907,9 @@
                                 "--ssh-private-key",
                             ],
                             description: Some("Base64-encoded private ssh key for private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "ssh-private-key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1186,14 +918,9 @@
                                 "--ssh-private-key-file",
                             ],
                             description: Some("File path to private ssh key for private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "ssh-private-key-file",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1202,22 +929,15 @@
                                 "--suspend",
                             ],
                             description: Some("Suspend the reconciliation of the source and kustomizations associated with this configuration"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--tag",
                             ],
                             description: Some("Tag within the git source to reconcile with the cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "tag",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1226,26 +946,17 @@
                                 "--timeout",
                             ],
                             description: Some("Maximum time to reconcile the source before timing out"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "timeout",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Delete a Flux v2 Kubernetes configuration"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1253,16 +964,12 @@
                                 "-c",
                             ],
                             description: Some("Name of the Kubernetes cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1270,20 +977,23 @@
                                 "-t",
                             ],
                             description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-type",
-                                    source: Static([
-                                        "connectedClusters",
-                                        "managedClusters",
-                                        "provisionedClusters",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "connectedClusters",
+                                        ),
+                                        (
+                                            name: "managedClusters",
+                                        ),
+                                        (
+                                            name: "provisionedClusters",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1291,16 +1001,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the flux configuration"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1308,16 +1014,12 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1325,14 +1027,9 @@
                                 "--cluster-rp",
                             ],
                             description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-resource-provider",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1341,16 +1038,12 @@
                                 "--force",
                             ],
                             description: Some("Force delete the flux configuration from the cluster"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-wait",
                             ],
                             description: Some("Do not wait for the long-running operation to finish"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1358,18 +1051,12 @@
                                 "-y",
                             ],
                             description: Some("Do not prompt for confirmation"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List all Flux v2 Kubernetes configurations"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1377,16 +1064,12 @@
                                 "-c",
                             ],
                             description: Some("Name of the Kubernetes cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1394,20 +1077,23 @@
                                 "-t",
                             ],
                             description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-type",
-                                    source: Static([
-                                        "connectedClusters",
-                                        "managedClusters",
-                                        "provisionedClusters",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "connectedClusters",
+                                        ),
+                                        (
+                                            name: "managedClusters",
+                                        ),
+                                        (
+                                            name: "provisionedClusters",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1415,16 +1101,12 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1432,26 +1114,17 @@
                                 "--cluster-rp",
                             ],
                             description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-resource-provider",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "show",
-                    aliases: [],
                     description: Some("Show a Flux v2 Kubernetes configuration"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1459,16 +1132,12 @@
                                 "-c",
                             ],
                             description: Some("Name of the Kubernetes cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1476,20 +1145,23 @@
                                 "-t",
                             ],
                             description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-type",
-                                    source: Static([
-                                        "connectedClusters",
-                                        "managedClusters",
-                                        "provisionedClusters",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "connectedClusters",
+                                        ),
+                                        (
+                                            name: "managedClusters",
+                                        ),
+                                        (
+                                            name: "provisionedClusters",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1497,16 +1169,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the flux configuration"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1514,16 +1182,12 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1531,26 +1195,17 @@
                                 "--cluster-rp",
                             ],
                             description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-resource-provider",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "update",
-                    aliases: [],
                     description: Some("Update a Flux v2 Kubernetes configuration"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1558,16 +1213,12 @@
                                 "-c",
                             ],
                             description: Some("Name of the Kubernetes cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1575,20 +1226,23 @@
                                 "-t",
                             ],
                             description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-type",
-                                    source: Static([
-                                        "connectedClusters",
-                                        "managedClusters",
-                                        "provisionedClusters",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "connectedClusters",
+                                        ),
+                                        (
+                                            name: "managedClusters",
+                                        ),
+                                        (
+                                            name: "provisionedClusters",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1596,16 +1250,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the flux configuration"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1613,30 +1263,21 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--account-key",
                             ],
                             description: Some("The Azure Blob Shared Key for authentication"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "account-key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1645,14 +1286,9 @@
                                 "--branch",
                             ],
                             description: Some("Branch within the git source to reconcile with the cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "branch",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1661,14 +1297,9 @@
                                 "--bucket-access-key",
                             ],
                             description: Some("Access Key ID used to authenticate with the bucket"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "bucket-access-key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1677,17 +1308,17 @@
                                 "--bucket-insecure",
                             ],
                             description: Some("Communicate with a bucket without TLS"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "bucket-insecure",
-                                    source: Static([
-                                        "false",
-                                        "true",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "false",
+                                        ),
+                                        (
+                                            name: "true",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1696,14 +1327,9 @@
                                 "--bucket-name",
                             ],
                             description: Some("Name of the S3 bucket to sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "bucket-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1712,14 +1338,9 @@
                                 "--bucket-secret-key",
                             ],
                             description: Some("Secret Key used to authenticate with the bucket"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "bucket-secret-key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1729,14 +1350,9 @@
                                 "--cluster-rp",
                             ],
                             description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "cluster-resource-provider",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1745,14 +1361,9 @@
                                 "--commit",
                             ],
                             description: Some("Commit within the git source to reconcile with the cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "commit",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1761,14 +1372,9 @@
                                 "--container-name",
                             ],
                             description: Some("Name of the Azure Blob Storage container to sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "container-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1777,14 +1383,9 @@
                                 "--https-ca-cert",
                             ],
                             description: Some("Base64-encoded HTTPS CA certificate for TLS communication with private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "https-ca-cert",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1793,14 +1394,9 @@
                                 "--https-ca-cert-file",
                             ],
                             description: Some("File path to HTTPS CA certificate file for TLS communication with private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "https-ca-cert-file",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1809,14 +1405,9 @@
                                 "--https-key",
                             ],
                             description: Some("HTTPS token/password for private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "https-key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1825,14 +1416,9 @@
                                 "--https-user",
                             ],
                             description: Some("HTTPS username for private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "https-user",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1842,14 +1428,9 @@
                                 "--interval",
                             ],
                             description: Some("Time between reconciliations of the source on the cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "sync-interval",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1858,18 +1439,20 @@
                                 "--kind",
                             ],
                             description: Some("Source kind to reconcile"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "kind",
-                                    source: Static([
-                                        "azblob",
-                                        "bucket",
-                                        "git",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "azblob",
+                                        ),
+                                        (
+                                            name: "bucket",
+                                        ),
+                                        (
+                                            name: "git",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1878,14 +1461,9 @@
                                 "--known-hosts",
                             ],
                             description: Some("Base64-encoded known_hosts data containing public SSH keys required to access private Git instances"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "known-hosts",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1894,14 +1472,9 @@
                                 "--known-hosts-file",
                             ],
                             description: Some("File path to known_hosts contents containing public SSH keys required to access private Git instances"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "known-hosts-file",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1910,15 +1483,10 @@
                                 "--kustomization",
                                 "-k",
                             ],
-                            description: Some("Define kustomizations to sync sources with parameters [\'name\', \'path\', \'depends_on\', \'timeout\', \'sync_interval\', \'retry_interval\', \'prune\', \'force\']"),
-                            takes_value: true,
+                            description: Some("Define kustomizations to sync sources with parameters ['name', 'path', 'depends_on', 'timeout', 'sync_interval', 'retry_interval', 'prune', 'force']"),
                             arguments: [
                                 (
                                     name: "kustomization",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1928,14 +1496,9 @@
                                 "--local-ref",
                             ],
                             description: Some("Local reference to a kubernetes secret in the configuration namespace to use for communication to the source"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "local-auth-ref",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1945,14 +1508,9 @@
                                 "--mi-client-id",
                             ],
                             description: Some("The client ID of the managed identity for authentication with Azure Blob"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "managed-identity-client-id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1961,22 +1519,15 @@
                                 "--no-wait",
                             ],
                             description: Some("Do not wait for the long-running operation to finish"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--sas-token",
                             ],
                             description: Some("The Azure Blob SAS Token for authentication"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "sas-token",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1985,14 +1536,9 @@
                                 "--semver",
                             ],
                             description: Some("Semver range within the git source to reconcile with the cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "semver",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2002,14 +1548,9 @@
                                 "--sp-client-cert",
                             ],
                             description: Some("The Base64 encoded client certificate for authenticating a service principal with Azure Blob"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "service-principal-client-certificate",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2019,14 +1560,9 @@
                                 "--sp-cert-password",
                             ],
                             description: Some("The password for the client certificate used to authenticate a service principal with Azure Blob"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "service-principal-client-certificate-password",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2036,8 +1572,6 @@
                                 "--sp-cert-send-chain",
                             ],
                             description: Some("Specify whether to include x5c header in client claims when acquiring a token to enable subject name / issuer based authentication for the client certificate"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2045,14 +1579,9 @@
                                 "--sp-client-id",
                             ],
                             description: Some("The client ID for authenticating a service principal with Azure Blob, required for this authentication method"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "service-principal-client-id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2062,14 +1591,9 @@
                                 "--sp-client-secret",
                             ],
                             description: Some("The client secret for authenticating a service principal with Azure Blob"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "service-principal-client-secret",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2079,14 +1603,9 @@
                                 "--sp-tenant-id",
                             ],
                             description: Some("The tenant ID for authenticating a service principal with Azure Blob, required for this authentication method"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "service-principal-tenant-id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2095,14 +1614,9 @@
                                 "--ssh-private-key",
                             ],
                             description: Some("Base64-encoded private ssh key for private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "ssh-private-key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2111,14 +1625,9 @@
                                 "--ssh-private-key-file",
                             ],
                             description: Some("File path to private ssh key for private repository sync"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "ssh-private-key-file",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2127,17 +1636,17 @@
                                 "--suspend",
                             ],
                             description: Some("Suspend the reconciliation of the source and kustomizations associated with this configuration"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "suspend",
-                                    source: Static([
-                                        "false",
-                                        "true",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "false",
+                                        ),
+                                        (
+                                            name: "true",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -2146,14 +1655,9 @@
                                 "--tag",
                             ],
                             description: Some("Tag within the git source to reconcile with the cluster"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "tag",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2162,14 +1666,9 @@
                                 "--timeout",
                             ],
                             description: Some("Maximum time to reconcile the source before timing out"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "timeout",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2179,14 +1678,9 @@
                                 "-u",
                             ],
                             description: Some("URL of the source to reconcile"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "url",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2196,23 +1690,16 @@
                                 "-y",
                             ],
                             description: Some("Do not prompt for confirmation"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "deployed-object",
-                    aliases: [],
                     description: Some("Commands to see deployed objects associated with Flux v2 Kubernetes configurations"),
                     subcommands: [
                         (
                             name: "list",
-                            aliases: [],
                             description: Some("List deployed objects associated with a Flux v2 Kubernetes configuration"),
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
@@ -2220,16 +1707,12 @@
                                         "-c",
                                     ],
                                     description: Some("Name of the Kubernetes cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2237,20 +1720,23 @@
                                         "-t",
                                     ],
                                     description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-type",
-                                            source: Static([
-                                                "connectedClusters",
-                                                "managedClusters",
-                                                "provisionedClusters",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "connectedClusters",
+                                                ),
+                                                (
+                                                    name: "managedClusters",
+                                                ),
+                                                (
+                                                    name: "provisionedClusters",
+                                                ),
+                                            ],
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2258,16 +1744,12 @@
                                         "-n",
                                     ],
                                     description: Some("Name of the flux configuration"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2275,16 +1757,12 @@
                                         "-g",
                                     ],
                                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "resource-group",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2292,26 +1770,17 @@
                                         "--cluster-rp",
                                     ],
                                     description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-resource-provider",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
                             ],
-                            arguments: [],
-                            load_spec: None,
                         ),
                         (
                             name: "show",
-                            aliases: [],
                             description: Some("Show a deployed object associated with a Flux v2 Kubernetes configuration"),
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
@@ -2319,16 +1788,12 @@
                                         "-c",
                                     ],
                                     description: Some("Name of the Kubernetes cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2336,20 +1801,23 @@
                                         "-t",
                                     ],
                                     description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-type",
-                                            source: Static([
-                                                "connectedClusters",
-                                                "managedClusters",
-                                                "provisionedClusters",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "connectedClusters",
+                                                ),
+                                                (
+                                                    name: "managedClusters",
+                                                ),
+                                                (
+                                                    name: "provisionedClusters",
+                                                ),
+                                            ],
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2357,71 +1825,68 @@
                                         "-n",
                                     ],
                                     description: Some("Name of the flux configuration"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
                                         "--object-kind",
                                     ],
                                     description: Some("Kind of the object deployed by the configuration on the cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "object-kind",
-                                            source: Static([
-                                                "Bucket",
-                                                "GitRepository",
-                                                "HelmChart",
-                                                "HelmRelease",
-                                                "HelmRepository",
-                                                "Kustomization",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "Bucket",
+                                                ),
+                                                (
+                                                    name: "GitRepository",
+                                                ),
+                                                (
+                                                    name: "HelmChart",
+                                                ),
+                                                (
+                                                    name: "HelmRelease",
+                                                ),
+                                                (
+                                                    name: "HelmRepository",
+                                                ),
+                                                (
+                                                    name: "Kustomization",
+                                                ),
+                                            ],
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
                                         "--object-name",
                                     ],
                                     description: Some("Name of the object deployed by the configuration on the cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "object-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
                                         "--object-namespace",
                                     ],
                                     description: Some("Namespace of the object deployed by the configuration on the cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "object-namespace",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2429,16 +1894,12 @@
                                         "-g",
                                     ],
                                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "resource-group",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2446,36 +1907,23 @@
                                         "--cluster-rp",
                                     ],
                                     description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-resource-provider",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
                             ],
-                            arguments: [],
-                            load_spec: None,
                         ),
                     ],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "kustomization",
-                    aliases: [],
                     description: Some("Commands to manage Kustomizations associated with Flux v2 Kubernetes configurations"),
                     subcommands: [
                         (
                             name: "create",
-                            aliases: [],
                             description: Some("Create a Kustomization associated with a Flux v2 Kubernetes configuration"),
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
@@ -2483,16 +1931,12 @@
                                         "-c",
                                     ],
                                     description: Some("Name of the Kubernetes cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2500,20 +1944,23 @@
                                         "-t",
                                     ],
                                     description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-type",
-                                            source: Static([
-                                                "connectedClusters",
-                                                "managedClusters",
-                                                "provisionedClusters",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "connectedClusters",
+                                                ),
+                                                (
+                                                    name: "managedClusters",
+                                                ),
+                                                (
+                                                    name: "provisionedClusters",
+                                                ),
+                                            ],
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2521,16 +1968,12 @@
                                         "-k",
                                     ],
                                     description: Some("Specify the name of the kustomization to target"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "kustomization-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2538,16 +1981,12 @@
                                         "-n",
                                     ],
                                     description: Some("Name of the flux configuration"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2555,16 +1994,12 @@
                                         "-g",
                                     ],
                                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "resource-group",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2572,14 +2007,9 @@
                                         "--cluster-rp",
                                     ],
                                     description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-resource-provider",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -2590,14 +2020,9 @@
                                         "--depends",
                                     ],
                                     description: Some("Comma-separated list of kustomization dependencies"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "dependencies",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -2606,17 +2031,17 @@
                                         "--force",
                                     ],
                                     description: Some("Re-create resources that cannot be updated on the cluster (i.e. jobs)"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "force",
-                                            source: Static([
-                                                "false",
-                                                "true",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "false",
+                                                ),
+                                                (
+                                                    name: "true",
+                                                ),
+                                            ],
                                         ),
                                     ],
                                 ),
@@ -2626,14 +2051,9 @@
                                         "--interval",
                                     ],
                                     description: Some("Time between reconciliations of the kustomization on the cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "sync-interval",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -2642,22 +2062,15 @@
                                         "--no-wait",
                                     ],
                                     description: Some("Do not wait for the long-running operation to finish"),
-                                    takes_value: false,
-                                    arguments: [],
                                 ),
                                 (
                                     names: [
                                         "--path",
                                     ],
                                     description: Some("Specify the path in the source that the kustomization should apply"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "path",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -2666,17 +2079,17 @@
                                         "--prune",
                                     ],
                                     description: Some("Garbage collect resources deployed by the kustomization on the cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "prune",
-                                            source: Static([
-                                                "false",
-                                                "true",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "false",
+                                                ),
+                                                (
+                                                    name: "true",
+                                                ),
+                                            ],
                                         ),
                                     ],
                                 ),
@@ -2685,14 +2098,9 @@
                                         "--retry-interval",
                                     ],
                                     description: Some("Time between reconciliations of the kustomization on the cluster on failures, defaults to --sync-interval"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "retry-interval",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -2701,26 +2109,17 @@
                                         "--timeout",
                                     ],
                                     description: Some("Maximum time to reconcile the kustomization before timing out"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "timeout",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
                             ],
-                            arguments: [],
-                            load_spec: None,
                         ),
                         (
                             name: "delete",
-                            aliases: [],
                             description: Some("Delete a Kustomization associated with a Flux v2 Kubernetes configuration"),
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
@@ -2728,16 +2127,12 @@
                                         "-c",
                                     ],
                                     description: Some("Name of the Kubernetes cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2745,20 +2140,23 @@
                                         "-t",
                                     ],
                                     description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-type",
-                                            source: Static([
-                                                "connectedClusters",
-                                                "managedClusters",
-                                                "provisionedClusters",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "connectedClusters",
+                                                ),
+                                                (
+                                                    name: "managedClusters",
+                                                ),
+                                                (
+                                                    name: "provisionedClusters",
+                                                ),
+                                            ],
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2766,16 +2164,12 @@
                                         "-k",
                                     ],
                                     description: Some("Specify the name of the kustomization to target"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "kustomization-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2783,16 +2177,12 @@
                                         "-n",
                                     ],
                                     description: Some("Name of the flux configuration"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2800,16 +2190,12 @@
                                         "-g",
                                     ],
                                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "resource-group",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2817,14 +2203,9 @@
                                         "--cluster-rp",
                                     ],
                                     description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-resource-provider",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -2833,8 +2214,6 @@
                                         "--no-wait",
                                     ],
                                     description: Some("Do not wait for the long-running operation to finish"),
-                                    takes_value: false,
-                                    arguments: [],
                                 ),
                                 (
                                     names: [
@@ -2842,18 +2221,12 @@
                                         "-y",
                                     ],
                                     description: Some("Do not prompt for confirmation"),
-                                    takes_value: false,
-                                    arguments: [],
                                 ),
                             ],
-                            arguments: [],
-                            load_spec: None,
                         ),
                         (
                             name: "list",
-                            aliases: [],
                             description: Some("List Kustomizations associated with a Flux v2 Kubernetes configuration"),
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
@@ -2861,16 +2234,12 @@
                                         "-c",
                                     ],
                                     description: Some("Name of the Kubernetes cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2878,20 +2247,23 @@
                                         "-t",
                                     ],
                                     description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-type",
-                                            source: Static([
-                                                "connectedClusters",
-                                                "managedClusters",
-                                                "provisionedClusters",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "connectedClusters",
+                                                ),
+                                                (
+                                                    name: "managedClusters",
+                                                ),
+                                                (
+                                                    name: "provisionedClusters",
+                                                ),
+                                            ],
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2899,16 +2271,12 @@
                                         "-n",
                                     ],
                                     description: Some("Name of the flux configuration"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2916,16 +2284,12 @@
                                         "-g",
                                     ],
                                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "resource-group",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2933,26 +2297,17 @@
                                         "--cluster-rp",
                                     ],
                                     description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-resource-provider",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
                             ],
-                            arguments: [],
-                            load_spec: None,
                         ),
                         (
                             name: "show",
-                            aliases: [],
                             description: Some("Show a Kustomization associated with a Flux v2 Kubernetes configuration"),
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
@@ -2960,16 +2315,12 @@
                                         "-c",
                                     ],
                                     description: Some("Name of the Kubernetes cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2977,20 +2328,23 @@
                                         "-t",
                                     ],
                                     description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-type",
-                                            source: Static([
-                                                "connectedClusters",
-                                                "managedClusters",
-                                                "provisionedClusters",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "connectedClusters",
+                                                ),
+                                                (
+                                                    name: "managedClusters",
+                                                ),
+                                                (
+                                                    name: "provisionedClusters",
+                                                ),
+                                            ],
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -2998,16 +2352,12 @@
                                         "-k",
                                     ],
                                     description: Some("Specify the name of the kustomization to target"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "kustomization-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -3015,16 +2365,12 @@
                                         "-n",
                                     ],
                                     description: Some("Name of the flux configuration"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -3032,16 +2378,12 @@
                                         "-g",
                                     ],
                                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "resource-group",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -3049,26 +2391,17 @@
                                         "--cluster-rp",
                                     ],
                                     description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-resource-provider",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
                             ],
-                            arguments: [],
-                            load_spec: None,
                         ),
                         (
                             name: "update",
-                            aliases: [],
                             description: Some("Update a Kustomization associated with a Flux v2 Kubernetes configuration"),
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
@@ -3076,16 +2409,12 @@
                                         "-c",
                                     ],
                                     description: Some("Name of the Kubernetes cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -3093,20 +2422,23 @@
                                         "-t",
                                     ],
                                     description: Some("Specify Arc connected clusters or AKS managed clusters or provisioned clusters"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-type",
-                                            source: Static([
-                                                "connectedClusters",
-                                                "managedClusters",
-                                                "provisionedClusters",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "connectedClusters",
+                                                ),
+                                                (
+                                                    name: "managedClusters",
+                                                ),
+                                                (
+                                                    name: "provisionedClusters",
+                                                ),
+                                            ],
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -3114,16 +2446,12 @@
                                         "-k",
                                     ],
                                     description: Some("Specify the name of the kustomization to target"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "kustomization-name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -3131,16 +2459,12 @@
                                         "-n",
                                     ],
                                     description: Some("Name of the flux configuration"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "name",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -3148,16 +2472,12 @@
                                         "-g",
                                     ],
                                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "resource-group",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
+                                    required: true,
                                 ),
                                 (
                                     names: [
@@ -3165,14 +2485,9 @@
                                         "--cluster-rp",
                                     ],
                                     description: Some("Cluster Resource Provider name for this clusterType (Required for provisionedClusters)"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "cluster-resource-provider",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -3183,14 +2498,9 @@
                                         "--depends",
                                     ],
                                     description: Some("Comma-separated list of kustomization dependencies"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "dependencies",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -3199,17 +2509,17 @@
                                         "--force",
                                     ],
                                     description: Some("Re-create resources that cannot be updated on the cluster (i.e. jobs)"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "force",
-                                            source: Static([
-                                                "false",
-                                                "true",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "false",
+                                                ),
+                                                (
+                                                    name: "true",
+                                                ),
+                                            ],
                                         ),
                                     ],
                                 ),
@@ -3219,14 +2529,9 @@
                                         "--interval",
                                     ],
                                     description: Some("Time between reconciliations of the kustomization on the cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "sync-interval",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -3235,22 +2540,15 @@
                                         "--no-wait",
                                     ],
                                     description: Some("Do not wait for the long-running operation to finish"),
-                                    takes_value: false,
-                                    arguments: [],
                                 ),
                                 (
                                     names: [
                                         "--path",
                                     ],
                                     description: Some("Specify the path in the source that the kustomization should apply"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "path",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -3259,17 +2557,17 @@
                                         "--prune",
                                     ],
                                     description: Some("Garbage collect resources deployed by the kustomization on the cluster"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "prune",
-                                            source: Static([
-                                                "false",
-                                                "true",
-                                            ]),
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
+                                            suggestions: [
+                                                (
+                                                    name: "false",
+                                                ),
+                                                (
+                                                    name: "true",
+                                                ),
+                                            ],
                                         ),
                                     ],
                                 ),
@@ -3278,14 +2576,9 @@
                                         "--retry-interval",
                                     ],
                                     description: Some("Time between reconciliations of the kustomization on the cluster on failures, defaults to --sync-interval"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "retry-interval",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
@@ -3294,32 +2587,17 @@
                                         "--timeout",
                                     ],
                                     description: Some("Maximum time to reconcile the kustomization before timing out"),
-                                    takes_value: true,
                                     arguments: [
                                         (
                                             name: "timeout",
-                                            source: Files,
-                                            optional: false,
-                                            variadic: false,
-                                            imported_generator: None,
                                         ),
                                     ],
                                 ),
                             ],
-                            arguments: [],
-                            load_spec: None,
                         ),
                     ],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
-    options: [],
-    arguments: [],
 )

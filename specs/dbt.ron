@@ -5,17 +5,13 @@
     subcommands: [
         (
             name: "build",
-            aliases: [],
             description: Some("Run models, test tests, snapshot snapshots, and seed seeds"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--full-refresh",
                     ],
                     description: Some("Treat incremental models as table models"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -23,24 +19,24 @@
                         "--fail-fast",
                     ],
                     description: Some("Exit immediately if a single model fails to build"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--profiles-dir",
                     ],
                     description: Some("Set the profiles directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Static([
-                                "profiles",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Directory containing profiles.yml"),
+                            suggestions: [
+                                (
+                                    name: "profiles",
+                                ),
+                            ],
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -49,16 +45,15 @@
                         "--profile",
                     ],
                     description: Some("Use the selected profile"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Static([
-                                "default",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of profile to use when running dbt project"),
+                            suggestions: [
+                                (
+                                    name: "default",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -67,17 +62,18 @@
                         "--target",
                     ],
                     description: Some("Target profile configuration i.e. prod/dev"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "profile",
-                            source: Static([
-                                "dev",
-                                "prod",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Target profile configuration (dev/prod)"),
+                            suggestions: [
+                                (
+                                    name: "dev",
+                                ),
+                                (
+                                    name: "prod",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -86,14 +82,10 @@
                         "--vars",
                     ],
                     description: Some("Variable values to override dbt_project.yml"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "variables",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("A short YAML string eg. '{my_variable: my_value}'"),
                         ),
                     ],
                 ),
@@ -102,14 +94,9 @@
                         "--threads",
                     ],
                     description: Some("Number of concurrent database jobs"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "THREADS",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -119,20 +106,28 @@
                         "--select",
                     ],
                     description: Some("Select subset of models"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            description: Some("Select subset of models"),
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -141,20 +136,28 @@
                         "--exclude",
                     ],
                     description: Some("Exclude subset of models"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            description: Some("Exclude subset of models"),
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -163,26 +166,18 @@
                         "--bypass-cache",
                     ],
                     description: Some("Bypass the cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "run",
-            aliases: [],
             description: Some("Runs the models in a project"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--full-refresh",
                     ],
                     description: Some("Treat incremental models as table models"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -190,40 +185,36 @@
                         "--fail-fast",
                     ],
                     description: Some("Exit immediately if a single model fails to build"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--use-colors",
                     ],
                     description: Some("Default value -- colorize run logs"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-use-colors",
                     ],
                     description: Some("Disable log colorizing"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--profiles-dir",
                     ],
                     description: Some("Set the profiles directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Static([
-                                "profiles",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Directory containing profiles.yml"),
+                            suggestions: [
+                                (
+                                    name: "profiles",
+                                ),
+                            ],
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -232,16 +223,15 @@
                         "--profile",
                     ],
                     description: Some("Select the profile to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Static([
-                                "default",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of profile to use when running dbt project"),
+                            suggestions: [
+                                (
+                                    name: "default",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -250,17 +240,18 @@
                         "--target",
                     ],
                     description: Some("The target profile"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Target profile",
-                            source: Static([
-                                "dev",
-                                "prod",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Target profile configuration (dev/prod)"),
+                            suggestions: [
+                                (
+                                    name: "dev",
+                                ),
+                                (
+                                    name: "prod",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -269,14 +260,10 @@
                         "--vars",
                     ],
                     description: Some("Variable values to override dbt_project.yml"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "variables",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("A short YAML string eg. '{my_variable: my_value}'"),
                         ),
                     ],
                 ),
@@ -285,14 +272,9 @@
                         "--threads",
                     ],
                     description: Some("Number of concurrent database jobs"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "threads",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -302,20 +284,28 @@
                         "--select",
                     ],
                     description: Some("Select subset of models"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            description: Some("Select subset of models"),
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -324,20 +314,28 @@
                         "--exclude",
                     ],
                     description: Some("Exclude subset of models"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            description: Some("Exclude subset of models"),
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -346,50 +344,33 @@
                         "--bypass-cache",
                     ],
                     description: Some("Bypass the cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "debug",
-            aliases: [],
             description: Some("Debugs dbt connections and projects"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--config-dir",
                     ],
-                    description: None,
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
             description: Some("Initializes a new dbt project"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--adapter",
                     ],
                     description: Some("Add an adapter"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "adapter",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("E.g. big query"),
                         ),
                     ],
                 ),
@@ -397,35 +378,30 @@
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "compile",
-            aliases: [],
             description: Some("Compiles (but does not run) the models in a project"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--profiles-dir",
                     ],
                     description: Some("Set the profiles directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Static([
-                                "profiles",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Directory containing profiles.yml"),
+                            suggestions: [
+                                (
+                                    name: "profiles",
+                                ),
+                            ],
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -434,16 +410,15 @@
                         "--profile",
                     ],
                     description: Some("Select the profile to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Static([
-                                "default",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of profile to use when running dbt project"),
+                            suggestions: [
+                                (
+                                    name: "default",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -452,17 +427,18 @@
                         "--target",
                     ],
                     description: Some("The target profile"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Target profile",
-                            source: Static([
-                                "dev",
-                                "prod",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Target profile configuration (dev/prod)"),
+                            suggestions: [
+                                (
+                                    name: "dev",
+                                ),
+                                (
+                                    name: "prod",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -471,14 +447,10 @@
                         "--vars",
                     ],
                     description: Some("Variable values to override dbt_project.yml"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Variable values",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("A short YAML string eg. '{my_variable: my_value}'"),
                         ),
                     ],
                 ),
@@ -487,14 +459,9 @@
                         "--threads",
                     ],
                     description: Some("Number of concurrent database jobs"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "THREADS",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -503,20 +470,28 @@
                         "--select",
                     ],
                     description: Some("Select subset of models"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Select subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            description: Some("Select subset of models"),
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -525,20 +500,28 @@
                         "--exclude",
                     ],
                     description: Some("Exclude subset of models"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Exclude subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            description: Some("Exclude subset of models"),
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -547,22 +530,16 @@
                         "--bypass-cache",
                     ],
                     description: Some("Bypass the cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--selector",
                     ],
                     description: Some("This flag specifies one or more named selectors, defined in a <selector name>.yml file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "YAML selector file name",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -571,18 +548,12 @@
                         "--defer",
                     ],
                     description: Some("Defer"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "test",
-            aliases: [],
             description: Some("Executes tests defined in a project"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -590,24 +561,24 @@
                         "--fail-fast",
                     ],
                     description: Some("Exit immediately if a single model fails to build"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--profiles-dir",
                     ],
                     description: Some("Set the profiles directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "directory",
-                            source: Static([
-                                "profiles",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Directory containing profiles.yml"),
+                            suggestions: [
+                                (
+                                    name: "profiles",
+                                ),
+                            ],
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -616,16 +587,15 @@
                         "--profile",
                     ],
                     description: Some("Select the profile to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Static([
-                                "default",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of profile to use when running dbt project"),
+                            suggestions: [
+                                (
+                                    name: "default",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -634,16 +604,12 @@
                         "--data",
                     ],
                     description: Some("Run only custom data tests"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--schema",
                     ],
                     description: Some("Run only schema tests"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -651,20 +617,27 @@
                         "--select",
                     ],
                     description: Some("Select subset of models"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -673,20 +646,27 @@
                         "--exclude",
                     ],
                     description: Some("Exclude subset of models"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -695,22 +675,16 @@
                         "--bypass-cache",
                     ],
                     description: Some("Bypass the cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--selector",
                     ],
                     description: Some("This flag specifies one or more named selectors, defined in a <selector name>.yml file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "YAML selector file name",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -719,43 +693,34 @@
                         "--defer",
                     ],
                     description: Some("Defer"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "deps",
-            aliases: [],
             description: Some("Downloads dependencies for a project"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "snapshot",
-            aliases: [],
-            description: Some("Executes \'snapshot\' jobs defined in a project"),
-            subcommands: [],
+            description: Some("Executes 'snapshot' jobs defined in a project"),
             options: [
                 (
                     names: [
                         "--profiles-dir",
                     ],
                     description: Some("Set the profiles directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "profiles directory",
-                            source: Static([
-                                "profiles",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Directory containing profiles.yml"),
+                            suggestions: [
+                                (
+                                    name: "profiles",
+                                ),
+                            ],
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -765,24 +730,21 @@
                         "--fail-fast",
                     ],
                     description: Some("Exit immediately if a single model fails to build"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--profile",
                     ],
                     description: Some("Select the profile to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Profile name",
-                            source: Static([
-                                "default",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of profile to use when running dbt project"),
+                            suggestions: [
+                                (
+                                    name: "default",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -791,17 +753,18 @@
                         "--target",
                     ],
                     description: Some("The target profile"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Target profile",
-                            source: Static([
-                                "dev",
-                                "prod",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Target profile configuration (dev/prod)"),
+                            suggestions: [
+                                (
+                                    name: "dev",
+                                ),
+                                (
+                                    name: "prod",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -810,14 +773,10 @@
                         "--vars",
                     ],
                     description: Some("Variable values to override dbt_project.yml"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Variable values",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("A short YAML string eg. '{my_variable: my_value}'"),
                         ),
                     ],
                 ),
@@ -826,14 +785,9 @@
                         "--threads",
                     ],
                     description: Some("Number of concurrent database jobs"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "thread",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -842,20 +796,27 @@
                         "--select",
                     ],
                     description: Some("Select subset of models"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -864,20 +825,27 @@
                         "--exclude",
                     ],
                     description: Some("Exclude subset of models"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Exclude subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -886,43 +854,34 @@
                         "--bypass-cache",
                     ],
                     description: Some("Bypass the cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "clean",
-            aliases: [],
             description: Some("Deletes artifacts present in the dbt project"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "seed",
-            aliases: [],
             description: Some("Loads CSV files into the database"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--profiles-dir",
                     ],
                     description: Some("Set the profiles directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "profiles directory",
-                            source: Static([
-                                "profiles",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Directory containing profiles.yml"),
+                            suggestions: [
+                                (
+                                    name: "profiles",
+                                ),
+                            ],
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -931,16 +890,15 @@
                         "--profile",
                     ],
                     description: Some("Select the profile to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Profile name",
-                            source: Static([
-                                "default",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Name of profile to use when running dbt project"),
+                            suggestions: [
+                                (
+                                    name: "default",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -950,28 +908,33 @@
                         "--fail-fast",
                     ],
                     description: Some("Exit immediately if a single model fails to build"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--select",
                     ],
                     description: Some("Run specific seeds"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Select subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("E.g. country_codes"),
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -980,20 +943,28 @@
                         "--exclude",
                     ],
                     description: Some("Exclude subset of models"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Exclude subset",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            description: Some("Exclude subset of models"),
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1002,71 +973,53 @@
                         "--bypass-cache",
                     ],
                     description: Some("Bypass the cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--selector",
                     ],
                     description: Some("This flag specifies one or more named selectors, defined in a <selector name>.yml file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "YAML selector file name",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "docs",
-            aliases: [],
             description: Some("Generates documentation for a project"),
             subcommands: [
                 (
                     name: "generate",
-                    aliases: [],
-                    description: Some("Generate your project\'s documentation website"),
-                    subcommands: [],
+                    description: Some("Generate your project's documentation website"),
                     options: [
                         (
                             names: [
                                 "--no-compile",
                             ],
                             description: Some("Skip re-compilation"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "serve",
-                    aliases: [],
                     description: Some("Serve your documentation on a local webserver (default prot 8000)"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--profiles-dir",
                             ],
                             description: Some("Skip re-compilation"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "PROFILES_DIR",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Path to profiles directory"),
+                                    template: [
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1075,14 +1028,9 @@
                                 "--profile",
                             ],
                             description: Some("Choose a profile"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "PROFILE NAME",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1091,17 +1039,18 @@
                                 "--target",
                             ],
                             description: Some("The target profile"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Target profile",
-                                    source: Static([
-                                        "dev",
-                                        "prod",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Target profile configuration (dev/prod)"),
+                                    suggestions: [
+                                        (
+                                            name: "dev",
+                                        ),
+                                        (
+                                            name: "prod",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1110,36 +1059,23 @@
                                 "--port",
                             ],
                             description: Some("Choose a port"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "port number",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Default is 8000"),
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "source",
-            aliases: [],
-            description: Some("Provides tools for working with source data (including validating that sources are \'fresh\')"),
+            description: Some("Provides tools for working with source data (including validating that sources are 'fresh')"),
             subcommands: [
                 (
                     name: "snapshot-freshness",
-                    aliases: [],
-                    description: None,
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1147,14 +1083,12 @@
                                 "--output",
                             ],
                             description: Some("Override the destination for sources.json"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "FILEPATH",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1163,51 +1097,47 @@
                                 "--select",
                             ],
                             description: Some("This flag specifies one or more selection-type arguments used to filter the nodes returned by the dbt ls command"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Select subset",
-                                    source: Static([
-                                        "path:",
-                                        "tag:",
-                                        "config:",
-                                        "test_type:",
-                                        "test_name:",
-                                    ]),
-                                    optional: false,
+                                    suggestions: [
+                                        (
+                                            name: "path:",
+                                        ),
+                                        (
+                                            name: "tag:",
+                                        ),
+                                        (
+                                            name: "config:",
+                                        ),
+                                        (
+                                            name: "test_type:",
+                                        ),
+                                        (
+                                            name: "test_name:",
+                                        ),
+                                    ],
                                     variadic: true,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "run-operation",
-            aliases: [],
             description: Some("Runs arbitrary maintenance SQL against the database"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--args",
                     ],
                     description: Some("Supply arguments to the macro"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "ARGS",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("A short YAML string eg. '{my_variable: my_value}'"),
                         ),
                     ],
                 ),
@@ -1215,33 +1145,23 @@
             arguments: [
                 (
                     name: "MACRO",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Dbt will call this macro with the supplied arguments and then exit"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "rpc",
-            aliases: [],
             description: Some("Runs an RPC server that clients can submit queries to"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--host",
                     ],
                     description: Some("Specify the host to listen on"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "HOST",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Default: 0.0.0.0"),
                         ),
                     ],
                 ),
@@ -1250,20 +1170,14 @@
                         "--port",
                     ],
                     description: Some("The port to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PORT",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Default: 8580"),
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ls",
@@ -1271,30 +1185,41 @@
                 "list",
             ],
             description: Some("Lists resources defined in a dbt project"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--resource-type",
                     ],
-                    description: Some("This flag limits the \'resource types\' that dbt will return in the dbt ls command. By default, the following resources are included in the results of dbt ls: models, snapshots, seeds, tests, and sources"),
-                    takes_value: true,
+                    description: Some("This flag limits the 'resource types' that dbt will return in the dbt ls command. By default, the following resources are included in the results of dbt ls: models, snapshots, seeds, tests, and sources"),
                     arguments: [
                         (
                             name: "resource-type",
-                            source: Static([
-                                "source",
-                                "analysis",
-                                "model",
-                                "snapshot",
-                                "test",
-                                "seed",
-                                "default",
-                                "all",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "source",
+                                ),
+                                (
+                                    name: "analysis",
+                                ),
+                                (
+                                    name: "model",
+                                ),
+                                (
+                                    name: "snapshot",
+                                ),
+                                (
+                                    name: "test",
+                                ),
+                                (
+                                    name: "seed",
+                                ),
+                                (
+                                    name: "default",
+                                ),
+                                (
+                                    name: "all",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1304,20 +1229,27 @@
                         "--select",
                     ],
                     description: Some("This flag specifies one or more selection-type arguments used to filter the nodes returned by the dbt ls command"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "SELECTION_ARG",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1326,20 +1258,27 @@
                         "--exclude",
                     ],
                     description: Some("Specify selectors that should be excluded from the list of returned nodes"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "SELECTOR",
-                            source: Static([
-                                "path:",
-                                "tag:",
-                                "config:",
-                                "test_type:",
-                                "test_name:",
-                            ]),
-                            optional: false,
+                            suggestions: [
+                                (
+                                    name: "path:",
+                                ),
+                                (
+                                    name: "tag:",
+                                ),
+                                (
+                                    name: "config:",
+                                ),
+                                (
+                                    name: "test_type:",
+                                ),
+                                (
+                                    name: "test_name:",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1348,14 +1287,10 @@
                         "--selector",
                     ],
                     description: Some("This flag specifies one or more named selectors, defined in a <selector name>.yml file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "YAML selector file name",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1364,34 +1299,32 @@
                         "--output",
                     ],
                     description: Some("This flag controls the format of output from the dbt ls command"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "output",
-                            source: Static([
-                                "json",
-                                "name",
-                                "path",
-                                "selector",
-                            ]),
-                            optional: false,
+                            suggestions: [
+                                (
+                                    name: "json",
+                                ),
+                                (
+                                    name: "name",
+                                ),
+                                (
+                                    name: "path",
+                                ),
+                                (
+                                    name: "selector",
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "parse",
-            aliases: [],
             description: Some("Parse dbt project and write detailed timing information"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -1400,8 +1333,6 @@
                 "--version",
             ],
             description: Some("Currently installed version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -1409,14 +1340,10 @@
                 "--record-timing-info",
             ],
             description: Some("Create a new file to record timing info"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Create a new file to record timing info"),
                 ),
             ],
         ),
@@ -1426,26 +1353,26 @@
                 "--debug",
             ],
             description: Some("Redirect debug logs to standard out"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--log-format",
             ],
-            description: Some("Specify how dbt\'s logs should be formatted"),
-            takes_value: true,
+            description: Some("Specify how dbt's logs should be formatted"),
             arguments: [
                 (
                     name: "log format",
-                    source: Static([
-                        "text",
-                        "json",
-                        "default",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "text",
+                        ),
+                        (
+                            name: "json",
+                        ),
+                        (
+                            name: "default",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -1453,9 +1380,7 @@
             names: [
                 "--no-write-json",
             ],
-            description: Some("Prevent dbt from writing JSOn artifacts to the \'target/\' directory"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Prevent dbt from writing JSOn artifacts to the 'target/' directory"),
         ),
         (
             names: [
@@ -1463,49 +1388,36 @@
                 "--strict",
             ],
             description: Some("Perform extra validation of dbt objects and internal consistency checks during compilation. Use only during development"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--warn-error",
             ],
             description: Some("Convert dbt warnings into errors"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--partial-parse",
             ],
             description: Some("Configure partial parsing for your project"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-partial-parse",
             ],
             description: Some("Turn off partial parsing for your project"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--use-colors",
             ],
             description: Some("Default value -- colorize run logs"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-use-colors",
             ],
             description: Some("Disable log colorizing"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

@@ -1,8 +1,7 @@
 (
     version: 1,
     command: "checkov",
-    description: Some("Checkov scans cloud infrastructure configurations to find misconfigurations before they\'re deployed"),
-    subcommands: [],
+    description: Some("Checkov scans cloud infrastructure configurations to find misconfigurations before they're deployed"),
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "-h",
             ],
             description: Some("Show help for checkov"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,24 +16,18 @@
                 "-v",
             ],
             description: Some("Show the version of checkov"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--quiet",
             ],
             description: Some("CLI output, display only failed checks"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--compact",
             ],
             description: Some("CLI output, do not display code blocks"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -44,24 +35,27 @@
                 "-l",
             ],
             description: Some("List checks"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-guide",
             ],
             description: Some("Do not fetch Bridgecrew platform IDs and guidelines for the checkov output report. Note: this prevents Bridgecrew platform check IDs from being used anywhere in the CLI"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "--bc-api-key",
+            ],
         ),
         (
             names: [
                 "--output-bc-ids",
             ],
             description: Some("Print Bridgecrew platform IDs (BC...) instead of Checkov IDs (CKV...), if the check exists in the platform"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-guide",
+            ],
+            depends_on: [
+                "--bc-api-key",
+            ],
         ),
         (
             names: [
@@ -69,15 +63,16 @@
                 "-d",
             ],
             description: Some("IaC root directory (can not be used together with --file)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
+            ],
+            exclusive_on: [
+                "--file",
             ],
         ),
         (
@@ -86,53 +81,89 @@
                 "-o",
             ],
             description: Some("Report output format. Add multiple outputs by using the flag multiple times (-o sarif -o cli)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FORMAT",
-                    source: Static([
-                        "cli",
-                        "cyclonedx",
-                        "json",
-                        "junitxml",
-                        "github_failed_only",
-                        "sarif",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "cli",
+                        ),
+                        (
+                            name: "cyclonedx",
+                        ),
+                        (
+                            name: "json",
+                        ),
+                        (
+                            name: "junitxml",
+                        ),
+                        (
+                            name: "github_failed_only",
+                        ),
+                        (
+                            name: "sarif",
+                        ),
+                    ],
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "--framework",
             ],
             description: Some("IaC frameworks to include checks for"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FRAMEWORKS",
-                    source: Static([
-                        "arm",
-                        "cloudformation",
-                        "dockerfile",
-                        "github_configuration",
-                        "gitlab_configuration",
-                        "helm",
-                        "json",
-                        "kubernetes",
-                        "kustomize",
-                        "sca_package",
-                        "secrets",
-                        "serverless",
-                        "terraform",
-                        "terraform_plan",
-                        "all",
-                    ]),
-                    optional: false,
+                    suggestions: [
+                        (
+                            name: "arm",
+                        ),
+                        (
+                            name: "cloudformation",
+                        ),
+                        (
+                            name: "dockerfile",
+                        ),
+                        (
+                            name: "github_configuration",
+                        ),
+                        (
+                            name: "gitlab_configuration",
+                        ),
+                        (
+                            name: "helm",
+                        ),
+                        (
+                            name: "json",
+                        ),
+                        (
+                            name: "kubernetes",
+                        ),
+                        (
+                            name: "kustomize",
+                        ),
+                        (
+                            name: "sca_package",
+                        ),
+                        (
+                            name: "secrets",
+                        ),
+                        (
+                            name: "serverless",
+                        ),
+                        (
+                            name: "terraform",
+                        ),
+                        (
+                            name: "terraform_plan",
+                        ),
+                        (
+                            name: "all",
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -141,30 +172,57 @@
                 "--skip-framework",
             ],
             description: Some("IaC frameworks to exclude checks for"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FRAMEWORKS",
-                    source: Static([
-                        "arm",
-                        "cloudformation",
-                        "dockerfile",
-                        "github_configuration",
-                        "gitlab_configuration",
-                        "helm",
-                        "json",
-                        "kubernetes",
-                        "kustomize",
-                        "sca_package",
-                        "secrets",
-                        "serverless",
-                        "terraform",
-                        "terraform_plan",
-                        "all",
-                    ]),
-                    optional: false,
+                    suggestions: [
+                        (
+                            name: "arm",
+                        ),
+                        (
+                            name: "cloudformation",
+                        ),
+                        (
+                            name: "dockerfile",
+                        ),
+                        (
+                            name: "github_configuration",
+                        ),
+                        (
+                            name: "gitlab_configuration",
+                        ),
+                        (
+                            name: "helm",
+                        ),
+                        (
+                            name: "json",
+                        ),
+                        (
+                            name: "kubernetes",
+                        ),
+                        (
+                            name: "kustomize",
+                        ),
+                        (
+                            name: "sca_package",
+                        ),
+                        (
+                            name: "secrets",
+                        ),
+                        (
+                            name: "serverless",
+                        ),
+                        (
+                            name: "terraform",
+                        ),
+                        (
+                            name: "terraform_plan",
+                        ),
+                        (
+                            name: "all",
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -173,8 +231,6 @@
                 "--add-check",
             ],
             description: Some("Generate a new check via CLI prompt"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -182,31 +238,34 @@
                 "-f",
             ],
             description: Some("IaC file(can not be used together with --directory)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
+            ],
+            exclusive_on: [
+                "--directory",
             ],
         ),
         (
             names: [
                 "--skip-path",
             ],
-            description: Some("Path (file or directory) to skip, using regular expression logic, relative to current working directory. Word boundaries are not implicit; i.e., specifying \'dir1\' will skip any directory or subdirectory named \'dir1\'. Ignored with -f. Can be specified multiple times"),
-            takes_value: true,
+            description: Some("Path (file or directory) to skip, using regular expression logic, relative to current working directory. Word boundaries are not implicit; i.e., specifying 'dir1' will skip any directory or subdirectory named 'dir1'. Ignored with -f. Can be specified multiple times"),
             arguments: [
                 (
                     name: "SKIP_PATH",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
+            ],
+            repeat: Many,
+            exclusive_on: [
+                "--file",
             ],
         ),
         (
@@ -215,14 +274,9 @@
                 "-c",
             ],
             description: Some("Filter scan to run only on a specific check identifier (allowlist). You can specify multiple checks separated by comma delimiter. You may also use the environment variable: CKV_CHECK"),
-            takes_value: true,
             arguments: [
                 (
                     name: "CHECKS",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -231,14 +285,9 @@
                 "--skip-check",
             ],
             description: Some("Filter scan to run all check except a specific check identifier (denylist). You can specify multiple checks separated by comma delimiter. You may also use the environment variable: CKV_SKIP_CHECK"),
-            takes_value: true,
             arguments: [
                 (
                     name: "CHECKS",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -247,38 +296,27 @@
                 "--run-all-external-checks",
             ],
             description: Some("Run all external checks (loaded via --external-checks options) even if the checks are not present in the --check list. This allows you to always ensure that new checks present in the external source are used. If an external check is included in --skip-check, it will still be skipped"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--external-checks-dir",
             ],
             description: Some("Directory for custom checks to be loaded. Can be repeated"),
-            takes_value: true,
             arguments: [
                 (
                     name: "EXTERNAL_CHECKS_DIR",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "--bc-api-key",
             ],
             description: Some("Bridgecrew API key. You may also use the environment variable: BC_API_KEY"),
-            takes_value: true,
             arguments: [
                 (
                     name: "BC_API_KEY",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -287,15 +325,13 @@
                 "--docker-image",
             ],
             description: Some("Scan docker images by name or ID. Only works with --bc-api-key flag"),
-            takes_value: true,
             arguments: [
                 (
                     name: "DOCKER_IMAGE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "--bc-api-key",
             ],
         ),
         (
@@ -303,14 +339,9 @@
                 "--dockerfile-path",
             ],
             description: Some("Path to the Dockerfile of the scanned docker image"),
-            takes_value: true,
             arguments: [
                 (
                     name: "DOCKERFILE_PATH",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -319,14 +350,9 @@
                 "--repo-id",
             ],
             description: Some("Identity string of the repository, with form <repo_owner>/<repo_name>"),
-            takes_value: true,
             arguments: [
                 (
                     name: "REPO_ID",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -336,23 +362,23 @@
                 "-b",
             ],
             description: Some("Selected branch of the persisted repository. Only has effect when using the --bc-api-key flag"),
-            takes_value: true,
             arguments: [
                 (
                     name: "BRANCH",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "git",
-                            "branch",
-                            "--no-color",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "git",
+                                "branch",
+                                "--no-color",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
+            ],
+            depends_on: [
+                "--bc-api-key",
             ],
         ),
         (
@@ -360,38 +386,36 @@
                 "--skip-fixes",
             ],
             description: Some("Do not download fixed resource templates from Bridgecrew. Only has an effect when using the --bc-api-key flag"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "--bc-api-key",
+            ],
         ),
         (
             names: [
                 "--skip-suppressions",
             ],
             description: Some("Do not download preconfigured suppressions from the Bridgecrew platform. Code comment suppressions will still be honored. Only has an effect when using the --bc-api-key flag"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "--bc-api-key",
+            ],
         ),
         (
             names: [
                 "--skip-policy-download",
             ],
             description: Some("Do not download custom policies configured in the Bridgecrew platform. Only has an effect when using the --bc-api-key flag"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "--bc-api-key",
+            ],
         ),
         (
             names: [
                 "--download-external-modules",
             ],
             description: Some("Download external terraform modules from public git repositories and terraform registry. You may also use the environment variable: DOWNLOAD_EXTERNAL_MODULES]"),
-            takes_value: true,
             arguments: [
                 (
                     name: "DOWNLOAD_EXTERNAL_MODULES",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -400,15 +424,16 @@
                 "--var-file",
             ],
             description: Some("Variable files to load in addition to the default files (see https://www.terraform.io/docs/language/values/variables.html#variable-definitions-tfvars-files). Currently only supported for source Terraform (.tf file), and Helm chart scans. Requires using --directory, NOT --file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "VAR_FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            exclusive_on: [
+                "--file",
+            ],
+            depends_on: [
+                "--directory",
             ],
         ),
         (
@@ -416,14 +441,9 @@
                 "--external-modules-download-path",
             ],
             description: Some("Set the path for the download external terraform modules. You may also use the environment variable: EXTERNAL_MODULES_DIR"),
-            takes_value: true,
             arguments: [
                 (
                     name: "EXTERNAL_MODULES_DIR",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -432,14 +452,9 @@
                 "--evaluate-variables",
             ],
             description: Some("Evaluate the values of variables and locals"),
-            takes_value: true,
             arguments: [
                 (
                     name: "EVALUATE_VARIABLES",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -449,14 +464,9 @@
                 "-ca",
             ],
             description: Some("Custom CA (bundle) fila. You may also use the environment variablee: CA_CERTIFICATE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "CA_CERTIFICATE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -465,15 +475,13 @@
                 "--repo-root-for-plan-enrichment",
             ],
             description: Some("Directory containing the hcl code used to generate a given plan file. Use with -f FILE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "REPO_ROOT_FOR_PLAN_ENRICHMENT",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "--file",
             ],
         ),
         (
@@ -481,14 +489,12 @@
                 "--config-file",
             ],
             description: Some("Path to the Checkov configuration YAML file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "CONFIG_FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -497,15 +503,13 @@
                 "--create-config",
             ],
             description: Some("Takes the current command line args and writes them out to a config file at the given path"),
-            takes_value: true,
             arguments: [
                 (
                     name: "CONFIG_FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "--directory",
             ],
         ),
         (
@@ -513,30 +517,24 @@
                 "--show-config",
             ],
             description: Some("Prints all arguments and config settings and where they came from (eg. commandline, config file, environment variable or default)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--create-baseline",
             ],
-            description: Some("Save all current results to a \'.checkov.baseline\' file so future runs will only flag new findings. Works only with `--directory` flag"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Save all current results to a '.checkov.baseline' file so future runs will only flag new findings. Works only with `--directory` flag"),
+            depends_on: [
+                "--directory",
+            ],
         ),
         (
             names: [
                 "--baseline",
             ],
-            description: Some("Use a \'.checkov.baseline\' file to compare current results with a known baseline. Report will include only failed checks that are newwith respect to the provided baseline. See --create-baseline"),
-            takes_value: true,
+            description: Some("Use a '.checkov.baseline' file to compare current results with a known baseline. Report will include only failed checks that are newwith respect to the provided baseline. See --create-baseline"),
             arguments: [
                 (
                     name: "BASELINE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -546,22 +544,15 @@
                 "-s",
             ],
             description: Some("Runs checks but suppresses the error code"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--soft-fail-on",
             ],
             description: Some("Exits with a 0 exit code for specified checks. You can specify multiple checks separated by comma delimiter"),
-            takes_value: true,
             arguments: [
                 (
                     name: "CHECKS",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -570,14 +561,9 @@
                 "--hard-fail-on",
             ],
             description: Some("Exits with a non-zero exit code for specified checks. You can specify multiple checks separated by comma delimiter"),
-            takes_value: true,
             arguments: [
                 (
                     name: "CHECKS",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -586,20 +572,26 @@
                 "--min-cve-severity",
             ],
             description: Some("Set minimum severity to return a non-zero exit code"),
-            takes_value: true,
             arguments: [
                 (
                     name: "MIN_SEVERITY",
-                    source: Static([
-                        "critical",
-                        "high",
-                        "medium",
-                        "low",
-                        "none",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "critical",
+                        ),
+                        (
+                            name: "high",
+                        ),
+                        (
+                            name: "medium",
+                        ),
+                        (
+                            name: "low",
+                        ),
+                        (
+                            name: "none",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -608,30 +600,21 @@
                 "--skip-cve-package",
             ],
             description: Some("Ignore specific open source package when SCA scanning for CVEs in package dependencies. Can be used multiple times to skip multiple packages"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SKIP_CVE_PACKAGE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "--use-enforcement-rules",
             ],
             description: Some("Use the Enforcement rules configured in the platform for hard / soft fail logic"),
-            takes_value: true,
             arguments: [
                 (
                     name: "USE_ENFORCEMENT_RULES",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -640,15 +623,13 @@
                 "--support",
             ],
             description: Some("Enable debug logs and upload the logs to the server"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SUPPORT",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "--bc-api-key",
             ],
         ),
         (
@@ -656,17 +637,17 @@
                 "--summary-position",
             ],
             description: Some("Chose whether the summary will be appended on top or on bottom"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SUMMARY_POSITION",
-                    source: Static([
-                        "top",
-                        "bottom",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "top",
+                        ),
+                        (
+                            name: "bottom",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -675,14 +656,9 @@
                 "--skip-resources-without-violations",
             ],
             description: Some("Exclude extra resources (resources without violations)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SKIP_RESOURCES_WITHOUT_VIOLATIONS",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -691,14 +667,9 @@
                 "--skip-download",
             ],
             description: Some("Do not download any data from Prisma Cloud"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SKIP_DOWNLOAD",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -707,14 +678,9 @@
                 "--secrets-history-timeout",
             ],
             description: Some("Maximum time to run the history scan"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SECRETS_HISTORY_TIMEOUT",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -723,14 +689,9 @@
                 "--scan-secrets-history",
             ],
             description: Some("Will scan the history of commits for secrets"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SCAN_SECRETS_HISTORY",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -739,14 +700,9 @@
                 "--prisma-api-url",
             ],
             description: Some("The Prisma Cloud API URL"),
-            takes_value: true,
             arguments: [
                 (
                     name: "PRISMA_API_URL",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -755,14 +711,9 @@
                 "--policy-metadata-filter",
             ],
             description: Some("Comma separated key:value string to filter policies based on Prisma Cloud policy metadata"),
-            takes_value: true,
             arguments: [
                 (
                     name: "POLICY_METADATA_FILTER",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -771,14 +722,9 @@
                 "--output-file-path",
             ],
             description: Some("Name of the output folder to save the chosen output formats"),
-            takes_value: true,
             arguments: [
                 (
                     name: "OUTPUT_FILE_PATH",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -787,14 +733,9 @@
                 "--output-baseline-as-skipped",
             ],
             description: Some("Output checks that are skipped due to baseline file presence"),
-            takes_value: true,
             arguments: [
                 (
                     name: "OUTPUT_BASELINE_AS_SKIPPED",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -803,14 +744,9 @@
                 "--openai-api-key",
             ],
             description: Some("Add an OpenAI API key to enhance finding guidelines. This will send Code to OpenAI"),
-            takes_value: true,
             arguments: [
                 (
                     name: "OPENAI_API_KEY",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -819,14 +755,9 @@
                 "--no-fail-on-crash",
             ],
             description: Some("Return exit code 0 instead of 2"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NO_FAIL_ON_CRASH",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -835,14 +766,9 @@
                 "--mask",
             ],
             description: Some("Each entry in the list will be used for masking the desired attribute"),
-            takes_value: true,
             arguments: [
                 (
                     name: "MASK",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -851,14 +777,9 @@
                 "--include-all-checkov-policies",
             ],
             description: Some("When running with an API key, Checkov will omit any policies that do not exist in the Bridgecrew or Prisma Cloud platform"),
-            takes_value: true,
             arguments: [
                 (
                     name: "INCLUDE_ALL_CHECKOV_POLICIES",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -867,14 +788,9 @@
                 "--external-checks-git",
             ],
             description: Some("GitHub URL of external checks to be added"),
-            takes_value: true,
             arguments: [
                 (
                     name: "EXTERNAL_CHECKS_GIT",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -883,14 +799,9 @@
                 "--enable-secret-scan-all-files",
             ],
             description: Some("Enable secret scan for all files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ENABLE_SECRET_SCAN_ALL_FILES",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -899,14 +810,9 @@
                 "--deep-analysis",
             ],
             description: Some("Enable combine TF graph and TF Plan graph"),
-            takes_value: true,
             arguments: [
                 (
                     name: "DEEP_ANALYSIS",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -915,17 +821,14 @@
                 "--block-list-secret-scan",
             ],
             description: Some("List of files to filter out from the secret scanner"),
-            takes_value: true,
             arguments: [
                 (
                     name: "BLOCK_LIST_SECRET_SCAN",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "--repo-root-for-plan-enrichment",
             ],
         ),
     ],
-    arguments: [],
 )

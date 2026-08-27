@@ -1,8 +1,6 @@
 (
     version: 1,
     command: "goto",
-    description: None,
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +8,6 @@
                 "-h",
             ],
             description: Some("Show help for goto"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,23 +15,18 @@
                 "-r",
             ],
             description: Some("Registers an alias"),
-            takes_value: true,
             arguments: [
                 (
                     name: "alias",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "target",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
@@ -43,20 +34,19 @@
                 "-u",
             ],
             description: Some("Unregister an alias"),
-            takes_value: true,
             arguments: [
                 (
                     name: "alias",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                        ),
+                    ],
+                    filter_strategy: Prefix,
+                    dangerous: true,
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
@@ -64,8 +54,6 @@
                 "-p",
             ],
             description: Some("Pushes the current directory onto the stack, then performs goto"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -73,8 +61,6 @@
                 "-o",
             ],
             description: Some("Pops the top directory from the stack, then changes to that directory"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -82,8 +68,6 @@
                 "-l",
             ],
             description: Some("Pops the top directory from the stack, then changes to that directory"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -91,18 +75,14 @@
                 "-x",
             ],
             description: Some("Expands an alias"),
-            takes_value: true,
             arguments: [
                 (
                     name: "alias",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -112,8 +92,6 @@
                 "-c",
             ],
             description: Some("Cleans up non existent directory aliases"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -121,21 +99,19 @@
                 "-v",
             ],
             description: Some("Displays the version of the goto script"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "alias",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
+            generators: [
+                (
+                    has_custom: true,
+                ),
+            ],
         ),
     ],
+    presentation: (
+        display_name: Some("Goto a Folder by alias"),
+    ),
 )

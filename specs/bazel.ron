@@ -5,78 +5,60 @@
     subcommands: [
         (
             name: "run",
-            aliases: [],
             description: Some("Runs the specified target"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "BUILD file",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "FILES=( $(find ./ -name BUILD) ); for f in $FILES; do echo \"----$f\"; \\cat \"$f\"; done",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "FILES=( $(find ./ -name BUILD) ); for f in $FILES; do echo \"----$f\"; \\cat \"$f\"; done",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "test",
-            aliases: [],
             description: Some("Builds and runs the specified test targets"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "BUILD file",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "FILES=( $(find ./ -name BUILD) ); for f in $FILES; do echo \"----$f\"; \\cat \"$f\"; done",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "FILES=( $(find ./ -name BUILD) ); for f in $FILES; do echo \"----$f\"; \\cat \"$f\"; done",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "build",
-            aliases: [],
             description: Some("Builds the specified targets"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "BUILD file",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "FILES=( $(find ./ -name BUILD) ); for f in $FILES; do echo \"----$f\"; \\cat \"$f\"; done",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "FILES=( $(find ./ -name BUILD) ); for f in $FILES; do echo \"----$f\"; \\cat \"$f\"; done",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -85,62 +67,66 @@
                 "--autodetect_server_javabase",
             ],
             description: Some("Back to the local JDK for running the bazel server and instead exits"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--noautodetect_server_javabase",
+            ],
         ),
         (
             names: [
                 "--noautodetect_server_javabase",
             ],
             description: Some("Does not fall back to the local JDK for running the bazel server and instead exits"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "autodetect_server_javabase",
+            ],
         ),
         (
             names: [
                 "--batch",
             ],
             description: Some("Run as just a client process without a server"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--nobatch",
+            ],
         ),
         (
             names: [
                 "--nobatch",
             ],
             description: Some("Run with a server"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--batch",
+            ],
         ),
         (
             names: [
                 "--batch_cpu_scheduling",
             ],
-            description: Some("Only on Linux; use \'batch\' CPU scheduling for Bazel"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Only on Linux; use 'batch' CPU scheduling for Bazel"),
+            exclusive_on: [
+                "--nobatch_cpu_scheduling",
+            ],
         ),
         (
             names: [
                 "--nobatch_cpu_scheduling",
             ],
             description: Some("Only on Linux; Bazel does not perform a system call"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--batch_cpu_scheduling",
+            ],
         ),
         (
             names: [
                 "--bazelrc",
             ],
             description: Some("The location of the user .bazelrc file containing default values of Bazel options"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bazelrc path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -149,46 +135,45 @@
                 "--block_for_lock",
             ],
             description: Some("Wait for a running command to complete"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--noblock_for_lock",
+            ],
         ),
         (
             names: [
                 "--noblock_for_lock",
             ],
             description: Some("Bazel does not wait for a running command to complete, but instead exits immediately"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--block_for_lock",
+            ],
         ),
         (
             names: [
                 "--client_debug",
             ],
             description: Some("Log debug information from the client to stderr. Changing this option will not cause the server to restart"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--noclient_debug",
+            ],
         ),
         (
             names: [
                 "--noclient_debug",
             ],
-            description: Some("Don\'t log debug information from the client to stderr"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't log debug information from the client to stderr"),
+            exclusive_on: [
+                "--client_debug",
+            ],
         ),
         (
             names: [
                 "--connect_timeout_secs",
             ],
             description: Some("The amount of time the client waits for each attempt to connect to the server"),
-            takes_value: true,
             arguments: [
                 (
                     name: "time",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -197,30 +182,30 @@
                 "--expand_configs_in_place",
             ],
             description: Some("Changed the expansion of --config flags to be done in-place"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--noexpand_configs_in_place",
+            ],
         ),
         (
             names: [
                 "--noexpand_configs_in_place",
             ],
             description: Some("--config flags in a fixed point expansion between normal rc options and command-line specified options"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--expand_configs_in_place",
+            ],
         ),
         (
             names: [
                 "--failure_detail_out",
             ],
             description: Some("Specifies a location to write a failure_detail protobuf message if the server experiences a failure and cannot report it via gRPC, as normal. Otherwise, the location will be ${OUTPUT_BASE}/failure_detail.rawproto"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -229,71 +214,89 @@
                 "--home_rc",
             ],
             description: Some("Look for the home bazelrc file at $HOME/.bazelrc"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--nohome_rc",
+            ],
         ),
         (
             names: [
                 "--nohome_rc",
             ],
-            description: Some("Don\'t look for the home bazelrc file at $HOME/.bazelrc"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't look for the home bazelrc file at $HOME/.bazelrc"),
+            exclusive_on: [
+                "--home_rc",
+            ],
         ),
         (
             names: [
                 "--idle_server_tasks",
             ],
             description: Some("Run System.gc() when the server is idle"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--noidle_server_tasks",
+            ],
         ),
         (
             names: [
                 "--noidle_server_tasks",
             ],
-            description: Some("Don\'t run System.gc() when the server is idle"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't run System.gc() when the server is idle"),
+            exclusive_on: [
+                "--idle_server_tasks",
+            ],
         ),
         (
             names: [
                 "--ignore_all_rc_files",
             ],
             description: Some("Disables all rc files, regardless of the values of other rc-modifying flags, even if these flags come later in the list of startup options"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--noignore_all_rc_files",
+            ],
         ),
         (
             names: [
                 "--noignore_all_rc_files",
             ],
             description: Some("Enables all rc files"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--ignore_all_rc_files",
+            ],
         ),
         (
             names: [
                 "--io_nice_level",
             ],
             description: Some("Only on Linux; set a level from 0-7 for best-effort IO scheduling using the sys_ioprio_set system call. 0 is highest priority, 7 is lowest"),
-            takes_value: true,
             arguments: [
                 (
                     name: "io-level",
-                    source: Static([
-                        "0",
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                        "5",
-                        "6",
-                        "7",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "0",
+                        ),
+                        (
+                            name: "1",
+                        ),
+                        (
+                            name: "2",
+                        ),
+                        (
+                            name: "3",
+                        ),
+                        (
+                            name: "4",
+                        ),
+                        (
+                            name: "5",
+                        ),
+                        (
+                            name: "6",
+                        ),
+                        (
+                            name: "7",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -302,14 +305,10 @@
                 "--local_startup_timeout_secs",
             ],
             description: Some("The maximum amount of time the client waits to connect to the server"),
-            takes_value: true,
             arguments: [
                 (
                     name: "seconds",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("120"),
                 ),
             ],
         ),
@@ -318,14 +317,10 @@
                 "--macos_qos_class",
             ],
             description: Some("Sets the QoS service class of the bazel server when running on macOS"),
-            takes_value: true,
             arguments: [
                 (
                     name: "QoS service class",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("default"),
                 ),
             ],
         ),
@@ -334,14 +329,10 @@
                 "--max_idle_secs",
             ],
             description: Some("The number of seconds the build server will wait idling before shutting down"),
-            takes_value: true,
             arguments: [
                 (
                     name: "seconds",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("10800"),
                 ),
             ],
         ),
@@ -350,14 +341,13 @@
                 "--output_base",
             ],
             description: Some("Specifies the output location to which all build output will be written"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
+                    default: Some("${OUTPUT_ROOT}/_bazel_${USER}/${MD5_OF_WORKSPACE_ROOT}"),
                 ),
             ],
         ),
@@ -366,14 +356,13 @@
                 "--output_base_root",
             ],
             description: Some("The user-specific directory beneath which all build outputs are written"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
+                    default: Some("$USER"),
                 ),
             ],
         ),
@@ -382,30 +371,30 @@
                 "--preemptible",
             ],
             description: Some("If true, the command can be preempted if another command is started"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--nopreemptible",
+            ],
         ),
         (
             names: [
                 "--nopreemptible",
             ],
             description: Some("If true, the command can be preempted if another command is started"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--preemptible",
+            ],
         ),
         (
             names: [
                 "--server_jvm_out",
             ],
-            description: Some("The location to write the server\'s JVM\'s output"),
-            takes_value: true,
+            description: Some("The location to write the server's JVM's output"),
             arguments: [
                 (
                     name: "Path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -414,97 +403,108 @@
                 "--shutdown_on_low_sys_mem",
             ],
             description: Some("Linux only. If max_idle_secs is set and the build server has been idle for a while, shut down the server when the system is low on free RAM"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--noshutdown_on_low_sys_mem",
+            ],
         ),
         (
             names: [
                 "--noshutdown_on_low_sys_mem",
             ],
-            description: Some("Linux only. Don\'t shut down the server when the system is low on free RAM"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Linux only. Don't shut down the server when the system is low on free RAM"),
+            exclusive_on: [
+                "--shutdown_on_low_sys_mem",
+            ],
         ),
         (
             names: [
                 "--system_rc",
             ],
             description: Some("Look for the system-wide bazelrc"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--nosystem_rc",
+            ],
         ),
         (
             names: [
                 "--nosystem_rc",
             ],
-            description: Some("Don\'t look for the system-wide bazelrc"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't look for the system-wide bazelrc"),
+            exclusive_on: [
+                "--system_rc",
+            ],
         ),
         (
             names: [
                 "--unlimit_coredumps",
             ],
             description: Some("Raises the soft coredump limit to the hard limit to make coredumps of the server (including the JVM) and the client possible under common conditions"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--nounlimit_coredumps",
+            ],
         ),
         (
             names: [
                 "--nounlimit_coredumps",
             ],
-            description: Some("Don\'t raise the soft coredump limit to the hard limit to make coredumps of the server (including the JVM) and the client possible under common conditions"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't raise the soft coredump limit to the hard limit to make coredumps of the server (including the JVM) and the client possible under common conditions"),
+            exclusive_on: [
+                "--unlimit_coredumps",
+            ],
         ),
         (
             names: [
                 "--watchfs",
             ],
-            description: Some("Use the operating system\'s file watch service for local changes instead of scanning every file for a change"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Use the operating system's file watch service for local changes instead of scanning every file for a change"),
+            exclusive_on: [
+                "--nowatchfs",
+            ],
         ),
         (
             names: [
                 "--nowatchfs",
             ],
             description: Some("Scan every file for a change"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--watchfs",
+            ],
         ),
         (
             names: [
                 "--windows_enable_symlinks",
             ],
             description: Some("Real symbolic links will be created on Windows instead of file copying"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--nowindows_enable_symlinks",
+            ],
         ),
         (
             names: [
                 "--nowindows_enable_symlinks",
             ],
             description: Some("Real symbolic links will be created via file copying"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--windows_enable_symlinks",
+            ],
         ),
         (
             names: [
                 "--workspace_rc",
             ],
             description: Some("Look for the workspace bazelrc file at $workspace/.bazelrc"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--noworkspace_rc",
+            ],
         ),
         (
             names: [
                 "--noworkspace_rc",
             ],
-            description: Some("Don\'t look for the workspace bazelrc file at $workspace/.bazelrc"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't look for the workspace bazelrc file at $workspace/.bazelrc"),
+            exclusive_on: [
+                "--workspace_rc",
+            ],
         ),
     ],
-    arguments: [],
 )

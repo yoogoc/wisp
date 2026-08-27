@@ -2,7 +2,6 @@
     version: 1,
     command: "rake",
     description: Some("A ruby build program with capabilities similar to make"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "--dry-run",
             ],
             description: Some("Do a dry run without executing actions"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -20,8 +17,6 @@
                 "--help",
             ],
             description: Some("Display this help message"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -29,16 +24,15 @@
                 "--libdir",
             ],
             description: Some("Include LIBDIR in the search path for required modules"),
-            takes_value: true,
             arguments: [
                 (
                     name: "LIBDIR",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
@@ -46,8 +40,6 @@
                 "--prereqs",
             ],
             description: Some("Display the tasks and dependencies, then exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -55,8 +47,6 @@
                 "--quiet",
             ],
             description: Some("Do not log messages to standard output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -64,16 +54,15 @@
                 "--rakefile",
             ],
             description: Some("Use FILE as the rakefile"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
@@ -81,25 +70,19 @@
                 "--require",
             ],
             description: Some("Require MODULE before executing rakefile"),
-            takes_value: true,
             arguments: [
                 (
                     name: "MODULE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "-s",
                 "--silent",
             ],
-            description: Some("Like --quiet, but also suppresses the \'in directory\' announcement"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Like --quiet, but also suppresses the 'in directory' announcement"),
         ),
         (
             names: [
@@ -107,14 +90,10 @@
                 "--tasks",
             ],
             description: Some("Display the tasks and dependencies, then exit"),
-            takes_value: true,
             arguments: [
                 (
                     name: "pattern",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -124,14 +103,10 @@
                 "--trace",
             ],
             description: Some("Turn on invoke/execute tracing, enable full backtrace"),
-            takes_value: true,
             arguments: [
                 (
                     name: "output",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -141,8 +116,6 @@
                 "--verbose",
             ],
             description: Some("Log message to standard output (default)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -150,25 +123,30 @@
                 "--version",
             ],
             description: Some("Display the program version"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "targets",
-            source: Unavailable,
+            generators: [
+                (
+                    script: [
+                        "rake",
+                        "--tasks",
+                        "--silent",
+                    ],
+                    has_post_process: true,
+                    cache: Some((
+                        by_directory: true,
+                        stale_while_revalidate: true,
+                    )),
+                ),
+            ],
             optional: true,
             variadic: true,
-            imported_generator: Some((
-                script: [
-                    "rake",
-                    "--tasks",
-                    "--silent",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
         ),
     ],
+    presentation: (
+        icon: Some("https://avatars.githubusercontent.com/u/210414?s=48&v=4"),
+    ),
 )

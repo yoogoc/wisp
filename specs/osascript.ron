@@ -2,21 +2,15 @@
     version: 1,
     command: "osascript",
     description: Some("Execute OSA scripts (AppleScript, JavaScript, etc.)"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-e",
             ],
             description: Some("Enter one line of a script"),
-            takes_value: true,
             arguments: [
                 (
                     name: "statement",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -25,22 +19,15 @@
                 "-i",
             ],
             description: Some("Interactive mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-l",
             ],
             description: Some("Override the language for any plain text files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "language",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -49,19 +36,28 @@
                 "-s",
             ],
             description: Some("Modify the output style"),
-            takes_value: true,
             arguments: [
                 (
                     name: "flags",
-                    source: Static([
-                        "h",
-                        "s",
-                        "e",
-                        "o",
-                    ]),
-                    optional: false,
+                    suggestions: [
+                        (
+                            name: "h",
+                            description: Some("Print values in human-readable form (default)"),
+                        ),
+                        (
+                            name: "s",
+                            description: Some("Print values in recompilable source form"),
+                        ),
+                        (
+                            name: "e",
+                            description: Some("Print script errors to stderr (default)"),
+                        ),
+                        (
+                            name: "o",
+                            description: Some("Print script errors to stdout"),
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -69,14 +65,15 @@
     arguments: [
         (
             name: "script",
-            source: Unavailable,
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    has_dynamic_query_term: true,
+                ),
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
+            is_script: true,
         ),
     ],
 )

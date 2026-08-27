@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "add",
-            aliases: [],
             description: Some("Add time to a project with tag(s) that was not tracked live"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,14 +13,10 @@
                         "-f",
                     ],
                     description: Some("Date and time of start of tracked activity"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DATETIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The start time. Ex: 2022-03-04 12:00:00"),
                         ),
                     ],
                 ),
@@ -32,14 +26,10 @@
                         "-t",
                     ],
                     description: Some("Date and time of end of tracked activity"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DATETIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The start time. Ex: 2022-03-04 12:00:00"),
                         ),
                     ],
                 ),
@@ -49,35 +39,33 @@
                         "-c",
                     ],
                     description: Some("Confirm creation of new tag"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
-                    name: "value",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "watson",
-                            "projects",
-                            "watson",
-                            "tags",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    name: "",
+                    generators: [
+                        (
+                            script: [
+                                "watson",
+                                "projects",
+                            ],
+                            has_post_process: true,
+                        ),
+                        (
+                            script: [
+                                "watson",
+                                "tags",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "aggregate",
-            aliases: [],
             description: Some("Display a report of the time spent on each project aggregated by day"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -85,17 +73,19 @@
                         "-c",
                     ],
                     description: Some("Include currently running frame in report"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-C",
+                    ],
                 ),
                 (
                     names: [
                         "--no-current",
                         "-C",
                     ],
-                    description: Some("Don\'t include currently running frame in report"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't include currently running frame in report"),
+                    exclusive_on: [
+                        "--current",
+                    ],
                 ),
                 (
                     names: [
@@ -103,14 +93,10 @@
                         "-f",
                     ],
                     description: Some("The date from when the reports should start. Defaults to seven days ago"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DATETIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The start time. Ex: 2022-03-04 12:00:00"),
                         ),
                     ],
                 ),
@@ -120,14 +106,10 @@
                         "-t",
                     ],
                     description: Some("The date at which the report should stop (inclusive). Defaults to tomorrow"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DATETIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The start time. Ex: 2022-03-04 12:00:00"),
                         ),
                     ],
                 ),
@@ -137,21 +119,18 @@
                         "-p",
                     ],
                     description: Some("Reports activity only for the given project. You can add other projects by using this option several times"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PROJECT",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "watson",
-                                    "projects",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "watson",
+                                        "projects",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -161,21 +140,18 @@
                         "-T",
                     ],
                     description: Some("Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "TAG",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "watson",
-                                    "tags",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "watson",
+                                        "tags",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -185,8 +161,11 @@
                         "-j",
                     ],
                     description: Some("Format output in JSON instead of plain text"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--csv",
+                        "--pager",
+                        "--no-pager",
+                    ],
                 ),
                 (
                     names: [
@@ -194,8 +173,11 @@
                         "-s",
                     ],
                     description: Some("Format output in CSV instead of plain text"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--json",
+                        "--pager",
+                        "--no-pager",
+                    ],
                 ),
                 (
                     names: [
@@ -203,36 +185,33 @@
                         "-g",
                     ],
                     description: Some("View output through a pager"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--csv",
+                        "--json",
+                        "--no-pager",
+                    ],
                 ),
                 (
                     names: [
                         "--no-pager",
                         "-G",
                     ],
-                    description: Some("Don\'t view output through a pager"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't view output through a pager"),
+                    exclusive_on: [
+                        "--csv",
+                        "--pager",
+                        "--json",
+                    ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "cancel",
-            aliases: [],
             description: Some("Cancel the last call to the start command. The time will not be recorded"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "config",
-            aliases: [],
             description: Some("Get and set configuration options"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -240,47 +219,75 @@
                         "-e",
                     ],
                     description: Some("Edit the configuration file with an editor"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "SECTION.OPTION",
-                    source: Static([
-                        "backend.url",
-                        "backend.token",
-                        "options.confirm_new_project",
-                        "options.confirm_new_tag",
-                        "options.date_format",
-                        "options.log_current",
-                        "options.pager",
-                        "options.report_current",
-                        "options.reverse_log",
-                        "options.stop_on_start",
-                        "options.stop_on_restart",
-                        "options.time_format",
-                        "options.week_start",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "backend.url",
+                            description: Some("This is the API root url of your repository, e.g. https://my.server.com/api/"),
+                        ),
+                        (
+                            name: "backend.token",
+                            description: Some("To authenticate watson as an API client, once generated, you will need to set up your API token in your configuration, e.g. 7e329263e329"),
+                        ),
+                        (
+                            name: "options.confirm_new_project",
+                            description: Some("If true, the user will be asked for confirmation before creating a new project. The option can be overriden in the command line with --confirm-new-project flag. Default: false"),
+                        ),
+                        (
+                            name: "options.confirm_new_tag",
+                            description: Some("If true, the user will be asked for confirmation before creating a new tag. The option can be overriden in the command line with --confirm-new-tag flag. Default: false"),
+                        ),
+                        (
+                            name: "options.date_format",
+                            description: Some("Globally configure how dates should be formatted. All python’s strftime directives are supported. Default: %Y.%m.%d"),
+                        ),
+                        (
+                            name: "options.log_current",
+                            description: Some("If true, the output of the log command will include the currently running frame (if any) by default. The option can be overridden on the command line with the -c/-C resp. --current/--no-current flags. Default: false"),
+                        ),
+                        (
+                            name: "options.pager",
+                            description: Some("If true, the output of the log and report command will be run through a pager by default. The option can be overridden on the command line with the -g/-G or --pager/--no-pager flags. If other commands output in colour, but log or report do not, try disabling the pager. Default: true"),
+                        ),
+                        (
+                            name: "options.report_current",
+                            description: Some("If true, the output of the report command will include the currently running frame (if any) by default. The option can be overridden on the command line with the -c/-C resp. --current/--no-current flags. Default: false"),
+                        ),
+                        (
+                            name: "options.reverse_log",
+                            description: Some("If true, the output of the log command will reverse the order of the days to display the latest day’s entries on top and the oldest day’s entries at the bottom. The option can be overridden on the command line with the -r/-R resp. --reverse/--no-reverse flags. Default: true"),
+                        ),
+                        (
+                            name: "options.stop_on_start",
+                            description: Some("If true, starting a new project will stop running projects. Default false"),
+                        ),
+                        (
+                            name: "options.stop_on_restart",
+                            description: Some("Similar to the options.stop_on_start option, but for the restart command. Default: false"),
+                        ),
+                        (
+                            name: "options.time_format",
+                            description: Some("Globally configure how time should be formatted. All python’s strftime directives are supported. Default: %H.%M:%S%z"),
+                        ),
+                        (
+                            name: "options.week_start",
+                            description: Some("Globally configure which day corresponds to the start of a week. Allowable values are monday, tuesday, wednesday, thursday, friday, saturday, and sunday"),
+                        ),
+                    ],
                 ),
                 (
                     name: "VALUE",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "edit",
-            aliases: [],
             description: Some("Edit a frame"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -288,8 +295,6 @@
                         "-c",
                     ],
                     description: Some("Confirm addition of new project"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -297,61 +302,41 @@
                         "-b",
                     ],
                     description: Some("Confirm creation of new tag"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "FRAME ID",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "watson",
-                            "log",
-                            "--json",
-                            "--reverse",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "watson",
+                                "log",
+                                "--json",
+                                "--reverse",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "frames",
-            aliases: [],
             description: Some("Display the list of all frame IDs"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Display help information"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "COMMAND",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "log",
-            aliases: [],
             description: Some("Display each recorded session during the given timespan"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -359,17 +344,19 @@
                         "-c",
                     ],
                     description: Some("Include currently running frame in report"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-current",
+                    ],
                 ),
                 (
                     names: [
                         "--no-current",
                         "-C",
                     ],
-                    description: Some("Don\'t include currently running frame in report"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't include currently running frame in report"),
+                    exclusive_on: [
+                        "--current",
+                    ],
                 ),
                 (
                     names: [
@@ -377,17 +364,19 @@
                         "-r",
                     ],
                     description: Some("Reverse the order of the days in output"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-reverse",
+                    ],
                 ),
                 (
                     names: [
                         "--no-reverse",
                         "-R",
                     ],
-                    description: Some("Don\'t Reverse the order of the days in output"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't Reverse the order of the days in output"),
+                    exclusive_on: [
+                        "--reverse",
+                    ],
                 ),
                 (
                     names: [
@@ -395,14 +384,9 @@
                         "-f",
                     ],
                     description: Some("The date from when the log should start. Defaults to seven days ago"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DATETIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -412,14 +396,9 @@
                         "-t",
                     ],
                     description: Some("The date at which the log should stop (inclusive). Defaults to tomorrow"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DATETIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -429,8 +408,13 @@
                         "-y",
                     ],
                     description: Some("Reports activity for the current year"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--month",
+                        "--luna",
+                        "--week",
+                        "--day",
+                        "--all",
+                    ],
                 ),
                 (
                     names: [
@@ -438,8 +422,13 @@
                         "-m",
                     ],
                     description: Some("Reports activity for the current month"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--year",
+                        "--luna",
+                        "--week",
+                        "--day",
+                        "--all",
+                    ],
                 ),
                 (
                     names: [
@@ -447,8 +436,13 @@
                         "-l",
                     ],
                     description: Some("Reports activity for the current moon cycle"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--year",
+                        "--month",
+                        "--week",
+                        "--day",
+                        "--all",
+                    ],
                 ),
                 (
                     names: [
@@ -456,8 +450,13 @@
                         "-w",
                     ],
                     description: Some("Reports activity for the current week"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--year",
+                        "--month",
+                        "--luna",
+                        "--day",
+                        "--all",
+                    ],
                 ),
                 (
                     names: [
@@ -465,8 +464,13 @@
                         "-d",
                     ],
                     description: Some("Reports activity for the current day"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--year",
+                        "--month",
+                        "--luna",
+                        "--week",
+                        "--all",
+                    ],
                 ),
                 (
                     names: [
@@ -474,8 +478,13 @@
                         "-a",
                     ],
                     description: Some("Reports all activities"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--year",
+                        "--month",
+                        "--luna",
+                        "--week",
+                        "--day",
+                    ],
                 ),
                 (
                     names: [
@@ -483,21 +492,19 @@
                         "-p",
                     ],
                     description: Some("Logs activity only for the given project. You can add other projects by using this option several times"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PROJECT",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    script: [
+                                        "watson",
+                                        "projects",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "watson",
-                                    "projects",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
                         ),
                     ],
                 ),
@@ -507,21 +514,19 @@
                         "-T",
                     ],
                     description: Some("Logs activity only for frames containing the given tag. You can add several tags by using this option multiple times"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "TAG",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    script: [
+                                        "watson",
+                                        "tags",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "watson",
-                                    "tags",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
                         ),
                     ],
                 ),
@@ -530,21 +535,19 @@
                         "--ignore-project",
                     ],
                     description: Some("Logs activity for all projects but the given ones. You can ignore several projects by using the option multiple times. Any given project will be ignored"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PROJECT",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    script: [
+                                        "watson",
+                                        "projects",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "watson",
-                                    "projects",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
                         ),
                     ],
                 ),
@@ -553,21 +556,19 @@
                         "--ignore-tag",
                     ],
                     description: Some("Logs activity for all tags but the given ones. You can ignore several tags by using the option multiple times. Any given tag will be ignored"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "TAG",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    script: [
+                                        "watson",
+                                        "tags",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "watson",
-                                    "tags",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
                         ),
                     ],
                 ),
@@ -577,8 +578,9 @@
                         "-j",
                     ],
                     description: Some("Format output in JSON instead of plain text"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--csv",
+                    ],
                 ),
                 (
                     names: [
@@ -586,8 +588,9 @@
                         "-s",
                     ],
                     description: Some("Format output in CSV instead of plain text"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--json",
+                    ],
                 ),
                 (
                     names: [
@@ -595,27 +598,25 @@
                         "-g",
                     ],
                     description: Some("View output through a pager"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-pager",
+                    ],
                 ),
                 (
                     names: [
                         "--no-pager",
                         "-G",
                     ],
-                    description: Some("Don\'t view output through a pager"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't view output through a pager"),
+                    exclusive_on: [
+                        "--pager",
+                    ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "merge",
-            aliases: [],
             description: Some("Perform a merge of the existing frames with a conflicting frames file.  When storing the frames on a file hosting service, there is the possibility that the frame file goes out-of-sync due to one or more of the connected clients going offline. This can cause the frames to diverge"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -623,35 +624,21 @@
                         "--force",
                     ],
                     description: Some("If specified, then the merge will automatically be performed"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "FRAMES_WITH_CONFLICT",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "projects",
-            aliases: [],
             description: Some("Display the list of all the existing projects"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "remove",
-            aliases: [],
             description: Some("Remove a frame. You can specify the frame either by id or by position (ex: -1 for the last frame)"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -659,78 +646,74 @@
                         "--force",
                     ],
                     description: Some("Don’t ask for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "ID",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "watson",
-                            "log",
-                            "--json",
-                            "--reverse",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "watson",
+                                "log",
+                                "--json",
+                                "--reverse",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "rename",
-            aliases: [],
             description: Some("Rename a project or tag"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "project",
-                        "tag",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Project or tag"),
+                    suggestions: [
+                        (
+                            name: "project",
+                            presentation: (
+                                icon: Some("🗂"),
+                            ),
+                        ),
+                        (
+                            name: "tag",
+                            presentation: (
+                                icon: Some("🏷"),
+                            ),
+                        ),
+                    ],
                 ),
                 (
                     name: "OLD_NAME",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "watson",
-                            "projects",
-                            "watson",
-                            "tags",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "watson",
+                                "projects",
+                            ],
+                            has_post_process: true,
+                        ),
+                        (
+                            script: [
+                                "watson",
+                                "tags",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "NEW_NAME",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "report",
-            aliases: [],
             description: Some("Display a report of the time spent on each project"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -738,17 +721,19 @@
                         "-c",
                     ],
                     description: Some("Include currently running frame in report"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-current",
+                    ],
                 ),
                 (
                     names: [
                         "--no-current",
                         "-C",
                     ],
-                    description: Some("Don\'t include currently running frame in report"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't include currently running frame in report"),
+                    exclusive_on: [
+                        "--current",
+                    ],
                 ),
                 (
                     names: [
@@ -756,14 +741,9 @@
                         "-f",
                     ],
                     description: Some("The date from when the report should start. Defaults to seven days ago"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DATETIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -773,14 +753,9 @@
                         "-t",
                     ],
                     description: Some("The date at which the report should stop (inclusive). Defaults to tomorrow"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DATETIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -790,8 +765,13 @@
                         "-y",
                     ],
                     description: Some("Reports activity for the current year"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--month",
+                        "--luna",
+                        "--week",
+                        "--day",
+                        "--all",
+                    ],
                 ),
                 (
                     names: [
@@ -799,8 +779,13 @@
                         "-m",
                     ],
                     description: Some("Reports activity for the current month"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--year",
+                        "--luna",
+                        "--week",
+                        "--day",
+                        "--all",
+                    ],
                 ),
                 (
                     names: [
@@ -808,8 +793,13 @@
                         "-l",
                     ],
                     description: Some("Reports activity for the current moon cycle"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--year",
+                        "--month",
+                        "--week",
+                        "--day",
+                        "--all",
+                    ],
                 ),
                 (
                     names: [
@@ -817,8 +807,13 @@
                         "-w",
                     ],
                     description: Some("Reports activity for the current week"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--year",
+                        "--month",
+                        "--luna",
+                        "--day",
+                        "--all",
+                    ],
                 ),
                 (
                     names: [
@@ -826,8 +821,13 @@
                         "-d",
                     ],
                     description: Some("Reports activity for the current day"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--year",
+                        "--month",
+                        "--luna",
+                        "--week",
+                        "--all",
+                    ],
                 ),
                 (
                     names: [
@@ -835,21 +835,18 @@
                         "-p",
                     ],
                     description: Some("Reports activity only for the given project. You can add other projects by using this option several times"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PROJECT",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "watson",
-                                    "projects",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "watson",
+                                        "projects",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -859,21 +856,18 @@
                         "-T",
                     ],
                     description: Some("Reports activity only for frames containing the given tag. You can add several tags by using this option multiple times"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "TAG",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "watson",
-                                    "tags",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "watson",
+                                        "tags",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -882,21 +876,18 @@
                         "--ignore-project",
                     ],
                     description: Some("Reports activity for all projects but the given ones. You can ignore several projects by using the option multiple times. Any given project will be ignored"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PROJECT",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "watson",
-                                    "projects",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "watson",
+                                        "projects",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -905,21 +896,18 @@
                         "--ignore-tag",
                     ],
                     description: Some("Reports activity for all tags but the given ones. You can ignore several tags by using the option multiple times. Any given tag will be ignored"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "TAG",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "watson",
-                                    "tags",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "watson",
+                                        "tags",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -929,8 +917,9 @@
                         "-j",
                     ],
                     description: Some("Format output in JSON instead of plain text"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--csv",
+                    ],
                 ),
                 (
                     names: [
@@ -938,8 +927,9 @@
                         "-s",
                     ],
                     description: Some("Format output in CSV instead of plain text"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--json",
+                    ],
                 ),
                 (
                     names: [
@@ -947,41 +937,34 @@
                         "-g",
                     ],
                     description: Some("View output through a pager"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-pager",
+                    ],
                 ),
                 (
                     names: [
                         "--no-pager",
                         "-G",
                     ],
-                    description: Some("Don\'t view output through a pager"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't view output through a pager"),
+                    exclusive_on: [
+                        "--pager",
+                    ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "restart",
-            aliases: [],
             description: Some("Restart monitoring time for a previously stopped project"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--at",
                     ],
                     description: Some("Start frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DATETIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -991,58 +974,51 @@
                         "-s",
                     ],
                     description: Some("Stop an already running project"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-stop",
+                    ],
                 ),
                 (
                     names: [
                         "--no-stop",
                         "-S",
                     ],
-                    description: Some("Don\'t stop an already running project"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't stop an already running project"),
+                    exclusive_on: [
+                        "--stop",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "FRAME",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            script: [
+                                "watson",
+                                "log",
+                                "--json",
+                                "--reverse",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "watson",
-                            "log",
-                            "--json",
-                            "--reverse",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "start",
-            aliases: [],
             description: Some("Start monitoring time for the given project. You can add tags indicating more specifically what you are working on with +tag"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--at",
                     ],
                     description: Some("Start frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DATETIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1052,17 +1028,19 @@
                         "-g",
                     ],
                     description: Some("Leave gap between end time of previous project and start time of the current"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-gap",
+                    ],
                 ),
                 (
                     names: [
                         "--no-gap",
                         "-G",
                     ],
-                    description: Some("Don\'t leave gap between end time of previous project and start time of the current"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't leave gap between end time of previous project and start time of the current"),
+                    exclusive_on: [
+                        "--gap",
+                    ],
                 ),
                 (
                     names: [
@@ -1070,8 +1048,6 @@
                         "-c",
                     ],
                     description: Some("Confirm addition of new project"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1079,35 +1055,34 @@
                         "-b",
                     ],
                     description: Some("Confirm creation of new tag"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "ARGS",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "watson",
+                                "projects",
+                            ],
+                            has_post_process: true,
+                        ),
+                        (
+                            script: [
+                                "watson",
+                                "tags",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "watson",
-                            "projects",
-                            "watson",
-                            "tags",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "status",
-            aliases: [],
             description: Some("Display when the current project was started and the time spent since"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1115,8 +1090,10 @@
                         "-p",
                     ],
                     description: Some("Only output project"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--tags",
+                        "--elapsed",
+                    ],
                 ),
                 (
                     names: [
@@ -1124,8 +1101,10 @@
                         "-t",
                     ],
                     description: Some("Only show tags"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--project",
+                        "--elapsed",
+                    ],
                 ),
                 (
                     names: [
@@ -1133,56 +1112,37 @@
                         "-e",
                     ],
                     description: Some("Only show time elapsed"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--project",
+                        "--tags",
+                    ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "stop",
-            aliases: [],
             description: Some("Stop monitoring time for the current project"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--at",
                     ],
                     description: Some("Stop frame at this time. Must be in (YYYY-MM-DDT)?HH:MM(:SS)? format"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DATETIME",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "sync",
-            aliases: [],
             description: Some("Get the frames from the server and push the new ones"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "tags",
-            aliases: [],
             description: Some("Display the list of all the tags"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -1191,33 +1151,31 @@
                 "--help",
             ],
             description: Some("Show help for watson"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Show the version for watson"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--color",
             ],
             description: Some("Color output"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-color",
+            ],
         ),
         (
             names: [
                 "--no-color",
             ],
             description: Some("No color output"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--color",
+            ],
         ),
     ],
-    arguments: [],
 )

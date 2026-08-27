@@ -5,35 +5,24 @@
     subcommands: [
         (
             name: "config",
-            aliases: [],
             description: Some("Edit the glow config file"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Help about any command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
+                    template: [
+                        Help,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "stash",
-            aliases: [],
             description: Some("Manage your stash of markdown files"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -41,32 +30,29 @@
                         "--memo",
                     ],
                     description: Some("Memo/note for stashing"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "note",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("--memo '{cursor}'"),
+                    ),
                 ),
             ],
             arguments: [
                 (
                     name: "path",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -76,24 +62,21 @@
                 "--all",
             ],
             description: Some("Show system files and directories (TUI-mode only)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--config",
             ],
             description: Some("Config file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
@@ -101,8 +84,7 @@
                 "--help",
             ],
             description: Some("Help for glow"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
@@ -110,8 +92,6 @@
                 "--local",
             ],
             description: Some("Show local files only; no network (TUI-mode only)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -119,28 +99,33 @@
                 "--pager",
             ],
             description: Some("Display with pager"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-s",
                 "--style",
             ],
-            description: Some("Style name or JSON path (default \'auto\')"),
-            takes_value: true,
+            description: Some("Style name or JSON path (default 'auto')"),
             arguments: [
                 (
                     name: "name",
-                    source: Static([
-                        "auto",
-                        "light",
-                        "dark",
-                        "notty",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "auto",
+                        ),
+                        (
+                            name: "light",
+                        ),
+                        (
+                            name: "dark",
+                        ),
+                        (
+                            name: "notty",
+                        ),
+                    ],
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -150,8 +135,6 @@
                 "--version",
             ],
             description: Some("Version for glow"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -159,14 +142,9 @@
                 "--width",
             ],
             description: Some("Word-wrap at width"),
-            takes_value: true,
             arguments: [
                 (
                     name: "column",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -174,14 +152,15 @@
     arguments: [
         (
             name: "source|dir",
-            source: Unavailable,
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    has_dynamic_query_term: true,
+                ),
+            ],
             optional: true,
             variadic: true,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
         ),
     ],
 )

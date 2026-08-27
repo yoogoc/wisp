@@ -5,23 +5,17 @@
     subcommands: [
         (
             name: "--plugin",
-            aliases: [],
             description: Some("Manage plugins"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "remove",
                     ],
                     description: Some("Remove plugin(s)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "plugin",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -30,14 +24,10 @@
                         "update",
                     ],
                     description: Some("Update plugin(s) (if no argument is given, updates all plugins)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "plugin",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -46,14 +36,9 @@
                         "search",
                     ],
                     description: Some("Search for a plugin"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "plugin",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -62,20 +47,14 @@
                         "list",
                     ],
                     description: Some("List installed plugins"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "available",
                     ],
                     description: Some("List available plugins"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -84,22 +63,15 @@
                 "--clean",
             ],
             description: Some("Cleans the configuration directory"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--config-dir",
             ],
             description: Some("Specify a custom location for the configuration directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "dir",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -108,41 +80,37 @@
                 "--options",
             ],
             description: Some("Show all option help"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--debug",
             ],
             description: Some("Enable debug mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Show the version number and information"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--autoindent",
             ],
             description: Some("When creating a new line, use the same indentation as the previous line"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -151,21 +119,31 @@
                 "--autosave",
             ],
             description: Some("Automatically save the buffer every <n> seconds. If set to 0, no autosaving is performed"),
-            takes_value: true,
             arguments: [
                 (
                     name: "n",
-                    source: Static([
-                        "0",
-                        "60",
-                        "120",
-                        "300",
-                        "600",
-                        "1800",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Seconds"),
+                    suggestions: [
+                        (
+                            name: "0",
+                        ),
+                        (
+                            name: "60",
+                        ),
+                        (
+                            name: "120",
+                        ),
+                        (
+                            name: "300",
+                        ),
+                        (
+                            name: "600",
+                        ),
+                        (
+                            name: "1800",
+                        ),
+                    ],
+                    default: Some("0"),
                 ),
             ],
         ),
@@ -174,17 +152,19 @@
                 "--autosu",
             ],
             description: Some("Automatically attempt to use super user privileges to save without asking"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -193,17 +173,19 @@
                 "--backup",
             ],
             description: Some("Automatically keep backups of all open buffers"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -212,16 +194,18 @@
                 "--backupdir",
             ],
             description: Some("The directory to place backups in"),
-            takes_value: true,
             arguments: [
                 (
                     name: "dir",
-                    source: Static([
-                        "~/.config/micro.backups",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "~/.config/micro.backups",
+                        ),
+                    ],
+                    template: [
+                        Folders,
+                    ],
+                    default: Some("~/.config/micro.backups"),
                 ),
             ],
         ),
@@ -230,17 +214,19 @@
                 "--basename",
             ],
             description: Some("In the infobar and tabbar, show only the basename of the file being edited rather than the full path"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -249,18 +235,24 @@
                 "--clipboard",
             ],
             description: Some("Apecifies how the system clipboard should be accessed"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "external",
-                        "terminal",
-                        "internal",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "external",
+                            description: Some("Accesses clipboard via an external tool, such as xclip/xsel or wl-clipboard on Linux, pbcopy/pbpaste on MacOS, and system calls on Windows"),
+                        ),
+                        (
+                            name: "terminal",
+                            description: Some("Accesses the clipboard via your terminal emulator"),
+                        ),
+                        (
+                            name: "internal",
+                            description: Some("Uses an internal clipboard"),
+                        ),
+                    ],
+                    default: Some("external"),
                 ),
             ],
         ),
@@ -269,17 +261,18 @@
                 "--colorcolumn",
             ],
             description: Some("Display a color at the specified column if not set to 0"),
-            takes_value: true,
             arguments: [
                 (
                     name: "value",
-                    source: Static([
-                        "0",
-                        "1",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "0",
+                        ),
+                        (
+                            name: "1",
+                        ),
+                    ],
+                    default: Some("0"),
                 ),
             ],
         ),
@@ -288,16 +281,15 @@
                 "--colorscheme",
             ],
             description: Some("Loads the colorscheme stored in $(configDir)/colorschemes/<scheme>.micro"),
-            takes_value: true,
             arguments: [
                 (
                     name: "scheme",
-                    source: Static([
-                        "default",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "default",
+                        ),
+                    ],
+                    default: Some("default"),
                 ),
             ],
         ),
@@ -306,17 +298,19 @@
                 "--cursorline",
             ],
             description: Some("Highlight the line that the cursor is on in a different color"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -325,17 +319,19 @@
                 "--diffgutter",
             ],
             description: Some("Display diff indicators before lines"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -344,16 +340,15 @@
                 "--divchars",
             ],
             description: Some("Specifies the divider characters used for the dividing line between vertical/horizontal splits (the first character is for vertical dividers, and the second is for horizontal dividers)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "chars",
-                    source: Static([
-                        "|-",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "|-",
+                        ),
+                    ],
+                    default: Some("|-"),
                 ),
             ],
         ),
@@ -362,17 +357,19 @@
                 "--divreverse",
             ],
             description: Some("Reverse colors specified by the colorscheme"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -381,16 +378,15 @@
                 "--encoding",
             ],
             description: Some("The encoding to open and save files with"),
-            takes_value: true,
             arguments: [
                 (
                     name: "encoding",
-                    source: Static([
-                        "utf-8",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "utf-8",
+                        ),
+                    ],
+                    default: Some("utf-8"),
                 ),
             ],
         ),
@@ -399,17 +395,19 @@
                 "--eofnewline",
             ],
             description: Some("Automatically add a newline to the end of the file if one does not exist"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -417,18 +415,20 @@
             names: [
                 "--fastdirty",
             ],
-            description: Some("Use \'fast dirty\' algorithm to determine if a buffer is modified or not"),
-            takes_value: true,
+            description: Some("Use 'fast dirty' algorithm to determine if a buffer is modified or not"),
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -437,17 +437,18 @@
                 "--fileformat",
             ],
             description: Some("Type of line endings to be used for the file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "format",
-                    source: Static([
-                        "unix",
-                        "dos",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "unix",
+                        ),
+                        (
+                            name: "dos",
+                        ),
+                    ],
+                    default: Some("unix"),
                 ),
             ],
         ),
@@ -456,17 +457,20 @@
                 "--filetype",
             ],
             description: Some("File type for the current buffer"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "unknown",
-                        "off",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "unknown",
+                            description: Some("Automatically overridden depending on type of file opened"),
+                        ),
+                        (
+                            name: "off",
+                            description: Some("Disable file type detection"),
+                        ),
+                    ],
+                    default: Some("unknown"),
                 ),
             ],
         ),
@@ -475,17 +479,19 @@
                 "--ignorecase",
             ],
             description: Some("Perform case-insensitive searches"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -494,17 +500,19 @@
                 "--incsearch",
             ],
             description: Some("Enable incremental search in \"Find\" prompt"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -513,17 +521,24 @@
                 "--indentchar",
             ],
             description: Some("Sets the indentation character"),
-            takes_value: true,
             arguments: [
                 (
                     name: "character",
-                    source: Static([
-                        " ",
-                        "\\t",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: " ",
+                            presentation: (
+                                display_name: Some("space"),
+                            ),
+                        ),
+                        (
+                            name: "\\t",
+                            presentation: (
+                                display_name: Some("tab"),
+                            ),
+                        ),
+                    ],
+                    default: Some(" "),
                 ),
             ],
         ),
@@ -532,17 +547,19 @@
                 "--infobar",
             ],
             description: Some("Enables the line at the bottom of the editor where messages are printed"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -551,17 +568,19 @@
                 "--keepautoindent",
             ],
             description: Some("Remove trailing whitespace from a line with no insertions when moving to the next line"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -570,17 +589,19 @@
                 "--keymenu",
             ],
             description: Some("Display the nano-style key menu at the bottom of the screen"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -588,18 +609,20 @@
             names: [
                 "--matchbrace",
             ],
-            description: Some("Underline matching braces for \'()\', \'{}\', \'[]\' when the cursor is on a brace character"),
-            takes_value: true,
+            description: Some("Underline matching braces for '()', '{}', '[]' when the cursor is on a brace character"),
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -607,18 +630,20 @@
             names: [
                 "--mkparents",
             ],
-            description: Some("Allow parent directories to be created automatically when opening a file on a path that doesn\'t exist"),
-            takes_value: true,
+            description: Some("Allow parent directories to be created automatically when opening a file on a path that doesn't exist"),
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -627,17 +652,19 @@
                 "--mouse",
             ],
             description: Some("Enable mouse support"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -646,17 +673,19 @@
                 "--paste",
             ],
             description: Some("Treat characters sent from the terminal in a single chunk as a paste event rather than a series of manual key presses"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -665,17 +694,19 @@
                 "--parsecursor",
             ],
             description: Some("Parse filenames such as file.txt:10:5 as requesting to open file.txt with the cursor at line 10 and column 5"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -684,17 +715,19 @@
                 "--permbackup",
             ],
             description: Some("Cause backups to be permanently saved"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -703,16 +736,16 @@
                 "--pluginchannels",
             ],
             description: Some("List of URLs pointing to plugin channels for downloading and installing plugins"),
-            takes_value: true,
             arguments: [
                 (
                     name: "url",
-                    source: Static([
-                        "https://raw.githubusercontent.com/micro-editor/plugin-channel/master/channel.json",
-                    ]),
-                    optional: false,
+                    suggestions: [
+                        (
+                            name: "https://raw.githubusercontent.com/micro-editor/plugin-channel/master/channel.json",
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: None,
+                    default: Some("https://raw.githubusercontent.com/micro-editor/plugin-channel/master/channel.json"),
                 ),
             ],
         ),
@@ -721,14 +754,10 @@
                 "--pluginrepos",
             ],
             description: Some("A list of links to plugin repositories"),
-            takes_value: true,
             arguments: [
                 (
                     name: "link",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -737,17 +766,19 @@
                 "--readonly",
             ],
             description: Some("Disallow edits to the buffer"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -756,17 +787,19 @@
                 "--relativeruler",
             ],
             description: Some("Make line numbers display relatively"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -775,17 +808,19 @@
                 "--rmtrailingws",
             ],
             description: Some("Automatically trim trailing whitespaces at ends of lines"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -794,17 +829,19 @@
                 "--ruler",
             ],
             description: Some("Display line numbers"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -813,17 +850,19 @@
                 "--savecursor",
             ],
             description: Some("Remember where the cursor was last time the file was opened and put it there when re-opened"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -832,17 +871,19 @@
                 "--savehistory",
             ],
             description: Some("Remember command history between closing and re-opening micro"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -851,17 +892,19 @@
                 "--saveundo",
             ],
             description: Some("Remember undo state between closing and re-opening a file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -870,17 +913,19 @@
                 "--scrollbar",
             ],
             description: Some("Display a scroll bar"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -889,21 +934,30 @@
                 "--scrollmargin",
             ],
             description: Some("Margin at which the view starts scrolling when the cursor approaches the edge of the view"),
-            takes_value: true,
             arguments: [
                 (
                     name: "margin",
-                    source: Static([
-                        "0",
-                        "1",
-                        "2",
-                        "3",
-                        "5",
-                        "10",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "0",
+                        ),
+                        (
+                            name: "1",
+                        ),
+                        (
+                            name: "2",
+                        ),
+                        (
+                            name: "3",
+                        ),
+                        (
+                            name: "5",
+                        ),
+                        (
+                            name: "10",
+                        ),
+                    ],
+                    default: Some("3"),
                 ),
             ],
         ),
@@ -912,20 +966,27 @@
                 "--scrollspeed",
             ],
             description: Some("Number of lines to scroll for one scroll event"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Static([
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                        "5",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "1",
+                        ),
+                        (
+                            name: "2",
+                        ),
+                        (
+                            name: "3",
+                        ),
+                        (
+                            name: "4",
+                        ),
+                        (
+                            name: "5",
+                        ),
+                    ],
+                    default: Some("2"),
                 ),
             ],
         ),
@@ -934,17 +995,19 @@
                 "--smartpaste",
             ],
             description: Some("Add leading whitespace when pasting multiple lines"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -953,17 +1016,19 @@
                 "--softwrap",
             ],
             description: Some("Wrap lines that are too long to fit on the screen"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -972,17 +1037,19 @@
                 "--splitbottom",
             ],
             description: Some("When a horizontal split is created, create it below the current split"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -991,17 +1058,19 @@
                 "--splitright",
             ],
             description: Some("When a vertical split is created, create it to the right of the current split"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -1010,14 +1079,9 @@
                 "--statusformatl",
             ],
             description: Some("Format string definition for the left-justified part of the statusline"),
-            takes_value: true,
             arguments: [
                 (
                     name: "format",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1026,14 +1090,9 @@
                 "--statusformatr",
             ],
             description: Some("Format string definition for the right-justified part of the statusline"),
-            takes_value: true,
             arguments: [
                 (
                     name: "format",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1042,17 +1101,19 @@
                 "--statusline",
             ],
             description: Some("Display the status line at the bottom of the screen"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -1061,17 +1122,18 @@
                 "--sucmd",
             ],
             description: Some("The super user command"),
-            takes_value: true,
             arguments: [
                 (
                     name: "command",
-                    source: Static([
-                        "sudo",
-                        "doas",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "sudo",
+                        ),
+                        (
+                            name: "doas",
+                        ),
+                    ],
+                    default: Some("sudo"),
                 ),
             ],
         ),
@@ -1080,17 +1142,19 @@
                 "--syntax",
             ],
             description: Some("Enables syntax highlighting"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -1099,17 +1163,19 @@
                 "--tabmovement",
             ],
             description: Some("Navigate spaces at the beginning of lines as if they are tabs"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -1118,19 +1184,24 @@
                 "--tabsize",
             ],
             description: Some("The size in spaces that a tab character should be displayed with"),
-            takes_value: true,
             arguments: [
                 (
                     name: "size",
-                    source: Static([
-                        "2",
-                        "4",
-                        "8",
-                        "16",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "2",
+                        ),
+                        (
+                            name: "4",
+                        ),
+                        (
+                            name: "8",
+                        ),
+                        (
+                            name: "16",
+                        ),
+                    ],
+                    default: Some("4"),
                 ),
             ],
         ),
@@ -1139,17 +1210,19 @@
                 "--tabstospaces",
             ],
             description: Some("Use spaces instead of tabs"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -1158,17 +1231,19 @@
                 "--useprimary",
             ],
             description: Some("Use the primary clipboard to copy selections in the background"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("true"),
                 ),
             ],
         ),
@@ -1177,17 +1252,19 @@
                 "--wordwrap",
             ],
             description: Some("Wrap long lines by words"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -1196,17 +1273,19 @@
                 "--xterm",
             ],
             description: Some("Assume that the terminal conforms to xterm-256color regardless of what the $TERM variable actually contains"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bool",
-                    source: Static([
-                        "true",
-                        "false",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("True/false"),
+                    suggestions: [
+                        (
+                            name: "true",
+                        ),
+                        (
+                            name: "false",
+                        ),
+                    ],
+                    default: Some("false"),
                 ),
             ],
         ),
@@ -1214,10 +1293,10 @@
     arguments: [
         (
             name: "file",
-            source: Files,
+            template: [
+                FilePaths,
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: None,
         ),
     ],
 )

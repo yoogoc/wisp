@@ -2,15 +2,12 @@
     version: 1,
     command: "eslint",
     description: Some("Pluggable JavaScript linter"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--no-eslintrc",
             ],
             description: Some("Disable use of configuration from .eslintrc.*"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -18,14 +15,12 @@
                 "--config",
             ],
             description: Some("Use this configuration, overriding .eslintrc.* config options if present"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -34,18 +29,18 @@
                 "--env",
             ],
             description: Some("Specify environments"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    name: "",
+                    generators: [
+                        (
+                            has_custom: true,
+                            trigger: Some(OnMatch([
+                                    ",",
+                                ])),
+                            query_term: Some(AfterLast(",")),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -54,14 +49,10 @@
                 "--ext",
             ],
             description: Some("Specify JavaScript file extensions"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Extension",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some(".js"),
                 ),
             ],
         ),
@@ -70,14 +61,9 @@
                 "--global",
             ],
             description: Some("Define global variables"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Variables",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -86,14 +72,9 @@
                 "--parser",
             ],
             description: Some("Specify the parser to be used"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
         ),
@@ -102,14 +83,9 @@
                 "--parser-options",
             ],
             description: Some("Specify parser options"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
         ),
@@ -118,14 +94,13 @@
                 "--resolve-plugins-relative-to",
             ],
             description: Some("A folder where plugins should be resolved from"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        Folders,
+                    ],
+                    default: Some("CWD"),
                 ),
             ],
         ),
@@ -134,14 +109,12 @@
                 "--rulesdir",
             ],
             description: Some("Use additional rules from this directory"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -150,22 +123,19 @@
                 "--plugin",
             ],
             description: Some("Specify plugins"),
-            takes_value: true,
             arguments: [
                 (
                     name: "Plugin",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "{ ls node_modules ; ls $(npm root -g) ; ls $(yarn global dir)/node_modules/ ; } | cat",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "{ ls node_modules ; ls $(npm root -g) ; ls $(yarn global dir)/node_modules/ ; } | cat",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -174,14 +144,9 @@
                 "--rule",
             ],
             description: Some("Specify rules"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
         ),
@@ -190,35 +155,37 @@
                 "--fix",
             ],
             description: Some("Automatically fix problems"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--fix-dry-run",
             ],
             description: Some("Automatically fix problems without saving the changes to the file system"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--fix-type",
             ],
             description: Some("Specify the types of fixes to apply"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Static([
-                        "problem",
-                        "suggestion",
-                        "layout",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    suggestions: [
+                        (
+                            name: "problem",
+                        ),
+                        (
+                            name: "suggestion",
+                        ),
+                        (
+                            name: "layout",
+                        ),
+                    ],
                 ),
+            ],
+            depends_on: [
+                "--fix",
+                "--fix-dry-run",
             ],
         ),
         (
@@ -226,14 +193,12 @@
                 "--ignore-path",
             ],
             description: Some("Specify path of ignore file"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -242,22 +207,15 @@
                 "--no-ignore",
             ],
             description: Some("Disable use of ignore files and patterns"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ignore-pattern",
             ],
             description: Some("Pattern of files to ignore (in addition to those in .eslintignore)"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
         ),
@@ -266,22 +224,18 @@
                 "--stdin",
             ],
             description: Some("Lint code provided on <STDIN>"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--stdin-filename",
             ],
             description: Some("Specify filename to process STDIN as"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -290,22 +244,16 @@
                 "--quiet",
             ],
             description: Some("Report errors only"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--max-warnings",
             ],
             description: Some("Number of warnings to trigger nonzero exit code"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    default: Some("-1"),
                 ),
             ],
         ),
@@ -315,14 +263,12 @@
                 "--output-file",
             ],
             description: Some("Specify file to write report to"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -332,27 +278,48 @@
                 "--format",
             ],
             description: Some("Use a specific output format"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Static([
-                        "checkstyle",
-                        "codeframe",
-                        "compact",
-                        "html",
-                        "jslint-xml",
-                        "json",
-                        "junit",
-                        "stylish",
-                        "table",
-                        "tap",
-                        "unix",
-                        "visualstudio",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    suggestions: [
+                        (
+                            name: "checkstyle",
+                        ),
+                        (
+                            name: "codeframe",
+                        ),
+                        (
+                            name: "compact",
+                        ),
+                        (
+                            name: "html",
+                        ),
+                        (
+                            name: "jslint-xml",
+                        ),
+                        (
+                            name: "json",
+                        ),
+                        (
+                            name: "junit",
+                        ),
+                        (
+                            name: "stylish",
+                        ),
+                        (
+                            name: "table",
+                        ),
+                        (
+                            name: "tap",
+                        ),
+                        (
+                            name: "unix",
+                        ),
+                        (
+                            name: "visualstudio",
+                        ),
+                    ],
+                    default: Some("stylish"),
                 ),
             ],
         ),
@@ -361,54 +328,49 @@
                 "--color",
             ],
             description: Some("Force enabling of color"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-color",
+            ],
         ),
         (
             names: [
                 "--no-color",
             ],
             description: Some("Force disabling of color"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--color",
+            ],
         ),
         (
             names: [
                 "--no-inline-config",
             ],
             description: Some("Prevent comments from changing config or rules"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--report-unused-disable-directives",
             ],
             description: Some("Adds reported errors for unused eslint-disable-directives"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--cache",
             ],
             description: Some("Only check changed files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--cache-location",
             ],
             description: Some("Path to the cache file or directory"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        FilePaths,
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -417,17 +379,18 @@
                 "--cache-strategy",
             ],
             description: Some("Strategy to use for detecting changed files"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Static([
-                        "metadata",
-                        "content",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    suggestions: [
+                        (
+                            name: "metadata",
+                        ),
+                        (
+                            name: "content",
+                        ),
+                    ],
+                    default: Some("metadata"),
                 ),
             ],
         ),
@@ -436,32 +399,24 @@
                 "--init",
             ],
             description: Some("Run config initialization wizard"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--env-info",
             ],
             description: Some("Output execution environment information"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-error-on-unmatched-pattern",
             ],
             description: Some("Prevent errors when pattern is unmatched"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--debug",
             ],
             description: Some("Output debugging information"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -469,8 +424,6 @@
                 "--help",
             ],
             description: Some("Show help"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -478,22 +431,18 @@
                 "--version",
             ],
             description: Some("Output the version number"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--print-config",
             ],
             description: Some("Print the configuration for the give file"),
-            takes_value: true,
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -501,10 +450,12 @@
     arguments: [
         (
             name: "file|dir|glob",
-            source: Directories,
-            optional: false,
+            description: Some("File(s) to lint"),
+            template: [
+                FilePaths,
+                Folders,
+            ],
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

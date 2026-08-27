@@ -2,7 +2,6 @@
     version: 1,
     command: "ts-node",
     description: Some("Run the TypeScript interpreter for Node.JS"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "-h",
             ],
             description: Some("Show help for ts-node"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,8 +16,6 @@
                 "--version",
             ],
             description: Some("Print version information of the ts-node module"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -28,16 +23,14 @@
                 "--eval",
             ],
             description: Some("Evaluate script"),
-            takes_value: true,
             arguments: [
                 (
                     name: "script",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            presentation: (
+                insert_value: Some("-e '{cursor}'"),
+            ),
         ),
         (
             names: [
@@ -45,8 +38,6 @@
                 "--print",
             ],
             description: Some("Evaluate script and print result"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -54,20 +45,19 @@
                 "--require",
             ],
             description: Some("Require module before executing"),
-            takes_value: true,
             arguments: [
                 (
                     name: "module",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
+                    filter_strategy: Fuzzy,
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
@@ -75,24 +65,18 @@
                 "--interactive",
             ],
             description: Some("Always open interactive REPL"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--show-config",
             ],
             description: Some("Print resolved Typescript config to the terminal"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--cwd-mode",
             ],
             description: Some("Resolve Typescript config based on the current working directory"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -100,8 +84,6 @@
                 "--transpile-only",
             ],
             description: Some("Use the Typescript transpile module mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -109,8 +91,6 @@
                 "--compiler-host",
             ],
             description: Some("Use the Typescript compiler host API"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -118,14 +98,9 @@
                 "--ignore",
             ],
             description: Some("Ignore patterns from Typescript compilation"),
-            takes_value: true,
             arguments: [
                 (
                     name: "pattern",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -135,18 +110,17 @@
                 "--project",
             ],
             description: Some("Specify TypeScript project location"),
-            takes_value: true,
             arguments: [
                 (
                     name: "project",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            template: [
+                                FilePaths,
+                            ],
+                            has_filter_template_suggestions: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -156,14 +130,9 @@
                 "--compiler",
             ],
             description: Some("Use a custom compiler"),
-            takes_value: true,
             arguments: [
                 (
                     name: "compiler",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -172,14 +141,9 @@
                 "--transpiler",
             ],
             description: Some("Use a custom transpiler"),
-            takes_value: true,
             arguments: [
                 (
                     name: "transpiler",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -189,14 +153,9 @@
                 "--ignore-diagnostics",
             ],
             description: Some("Specify Typescript diagnostic code to ignore"),
-            takes_value: true,
             arguments: [
                 (
                     name: "code",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -206,34 +165,30 @@
                 "--compiler-options",
             ],
             description: Some("JSON object that will be merged with the compiler options"),
-            takes_value: true,
             arguments: [
                 (
                     name: "options",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            presentation: (
+                insert_value: Some("-O '{cursor}'"),
+            ),
         ),
         (
             names: [
                 "--cwd",
             ],
             description: Some("Specify working directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "cwd",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            template: [
+                                Folders,
+                            ],
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -242,50 +197,40 @@
                 "--files",
             ],
             description: Some("Load files, include and exclude from Typescript config on startup"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--pretty",
             ],
             description: Some("Use the pretty formatter for diagnostic errors"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--skip-project",
             ],
             description: Some("Skip reading Typescript config"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--scope",
             ],
             description: Some("Scope compilation to scope directory specified"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--scope-dir",
             ],
             description: Some("Directory for scope parameter"),
-            takes_value: true,
             arguments: [
                 (
                     name: "directory",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            template: [
+                                Folders,
+                            ],
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -294,45 +239,37 @@
                 "--skip-ignore",
             ],
             description: Some("Skip --ignore checks"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--prefer-ts-exts",
             ],
             description: Some("Prefer Typescript files over JavaScript files when importing files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--log-error",
             ],
             description: Some("Pipe Typescript errors to stderr instead of throwing exceptions"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-experimental-repl-await",
             ],
             description: Some("Disable the top-level await function in REPL"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "script",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
+            generators: [
+                (
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                    has_dynamic_query_term: true,
+                ),
+            ],
+            is_script: true,
         ),
     ],
 )

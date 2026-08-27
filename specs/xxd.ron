@@ -2,7 +2,6 @@
     version: 1,
     command: "xxd",
     description: Some("Make a hexdump or do the reverse"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,17 +9,13 @@
                 "-h",
             ],
             description: Some("Show help for xxd"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-autoskip",
                 "-a",
             ],
-            description: Some("Toggle autoskip: A single \'*\' replaces nul-lines.  Default off"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Toggle autoskip: A single '*' replaces nul-lines.  Default off"),
         ),
         (
             names: [
@@ -28,8 +23,14 @@
                 "-b",
             ],
             description: Some("Switch to bits (binary digits) dump, rather than hexdump"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "-postscript",
+                "-plain",
+                "-ps",
+                "-p",
+                "-r",
+                "-i",
+            ],
         ),
         (
             names: [
@@ -37,14 +38,9 @@
                 "-c",
             ],
             description: Some("Format <cols> octets per line. Default 16"),
-            takes_value: true,
             arguments: [
                 (
                     name: "cols",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -54,8 +50,6 @@
                 "-C",
             ],
             description: Some("Capitalize variable names in C include file style, when using -i"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -63,16 +57,20 @@
                 "-E",
             ],
             description: Some("Change the character encoding in the righthand column from ASCII to EBCDIC"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "-postscript",
+                "-plain",
+                "-ps",
+                "-p",
+                "-r",
+                "-i",
+            ],
         ),
         (
             names: [
                 "-e",
             ],
             description: Some("Switch to little-endian hexdump"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -80,14 +78,9 @@
                 "-g",
             ],
             description: Some("Separate the output of every <bytes> bytes"),
-            takes_value: true,
             arguments: [
                 (
                     name: "bytes",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -97,8 +90,12 @@
                 "-i",
             ],
             description: Some("Output in C include file style"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "-EBCDIC",
+                "-E",
+                "-bits",
+                "-b",
+            ],
         ),
         (
             names: [
@@ -106,14 +103,9 @@
                 "-l",
             ],
             description: Some("Stop after writing <len> octets"),
-            takes_value: true,
             arguments: [
                 (
                     name: "len",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -123,14 +115,9 @@
                 "-n",
             ],
             description: Some("Override the variable name output when -i is used"),
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -139,14 +126,9 @@
                 "-o",
             ],
             description: Some("Add <offset> to the displayed file position"),
-            takes_value: true,
             arguments: [
                 (
                     name: "offset",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -158,8 +140,12 @@
                 "-p",
             ],
             description: Some("Output in postscript continuous hexdump style"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "-EBCDIC",
+                "-E",
+                "-bits",
+                "-b",
+            ],
         ),
         (
             names: [
@@ -167,22 +153,21 @@
                 "-r",
             ],
             description: Some("Reverse operation: convert (or patch) hexdump into binary"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "-EBCDIC",
+                "-E",
+                "-bits",
+                "-b",
+            ],
         ),
         (
             names: [
                 "-seek",
             ],
             description: Some("When used after -r: revert with <offset> added to file positions found in hexdump"),
-            takes_value: true,
             arguments: [
                 (
                     name: "offset",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -191,8 +176,6 @@
                 "-u",
             ],
             description: Some("Use upper case hex letters. Default is lower case"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -200,24 +183,23 @@
                 "-v",
             ],
             description: Some("Show version string"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "infile",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            template: [
+                FilePaths,
+            ],
         ),
         (
             name: "outfile",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            template: [
+                FilePaths,
+            ],
         ),
     ],
+    parser_directives: Some((
+        flags_are_posix_noncompliant: true,
+    )),
 )

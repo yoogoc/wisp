@@ -2,7 +2,6 @@
     version: 1,
     command: "nr",
     description: Some("Use the right package manager - run"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,25 +9,37 @@
                 "--help",
             ],
             description: Some("Output usage information"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "script",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [
-                    "bash",
-                    "-c",
-                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
+            description: Some("The script to run"),
+            generators: [
+                (
+                    script: [
+                        "bash",
+                        "-c",
+                        "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                    ],
+                    has_post_process: true,
+                    cache: Some((
+                        by_directory: true,
+                        stale_while_revalidate: true,
+                    )),
+                ),
+            ],
+            filter_strategy: Fuzzy,
+        ),
+    ],
+    additional_suggestions: [
+        (
+            name: "-",
+            description: Some("Run the last command"),
+            kind: Some(Shortcut),
+            presentation: (
+                insert_value: Some("-\n"),
+            ),
         ),
     ],
 )

@@ -5,2446 +5,1813 @@
     subcommands: [
         (
             name: "-listnetworkserviceorder",
-            aliases: [],
             description: Some("Displays a list of network services in the order they are contacted for a connection, along with the corresponding port and device for each"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-listallnetworkservices",
-            aliases: [],
-            description: Some("Displays a list of all the network services on the server\'s hardware ports"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Displays a list of all the network services on the server's hardware ports"),
         ),
         (
             name: "-listallhardwareports",
-            aliases: [],
             description: Some("Displays list of hardware ports with corresponding device name and ethernet address"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-detectnewhardware",
-            aliases: [],
             description: Some("Detects new network hardware and creates a default network service on the hardware"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-getmacaddress",
-            aliases: [],
             description: Some("Displays ethernet (or Wi-Fi) address for hardwareport or device specified"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getcomputername",
-            aliases: [],
             description: Some("Displays the computer name"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-setcomputername",
-            aliases: [],
             description: Some("Sets computer name to <computername>. This name is used by AFP"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "computername",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The new name for your computer on the network"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getinfo",
-            aliases: [],
             description: Some("Displays the IP address, subnet mask, router, and hardware address for the <networkservice> that you specify"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setmanual",
-            aliases: [],
             description: Some("Set the TCP/IP configuration for <networkservice> to manual with IP address set to <ip>, Subnet Mask set to <subnet>, and Router address set to <router>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "ip",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The IP address to set for the network service"),
                 ),
                 (
                     name: "subnet",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The subnet mask to apply"),
                 ),
                 (
                     name: "router",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The router address to set"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setdhcp",
-            aliases: [],
             description: Some("Use this command to set the TCP/IP configuration for the specified <networkservice> to use DHCP. The client ID is optional. Specify \"Empty\" for [clientid] to clear the DHCP client id"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "clientid",
-                    source: Files,
+                    description: Some("Optional DHCP client ID. Use 'Empty' to clear it"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setbootp",
-            aliases: [],
             description: Some("Use this command to set the TCP/IP configuration for the specified <networkservice> to use BOOTP"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setmanualwithdhcprouter",
-            aliases: [],
             description: Some("Use this command to specify a manual IP address to use for DHCP for the specified <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "ip",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The IP address to set for the network service"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getadditionalroutes",
-            aliases: [],
             description: Some("Use this command to display the list of additional IPv4 routes configured for the service"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setadditionalroutes",
-            aliases: [],
             description: Some("Use this command to set the list of IPv4 additional routes configured for the service. Each route is specified as a (destination address, subnet mask, gateway address) tuple. Specifying no tuples clears the list of routes"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "dest mask gate",
-                    source: Files,
+                    description: Some("One or more tuples of (destination address, subnet mask, gateway address). Specify 'Empty' to clear routes"),
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setv4off",
-            aliases: [],
             description: Some("Use this command to turn IPv4 off on the specified <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setv6off",
-            aliases: [],
             description: Some("Use this command to turn IPv6 off on the specified <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setv6automatic",
-            aliases: [],
             description: Some("Use this command to set IPv6 to get its addresses automatically for <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setv6linklocal",
-            aliases: [],
             description: Some("Use this command to set IPv6 to only use link local for <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setv6manual",
-            aliases: [],
             description: Some("Use this command to set IPv6 to get its addresses manually for <networkservice>. Specify the ip address, the prefix length and the router"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "ip",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The IPv6 address to assign"),
                 ),
                 (
                     name: "prefixlength",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The prefix length for the IPv6 address (e.g., 64)"),
                 ),
                 (
                     name: "router",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The IPv6 address of the router"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getv6additionalroutes",
-            aliases: [],
             description: Some("Use this command to display the list of additional IPv6 routes configured for the service"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setv6additionalroutes",
-            aliases: [],
             description: Some("Use this command to set the list of additional routes configured for the service. Each route is specified as a (destination address, prefix length, gateway address) tuple. Specifying no tuples clears the list of routes"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "dest prefixlength gate",
-                    source: Files,
+                    description: Some("The list of routes, each specified as a tuple of destination address, prefix length, and gateway address. Provide multiple routes or omit this to clear all routes"),
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getdnsservers",
-            aliases: [],
             description: Some("Displays DNS info for <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setdnsservers",
-            aliases: [],
             description: Some("Use this command to specify the IP addresses of servers you want the specified <networkservice> to use to resolve domain names. You can list any number of servers (replace dns1, dns2, and so on with the IP addresses of domain name servers). If you want to clear all DNS entries for the specified network service, type \"empty\" in place of the DNS server names"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "dns",
-                    source: Files,
-                    optional: false,
+                    description: Some("IP addresses of DNS servers. Use 'empty' to clear all DNS entries"),
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getsearchdomains",
-            aliases: [],
             description: Some("Displays Domain Name info for <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setsearchdomains",
-            aliases: [],
             description: Some("Use this command to designate the search domain for the specified <networkservice>. You can list any number of search domains (replace domain1, domain2, and so on with the name of a local domain). If you want to clear all search domain entries for the specified network service, type “empty” in place of the domain name"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "domain",
-                    source: Files,
-                    optional: false,
+                    description: Some("List of search domains. Use 'empty' to clear all existing domains"),
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-create6to4service",
-            aliases: [],
             description: Some("Use this command to create a new 6 to 4 service with name <newnetworkservicename>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "newnetworkservicename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name of the new 6 to 4 service to be created"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-set6to4automatic",
-            aliases: [],
             description: Some("Use this command to set the 6 to 4 service such that it will get the relay address automatically"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "newnetworkservicename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name of the 6 to 4 service to be configured for automatic relay address retrieval"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-set6to4manual",
-            aliases: [],
             description: Some("Use this command to set the 6 to 4 service such that it will get the relay address manually. Specify the <relayaddress> that you would like to set"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "newnetworkservicename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name of the 6 to 4 service to be configured"),
                 ),
                 (
                     name: "relayaddress",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The manually specified relay address to be used by the 6 to 4 service"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getwebproxy",
-            aliases: [],
             description: Some("Displays Web proxy (server, port, enabled value) info for <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setwebproxy",
-            aliases: [],
             description: Some("Set Web proxy for <networkservice> with <domain> and <port number>. Turns proxy on. Optionally, specify <on> or <off> for <authenticated> to enable and disable authenticated proxy support. Specify <username> and <password> if you turn authenticated proxy support on"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "domain",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The domain name or IP address of the proxy server"),
                 ),
                 (
                     name: "portnumber",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The port number for the proxy server"),
                 ),
                 (
                     name: "authenticated",
-                    source: Static([
-                        "on",
-                        "off",
-                    ]),
+                    description: Some("Specify whether proxy authentication is required"),
+                    suggestions: [
+                        (
+                            name: "on",
+                            description: Some("Specify <on> for <authenticated> to enable authenticated proxy support"),
+                        ),
+                        (
+                            name: "off",
+                            description: Some("Specify <off> for <authenticated> to disable authenticated proxy support"),
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "username",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The username for proxy authentication"),
                 ),
                 (
                     name: "password",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The password for proxy authentication"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setwebproxystate",
-            aliases: [],
             description: Some("Set Web proxy on <networkservice> to either <on> or <off>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "on | off",
-                    source: Static([
-                        "on",
-                        "off",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "on",
+                        ),
+                        (
+                            name: "off",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getsecurewebproxy",
-            aliases: [],
             description: Some("Displays Secure Web proxy (server, port, enabled value) info for <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setsecurewebproxy",
-            aliases: [],
             description: Some("Set Secure Web proxy for <networkservice> with <domain> and <port number>. Turns proxy on. Optionally, specify <on> or <off> for <authenticated> to enable and disable authenticated proxy support. Specify <username> and <password> if you turn authenticated proxy support on"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "domain",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The proxy server's domain or IP address"),
                 ),
                 (
                     name: "portnumber",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The port number for the proxy server"),
                 ),
                 (
                     name: "authenticated",
-                    source: Static([
-                        "on",
-                        "off",
-                    ]),
+                    description: Some("Specify whether proxy authentication is required"),
+                    suggestions: [
+                        (
+                            name: "on",
+                            description: Some("Specify <on> for <authenticated> to enable authenticated proxy support"),
+                        ),
+                        (
+                            name: "off",
+                            description: Some("Specify <off> for <authenticated> to disable authenticated proxy support"),
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "username",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The username for proxy authentication"),
                 ),
                 (
                     name: "password",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The password for proxy authentication"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setsecurewebproxystate",
-            aliases: [],
             description: Some("Set Secure Web proxy on <networkservice> to either <on> or <off>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "on | off",
-                    source: Static([
-                        "on",
-                        "off",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "on",
+                        ),
+                        (
+                            name: "off",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getsocksfirewallproxy",
-            aliases: [],
             description: Some("Displays SOCKS Firewall proxy (server, port, enabled value) info for <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setsocksfirewallproxy",
-            aliases: [],
             description: Some("Set SOCKS Firewall proxy for <networkservice> with <domain> and <port number>. Turns proxy on.  Optionally, specify <on> or <off> for <authenticated> to enable and disable authenticated proxy support. Specify <username> and <password> if you turn authenticated proxy support on"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "domain",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The proxy server's domain or IP address"),
                 ),
                 (
                     name: "portnumber",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The port number for the proxy server"),
                 ),
                 (
                     name: "authenticated",
-                    source: Static([
-                        "on",
-                        "off",
-                    ]),
+                    description: Some("Specify whether proxy authentication is required"),
+                    suggestions: [
+                        (
+                            name: "on",
+                            description: Some("Specify <on> for <authenticated> to enable authenticated proxy support"),
+                        ),
+                        (
+                            name: "off",
+                            description: Some("Specify <off> for <authenticated> to disable authenticated proxy support"),
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "username",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The username for proxy authentication"),
                 ),
                 (
                     name: "password",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The password for proxy authentication"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setsocksfirewallproxystate",
-            aliases: [],
             description: Some("Set SOCKS Firewall proxy to  either <on> or <off>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "on | off",
-                    source: Static([
-                        "on",
-                        "off",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "on",
+                        ),
+                        (
+                            name: "off",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getproxybypassdomains",
-            aliases: [],
             description: Some("Displays Bypass Domain Names for <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setproxybypassdomains",
-            aliases: [],
             description: Some("Set the Bypass Domain Name Servers for <networkservice> to <domain1> [domain2] [...]. Any number of Domain Name servers can be specified. Specify \"Empty\" for <domain1> to clear all Domain Name entries"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "domain",
-                    source: Files,
-                    optional: false,
+                    description: Some("Domains to bypass proxy for. Use 'Empty' to clear all bypass domains"),
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getproxyautodiscovery",
-            aliases: [],
             description: Some("Displays Proxy Auto Discover for <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setproxyautodiscovery",
-            aliases: [],
             description: Some("Set Proxy Auto Discover for <networkservice> to either <on> or <off>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "on | off",
-                    source: Static([
-                        "on",
-                        "off",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "on",
+                        ),
+                        (
+                            name: "off",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setautoproxyurl",
-            aliases: [],
             description: Some("Set proxy auto-config to url for <networkservice> and enable it"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "url",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The URL of the proxy auto-config (PAC) file"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getautoproxyurl",
-            aliases: [],
             description: Some("Displays proxy auto-config (url, enabled) info for <networkservice>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getairportnetwork",
-            aliases: [],
             description: Some("Displays current Wi-Fi Network"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setairportnetwork",
-            aliases: [],
             description: Some("Set Wi-Fi Network to <network> using optional [password] if specified"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "network",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name of the Wi-Fi network to connect to"),
                 ),
                 (
                     name: "password",
-                    source: Files,
+                    description: Some("Optional password for the Wi-Fi network"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getairportpower",
-            aliases: [],
             description: Some("Displays whether Wi-Fi power is on or off"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setairportpower",
-            aliases: [],
             description: Some("Set Wi-Fi power to either <on> or <off>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "on | off",
-                    source: Static([
-                        "on",
-                        "off",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "on",
+                        ),
+                        (
+                            name: "off",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-listpreferredwirelessnetworks",
-            aliases: [],
             description: Some("List the preferred wireless networks for <hardwareport>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-addpreferredwirelessnetworkatindex",
-            aliases: [],
             description: Some("Add wireless network named <network> to preferred list for <hardwareport> at <index>. Store the optional password in the keychain"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "network",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name of the Wi-Fi network to add"),
                 ),
                 (
                     name: "index",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The position in the preferred list"),
                 ),
                 (
                     name: "securitytype",
-                    source: Static([
-                        "OPEN",
-                        "WPA",
-                        "WPA2",
-                        "WPA/WPA2",
-                        "WPAE",
-                        "WPA2E",
-                        "WPAE/WPA2E",
-                        "WEP",
-                        "8021XWEP",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The security type of the network"),
+                    suggestions: [
+                        (
+                            name: "OPEN",
+                            description: Some("No security"),
+                        ),
+                        (
+                            name: "WPA",
+                            description: Some("WPA Personal"),
+                        ),
+                        (
+                            name: "WPA2",
+                            description: Some("WPA2 Personal"),
+                        ),
+                        (
+                            name: "WPA/WPA2",
+                            description: Some("WPA/WPA2 Personal"),
+                        ),
+                        (
+                            name: "WPAE",
+                            description: Some("WPA Enterprise"),
+                        ),
+                        (
+                            name: "WPA2E",
+                            description: Some("WPA2 Enterprise"),
+                        ),
+                        (
+                            name: "WPAE/WPA2E",
+                            description: Some("WPA/WPA2 Enterprise"),
+                        ),
+                        (
+                            name: "WEP",
+                            description: Some("Plain WEP"),
+                        ),
+                        (
+                            name: "8021XWEP",
+                            description: Some("802.1X WEP"),
+                        ),
+                    ],
                 ),
                 (
                     name: "password",
-                    source: Files,
+                    description: Some("Optional password for the network"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-removepreferredwirelessnetwork",
-            aliases: [],
             description: Some("Remove <network> from the preferred wireless network list for <hardwareport>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "network",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name of the Wi-Fi network to remove"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-removeallpreferredwirelessnetworks",
-            aliases: [],
             description: Some("Remove all networks from the preferred wireless network list for <hardwareport>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getnetworkserviceenabled",
-            aliases: [],
             description: Some("Displays whether a service is on or off (enabled or disabled)"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setnetworkserviceenabled",
-            aliases: [],
             description: Some("Use this command to turn the specified network service on or off (enable or disable)"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "on | off",
-                    source: Static([
-                        "on",
-                        "off",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "on",
+                        ),
+                        (
+                            name: "off",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-createnetworkservice",
-            aliases: [],
             description: Some("Create a service named <networkservice> on port <hardwareport>. The new service will be enabled by default"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservicename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name for the new network service"),
                 ),
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-renamenetworkservice",
-            aliases: [],
             description: Some("Use this command to rename the specified network service <networkservice> to <newnetworkservicename>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "newnetworkservicename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The new name for the network service"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-duplicatenetworkservice",
-            aliases: [],
             description: Some("Use this command to duplicate an existing network service <networkservice> and rename it to the specified name <newnetworkservicename>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "newnetworkservicename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The new name for the duplicated network service"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-removenetworkservice",
-            aliases: [],
             description: Some("Use this command to delete a network service <networkservice>. You cannot use this command to delete the last remaining service for a hardware port. To do so, you use the -setnetworkserviceenabled command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "networkservice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-ordernetworkservices",
-            aliases: [],
             description: Some("Use this command to designate the order network services are contacted on the specified hardware port. Name the network you want contacted first, then the second, and so on. Use \"listnetworkserviceorder\" to view current service order. Note: use quotes around service names which contain spaces (ie. \"Built-in Ethernet\")"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallnetworkservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallnetworkservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setMTUAndMediaAutomatically",
-            aliases: [],
             description: Some("Set hardwareport or device specified back to automatically setting the MTU and Media"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwarePort",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getMTU",
-            aliases: [],
             description: Some("Get the MTU value for hardwareport or device specified"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwarePort",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setMTU",
-            aliases: [],
             description: Some("Set MTU for hardwareport or device specified"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwarePort",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The MTU value to set, typically an integer representing the maximum packet size"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-listValidMTURange",
-            aliases: [],
             description: Some("List the valid MTU range for hardwareport or device specified"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-getMedia",
-            aliases: [],
             description: Some("Show both the current setting for media and the active media on hardwareport or device specified"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setMedia",
-            aliases: [],
             description: Some("Set media for hardwareport or device specified to subtype. Specify optional [option1] and additional options depending on subtype. Any number of valid options can be specified"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwarePort",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "subtype",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The media subtype to set for the hardware port or device"),
                 ),
                 (
                     name: "option",
-                    source: Files,
+                    description: Some("Additional options relevant to the <subtype>. Can include multiple values depending on the subtype"),
                     optional: true,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-listValidMedia",
-            aliases: [],
             description: Some("List valid media options for hardwareport or device name. Enumerates available subtypes and options per subtype"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "hardwareport",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-createVLAN",
-            aliases: [],
             description: Some("Create a VLAN with the name <name> over the parent device <parentdevice> and with the tag <tag>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name to assign to the new VLAN"),
                 ),
                 (
                     name: "parentdevice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("The parent device over which the VLAN will be created"),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "tag",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The VLAN tag to assign to the new VLAN"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-deleteVLAN",
-            aliases: [],
             description: Some("Delete the VLAN with the name <name> over the parent device <parentdevice> and with the tag <tag>"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name of the VLAN to be deleted"),
                 ),
                 (
                     name: "parentdevice",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("The parent device on which the VLAN is configured"),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "tag",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The VLAN tag of the VLAN to be deleted"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-listVLANs",
-            aliases: [],
             description: Some("List the VLANs that have been created"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-listdevicesthatsupportVLAN",
-            aliases: [],
             description: Some("List the devices that support VLANs"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-isBondSupported",
-            aliases: [],
             description: Some("Displays YES if the device can be added to a bond. NO if it cannot"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "device",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-createBond",
-            aliases: [],
             description: Some("Create a bond with the user-defined-name name and optionally add any listed devices if they support bonding"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The user-defined name for the new bond"),
                 ),
                 (
                     name: "device",
-                    source: Unavailable,
+                    description: Some("The devices to include in the bond. Any number of devices can be specified"),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-deleteBond",
-            aliases: [],
             description: Some("Delete the bond with the specified device-name"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "bond",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listBonds",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listBonds",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-addDeviceToBond",
-            aliases: [],
             description: Some("Add device to bond"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "device",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "bond",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listBonds",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listBonds",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-removeDeviceFromBond",
-            aliases: [],
             description: Some("Remove device from bond"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "device",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "bond",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listBonds",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listBonds",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-listBonds",
-            aliases: [],
             description: Some("List of all bonds"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-showBondStatus",
-            aliases: [],
             description: Some("Display the status of the specified bond"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "bond",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listBonds",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listBonds",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-listpppoeservices",
-            aliases: [],
             description: Some("List all PPPoE services in the current set"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-showpppoestatus",
-            aliases: [],
             description: Some("Display the status of the PPPoE service with the specified name"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "name",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listpppoeservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listpppoeservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-createpppoeservice",
-            aliases: [],
             description: Some("Create a PPPoE service on the specified device with the service name specified"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "device",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("The network device to create the PPPoE service on"),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name for the new PPPoE service"),
                 ),
                 (
                     name: "account",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The PPPoE account name"),
                 ),
                 (
                     name: "password",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The PPPoE account password"),
                 ),
                 (
                     name: "pppoeName",
-                    source: Files,
+                    description: Some("Optional name for the PPPoE service"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-deletepppoeservice",
-            aliases: [],
             description: Some("Delete the service"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listpppoeservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listpppoeservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setpppoeaccountname",
-            aliases: [],
             description: Some("Set the account name for the service"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listpppoeservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listpppoeservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "account",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The PPPoE account name"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-setpppoepassword",
-            aliases: [],
             description: Some("Set the password for the service"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listpppoeservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listpppoeservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "password",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The PPPoE account password"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-connectpppoeservice",
-            aliases: [],
             description: Some("Connect the service"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listpppoeservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listpppoeservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-disconnectpppoeservice",
-            aliases: [],
             description: Some("Disconnect the service"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "service",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listpppoeservices",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listpppoeservices",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-listlocations",
-            aliases: [],
             description: Some("List all network locations"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-getcurrentlocation",
-            aliases: [],
             description: Some("Display the name of the current set"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-createlocation",
-            aliases: [],
             description: Some("Create a set with the user-defined-name name and optionally populate it with the default services"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "location",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name for the new location"),
                 ),
                 (
                     name: "populate",
-                    source: Files,
+                    description: Some("Specify 'true' to populate with default services or 'false' to create an empty location"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-deletelocation",
-            aliases: [],
             description: Some("Delete the set"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "location",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listlocations",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listlocations",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-switchtolocation",
-            aliases: [],
             description: Some("Make the specified set the current set"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "location",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listlocations",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listlocations",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "-version",
-            aliases: [],
             description: Some("Displays version of networksetup tool"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-help",
-            aliases: [],
             description: Some("Displays a list of all the commands available in the Network Setup Tool, with explanatory information"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "-printcommands",
-            aliases: [],
             description: Some("Displays a list of commands with no detail"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
-    options: [],
-    arguments: [],
 )

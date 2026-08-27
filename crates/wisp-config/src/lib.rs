@@ -38,8 +38,13 @@ impl WispConfig {
     }
 
     pub fn validate(&self) -> anyhow::Result<()> {
-        if self.generator.timeout_ms == 0 || self.generator.max_output_bytes == 0 {
-            bail!("generator timeout_ms and max_output_bytes must be greater than zero");
+        if self.generator.timeout_ms == 0
+            || self.generator.max_output_bytes == 0
+            || self.generator.history_limit == 0
+        {
+            bail!(
+                "generator timeout_ms, max_output_bytes, and history_limit must be greater than zero"
+            );
         }
         if self.overlay.max_visible_candidates == 0
             || self.overlay.max_path_label_width == 0
@@ -103,6 +108,10 @@ pub struct GeneratorConfig {
     pub timeout_ms: u64,
     #[serde(default = "default_generator_max_output_bytes")]
     pub max_output_bytes: usize,
+    #[serde(default = "default_generator_cache_ttl_ms")]
+    pub cache_ttl_ms: u64,
+    #[serde(default = "default_generator_history_limit")]
+    pub history_limit: usize,
 }
 
 impl Default for GeneratorConfig {
@@ -110,6 +119,8 @@ impl Default for GeneratorConfig {
         Self {
             timeout_ms: default_generator_timeout_ms(),
             max_output_bytes: default_generator_max_output_bytes(),
+            cache_ttl_ms: default_generator_cache_ttl_ms(),
+            history_limit: default_generator_history_limit(),
         }
     }
 }
@@ -319,6 +330,12 @@ const fn default_generator_timeout_ms() -> u64 {
 const fn default_generator_max_output_bytes() -> usize {
     256 * 1024
 }
+const fn default_generator_cache_ttl_ms() -> u64 {
+    3_000
+}
+const fn default_generator_history_limit() -> usize {
+    2_000
+}
 const fn default_ai_debounce_ms() -> u64 {
     120
 }
@@ -443,6 +460,8 @@ mod tests {
         let config: WispConfig = toml::from_str("").unwrap();
         assert_eq!(config.completion.max_candidates, 0);
         assert_eq!(config.generator.timeout_ms, 150);
+        assert_eq!(config.generator.cache_ttl_ms, 3_000);
+        assert_eq!(config.generator.history_limit, 2_000);
         assert_eq!(config.overlay.max_visible_candidates, 8);
         assert_eq!(config.overlay.width, 440.0);
         assert_eq!(config.terminal.window_frame_cache_ms, 250);

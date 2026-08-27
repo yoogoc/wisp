@@ -5,144 +5,104 @@
     subcommands: [
         (
             name: "publish",
-            aliases: [],
             description: Some("Copy all the files that should be published in remote NPM registry"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--push",
                     ],
                     description: Some("Publish package to the store and propagate all changes to existing yalc package installations"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-scripts",
                     ],
                     description: Some("Publish without running scripts"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-sig",
                     ],
                     description: Some("Disable adding hash signature of all files when copying package content"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--content",
                     ],
                     description: Some("Show included files in the published package"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-workspace-resolve",
                     ],
-                    description: Some("Do not resolve \'workspace:\' protocol in dependencies"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Do not resolve 'workspace:' protocol in dependencies"),
                 ),
                 (
                     names: [
                         "--private",
                     ],
                     description: Some("Force publishing of private package"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "push",
-            aliases: [],
             description: Some("Publish your package to the store and propagate all changes to existing yalc package installations"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "add",
-            aliases: [],
             description: Some("Copy the current version from the store to your project"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--link",
                     ],
-                    description: Some("Add a \'link:\' dependency instead of \'file:\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Add a 'link:' dependency instead of 'file:'"),
                 ),
                 (
                     names: [
                         "--dev",
                     ],
                     description: Some("Add yalc package to dev dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--pure",
                     ],
-                    description: Some("Do not touch \'package.json\' or \'node_modules\'"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Do not touch 'package.json' or 'node_modules'"),
                 ),
                 (
                     names: [
                         "--workspace",
                         "-W",
                     ],
-                    description: Some("Add dependency with \'workspace:\' protocol"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Add dependency with 'workspace:' protocol"),
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "command find ~/.yalc/packages -maxdepth 4 -iname \'package.json\'",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("The package you want to add"),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "command find ~/.yalc/packages -maxdepth 4 -iname 'package.json'",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "link",
-            aliases: [],
-            description: Some("Alterative to \'add\', instead using local \'.yalc\' as symlink source"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Alterative to 'add', instead using local '.yalc' as symlink source"),
         ),
         (
             name: "update",
-            aliases: [],
             description: Some("Update package(s)"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -150,158 +110,114 @@
                         "--upgrade",
                         "--up",
                     ],
-                    description: Some("Run package manager\'s update command for packages"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Run package manager's update command for packages"),
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
+                    description: Some("The package to update"),
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "command find ~/.yalc/packages -maxdepth 4 -iname 'package.json'",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "command find ~/.yalc/packages -maxdepth 4 -iname \'package.json\'",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "remove",
-            aliases: [],
-            description: Some("Remove package info from \'package.json\' & \'yalc.lock\'"),
-            subcommands: [],
+            description: Some("Remove package info from 'package.json' & 'yalc.lock'"),
             options: [
                 (
                     names: [
                         "--all",
                     ],
                     description: Some("Remove all packages from project"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
+                    description: Some("The package you want to remove"),
+                    generators: [
+                        (
+                            script: [
+                                "ls",
+                                ".yalc",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "ls",
-                            ".yalc",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "installations",
-            aliases: [],
-            description: None,
             subcommands: [
                 (
                     name: "clean",
-                    aliases: [],
                     description: Some("Unpublish a package published with yalc publish"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "package",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "command find ~/.yalc/packages -maxdepth 4 -iname \'package.json\'",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "command find ~/.yalc/packages -maxdepth 4 -iname 'package.json'",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "show",
-                    aliases: [],
                     description: Some("Show all packages to which chosen package has been added"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "package",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "command find ~/.yalc/packages -maxdepth 4 -iname \'package.json\'",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "command find ~/.yalc/packages -maxdepth 4 -iname 'package.json'",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            requires_subcommand: true,
         ),
         (
             name: "dir",
-            aliases: [],
             description: Some("Show yalc system directory"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "check",
-            aliases: [],
-            description: Some("Check \'package.json\' for yalc packages"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Check 'package.json' for yalc packages"),
         ),
         (
             name: "restore",
-            aliases: [],
             description: Some("Restore retreated packages"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "retreat",
-            aliases: [],
             description: Some("Remove packages from project, but leave in lock file (to be restored later)"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -310,25 +226,18 @@
                 "--help",
             ],
             description: Some("Show help for yalc"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-colors",
             ],
             description: Some("Disable colors"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--quiet",
             ],
             description: Some("Fully disable output (except errors)"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

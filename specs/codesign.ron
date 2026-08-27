@@ -2,15 +2,12 @@
     version: 1,
     command: "codesign",
     description: Some("Create and manipulate code signatures"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--all-architectures",
             ],
-            description: Some("When verifying a code signature on code that has a universal (\'fat\') Mach-O binary, separately verify each architecture contained. This is the default unless overridden with the -a (--architecture) option"),
-            takes_value: false,
-            arguments: [],
+            description: Some("When verifying a code signature on code that has a universal ('fat') Mach-O binary, separately verify each architecture contained. This is the default unless overridden with the -a (--architecture) option"),
         ),
         (
             names: [
@@ -18,14 +15,9 @@
                 "--architecture",
             ],
             description: Some("When verifying or displaying signatures, explicitly select the Mach-O architecture given"),
-            takes_value: true,
             arguments: [
                 (
                     name: "architecture",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -34,14 +26,9 @@
                 "--bundle-version",
             ],
             description: Some("When handling versioned bundles such as frameworks, explicitly specify the version to operate on"),
-            takes_value: true,
             arguments: [
                 (
                     name: "version-string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -51,8 +38,6 @@
                 "--display",
             ],
             description: Some("Display information about the code at the path(s) given"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -60,14 +45,12 @@
                 "--detached",
             ],
             description: Some("When signing, designates that a detached signature should be written to the specified file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -76,16 +59,12 @@
                 "--deep",
             ],
             description: Some("When signing a bundle, specifies that nested code content such as helpers, frameworks, and plug-ins, should be recursively signed in turn. Beware that all signing options you specify will apply, in turn, to such nested content"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--detached-database",
             ],
             description: Some("When signing, specifies that a detached signature should be generated as with the --detached option, but that the resulting signature should be written into a system database, from where it is made automatically available whenever apparently unsigned code is validated on the system"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -93,8 +72,6 @@
                 "--force",
             ],
             description: Some("When signing, causes codesign to replace any existing signature on the path(s) given"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -102,8 +79,6 @@
                 "--hosting",
             ],
             description: Some("Constructs and prints the hosting chain of a running program"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -111,14 +86,9 @@
                 "--identifier",
             ],
             description: Some("During signing, explicitly specify the unique identifier string that is embedded in code signatures"),
-            takes_value: true,
             arguments: [
                 (
                     name: "identifier",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -128,18 +98,16 @@
                 "--options",
             ],
             description: Some("During signing, specifies a set of option flags to be embedded in the code signature"),
-            takes_value: true,
             arguments: [
                 (
                     name: "version-string",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -149,14 +117,9 @@
                 "--pagesize",
             ],
             description: Some("Indicates the granularity of code signing. Pagesize must be a power of two"),
-            takes_value: true,
             arguments: [
                 (
                     name: "size",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -166,14 +129,9 @@
                 "--requirements",
             ],
             description: Some("During signing, indicates that internal requirements should be embedded in the code path(s) as specified"),
-            takes_value: true,
             arguments: [
                 (
                     name: "requirements",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -183,14 +141,9 @@
                 "--test-requirement",
             ],
             description: Some("During verification, indicates that the path(s) given should be verified against the code requirement specified"),
-            takes_value: true,
             arguments: [
                 (
                     name: "requirement",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -200,14 +153,9 @@
                 "--sign",
             ],
             description: Some("Sign the code at the path(s) given using this identity"),
-            takes_value: true,
             arguments: [
                 (
                     name: "identity",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -217,38 +165,27 @@
                 "--verify",
             ],
             description: Some("Requests verification of code signatures"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--continue",
             ],
             description: Some("Instructs codesign to continue processing path arguments even if processing one fails"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--dryrun",
             ],
             description: Some("During signing, performs almost all signing operations, but does not actually write the result anywhere"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--entitlements",
             ],
             description: Some("When signing, take the file at the given path and embed its contents in the signature as entitlement data"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -257,14 +194,9 @@
                 "--extract-certificates",
             ],
             description: Some("When displaying a signature, extract the certificates in the embedded certificate chain and write them to individual files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "prefix",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -273,14 +205,13 @@
                 "--file-list",
             ],
             description: Some("When signing or displaying a signature, codesign writes to the given path a list of files that may have been modified as part of the signing process"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
+                    template: [
+                        FilePaths,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -288,23 +219,16 @@
             names: [
                 "--ignore-resources",
             ],
-            description: Some("During static validation, do not validate the contents of the code\'s resources"),
-            takes_value: false,
-            arguments: [],
+            description: Some("During static validation, do not validate the contents of the code's resources"),
         ),
         (
             names: [
                 "--keychain",
             ],
             description: Some("During signing, only search for the signing identity in the keychain file specified"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -313,14 +237,9 @@
                 "--prefix",
             ],
             description: Some("If no explicit unique identifier is specified (using the -i option), and if the implicitly generated identifier does not contain any dot (.) characters, then the given string is prefixed to the identifier before use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "prefix",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -329,26 +248,22 @@
                 "--preserve-metadata=list",
             ],
             description: Some("When re-signing code that is already signed, reuse some information from the old signature"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--resource-rules",
             ],
             description: Some("During signing, this option overrides the default rules for identifying and collecting bundle resources and nested code to be sealed into the signature"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -357,17 +272,13 @@
                 "--timestamp",
             ],
             description: Some("During signing, requests that a timestamp authority server be contacted to authenticate the time of signing"),
-            takes_value: true,
             arguments: [
                 (
                     name: "URL",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            requires_separator: Some("="),
         ),
     ],
-    arguments: [],
 )

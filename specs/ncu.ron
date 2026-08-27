@@ -2,38 +2,32 @@
     version: 1,
     command: "ncu",
     description: Some("Upgrade your npm package.json dependencies to the latest versions, ignoring specified versions"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--cache",
             ],
             description: Some("Cache versions to a local cache file. Default --cacheFile is ~/.ncu-cache.json and default --cacheExpiration is 10 minutes"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--cacheClear",
             ],
             description: Some("Clear the default cache, or the cache file specified by --cacheFile"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--cacheExpiration",
             ],
             description: Some("Cache expiration in minutes. Only works with --cache. (default: 10)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "min",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("10"),
                 ),
+            ],
+            depends_on: [
+                "--cache",
             ],
         ),
         (
@@ -41,15 +35,17 @@
                 "--cacheFile",
             ],
             description: Some("Filepath for the cache file. Only works with --cache. (default: \"~/.ncu-cache.json\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
+                    default: Some("~/.ncu-cache.json"),
                 ),
+            ],
+            depends_on: [
+                "--cache",
             ],
         ),
         (
@@ -57,22 +53,16 @@
                 "--color",
             ],
             description: Some("Force color in terminal"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--concurrency",
             ],
             description: Some("Max number of concurrent HTTP requests to registry. (default: 8)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "n",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("8"),
                 ),
             ],
         ),
@@ -81,14 +71,13 @@
                 "--configFileName",
             ],
             description: Some("Config file name. (default: .ncurc.{json,yml,js,cjs})"),
-            takes_value: true,
             arguments: [
                 (
                     name: "s",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
+                    default: Some(".ncurc.{json,yml,js,cjs}"),
                 ),
             ],
         ),
@@ -97,14 +86,13 @@
                 "--configFilePath",
             ],
             description: Some("Directory of .ncurc config file. (default: directory of packageFile)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
+                    default: Some("directory of packageFile"),
                 ),
             ],
         ),
@@ -113,14 +101,12 @@
                 "--cwd",
             ],
             description: Some("Working directory in which npm will be executed"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -128,29 +114,34 @@
             names: [
                 "--deep",
             ],
-            description: Some("Run recursively in current working directory. Alias of (--packageFile \'**/package.json\')"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Run recursively in current working directory. Alias of (--packageFile '**/package.json')"),
         ),
         (
             names: [
                 "--dep",
             ],
             description: Some("Check one or more sections of dependencies only: dev, optional, peer, prod, or packageManager (comma-delimited). (default: [\"prod\",\"dev\",\"optional\"])"),
-            takes_value: true,
             arguments: [
                 (
                     name: "value",
-                    source: Static([
-                        "dev",
-                        "optional",
-                        "peer",
-                        "prod",
-                        "packageManager",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "dev",
+                        ),
+                        (
+                            name: "optional",
+                        ),
+                        (
+                            name: "peer",
+                        ),
+                        (
+                            name: "prod",
+                        ),
+                        (
+                            name: "packageManager",
+                        ),
+                    ],
+                    default: Some("prod,dev,optional"),
                 ),
             ],
         ),
@@ -159,8 +150,6 @@
                 "--deprecated",
             ],
             description: Some("Include deprecated packages"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -168,22 +157,16 @@
                 "-d",
             ],
             description: Some("Iteratively installs upgrades and runs tests to identify breaking upgrades. Requires -u to execute. Run \"ncu --help --doctor\" for details"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--doctorInstall",
             ],
             description: Some("Specifies the install script to use in doctor mode. (default: npm install/yarn)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("npm install/yarn"),
                 ),
             ],
         ),
@@ -192,14 +175,10 @@
                 "--doctorTest",
             ],
             description: Some("Specifies the test script to use in doctor mode. (default: npm test)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("npm test"),
                 ),
             ],
         ),
@@ -208,8 +187,6 @@
                 "--enginesNode",
             ],
             description: Some("Include only packages that satisfy engines.node as specified in the package file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -217,14 +194,10 @@
                 "-e",
             ],
             description: Some("Set the error level. 1: exits with error code 0 if no errors occur. 2: exits with error code 0 if no packages need updating (useful for continuous integration). (default: 1)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "n",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("1"),
                 ),
             ],
         ),
@@ -234,14 +207,9 @@
                 "-f",
             ],
             description: Some("Include only package names matching the given string, wildcard, glob, comma-or-space-delimited list, /regex/, or predicate function"),
-            takes_value: true,
             arguments: [
                 (
                     name: "p",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -250,22 +218,15 @@
                 "--filterResults",
             ],
             description: Some("Filters out upgrades based on a user provided function. Run \"ncu --help --filterResults\" for details"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--filterVersion",
             ],
             description: Some("Filter on package version using comma-or-space-delimited list, /regex/, or predicate function"),
-            takes_value: true,
             arguments: [
                 (
                     name: "p",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -274,20 +235,26 @@
                 "--format",
             ],
             description: Some("Modify the output formatting or show additional information. Specify one or more comma-delimited values: group, ownerChanged, repo, time, lines. Run \"ncu --help --format\" for details. (default: [])"),
-            takes_value: true,
             arguments: [
                 (
                     name: "value",
-                    source: Static([
-                        "group",
-                        "ownerChanged",
-                        "repo",
-                        "time",
-                        "lines",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "group",
+                        ),
+                        (
+                            name: "ownerChanged",
+                        ),
+                        (
+                            name: "repo",
+                        ),
+                        (
+                            name: "time",
+                        ),
+                        (
+                            name: "lines",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -297,16 +264,12 @@
                 "-g",
             ],
             description: Some("Check global packages instead of in the current project"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--groupFunction",
             ],
             description: Some("Customize how packages are divided into groups when using --format group. Run \"ncu --help --groupFunction\" for details"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -314,8 +277,6 @@
                 "-h",
             ],
             description: Some("Show help"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -323,8 +284,6 @@
                 "-i",
             ],
             description: Some("Enable interactive prompts for each dependency; implies -u unless one of the json options are set"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -332,24 +291,18 @@
                 "-j",
             ],
             description: Some("Output new package file instead of human-readable message"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--jsonDeps",
             ],
             description: Some("Like jsonAll but only lists dependencies, devDependencies, optionalDependencies, etc of the new package data"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--jsonUpgraded",
             ],
             description: Some("Output upgraded dependencies in json"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -357,22 +310,33 @@
                 "-l",
             ],
             description: Some("Amount to log: silent, error, minimal, warn, info, verbose, silly. (default: \"warn\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "n",
-                    source: Static([
-                        "silent",
-                        "error",
-                        "minimal",
-                        "warn",
-                        "info",
-                        "verbose",
-                        "silly",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "silent",
+                        ),
+                        (
+                            name: "error",
+                        ),
+                        (
+                            name: "minimal",
+                        ),
+                        (
+                            name: "warn",
+                        ),
+                        (
+                            name: "info",
+                        ),
+                        (
+                            name: "verbose",
+                        ),
+                        (
+                            name: "silly",
+                        ),
+                    ],
+                    default: Some("warn"),
                 ),
             ],
         ),
@@ -381,8 +345,6 @@
                 "--mergeConfig",
             ],
             description: Some("Merges nested configs with the root config file for --deep or --packageFile options. (default: false)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -390,22 +352,15 @@
                 "-m",
             ],
             description: Some("Do not upgrade newer versions that are already satisfied by the version range according to semver"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--packageData",
             ],
             description: Some("Package file data (you can also use stdin)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -414,14 +369,13 @@
                 "--packageFile",
             ],
             description: Some("Package file(s) location. (default: ./package.json)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path|glob",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
+                    default: Some("./package.json"),
                 ),
             ],
         ),
@@ -431,20 +385,27 @@
                 "-p",
             ],
             description: Some("Npm, yarn, pnpm, deno, staticRegistry (default: npm). Run \"ncu --help --packageManager\" for details"),
-            takes_value: true,
             arguments: [
                 (
                     name: "s",
-                    source: Static([
-                        "npm",
-                        "yarn",
-                        "pnpm",
-                        "deno",
-                        "staticRegistry",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "npm",
+                        ),
+                        (
+                            name: "yarn",
+                        ),
+                        (
+                            name: "pnpm",
+                        ),
+                        (
+                            name: "deno",
+                        ),
+                        (
+                            name: "staticRegistry",
+                        ),
+                    ],
+                    default: Some("npm"),
                 ),
             ],
         ),
@@ -453,22 +414,16 @@
                 "--peer",
             ],
             description: Some("Check peer dependencies of installed packages and filter updates to compatible versions. Run \"ncu --help --peer\" for details"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--pre",
             ],
             description: Some("Include prerelease versions, e.g. -alpha.0, -beta.5, -rc.2. Automatically set to 1 when --target is newest or greatest, or when the current version is a prerelease. (default: 0)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "n",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("0"),
                 ),
             ],
         ),
@@ -477,14 +432,12 @@
                 "--prefix",
             ],
             description: Some("Current working directory of npm"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -494,14 +447,9 @@
                 "-r",
             ],
             description: Some("Third-party npm registry. Run \"ncu --help --registry\" for details"),
-            takes_value: true,
             arguments: [
                 (
                     name: "uri",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -511,14 +459,9 @@
                 "-x",
             ],
             description: Some("Exclude packages matching the given string, wildcard, glob, comma-or-space-delimited list, /regex/, or predicate function"),
-            takes_value: true,
             arguments: [
                 (
                     name: "p",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -527,14 +470,9 @@
                 "--rejectVersion",
             ],
             description: Some("Exclude package.json versions using comma-or-space-delimited list, /regex/, or predicate function"),
-            takes_value: true,
             arguments: [
                 (
                     name: "p",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -543,22 +481,16 @@
                 "--removeRange",
             ],
             description: Some("Remove version ranges from the final package version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--retry",
             ],
             description: Some("Number of times to retry failed requests for package info. (default: 3)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "n",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("3"),
                 ),
             ],
         ),
@@ -567,25 +499,19 @@
                 "--root",
             ],
             description: Some("Runs updates on the root project in addition to specified workspaces. Only allowed with --workspace or --workspaces. (default: false)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--silent",
                 "-s",
             ],
-            description: Some("Don\'t output anything. Alias for --loglevel silent"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't output anything. Alias for --loglevel silent"),
         ),
         (
             names: [
                 "--stdin",
             ],
             description: Some("Read package.json from stdin"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -593,20 +519,27 @@
                 "-t",
             ],
             description: Some("Determines the version to upgrade to: latest, newest, greatest, minor, patch, @[tag], or [function]. (default: latest) Run \"ncu --help --target\" for details"),
-            takes_value: true,
             arguments: [
                 (
                     name: "value",
-                    source: Static([
-                        "latest",
-                        "newest",
-                        "greatest",
-                        "minor",
-                        "patch",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "latest",
+                        ),
+                        (
+                            name: "newest",
+                        ),
+                        (
+                            name: "greatest",
+                        ),
+                        (
+                            name: "minor",
+                        ),
+                        (
+                            name: "patch",
+                        ),
+                    ],
+                    default: Some("latest"),
                 ),
             ],
         ),
@@ -615,14 +548,9 @@
                 "--timeout",
             ],
             description: Some("Global timeout in milliseconds. (default: no global timeout and 30 seconds per npm-registry-fetch)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ms",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -632,16 +560,12 @@
                 "-u",
             ],
             description: Some("Overwrite package file with upgraded versions instead of just outputting to console"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--verbose",
             ],
             description: Some("Log additional information for debugging. Alias for --loglevel verbose"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -649,8 +573,6 @@
                 "-v",
             ],
             description: Some("Output the version number of npm-check-updates"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -658,14 +580,9 @@
                 "-w",
             ],
             description: Some("Run on one or more specified workspaces. Add --root to also upgrade the root project. (default: [])"),
-            takes_value: true,
             arguments: [
                 (
                     name: "s",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -675,17 +592,17 @@
                 "-ws",
             ],
             description: Some("Run on all workspaces. Add --root to also upgrade the root project"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "filter",
-            source: Files,
+            description: Some("A list or regex of package names to check (all others will be ignored)"),
             optional: true,
             variadic: true,
-            imported_generator: None,
         ),
     ],
+    parser_directives: Some((
+        flags_are_posix_noncompliant: true,
+    )),
 )

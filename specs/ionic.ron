@@ -5,26 +5,24 @@
     subcommands: [
         (
             name: "build",
-            aliases: [],
             description: Some("Build web assets and prepare your app for any platform targets"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--engine",
                     ],
                     description: Some("Target engine (e.g. browser, cordova)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "engine",
-                            source: Static([
-                                "browser",
-                                "cordova",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "browser",
+                                ),
+                                (
+                                    name: "cordova",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -33,17 +31,17 @@
                         "--platform",
                     ],
                     description: Some("Target platform on chosen engine (e.g. ios, android)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -52,8 +50,6 @@
                         "--prod",
                     ],
                     description: Some("Flag to use the production configuration"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -61,14 +57,13 @@
                         "-c",
                     ],
                     description: Some("Specify the configuration to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "conf",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -77,35 +72,22 @@
                         "--source-map",
                     ],
                     description: Some("Output source maps"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--watch",
                     ],
                     description: Some("Rebuild when files change"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "completion",
-            aliases: [],
             description: Some("Enables tab-completion for Ionic CLI commands"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "docs",
-            aliases: [],
             description: Some("Open the Ionic documentation website"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -113,67 +95,63 @@
                         "-w",
                     ],
                     description: Some("Specifies the browser to use (safari, firefox, google chrome)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "browser",
-                            source: Static([
-                                "safari",
-                                "firefox",
-                                "google chrome",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "safari",
+                                ),
+                                (
+                                    name: "firefox",
+                                ),
+                                (
+                                    name: "google chrome",
+                                ),
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "info",
-            aliases: [],
             description: Some("Print project, system, and environment information"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Print system/environment info in JSON format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
             description: Some("Initialize existing projects with Ionic"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--type",
                     ],
                     description: Some("Type of project (e.g. angular, react, vue, custom)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "type",
-                            source: Static([
-                                "angular",
-                                "react",
-                                "vue",
-                                "custom",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "angular",
+                                ),
+                                (
+                                    name: "react",
+                                ),
+                                (
+                                    name: "vue",
+                                ),
+                                (
+                                    name: "custom",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -183,30 +161,21 @@
                         "-f",
                     ],
                     description: Some("Initialize even if a project already exists"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--multi-app",
                     ],
                     description: Some("Initialize a multi-app project"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--project-id",
                     ],
                     description: Some("Specify a slug for your app"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "slug",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -215,116 +184,77 @@
                         "--default",
                     ],
                     description: Some("Mark the initialized app as the default project"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "name",
-                    source: Files,
+                    description: Some("The name of your project (e.g. myApp, \"My App\")"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "link",
-            aliases: [],
             description: Some("Connect local apps to Ionic"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "id",
-                    source: Files,
+                    description: Some("The Appflow ID of the app to link (e.g. a1b2c3d4)"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "login",
-            aliases: [],
             description: Some("Log in to Ionic"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "email",
-                    source: Files,
+                    description: Some("Your email address"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "password",
-                    source: Files,
+                    description: Some("Your password"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "logout",
-            aliases: [],
             description: Some("Log out of Ionic"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "repair",
-            aliases: [],
             description: Some("Remove and recreate dependencies and generated files"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--cordova",
                     ],
                     description: Some("Only perform the repair steps for Cordova platforms and plugins"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "serve",
-            aliases: [],
             description: Some("Start a local dev server for app dev/testing"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--external",
                     ],
                     description: Some("Host dev server on all network interfaces (i.e. --host=0.0.0.0)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--host",
                     ],
                     description: Some("Use specific host for the dev server"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "host",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -334,14 +264,10 @@
                         "-p",
                     ],
                     description: Some("Use specific port for the dev server"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("8100"),
                         ),
                     ],
                 ),
@@ -350,14 +276,10 @@
                         "--public-host",
                     ],
                     description: Some("The host used for the browser or web view"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "host",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("localhost"),
                         ),
                     ],
                 ),
@@ -366,22 +288,16 @@
                         "--no-livereload",
                     ],
                     description: Some("Do not spin up dev server--just serve files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--lab-host",
                     ],
                     description: Some("Use specific host for Ionic Lab server"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "host",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("8200"),
                         ),
                     ],
                 ),
@@ -390,14 +306,9 @@
                         "--lab-port",
                     ],
                     description: Some("Use specific port for Ionic Lab server"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -406,8 +317,6 @@
                         "--no-open",
                     ],
                     description: Some("Do not open a browser window"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -415,18 +324,20 @@
                         "-w",
                     ],
                     description: Some("Specifies the browser to use (safari, firefox, google chrome)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "browser",
-                            source: Static([
-                                "safari",
-                                "firefox",
-                                "google chrome",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "safari",
+                                ),
+                                (
+                                    name: "firefox",
+                                ),
+                                (
+                                    name: "google chrome",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -436,14 +347,9 @@
                         "-o",
                     ],
                     description: Some("Specifies a path to open to (/#/tab/dash)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -453,46 +359,33 @@
                         "-l",
                     ],
                     description: Some("Test your apps on multiple platform types in the browser"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--ssl",
                     ],
                     description: Some("Use HTTPS for the dev server"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--prod",
                     ],
                     description: Some("Flag to use the production configuration"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--consolelogs",
                     ],
                     description: Some("Print app console logs to the terminal"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--consolelogs-port",
                     ],
                     description: Some("Use specific port for console logs server"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -502,14 +395,13 @@
                         "-c",
                     ],
                     description: Some("Specify the configuration to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "conf",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -518,27 +410,16 @@
                         "--source-map",
                     ],
                     description: Some("Output sourcemaps"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "signup",
-            aliases: [],
             description: Some("Create an Ionic account"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "start",
-            aliases: [],
             description: Some("Create a new project"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -546,28 +427,32 @@
                         "-l",
                     ],
                     description: Some("List available starter templates"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--type",
                     ],
                     description: Some("Type of project to start (e.g. vue, angular, react, ionic-angular, ionic1)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "type",
-                            source: Static([
-                                "vue",
-                                "angular",
-                                "react",
-                                "ionic-angular",
-                                "ionic1",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "vue",
+                                ),
+                                (
+                                    name: "angular",
+                                ),
+                                (
+                                    name: "react",
+                                ),
+                                (
+                                    name: "ionic-angular",
+                                ),
+                                (
+                                    name: "ionic1",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -576,54 +461,39 @@
                         "--cordova",
                     ],
                     description: Some("Include Cordova integration"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--capacitor",
                     ],
                     description: Some("Include Capacitor integration"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-deps",
                     ],
                     description: Some("Do not install npm/yarn dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-git",
                     ],
                     description: Some("Do not initialize a git repo"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--link",
                     ],
                     description: Some("Connect your new app to Ionic"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--id",
                     ],
                     description: Some("Specify an Ionic App ID to link"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -632,14 +502,9 @@
                         "--project-id",
                     ],
                     description: Some("Specify a slug for your app (used for the directory name and package name)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "slug",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -648,14 +513,9 @@
                         "--package-id",
                     ],
                     description: Some("Specify the bundle ID/application ID for your app (reverse-DNS notation)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -663,31 +523,21 @@
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The name of your new project (e.g. myApp, \"My App\")"),
                 ),
                 (
                     name: "template",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The starter template to use (e.g. blank, tabs; use --list to see all)"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "config",
-            aliases: [],
             description: Some("Config commands for Ionic"),
             subcommands: [
                 (
                     name: "get",
-                    aliases: [],
                     description: Some("Print config values"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -695,42 +545,31 @@
                                 "-g",
                             ],
                             description: Some("Use global CLI config"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--json",
                             ],
                             description: Some("Output config values in JSON"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--root",
                             ],
                             description: Some("Operate on root of ionic.config.json"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "property",
-                            source: Files,
+                            description: Some("The property name you wish to get"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "set",
-                    aliases: [],
                     description: Some("Set config values"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -738,57 +577,40 @@
                                 "-g",
                             ],
                             description: Some("Use global CLI config"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--json",
                             ],
                             description: Some("Always interpret value as JSON"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--force",
                             ],
                             description: Some("Always overwrite existing values"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--root",
                             ],
                             description: Some("Operate on root of ./ionic.config.json"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "property",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The property name you wish to set"),
                         ),
                         (
                             name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The new value of the given property"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "unset",
-                    aliases: [],
                     description: Some("Delete config values"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -796,88 +618,66 @@
                                 "-g",
                             ],
                             description: Some("Use global CLI config"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--root",
                             ],
                             description: Some("Operate on root of ./ionic.config.json"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "property",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The property name you wish to delete"),
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "capacitor",
-            aliases: [],
             description: Some("Capacitor commands Ionic"),
             subcommands: [
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Add a native platform to your Ionic project"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform to add (e.g. android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "build",
-                    aliases: [],
                     description: Some("Build an Ionic project for a given platform"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--no-build",
                             ],
                             description: Some("Do not invoke Ionic build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-open",
                             ],
                             description: Some("Do not invoke Capacitor open"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--prod",
                             ],
                             description: Some("Flag to use the production configuration"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -885,61 +685,50 @@
                                 "-c",
                             ],
                             description: Some("Specify the configuration to use"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--source-map",
                             ],
                             description: Some("Output source maps"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--watch",
                             ],
                             description: Some("Rebuild when files change"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform to build for (e.g. android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "copy",
-                    aliases: [],
                     description: Some("Copy web assets to native platforms"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--no-build",
                             ],
                             description: Some("Do not invoke an Ionic build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--prod",
                             ],
                             description: Some("Flag to use the production configuration"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -947,84 +736,64 @@
                                 "-c",
                             ],
                             description: Some("Specify the configuration to use"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--source-map",
                             ],
                             description: Some("Output source maps"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--watch",
                             ],
                             description: Some("Rebuild when files change"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "platform",
-                            source: Files,
+                            description: Some("The platform to copy (e.g. android, ios)"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "open",
-                    aliases: [],
                     description: Some("Open the IDE for a given native platform project"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform to open (e.g. android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "run",
-                    aliases: [],
                     description: Some("Run an Ionic project on a connected device"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--list",
                             ],
                             description: Some("List all available targets"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--target",
                             ],
                             description: Some("Deploy to a specific device by its ID (use --list to see all)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "target",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1033,38 +802,28 @@
                                 "--open",
                             ],
                             description: Some("Open native IDE instead of using capacitor run"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-build",
                             ],
                             description: Some("Do not invoke Ionic build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--external",
                             ],
                             description: Some("Host dev server on all network interfaces (i.e. --host=0.0.0.0)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--host",
                             ],
                             description: Some("Use specific host for the dev server"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "host",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("localhost"),
                                 ),
                             ],
                         ),
@@ -1074,14 +833,10 @@
                                 "-p",
                             ],
                             description: Some("Use specific port for the dev server"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "port",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("8100"),
                                 ),
                             ],
                         ),
@@ -1090,14 +845,9 @@
                                 "--public-host",
                             ],
                             description: Some("The host used for the browser or web view"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "host",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1107,22 +857,15 @@
                                 "-l",
                             ],
                             description: Some("Spin up dev server to live-reload www files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--livereload-url",
                             ],
                             description: Some("Provide a custom URL to the dev server"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "url",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1131,8 +874,6 @@
                                 "--prod",
                             ],
                             description: Some("Flag to use the production configuration"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1140,14 +881,13 @@
                                 "-c",
                             ],
                             description: Some("Specify the configuration to use"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "conf",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1156,53 +896,44 @@
                                 "--source-map",
                             ],
                             description: Some("Output source maps"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--watch",
                             ],
                             description: Some("Rebuild when files change"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform to run (e.g. android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "sync",
-                    aliases: [],
                     description: Some("Sync (copy + update) an Ionic project"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--no-build",
                             ],
                             description: Some("Do not invoke an Ionic build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--prod",
                             ],
                             description: Some("Flag to use the production configuration"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1210,14 +941,13 @@
                                 "-c",
                             ],
                             description: Some("Specify the configuration to use"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "conf",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1226,81 +956,67 @@
                                 "--source-map",
                             ],
                             description: Some("Output source maps"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--watch",
                             ],
                             description: Some("Rebuild when files change"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
+                            description: Some("The platform to sync (e.g. android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "update",
-                    aliases: [],
                     description: Some("Update Capacitor native platforms, install Capacitor/Cordova plugins"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
+                            description: Some("The platform to update (e.g. android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "deploy",
-            aliases: [],
             description: Some("AppFlow deploy commands for Ionic"),
             subcommands: [
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Adds Appflow Deploy to the project"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--app-id",
                             ],
                             description: Some("Your Appflow app ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1309,14 +1025,9 @@
                                 "--channel-name",
                             ],
                             description: Some("The channel to check for updates from"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1325,14 +1036,9 @@
                                 "--update-method",
                             ],
                             description: Some("The update method that dictates the behavior of the plugin"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1341,14 +1047,10 @@
                                 "--max-store",
                             ],
                             description: Some("The maximum number of downloaded versions to store on the device"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "quantity",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("2"),
                                 ),
                             ],
                         ),
@@ -1357,40 +1059,27 @@
                                 "--min-background-duration",
                             ],
                             description: Some("The minimum duration after which the app checks for an update in the background"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "seconds",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("30"),
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "build",
-                    aliases: [],
                     description: Some("Create a deploy build on Appflow"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--environment",
                             ],
                             description: Some("The group of environment variables exposed to your build"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1399,14 +1088,9 @@
                                 "--channel",
                             ],
                             description: Some("The channel you want to auto deploy the build to. This can be repeated multiple times if multiple channels need to be specified"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1415,14 +1099,9 @@
                                 "--commit",
                             ],
                             description: Some("Commit (defaults to HEAD)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "sha1",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1431,32 +1110,21 @@
                                 "--skip-download",
                             ],
                             description: Some("Skip downloading build artifacts after command succeeds"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "configure",
-                    aliases: [],
                     description: Some("Overrides Appflow Deploy configuration"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--app-id",
                             ],
                             description: Some("Your Appflow app ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1465,14 +1133,9 @@
                                 "--channel-name",
                             ],
                             description: Some("The channel to check for updates from"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1481,14 +1144,9 @@
                                 "--update-method",
                             ],
                             description: Some("The update method that dictates the behavior of the plugin"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1497,14 +1155,9 @@
                                 "--max-store",
                             ],
                             description: Some("The maximum number of downloaded versions to store on the device"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "quantity",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1513,14 +1166,9 @@
                                 "--min-background-duration",
                             ],
                             description: Some("The minimum duration after which the app checks for an update in the background"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "seconds",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1528,71 +1176,43 @@
                     arguments: [
                         (
                             name: "platform",
-                            source: Files,
+                            description: Some("The native platform (e.g. ios, android)"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "manifest",
-                    aliases: [],
                     description: Some("Generates a manifest file for the deploy service from a built app directory"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "git",
-            aliases: [],
             description: Some("Git commands for Ionic"),
             subcommands: [
                 (
                     name: "remote",
-                    aliases: [],
                     description: Some("Adds/updates the Appflow git remote to your local Ionic app"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "package",
-            aliases: [],
             description: Some("Package commands for Ionic"),
             subcommands: [
                 (
                     name: "build",
-                    aliases: [],
                     description: Some("Create a package build on Appflow"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--signing-certificate",
                             ],
                             description: Some("Signing certificate"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1601,14 +1221,9 @@
                                 "--environment",
                             ],
                             description: Some("The group of environment variables exposed to your build"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1617,14 +1232,9 @@
                                 "--native-config",
                             ],
                             description: Some("The group of native config variables exposed to your build"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1633,14 +1243,9 @@
                                 "--destination",
                             ],
                             description: Some("The configuration to deploy the build artifact to the app store"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1649,14 +1254,9 @@
                                 "--commit",
                             ],
                             description: Some("Commit (defaults to HEAD)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "sha1",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1665,18 +1265,20 @@
                                 "--build-stack",
                             ],
                             description: Some("Target platform (\"Android\", \"iOS - Xcode 11 (Preferred)\", \"iOS - Xcode 10\")"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Static([
-                                        "Android",
-                                        "iOS - Xcode 11 (Preferred)",
-                                        "iOS - Xcode 10",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "Android",
+                                        ),
+                                        (
+                                            name: "iOS - Xcode 11 (Preferred)",
+                                        ),
+                                        (
+                                            name: "iOS - Xcode 10",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1685,14 +1287,9 @@
                                 "--build-file-name",
                             ],
                             description: Some("The name for the downloaded build file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1701,14 +1298,9 @@
                                 "--ipa-name",
                             ],
                             description: Some("The name for the downloaded ipa file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1717,14 +1309,9 @@
                                 "--dsym-name",
                             ],
                             description: Some("The name for the downloaded dsym file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1733,14 +1320,9 @@
                                 "--apk-name",
                             ],
                             description: Some("The name for the downloaded apk file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1749,14 +1331,9 @@
                                 "--aab-name",
                             ],
                             description: Some("The name for the downloaded aab file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1765,19 +1342,23 @@
                                 "--artifact-type",
                             ],
                             description: Some("The artifact type (aab, apk, ipa, dsym)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Static([
-                                        "aab",
-                                        "apl",
-                                        "ipa",
-                                        "dysm",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "aab",
+                                        ),
+                                        (
+                                            name: "apl",
+                                        ),
+                                        (
+                                            name: "ipa",
+                                        ),
+                                        (
+                                            name: "dysm",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1786,91 +1367,80 @@
                                 "--skip-download",
                             ],
                             description: Some("Skip downloading build artifacts after command succeeds"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform to package (android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                         ),
                         (
                             name: "type",
-                            source: Static([
-                                "debug",
-                                "release",
-                                "development",
-                                "ad-hoc",
-                                "app-stpre",
-                                "enterprise",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The build type (debug, release, development, ad-hoc, app-store, enterprise)"),
+                            suggestions: [
+                                (
+                                    name: "debug",
+                                ),
+                                (
+                                    name: "release",
+                                ),
+                                (
+                                    name: "development",
+                                ),
+                                (
+                                    name: "ad-hoc",
+                                ),
+                                (
+                                    name: "app-stpre",
+                                ),
+                                (
+                                    name: "enterprise",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "deploy",
-                    aliases: [],
                     description: Some("Deploys a binary to a destination, such as an app store using Appflow"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "build-id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The build id of the desired successful package build"),
                         ),
                         (
                             name: "destination",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The destination to deploy the build artifact to the app store"),
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ssl",
-            aliases: [],
             description: Some("SSL commands for Ionic"),
             subcommands: [
                 (
                     name: "generate",
-                    aliases: [],
                     description: Some("Generates an SSL key & certificate"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--key-path",
                             ],
                             description: Some("Destination of private key file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("./.ionic/ssl/key.pem"),
                                 ),
                             ],
                         ),
@@ -1879,14 +1449,10 @@
                                 "--cert-path",
                             ],
                             description: Some("Destination of certificate file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("./.ionic/ssl/cert.pem"),
                                 ),
                             ],
                         ),
@@ -1895,14 +1461,10 @@
                                 "--country-name",
                             ],
                             description: Some("The country name (C) of the SSL certificate"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "C",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("US"),
                                 ),
                             ],
                         ),
@@ -1911,14 +1473,10 @@
                                 "--state-or-province-name",
                             ],
                             description: Some("The state or province name (ST) of the SSL certificate"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "ST",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("Wisconsin"),
                                 ),
                             ],
                         ),
@@ -1927,14 +1485,10 @@
                                 "--locality-name",
                             ],
                             description: Some("The locality name (L) of the SSL certificate"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "L",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("Madison"),
                                 ),
                             ],
                         ),
@@ -1943,14 +1497,10 @@
                                 "--organization-name",
                             ],
                             description: Some("The organization name (O) of the SSL certificate"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "O",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("Ionic"),
                                 ),
                             ],
                         ),
@@ -1959,14 +1509,10 @@
                                 "--common-name",
                             ],
                             description: Some("The common name (CN) of the SSL certificate"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "CN",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("localhost"),
                                 ),
                             ],
                         ),
@@ -1976,79 +1522,52 @@
                                 "-b",
                             ],
                             description: Some("Number of bits in the key"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "bits",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("2048"),
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ssh",
-            aliases: [],
             description: Some("SSH commands for Ionic"),
             subcommands: [
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Add an SSH public key to Ionic"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--use",
                             ],
                             description: Some("Use the newly added key as your default SSH key for Ionic"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "pubkey-path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Location of public key file to add to Ionic"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Delete an SSH public key from Ionic"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "key-id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The ID of the public key to delete"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "generate",
-                    aliases: [],
                     description: Some("Generates a private and public SSH key pair"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2056,18 +1575,21 @@
                                 "-t",
                             ],
                             description: Some("The type of key to generate: ecdsa, ed25519, rsa"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "type",
-                                    source: Static([
-                                        "ecdsa",
-                                        "ed25519",
-                                        "rsa",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "ecdsa",
+                                        ),
+                                        (
+                                            name: "ed25519",
+                                        ),
+                                        (
+                                            name: "rsa",
+                                        ),
+                                    ],
+                                    default: Some("rsa"),
                                 ),
                             ],
                         ),
@@ -2077,14 +1599,10 @@
                                 "-b",
                             ],
                             description: Some("Number of bits in the key"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "bits",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("2048"),
                                 ),
                             ],
                         ),
@@ -2094,14 +1612,9 @@
                                 "-C",
                             ],
                             description: Some("Annotation (comment) in public key. Your Ionic email address will be used"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "annotation",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2109,169 +1622,114 @@
                     arguments: [
                         (
                             name: "key-path",
-                            source: Files,
+                            description: Some("Destination of private key file"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List your SSH public keys on Ionic"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--json",
                             ],
                             description: Some("Output SSH keys in JSON"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "setup",
-                    aliases: [],
                     description: Some("Setup your Ionic SSH keys automatically"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "use",
-                    aliases: [],
                     description: Some("Set your active Ionic SSH key"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "key-path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Location of private key file to use"),
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "doctor",
-            aliases: [],
             description: Some("Doctor commands for Ionic"),
             subcommands: [
                 (
                     name: "check",
-                    aliases: [],
                     description: Some("Check the health of your Ionic project"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "id",
-                            source: Files,
+                            description: Some("The issue identifier"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List all issues and their identifiers"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "treat",
-                    aliases: [],
                     description: Some("Attempt to fix issues in your Ionic project"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "id",
-                            source: Files,
+                            description: Some("The issue identifier"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "integrations",
-            aliases: [],
             description: Some("Integration commands for Ionic"),
             subcommands: [
                 (
                     name: "disable",
-                    aliases: [],
                     description: Some("Disable an integration"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "name",
-                            source: Static([
-                                "capacitor",
-                                "cordova",
-                                "enterprise",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The integration to disable (e.g. capacitor, cordova, enterprise)"),
+                            suggestions: [
+                                (
+                                    name: "capacitor",
+                                ),
+                                (
+                                    name: "cordova",
+                                ),
+                                (
+                                    name: "enterprise",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "enable",
-                    aliases: [],
                     description: Some("Add & enable integrations to your app"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--add",
                             ],
                             description: Some("Download and add the integration even if enabled"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--root",
                             ],
                             description: Some("Specify an alternative destination to download into when adding"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "path",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2280,63 +1738,48 @@
                                 "--quiet",
                             ],
                             description: Some("Less verbose output, ignore integration errors"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "name",
-                            source: Static([
-                                "capacitor",
-                                "cordova",
-                                "enterprise",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The integration to enable (e.g. capacitor, cordova, enterprise)"),
+                            suggestions: [
+                                (
+                                    name: "capacitor",
+                                ),
+                                (
+                                    name: "cordova",
+                                ),
+                                (
+                                    name: "enterprise",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List available and active integrations in your app"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "enterprise",
-            aliases: [],
             description: Some("Enterprise commands for Ionic"),
             subcommands: [
                 (
                     name: "register",
-                    aliases: [],
                     description: Some("Register your Product Key with this app"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--app-id",
                             ],
                             description: Some("The Ionic App ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2345,90 +1788,66 @@
                                 "--key",
                             ],
                             description: Some("The Product Key"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "key",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "cordova",
-            aliases: [],
             description: Some("Cordova commands for Ionic"),
             subcommands: [
                 (
                     name: "build",
-                    aliases: [],
                     description: Some("Use Cordova to build for Android and iOS platform targets"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--no-build",
                             ],
                             description: Some("Do not invoke an Ionic build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--debug",
                             ],
                             description: Some("Mark as a debug build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--release",
                             ],
                             description: Some("Mark as a release build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--device",
                             ],
                             description: Some("Deploy build to a device"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--emulator",
                             ],
                             description: Some("Deploy build to an emulator"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--buildConfig",
                             ],
                             description: Some("Use the specified build configuration"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "file",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2437,8 +1856,6 @@
                                 "--prod",
                             ],
                             description: Some("Flag to use the production configuration"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2446,14 +1863,13 @@
                                 "-c",
                             ],
                             description: Some("Specify the configuration to use"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "conf",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2462,75 +1878,63 @@
                                 "--source-map",
                             ],
                             description: Some("Output source maps"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform to build (e.g. android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "compile",
-                    aliases: [],
                     description: Some("Compile native platform code"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--debug",
                             ],
                             description: Some("Mark as a debug build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--release",
                             ],
                             description: Some("Mark as a release build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--device",
                             ],
                             description: Some("Deploy build to a device"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--emulator",
                             ],
                             description: Some("Deploy build to an emulator"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--buildConfig",
                             ],
                             description: Some("Use the specified build configuration"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "file",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2538,60 +1942,49 @@
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform to compile (android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "emulate",
-                    aliases: [],
                     description: Some("Emulate an Ionic project on a simulator/emulator"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--list",
                             ],
                             description: Some("List all available targets"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-build",
                             ],
                             description: Some("Do not invoke Ionic build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--external",
                             ],
                             description: Some("Host dev server on all network interfaces (i.e. --host=0.0.0.0)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--host",
                             ],
                             description: Some("Use specific host for the dev server"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "host",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("localhost"),
                                 ),
                             ],
                         ),
@@ -2601,14 +1994,10 @@
                                 "-p",
                             ],
                             description: Some("Use specific port for the dev server"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "port",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("8100"),
                                 ),
                             ],
                         ),
@@ -2617,14 +2006,9 @@
                                 "--public-host",
                             ],
                             description: Some("The host used for the browser or web view"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "host",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2634,22 +2018,15 @@
                                 "-l",
                             ],
                             description: Some("Spin up dev server to live-reload www files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--livereload-url",
                             ],
                             description: Some("Provide a custom URL to the dev server"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "url",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2658,46 +2035,37 @@
                                 "--debug",
                             ],
                             description: Some("Mark as a debug build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--release",
                             ],
                             description: Some("Mark as a release build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--device",
                             ],
                             description: Some("Deploy build to a device"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--emulator",
                             ],
                             description: Some("Deploy build to an emulator"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--buildConfig",
                             ],
                             description: Some("Use the specified build configuration"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "file",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2706,14 +2074,9 @@
                                 "--target",
                             ],
                             description: Some("Deploy build to a device (use --list to see all)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "target",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2722,62 +2085,45 @@
                                 "--no-native-run",
                             ],
                             description: Some("Do not use native-run to run the app; use Cordova instead"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--connect",
                             ],
                             description: Some("Tie the running app to the process"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--json",
                             ],
                             description: Some("Output targets in JSON"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--ssl",
                             ],
                             description: Some("Use HTTPS for the dev serve"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--prod",
                             ],
                             description: Some("Flag to use the production configuration"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--consolelogs",
                             ],
                             description: Some("Print app console logs to the terminal"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--consolelogs-port",
                             ],
                             description: Some("Use specific port for console logs server"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "port",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2787,14 +2133,13 @@
                                 "-c",
                             ],
                             description: Some("Specify the configuration to use"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "conf",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2803,22 +2148,19 @@
                                 "--source-map",
                             ],
                             description: Some("Output source maps"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--buildconfig",
                             ],
                             description: Some("Use the specified build configuration"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "file",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2826,87 +2168,88 @@
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform to run (e.g. android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "platform",
-                    aliases: [],
                     description: Some("Manage Cordova platform targets"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--no-resources",
                             ],
                             description: Some("Do not pregenerate icons and splash screen resources (corresponds to add)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "action",
-                            source: Static([
-                                "add",
-                                "remove",
-                                "update",
-                                "ls",
-                                "check",
-                                "save",
-                            ]),
+                            description: Some("Add, remove, or update a platform; ls, check, or save all project platforms"),
+                            suggestions: [
+                                (
+                                    name: "add",
+                                ),
+                                (
+                                    name: "remove",
+                                ),
+                                (
+                                    name: "update",
+                                ),
+                                (
+                                    name: "ls",
+                                ),
+                                (
+                                    name: "check",
+                                ),
+                                (
+                                    name: "save",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
+                            description: Some("The platform that you would like to add (android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "plugin",
-                    aliases: [],
                     description: Some("Manage Cordova plugins"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--force",
                             ],
                             description: Some("Force overwrite the plugin if it exists (corresponds to add)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--variable",
                             ],
                             description: Some("Specify plugin variables"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "KEY=VALUE",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2914,47 +2257,45 @@
                     arguments: [
                         (
                             name: "action",
-                            source: Static([
-                                "add",
-                                "remove",
-                                "ls",
-                                "save",
-                            ]),
+                            description: Some("Add or remove a plugin; ls or save all project plugins"),
+                            suggestions: [
+                                (
+                                    name: "add",
+                                ),
+                                (
+                                    name: "remove",
+                                ),
+                                (
+                                    name: "ls",
+                                ),
+                                (
+                                    name: "save",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                         (
                             name: "plugin",
-                            source: Files,
+                            description: Some("The name of the plugin (corresponds to add and remove)"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "prepare",
-                    aliases: [],
                     description: Some("Copies assets to Cordova platforms, preparing them for native builds"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--no-build",
                             ],
                             description: Some("Do not invoke an Ionic build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--prod",
                             ],
                             description: Some("Flag to use the production configuration"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2962,14 +2303,13 @@
                                 "-c",
                             ],
                             description: Some("Specify the configuration to use"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "conf",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2978,57 +2318,52 @@
                                 "--source-map",
                             ],
                             description: Some("Output source maps"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--watch",
                             ],
                             description: Some("Rebuild when files change"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
+                            description: Some("The platform you would like to prepare (e.g. android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "requirements",
-                    aliases: [],
                     description: Some("Checks and print out all the requirements for platforms"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
+                            description: Some("The platform for which you would like to gather requirements (android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "resources",
-                    aliases: [],
                     description: Some("Automatically create icon and splash screen resources"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -3036,8 +2371,6 @@
                                 "-i",
                             ],
                             description: Some("Generate icon resources"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -3045,67 +2378,55 @@
                                 "-s",
                             ],
                             description: Some("Generate splash screen resources"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
+                            description: Some("The platform for which you would like to generate resources (ios, android)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "run",
-                    aliases: [],
                     description: Some("Run an Ionic project on a connected device"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--list",
                             ],
                             description: Some("List all available targets"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-build",
                             ],
                             description: Some("Do not invoke Ionic build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--external",
                             ],
                             description: Some("Host dev server on all network interfaces (i.e. --host=0.0.0.0)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--host",
                             ],
                             description: Some("Use specific host for the dev server"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "host",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("localhost"),
                                 ),
                             ],
                         ),
@@ -3115,14 +2436,10 @@
                                 "-p",
                             ],
                             description: Some("Use specific port for the dev server"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "port",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("8100"),
                                 ),
                             ],
                         ),
@@ -3131,14 +2448,9 @@
                                 "--public-host",
                             ],
                             description: Some("The host used for the browser or web view"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "host",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -3148,22 +2460,15 @@
                                 "-l",
                             ],
                             description: Some("Spin up dev server to live-reload www files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--livereload-url",
                             ],
                             description: Some("Provide a custom URL to the dev server"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "url",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -3172,46 +2477,37 @@
                                 "--debug",
                             ],
                             description: Some("Mark as a debug build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--release",
                             ],
                             description: Some("Mark as a release build"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--device",
                             ],
                             description: Some("Deploy build to a device"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--emulator",
                             ],
                             description: Some("Deploy build to an emulator"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--buildConfig",
                             ],
                             description: Some("Use the specified build configuration"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "file",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -3220,14 +2516,9 @@
                                 "--target",
                             ],
                             description: Some("Deploy build to a device (use --list to see all)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "target",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -3236,62 +2527,45 @@
                                 "--no-native-run",
                             ],
                             description: Some("Do not use native-run to run the app; use Cordova instead"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--connect",
                             ],
                             description: Some("Tie the running app to the process"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--json",
                             ],
                             description: Some("Output targets in JSON"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--ssl",
                             ],
                             description: Some("Use HTTPS for the dev server"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--prod",
                             ],
                             description: Some("Flag to use the production configuration"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--consolelogs",
                             ],
                             description: Some("Print app console logs to the terminal"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--consolelogs-port",
                             ],
                             description: Some("Use specific port for console logs server"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "port",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -3301,14 +2575,13 @@
                                 "-c",
                             ],
                             description: Some("Specify the configuration to use"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "conf",
-                                    source: Directories,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                        Folders,
+                                    ],
                                 ),
                             ],
                         ),
@@ -3316,23 +2589,19 @@
                     arguments: [
                         (
                             name: "platform",
-                            source: Static([
-                                "ios",
-                                "android",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The platform to run (e.g. android, ios)"),
+                            suggestions: [
+                                (
+                                    name: "ios",
+                                ),
+                                (
+                                    name: "android",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
-    options: [],
-    arguments: [],
 )

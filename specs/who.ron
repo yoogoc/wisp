@@ -5,12 +5,19 @@
     subcommands: [
         (
             name: "am",
-            aliases: [],
-            description: Some("Returns the invoker\'s real user name"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Returns the invoker's real user name"),
+            additional_suggestions: [
+                (
+                    name: "am I",
+                    presentation: (
+                        icon: Some("fig://icon?type=command"),
+                        insert_value: Some("I{cursor}"),
+                    ),
+                ),
+            ],
+            presentation: (
+                priority: Some(40.0),
+            ),
         ),
     ],
     options: [
@@ -19,113 +26,105 @@
                 "-a",
             ],
             description: Some("Same as -bdlprTtu"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-b",
             ],
             description: Some("Time of last system boot"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-d",
             ],
             description: Some("Print dead processes"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-H",
             ],
             description: Some("Write column headings above the regular output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-l",
             ],
             description: Some("Print system login processes (unsupported)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-m",
             ],
             description: Some("Only print information about the current terminal"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-p",
             ],
             description: Some("Print active processes spawned by launchd(8) (unsupported)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-q",
             ],
-            description: Some("\'Quick mode\': List only names and number of users currently logged on"),
-            takes_value: false,
-            arguments: [],
+            description: Some("'Quick mode': List only names and number of users currently logged on"),
+            exclusive_on: [
+                "-a",
+                "-b",
+                "-d",
+                "-H",
+                "-l",
+                "-m",
+                "-p",
+                "-r",
+                "-s",
+                "-T",
+                "-t",
+                "-u",
+            ],
         ),
         (
             names: [
                 "-r",
             ],
             description: Some("Print the current runlevel"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-s",
             ],
             description: Some("List only the name, line and time fields (this is the default)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-T",
             ],
-            description: Some("Print a character after the user name indicating the state of the terminal line: \'+\' writable, \'-\' not writable, \'?\' bad"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Print a character after the user name indicating the state of the terminal line: '+' writable, '-' not writable, '?' bad"),
         ),
         (
             names: [
                 "-t",
             ],
             description: Some("Print last system clock change (unsupported)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-u",
             ],
             description: Some("Print the idle time for each user and the associated process ID"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "file",
-            source: Files,
+            description: Some("By default, who gathers information from the file /var/run/utmpx; an alternative file may be specified"),
+            template: [
+                FilePaths,
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: None,
         ),
     ],
+    parser_directives: Some((
+        options_must_precede_arguments: true,
+    )),
 )

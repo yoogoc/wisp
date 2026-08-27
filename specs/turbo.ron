@@ -5,338 +5,271 @@
     subcommands: [
         (
             name: "bin",
-            aliases: [],
             description: Some("Get the path to the turbo binary"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "link",
-            aliases: [],
             description: Some("Link your local directory to a Vercel organization and enable remote caching"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--no-gitignore",
                     ],
                     description: Some("Do not create or modify .gitignore"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "login",
-            aliases: [],
             description: Some("Login to your Vercel account"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--sso-team",
                     ],
                     description: Some("Attempt to authenticate to the specified team using SSO"),
-                    takes_value: false,
-                    arguments: [],
+                    requires_separator: Some("="),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "logout",
-            aliases: [],
             description: Some("Logout of your Vercel account"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "prune",
-            aliases: [],
             description: Some("Prepare a subset of your monorepo"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--scope",
                     ],
                     description: Some("Specify package to act as entry point for pruned monorepo"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--docker",
                     ],
-                    description: Some("Output pruned workspace into \'fill\' and \'json\' directories optimized for Docker layer caching"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Output pruned workspace into 'fill' and 'json' directories optimized for Docker layer caching"),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "unlink",
-            aliases: [],
             description: Some("Unlink the current directory from your Vercel organization and disable remote caching"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "run",
-            aliases: [],
             description: Some("Run tasks in your monorepo"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--scope",
                     ],
                     description: Some("Specify packages to act as entry points for task execution"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--cache-dir",
                     ],
                     description: Some("Specify local filesystem cache directory"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dir",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--concurrency",
                     ],
                     description: Some("Limit the concurrency of task execution (use `1` for serial)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "limit",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--continue",
                     ],
                     description: Some("Continue execution even if a task exits with an error"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--force",
                     ],
                     description: Some("Ignore the existing cache"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--graph",
                     ],
                     description: Some("Generate a Dot graph of the task execution"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--global-deps",
                     ],
                     description: Some("Specify glob of global filesystem dependencies to be hashed (useful for .env and files in the root directory)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "glob",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
+                    requires_separator: Some("="),
+                    presentation: (
+                        insert_value: Some("--global-deps='{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
                         "--since",
                     ],
                     description: Some("Limit/set scope to changed packages since a mergebase"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "branch",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "git",
-                                    "--no-optional-locks",
-                                    "branch",
-                                    "-a",
-                                    "--no-color",
-                                    "--sort=-committerdate",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "git",
+                                        "--no-optional-locks",
+                                        "branch",
+                                        "-a",
+                                        "--no-color",
+                                        "--sort=-committerdate",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--team",
                     ],
                     description: Some("The slug of a turborepo.com team"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "slug",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--token",
                     ],
                     description: Some("A turborepo.com access token"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "token",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--ignore",
                     ],
                     description: Some("Files to ignore when calculating changed files (supports globs)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "files",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--profile",
                     ],
-                    description: Some("File to write turbo\'s performance profile into"),
-                    takes_value: true,
+                    description: Some("File to write turbo's performance profile into"),
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--parallel",
                     ],
                     description: Some("Execute all tasks in parallel"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--include-dependencies",
                     ],
                     description: Some("Include the dependencies of tasks in execution"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-deps",
                     ],
                     description: Some("Exclude dependent task consumers from execution"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-cache",
                     ],
                     description: Some("Avoid saving task results to the cache (useful for development/watch tasks)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--output-logs",
                     ],
-                    description: None,
-                    takes_value: true,
                     arguments: [
                         (
                             name: "level",
-                            source: Static([
-                                "new-only",
-                                "hash-only",
-                                "full",
-                                "none",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "new-only",
+                                    description: Some("Only new output with hashes for cached tasks"),
+                                ),
+                                (
+                                    name: "hash-only",
+                                    description: Some("Only turbo-computed task hashes"),
+                                ),
+                                (
+                                    name: "full",
+                                    description: Some("Show all output"),
+                                ),
+                                (
+                                    name: "none",
+                                    description: Some("Hide process output"),
+                                ),
+                            ],
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
@@ -344,38 +277,39 @@
                         "--dry-run",
                     ],
                     description: Some("List the packages in scope and the tasks that would be run"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "json",
-                            ]),
+                            suggestions: [
+                                (
+                                    name: "json",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
             ],
             arguments: [
                 (
                     name: "tasks",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "until [[ ( -f turbo.json || $PWD = '/' ) ]]; do cd ..; done; cat turbo.json",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "until [[ ( -f turbo.json || $PWD = \'/\' ) ]]; do cd ..; done; cat turbo.json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("data:image/png;base64,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"),
+            ),
         ),
     ],
     options: [
@@ -384,17 +318,13 @@
                 "--version",
             ],
             description: Some("Print the version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--help",
             ],
             description: Some("Print a help message"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
     ],
-    arguments: [],
 )

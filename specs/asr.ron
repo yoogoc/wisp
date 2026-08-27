@@ -5,42 +5,34 @@
     subcommands: [
         (
             name: "help",
-            aliases: [],
             description: Some("Displays asr usage information"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Displays asr version"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "restore",
-            aliases: [],
             description: Some("Restores a disk image or volume to another volume"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--source",
                     ],
                     description: Some("Can be a disk image, /dev entry, or volume mountpoint"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "source",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Disk image, /dev entry, or volume mountpoint"),
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
+                    ],
+                    depends_on: [
+                        "--target",
+                        "--file",
                     ],
                 ),
                 (
@@ -48,14 +40,14 @@
                         "--target",
                     ],
                     description: Some("Can be a /dev entry, or volume mountpoint"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "target",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("/dev entry, or volume mountpoint"),
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
                     ],
                 ),
@@ -64,15 +56,18 @@
                         "--file",
                     ],
                     description: Some("When performing a multicast restore, --file can be specified instead of --target"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "source",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Disk image, /dev entry, or volume mountpoint"),
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
+                    ],
+                    depends_on: [
+                        "--erase",
                     ],
                 ),
                 (
@@ -80,22 +75,17 @@
                         "--erase",
                     ],
                     description: Some("Erases target and is required. --erase must always be used, as file copies are no longer supported by asr"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--format",
                     ],
                     description: Some("Specifies the destination filesystem format"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "HFS+ | HFSX",
-                            source: Files,
+                            description: Some("Specify the destination filesystem format"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -104,24 +94,23 @@
                         "--noprompt",
                     ],
                     description: Some("Suppresses the prompt which usually occurs before target"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--timeout",
                     ],
                     description: Some("Specifies num seconds that a multicast client should wait when no payload data has been received over a multicast stream before exiting"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "num",
-                            source: Static([
-                                "0",
-                            ]),
+                            description: Some("Number of seconds that a multicast client should wait"),
+                            suggestions: [
+                                (
+                                    name: "0",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("0"),
                         ),
                     ],
                 ),
@@ -130,105 +119,85 @@
                         "--puppetstrings",
                     ],
                     description: Some("Provide progress output that is easy for another program to parse"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--noverify",
                     ],
                     description: Some("Skips the verification steps normally taken to ensure that a volume has been properly restored"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--allowfragmentedcatalog",
                     ],
-                    description: Some("Allows restores to proceed even if the source\'s catalog file is fragmented"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Allows restores to proceed even if the source's catalog file is fragmented"),
                 ),
                 (
                     names: [
                         "--SHA256",
                     ],
                     description: Some("Forces the restore to use the SHA-256 hash in the image during verification"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--sourcevolumename",
                     ],
                     description: Some("Tells asr which volume in the source container to invert when doing an APFS restore"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--sourcevolumeUUID",
                     ],
                     description: Some("Tells asr which volume in the source container to invert when doing an APFS restore"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--useReplication",
                     ],
                     description: Some("Forces asr to use replication for restoring APFS volumes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--useInverter",
                     ],
                     description: Some("Forces asr to use the inverter for restoring APFS volumes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--toSnapshot",
                     ],
                     description: Some("Specifies the snapshot on the source APFS volume to restore to the target APFS volume"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--fromSnapshot",
                     ],
                     description: Some("Names a snapshot on the source APFS volume to use in combination with --toSnapshot to specify a snapshot delta to restore to the target APFS volume"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "restoreexact",
-            aliases: [],
             description: Some("Same as restore verb, except that for an HFS Plus volume, the target partition is resized to match the size of the source partition/ volume"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--source",
                     ],
                     description: Some("Can be a disk image, /dev entry, or volume mountpoint"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "source",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Disk image, /dev entry, or volume mountpoint"),
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
+                    ],
+                    depends_on: [
+                        "--target",
+                        "--file",
                     ],
                 ),
                 (
@@ -236,14 +205,14 @@
                         "--target",
                     ],
                     description: Some("Can be a /dev entry, or volume mountpoint"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "target",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("/dev entry, or volume mountpoint"),
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
                     ],
                 ),
@@ -252,15 +221,18 @@
                         "--file",
                     ],
                     description: Some("When performing a multicast restore, --file can be specified instead of --target"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "source",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Disk image, /dev entry, or volume mountpoint"),
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
+                    ],
+                    depends_on: [
+                        "--erase",
                     ],
                 ),
                 (
@@ -268,22 +240,17 @@
                         "--erase",
                     ],
                     description: Some("Erases target and is required. --erase must always be used, as file copies are no longer supported by asr"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--format",
                     ],
                     description: Some("Specifies the destination filesystem format"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "HFS+ | HFSX",
-                            source: Files,
+                            description: Some("Specify the destination filesystem format"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -292,24 +259,23 @@
                         "--noprompt",
                     ],
                     description: Some("Suppresses the prompt which usually occurs before target"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--timeout",
                     ],
                     description: Some("Specifies num seconds that a multicast client should wait when no payload data has been received over a multicast stream before exiting"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "num",
-                            source: Static([
-                                "0",
-                            ]),
+                            description: Some("Number of seconds that a multicast client should wait"),
+                            suggestions: [
+                                (
+                                    name: "0",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("0"),
                         ),
                     ],
                 ),
@@ -318,104 +284,83 @@
                         "--puppetstrings",
                     ],
                     description: Some("Provide progress output that is easy for another program to parse"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--noverify",
                     ],
                     description: Some("Skips the verification steps normally taken to ensure that a volume has been properly restored"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--allowfragmentedcatalog",
                     ],
-                    description: Some("Allows restores to proceed even if the source\'s catalog file is fragmented"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Allows restores to proceed even if the source's catalog file is fragmented"),
                 ),
                 (
                     names: [
                         "--SHA256",
                     ],
                     description: Some("Forces the restore to use the SHA-256 hash in the image during verification"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--sourcevolumename",
                     ],
                     description: Some("Tells asr which volume in the source container to invert when doing an APFS restore"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--sourcevolumeUUID",
                     ],
                     description: Some("Tells asr which volume in the source container to invert when doing an APFS restore"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--useReplication",
                     ],
                     description: Some("Forces asr to use replication for restoring APFS volumes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--useInverter",
                     ],
                     description: Some("Forces asr to use the inverter for restoring APFS volumes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--toSnapshot",
                     ],
                     description: Some("Specifies the snapshot on the source APFS volume to restore to the target APFS volume"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--fromSnapshot",
                     ],
                     description: Some("Names a snapshot on the source APFS volume to use in combination with --toSnapshot to specify a snapshot delta to restore to the target APFS volume"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                display_name: Some("restore[exact]"),
+            ),
         ),
         (
             name: "server",
-            aliases: [],
             description: Some("Multicasts source over the network"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--source",
                     ],
                     description: Some("Source has to be a UDIF disk image"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "source",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("UDIF disk image local/remote path"),
+                            template: [
+                                FilePaths,
+                            ],
+                            suggest_current_token: true,
                         ),
                     ],
                 ),
@@ -424,14 +369,10 @@
                         "--interface",
                     ],
                     description: Some("The network interface to be used for multicasting"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "interface",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The network interface to be used for multicasting"),
                         ),
                     ],
                 ),
@@ -440,51 +381,37 @@
                         "--config",
                     ],
                     description: Some("Server requires a configuration file to be passed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "configuration",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            description: Some("Configuration file in standard property list format"),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "imagescan",
-            aliases: [],
             description: Some("Calculate checksums of the data in the provided image and store them in the image"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "info",
-            aliases: [],
             description: Some("Report the image metadata which was placed in the image by a previous use of the imagescan verb"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--plist",
                     ],
                     description: Some("Writes its output as an XML-formatted plist"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -493,14 +420,10 @@
                 "--buffers",
             ],
             description: Some("One of the options that control how asr uses memory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "num",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Specifies the num buffers should be used"),
                 ),
             ],
         ),
@@ -509,14 +432,10 @@
                 "--buffersize",
             ],
             description: Some("One of the options that control how asr uses memory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "size",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Specifies the size of each buffer"),
                 ),
             ],
         ),
@@ -525,14 +444,10 @@
                 "--csumbuffers",
             ],
             description: Some("One of the options that control how asr uses memory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "num",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Specifies that num buffers should be used for checksumming operations"),
                 ),
             ],
         ),
@@ -541,14 +456,10 @@
                 "--csumbuffersize",
             ],
             description: Some("One of the options that control how asr uses memory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "size",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Specifies the size of each buffer used for checksumming"),
                 ),
             ],
         ),
@@ -557,17 +468,12 @@
                 "--verbose",
             ],
             description: Some("Enables verbose progress and error messages"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--debug",
             ],
             description: Some("Enables other progress and error messages"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

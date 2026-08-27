@@ -1,41 +1,37 @@
 (
     version: 1,
     command: "which",
-    description: Some("Locate a program in the user\'s PATH"),
-    subcommands: [],
+    description: Some("Locate a program in the user's PATH"),
     options: [
         (
             names: [
                 "-s",
             ],
             description: Some("No output, return 0 if all the executables are found, 1 if not"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-a",
             ],
             description: Some("List all instances of executables found, instead of just the first"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "names",
-            source: Unavailable,
-            optional: false,
+            generators: [
+                (
+                    script: [
+                        "bash",
+                        "-c",
+                        "for i in $(echo $PATH | tr \":\" \"\n\"); do find $i -maxdepth 1 -perm -111 -type f; done",
+                    ],
+                    has_post_process: true,
+                ),
+            ],
             variadic: true,
-            imported_generator: Some((
-                script: [
-                    "bash",
-                    "-c",
-                    "for i in $(echo $PATH | tr \":\" \"\n\"); do find $i -maxdepth 1 -perm -111 -type f; done",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
+            filter_strategy: Fuzzy,
+            suggest_current_token: true,
         ),
     ],
 )

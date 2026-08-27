@@ -5,39 +5,28 @@
     subcommands: [
         (
             name: "check",
-            aliases: [],
             description: Some("Run the linter on a set of files"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--apply",
                     ],
                     description: Some("Apply safe fixes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--apply-unsafe",
                     ],
                     description: Some("Apply safe and unsafe fixes"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--max-diagnostics",
                     ],
                     description: Some("Cap the amount of diagnostics displayed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "NUMBER",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -46,14 +35,13 @@
                         "--config-path",
                     ],
                     description: Some("Set the filesystem path to the config dir of the rome.json file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dir",
-                            source: Directories,
-                            optional: false,
+                            template: [
+                                Folders,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -62,64 +50,49 @@
                         "--verbose",
                     ],
                     description: Some("Print additional verbose advices on diagnostics"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "file, dir",
-                    source: Directories,
-                    optional: false,
+                    template: [
+                        FilePaths,
+                        Folders,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "ci",
-            aliases: [],
             description: Some("Run the linter and formatter check on a set of files"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--formatter-enabled",
                     ],
                     description: Some("Allow to enable or disable the formatter check"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--linter-enabled",
                     ],
                     description: Some("Allow to enable or disable the linter check"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--organize-imports-enabled",
                     ],
                     description: Some("Allow to enable or disable the organize imports"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--max-diagnostics",
                     ],
                     description: Some("Cap the amount of diagnostics displayed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "NUMBER",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -128,14 +101,13 @@
                         "--config-path",
                     ],
                     description: Some("Set the filesystem path to the config dir of the rome.json file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dir",
-                            source: Directories,
-                            optional: false,
+                            template: [
+                                Folders,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -144,25 +116,23 @@
                         "--verbose",
                     ],
                     description: Some("Print additional verbose advices on diagnostics"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--indent-style",
                     ],
                     description: Some("Change the indention character"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "style",
-                            source: Static([
-                                "tabs",
-                                "space",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "tabs",
+                                ),
+                                (
+                                    name: "space",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -171,14 +141,9 @@
                         "--indent-size",
                     ],
                     description: Some("How many spaces should be used for indentation"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "SIZE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -187,14 +152,9 @@
                         "--line-width",
                     ],
                     description: Some("How many characters the formatter is allowed to print in a single line"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "width",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -203,17 +163,17 @@
                         "--quote-style",
                     ],
                     description: Some("Changes the quotation character for strings"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "style",
-                            source: Static([
-                                "single",
-                                "double",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "single",
+                                ),
+                                (
+                                    name: "double",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -222,17 +182,17 @@
                         "--quote-properties",
                     ],
                     description: Some("Changes when properties in object should be quoted"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "property",
-                            source: Static([
-                                "as-needed",
-                                "preserve",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "as-needed",
+                                ),
+                                (
+                                    name: "preserve",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -241,18 +201,20 @@
                         "--trailing-comma",
                     ],
                     description: Some("Changes trailing commas in multi-line comma-separated syntactic structures"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "trailing",
-                            source: Static([
-                                "all",
-                                "es5",
-                                "none",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "all",
+                                ),
+                                (
+                                    name: "es5",
+                                ),
+                                (
+                                    name: "none",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -261,17 +223,17 @@
                         "--semicolons",
                     ],
                     description: Some("Changes when to print semicolons for statements"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "rule",
-                            source: Static([
-                                "always",
-                                "as-needed",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "always",
+                                ),
+                                (
+                                    name: "as-needed",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -279,49 +241,38 @@
             arguments: [
                 (
                     name: "file, dir",
-                    source: Directories,
-                    optional: false,
+                    template: [
+                        FilePaths,
+                        Folders,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "format",
-            aliases: [],
             description: Some("Run the formatter on a set of files"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--write",
                     ],
                     description: Some("Edit the files in place (beware!) instead of printing the diff to the console"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--skip-errors",
                     ],
                     description: Some("Skip over files containing syntax errors instead of emitting an error diagnostic"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--max-diagnostics",
                     ],
                     description: Some("Cap the amount of diagnostics displayed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "NUMBER",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -330,14 +281,13 @@
                         "--config-path",
                     ],
                     description: Some("Set the filesystem path to the config dir of the rome.json file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dir",
-                            source: Directories,
-                            optional: false,
+                            template: [
+                                Folders,
+                            ],
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -346,25 +296,23 @@
                         "--verbose",
                     ],
                     description: Some("Print additional verbose advices on diagnostics"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--indent-style",
                     ],
                     description: Some("Change the indention character"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "style",
-                            source: Static([
-                                "tabs",
-                                "space",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "tabs",
+                                ),
+                                (
+                                    name: "space",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -373,14 +321,9 @@
                         "--indent-size",
                     ],
                     description: Some("How many spaces should be used for indentation"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "SIZE",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -389,14 +332,9 @@
                         "--line-width",
                     ],
                     description: Some("How many characters the formatter is allowed to print in a single line"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "width",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -405,17 +343,17 @@
                         "--quote-style",
                     ],
                     description: Some("Changes the quotation character for strings"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "style",
-                            source: Static([
-                                "single",
-                                "double",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "single",
+                                ),
+                                (
+                                    name: "double",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -424,17 +362,17 @@
                         "--quote-properties",
                     ],
                     description: Some("Changes when properties in object should be quoted"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "property",
-                            source: Static([
-                                "as-needed",
-                                "preserve",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "as-needed",
+                                ),
+                                (
+                                    name: "preserve",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -443,18 +381,20 @@
                         "--trailing-comma",
                     ],
                     description: Some("Changes trailing commas in multi-line comma-separated syntactic structures"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "trailing",
-                            source: Static([
-                                "all",
-                                "es5",
-                                "none",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "all",
+                                ),
+                                (
+                                    name: "es5",
+                                ),
+                                (
+                                    name: "none",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -463,17 +403,17 @@
                         "--semicolons",
                     ],
                     description: Some("Changes when to print semicolons for statements"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "rule",
-                            source: Static([
-                                "always",
-                                "as-needed",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "always",
+                                ),
+                                (
+                                    name: "as-needed",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -482,14 +422,9 @@
                         "--stdin-file-path",
                     ],
                     description: Some("A file name with its extension to pass when reading from standard in"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -497,76 +432,41 @@
             arguments: [
                 (
                     name: "file, dir",
-                    source: Directories,
-                    optional: false,
+                    template: [
+                        FilePaths,
+                        Folders,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
             description: Some("Bootstraps a new rome project"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "start",
-            aliases: [],
             description: Some("Start the Rome daemon server process"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "stop",
-            aliases: [],
             description: Some("Stop the Rome daemon server process"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "lsp-proxy",
-            aliases: [],
             description: Some("Acts as a server for the Language Server Protocol over stdin/stdout"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "rage",
-            aliases: [],
             description: Some("Prints information for debugging"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Shows the Rome version information and quit"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Prints help message"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -575,17 +475,17 @@
                 "--colors",
             ],
             description: Some("Set the formatting mode for markup"),
-            takes_value: true,
             arguments: [
                 (
                     name: "mode",
-                    source: Static([
-                        "off",
-                        "force",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "off",
+                        ),
+                        (
+                            name: "force",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -594,33 +494,23 @@
                 "--use-server",
             ],
             description: Some("Connect to a running instance of the Rome daemon server"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Show the Rome version information and quit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--files-max-size",
             ],
             description: Some("The maximum allowed size for source code files in bytes"),
-            takes_value: true,
             arguments: [
                 (
                     name: "BYTES",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
     ],
-    arguments: [],
 )

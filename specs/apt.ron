@@ -5,35 +5,31 @@
     subcommands: [
         (
             name: "update",
-            aliases: [],
             description: Some("Update the package database"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "upgrade",
-            aliases: [],
             description: Some("Install all available upgrades"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -41,67 +37,61 @@
                         "--download-only",
                     ],
                     description: Some("For any operation that would download packages, download them, but do nothing else"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-download",
                     ],
                     description: Some("Do not download packages, attempt to use already downloaded packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
+                    description: Some("Package(s) to upgrade"),
+                    generators: [
+                        (
+                            script: [
+                                "apt",
+                                "list",
+                                "--upgradable",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "apt",
-                            "list",
-                            "--upgradable",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "full-upgrade",
-            aliases: [],
             description: Some("Install available upgrades, removing currently installed packages if needed to upgrade the system as a whole"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -109,51 +99,43 @@
                         "--download-only",
                     ],
                     description: Some("For any operation that would download packages, download them, but do nothing else"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-download",
                     ],
                     description: Some("Do not download packages, attempt to use already downloaded packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "install",
-            aliases: [],
             description: Some("Install package(s)"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -161,49 +143,43 @@
                         "--download-only",
                     ],
                     description: Some("For any operation that would download packages, download them, but do nothing else"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-download",
                     ],
                     description: Some("Do not download packages, attempt to use already downloaded packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
                 (
                     names: [
                         "--reinstall",
                     ],
                     description: Some("Reinstall the package if it is already installed"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -211,106 +187,103 @@
                         "--fix-broken",
                     ],
                     description: Some("Attempt to fix broken packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
+                    description: Some("The package you want to install"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "reinstall",
-            aliases: [],
             description: Some("Reinstall package(s)"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
+                    description: Some("The package you want to reinstall"),
+                    generators: [
+                        (
+                            script: [
+                                "apt",
+                                "list",
+                                "--installed",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "apt",
-                            "list",
-                            "--installed",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "remove",
-            aliases: [],
             description: Some("Remove package(s)"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
                 (
                     names: [
@@ -318,79 +291,73 @@
                         "--fix-broken",
                     ],
                     description: Some("Attempt to fix broken packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
+                    description: Some("The package you want to remove"),
+                    generators: [
+                        (
+                            script: [
+                                "apt",
+                                "list",
+                                "--installed",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "apt",
-                            "list",
-                            "--installed",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "purge",
-            aliases: [],
             description: Some("Remove package(s) and their configuration files"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
+                    description: Some("The package you want to purge"),
+                    generators: [
+                        (
+                            script: [
+                                "apt",
+                                "list",
+                                "--installed",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "apt",
-                            "list",
-                            "--installed",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "autoremove",
@@ -398,123 +365,101 @@
                 "auto-remove",
             ],
             description: Some("Remove unused packages"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "list",
-            aliases: [],
             description: Some("List packages"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--installed",
                     ],
                     description: Some("List installed packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--upgradable",
                     ],
                     description: Some("List upgradable packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "search",
-            aliases: [],
             description: Some("Search for packages"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "query",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The query to search for"),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "show",
-            aliases: [],
             description: Some("Show package details"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("The package you want to show"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "satisfy",
-            aliases: [],
             description: Some("Satisfy package dependencies"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -522,124 +467,111 @@
                         "--download-only",
                     ],
                     description: Some("For any operation that would download packages, download them, but do nothing else"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-download",
                     ],
                     description: Some("Do not download packages, attempt to use already downloaded packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
+                    description: Some("The package you want to satisfy"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "clean",
-            aliases: [],
             description: Some("Remove downloaded package files"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "edit-sources",
-            aliases: [],
             description: Some("Edit the list of package sources"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "source",
-            aliases: [],
             description: Some("Fetch package source files"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -647,71 +579,58 @@
                         "--download-only",
                     ],
                     description: Some("For any operation that would download packages, download them, but do nothing else"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-download",
                     ],
                     description: Some("Do not download packages, attempt to use already downloaded packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
                 (
                     names: [
                         "--compile",
                     ],
                     description: Some("Compile the package to a binary using dpkg-buildpackage"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--only-source",
                     ],
-                    description: None,
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--host-architecture",
                     ],
                     description: Some("The architecture to build for"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "architecture",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The architecture to build for"),
                         ),
                     ],
                 ),
@@ -719,23 +638,20 @@
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
+                    description: Some("The package you want to get source files for"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "build-dep",
-            aliases: [],
             description: Some("Install/remove packages in an attempt to satisfy the build dependencies for a source package"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -743,55 +659,47 @@
                         "--download-only",
                     ],
                     description: Some("For any operation that would download packages, download them, but do nothing else"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-download",
                     ],
                     description: Some("Do not download packages, attempt to use already downloaded packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
                 (
                     names: [
                         "--host-architecture",
                     ],
                     description: Some("The architecture to build for"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "architecture",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The architecture to build for"),
                         ),
                     ],
                 ),
@@ -799,31 +707,24 @@
                     names: [
                         "--only-source",
                     ],
-                    description: None,
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("The package you want to build dependencies for"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "download",
-            aliases: [],
             description: Some("Download package binary into the current directory"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -831,48 +732,44 @@
                         "--download-only",
                     ],
                     description: Some("For any operation that would download packages, download them, but do nothing else"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-download",
                     ],
                     description: Some("Do not download packages, attempt to use already downloaded packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("The package you want to download"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "autoclean",
@@ -880,7 +777,6 @@
                 "auto-clean",
             ],
             description: Some("Like clean, but only removes package files that can no longer be downloaded"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -888,51 +784,43 @@
                         "--download-only",
                     ],
                     description: Some("For any operation that would download packages, download them, but do nothing else"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-download",
                     ],
                     description: Some("Do not download packages, attempt to use already downloaded packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
                 (
                     names: [
                         "-s",
                         "--simulate",
                     ],
-                    description: Some("Simulate running this command and show it\'s output, without actually changing anything"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Simulate running this command and show it's output, without actually changing anything"),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "changelog",
-            aliases: [],
             description: Some("Show the changelog for a package"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -940,48 +828,45 @@
                         "--download-only",
                     ],
                     description: Some("For any operation that would download packages, download them, but do nothing else"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-download",
                     ],
                     description: Some("Do not download packages, attempt to use already downloaded packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-y",
                     ],
                     description: Some("Assume yes to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--assume-no",
+                    ],
                 ),
                 (
                     names: [
                         "--assume-no",
                     ],
                     description: Some("Assume no to all prompts"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-y",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
+                    description: Some("The package you want to show the changelog for"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -991,8 +876,10 @@
                 "--help",
             ],
             description: Some("Print help message and exit"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
+            presentation: (
+                priority: Some(40.0),
+            ),
         ),
         (
             names: [
@@ -1000,9 +887,10 @@
                 "--version",
             ],
             description: Some("Print version information and exit"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
+            presentation: (
+                priority: Some(40.0),
+            ),
         ),
     ],
-    arguments: [],
 )

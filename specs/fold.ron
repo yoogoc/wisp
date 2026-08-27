@@ -2,43 +2,45 @@
     version: 1,
     command: "fold",
     description: Some("Fold long lines for finite width output device"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-b",
             ],
             description: Some("Count width in bytes rather than column positions"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-s",
             ],
             description: Some("Fold line after the last blank character within the first width\ncolumn positions (or bytes)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-w",
             ],
             description: Some("Specify a line width to use instead of the default 80 columns.\nThe width value should be a multiple of 8 if tabs are present,\nor the tabs should be expanded using expand(1) before using\nfold"),
-            takes_value: true,
             arguments: [
                 (
                     name: "width",
-                    source: Static([
-                        "80",
-                        "90",
-                        "100",
-                        "110",
-                        "120",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "80",
+                        ),
+                        (
+                            name: "90",
+                        ),
+                        (
+                            name: "100",
+                        ),
+                        (
+                            name: "110",
+                        ),
+                        (
+                            name: "120",
+                        ),
+                    ],
+                    default: Some("80"),
                 ),
             ],
         ),
@@ -46,10 +48,15 @@
     arguments: [
         (
             name: "file",
-            source: Files,
+            description: Some("File(s) to fold"),
+            template: [
+                FilePaths,
+            ],
             optional: true,
             variadic: true,
-            imported_generator: None,
         ),
     ],
+    parser_directives: Some((
+        options_must_precede_arguments: true,
+    )),
 )

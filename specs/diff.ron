@@ -2,7 +2,6 @@
     version: 1,
     command: "diff",
     description: Some("Compare files line by line"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,24 +9,24 @@
                 "--ignore-case",
             ],
             description: Some("Ignore case differences in file contents"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ignore-file-name-case",
             ],
             description: Some("Ignore case when comparing file names"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-ignore-file-name-case",
+            ],
         ),
         (
             names: [
                 "--no-ignore-file-name-case",
             ],
             description: Some("Consider case when comparing file names"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--ignore-file-name-case",
+            ],
         ),
         (
             names: [
@@ -35,8 +34,6 @@
                 "--ignore-tab-expansion",
             ],
             description: Some("Ignore changes due to tab expansion"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -44,8 +41,6 @@
                 "--ignore-space-change",
             ],
             description: Some("Ignore changes in the amount of white space"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -53,8 +48,6 @@
                 "--ignore-all-space",
             ],
             description: Some("Ignore all white space"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -62,8 +55,6 @@
                 "--ignore-blank-lines",
             ],
             description: Some("Ignore changes whose lines are all blank"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -71,14 +62,9 @@
                 "--ignore-matching-lines",
             ],
             description: Some("Ignore changes whose lines all match RE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "RE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -87,8 +73,6 @@
                 "--strip-trailing-cr",
             ],
             description: Some("Strip trailing carriage return on input"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -96,8 +80,6 @@
                 "--text",
             ],
             description: Some("Treat all files as text"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -106,14 +88,10 @@
                 "--context",
             ],
             description: Some("Output NUM lines of copied context"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("3"),
                 ),
             ],
         ),
@@ -124,14 +102,10 @@
                 "--unified",
             ],
             description: Some("Output NUM lines of unified context"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("3"),
                 ),
             ],
         ),
@@ -140,14 +114,9 @@
                 "--label",
             ],
             description: Some("Use LABEL instead of file name"),
-            takes_value: true,
             arguments: [
                 (
                     name: "LABEL",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -157,8 +126,6 @@
                 "--show-c-function",
             ],
             description: Some("Show which C function each change is in"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -166,14 +133,9 @@
                 "--show-function-line",
             ],
             description: Some("Show the most recent line matching RE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "RE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -183,8 +145,6 @@
                 "--brief",
             ],
             description: Some("Output only whether files differ"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -192,16 +152,12 @@
                 "--ed",
             ],
             description: Some("Output an ed script"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--normal",
             ],
             description: Some("Output a normal diff"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -209,8 +165,6 @@
                 "--rcs",
             ],
             description: Some("Output an RCS format diff"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -218,8 +172,6 @@
                 "--side-by-side",
             ],
             description: Some("Output in two columns"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -227,14 +179,9 @@
                 "--width",
             ],
             description: Some("Output at most NUM (default 130) print columns"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -243,31 +190,22 @@
                 "--left-column",
             ],
             description: Some("Output only the left column of common lines"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--suppress-common-lines",
             ],
             description: Some("Do not output common lines"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-D",
                 "--ifdef",
             ],
-            description: Some("Output merged file to show `#ifdef NAME\' diffs"),
-            takes_value: true,
+            description: Some("Output merged file to show `#ifdef NAME' diffs"),
             arguments: [
                 (
                     name: "NAME",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -276,9 +214,7 @@
                 "-l",
                 "--paginate",
             ],
-            description: Some("Pass the output through `pr\' to paginate it"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Pass the output through `pr' to paginate it"),
         ),
         (
             names: [
@@ -286,8 +222,6 @@
                 "--expand-tabs",
             ],
             description: Some("Expand tabs to spaces in output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -295,8 +229,6 @@
                 "--initial-tab",
             ],
             description: Some("Make tabs line up by prepending a tab"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -304,8 +236,6 @@
                 "--recursive",
             ],
             description: Some("Recursively compare any subdirectories found"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -313,16 +243,12 @@
                 "--new-file",
             ],
             description: Some("Treat absent files as empty"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--unidirectional-new-file",
             ],
             description: Some("Treat absent first files as empty"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -330,8 +256,6 @@
                 "--report-identical-files",
             ],
             description: Some("Report when two files are the same"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -339,14 +263,9 @@
                 "--exclude",
             ],
             description: Some("Exclude files that match PAT"),
-            takes_value: true,
             arguments: [
                 (
                     name: "PAT",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -356,14 +275,12 @@
                 "--exclude-from",
             ],
             description: Some("Exclude files that match any pattern in FILE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -373,14 +290,12 @@
                 "--starting-file",
             ],
             description: Some("Start with FILE when comparing directories"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -389,14 +304,13 @@
                 "--from-file",
             ],
             description: Some("Compare FILE1 to all operands. FILE1 can be a directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE1",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -405,14 +319,13 @@
                 "--to-file",
             ],
             description: Some("Compare all operands to FILE2. FILE2 can be a directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE2",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -421,14 +334,9 @@
                 "--horizon-lines",
             ],
             description: Some("Keep NUM lines of the common prefix and suffix"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -438,16 +346,12 @@
                 "--minimal",
             ],
             description: Some("Try hard to find a smaller set of changes"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--speed-large-files",
             ],
             description: Some("Assume large files and many scattered small changes"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -455,30 +359,22 @@
                 "--version",
             ],
             description: Some("Output version info"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--help",
             ],
             description: Some("Show help"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--old-group-format",
             ],
             description: Some("Similar, but format old input groups with GFTM"),
-            takes_value: true,
             arguments: [
                 (
                     name: "GFTM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("%<  lines from FILE1\n%>  lines from FILE2\n%=  lines common to FILE1 and FILE2\n%[-][WIDTH][.[PREC]]{doxX}LETTER  printf-style spec for LETTER\nLETTERs are as follows for new group, lower case for old group:\nF  first line number\nL  last line number\nN  number of lines = L-F+1\nE  F-1\nM  L+1\n%%  %\n%c'C'  the single character C\n%c'OOO'  the character with octal code OOO"),
                 ),
             ],
         ),
@@ -487,14 +383,10 @@
                 "--new-group-format",
             ],
             description: Some("Similar, but format new input groups with GFTM"),
-            takes_value: true,
             arguments: [
                 (
                     name: "GFTM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("%<  lines from FILE1\n%>  lines from FILE2\n%=  lines common to FILE1 and FILE2\n%[-][WIDTH][.[PREC]]{doxX}LETTER  printf-style spec for LETTER\nLETTERs are as follows for new group, lower case for old group:\nF  first line number\nL  last line number\nN  number of lines = L-F+1\nE  F-1\nM  L+1\n%%  %\n%c'C'  the single character C\n%c'OOO'  the character with octal code OOO"),
                 ),
             ],
         ),
@@ -503,14 +395,10 @@
                 "--unchanged-group-format",
             ],
             description: Some("Similar, but format unchanged input groups with GFTM"),
-            takes_value: true,
             arguments: [
                 (
                     name: "GFTM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("%<  lines from FILE1\n%>  lines from FILE2\n%=  lines common to FILE1 and FILE2\n%[-][WIDTH][.[PREC]]{doxX}LETTER  printf-style spec for LETTER\nLETTERs are as follows for new group, lower case for old group:\nF  first line number\nL  last line number\nN  number of lines = L-F+1\nE  F-1\nM  L+1\n%%  %\n%c'C'  the single character C\n%c'OOO'  the character with octal code OOO"),
                 ),
             ],
         ),
@@ -519,14 +407,10 @@
                 "--changed-group-format",
             ],
             description: Some("Similar, but format changed input groups with GFTM"),
-            takes_value: true,
             arguments: [
                 (
                     name: "GFTM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("%<  lines from FILE1\n%>  lines from FILE2\n%=  lines common to FILE1 and FILE2\n%[-][WIDTH][.[PREC]]{doxX}LETTER  printf-style spec for LETTER\nLETTERs are as follows for new group, lower case for old group:\nF  first line number\nL  last line number\nN  number of lines = L-F+1\nE  F-1\nM  L+1\n%%  %\n%c'C'  the single character C\n%c'OOO'  the character with octal code OOO"),
                 ),
             ],
         ),
@@ -535,14 +419,9 @@
                 "--line-format",
             ],
             description: Some("Format all input lines with LFMT"),
-            takes_value: true,
             arguments: [
                 (
                     name: "LFTM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -551,14 +430,10 @@
                 "--old-line-format",
             ],
             description: Some("Format old input lines with LFTM"),
-            takes_value: true,
             arguments: [
                 (
                     name: "LFTM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("%L  contents of line\n%l  contents of line, excluding any trailing newline\n%[-][WIDTH][.[PREC]]{doxX}n  printf-style spec for input line number\n%%  %\n%c'C'  the single character C\n%c'OOO'  the character with octal code OOO"),
                 ),
             ],
         ),
@@ -567,14 +442,10 @@
                 "--new-line-format",
             ],
             description: Some("Format new input lines with LFTM"),
-            takes_value: true,
             arguments: [
                 (
                     name: "LFTM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("%L  contents of line\n%l  contents of line, excluding any trailing newline\n%[-][WIDTH][.[PREC]]{doxX}n  printf-style spec for input line number\n%%  %\n%c'C'  the single character C\n%c'OOO'  the character with octal code OOO"),
                 ),
             ],
         ),
@@ -583,14 +454,10 @@
                 "--unchanged-line-format",
             ],
             description: Some("Format unchanged input lines with LFTM"),
-            takes_value: true,
             arguments: [
                 (
                     name: "LFTM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("%L  contents of line\n%l  contents of line, excluding any trailing newline\n%[-][WIDTH][.[PREC]]{doxX}n  printf-style spec for input line number\n%%  %\n%c'C'  the single character C\n%c'OOO'  the character with octal code OOO"),
                 ),
             ],
         ),
@@ -598,10 +465,10 @@
     arguments: [
         (
             name: "file",
-            source: Files,
-            optional: false,
+            template: [
+                FilePaths,
+            ],
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

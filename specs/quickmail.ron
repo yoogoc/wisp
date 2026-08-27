@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "init",
-            aliases: [],
             description: Some("Initialise cli"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,26 +13,21 @@
                         "--help",
                     ],
                     description: Some("Get help regarding init command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "clear",
-            aliases: [],
             description: Some("Clear the files stored locally"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -42,8 +35,6 @@
                         "--help",
                     ],
                     description: Some("Get help regarding clear command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -51,18 +42,12 @@
                         "--justdoit",
                     ],
                     description: Some("Clear entire cli storage including token"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "send",
-            aliases: [],
             description: Some("Send mail"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -70,23 +55,16 @@
                         "--help",
                     ],
                     description: Some("Get help regarding send command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-r",
                         "--receiver",
                     ],
-                    description: Some("Receiver\'s email address"),
-                    takes_value: true,
+                    description: Some("Receiver's email address"),
                     arguments: [
                         (
                             name: "receiver",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -96,14 +74,9 @@
                         "--subject",
                     ],
                     description: Some("Subject of mail"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Subject",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -113,22 +86,20 @@
                         "--template",
                     ],
                     description: Some("Templates for mail body"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Template",
-                            source: Unavailable,
+                            generators: [
+                                (
+                                    script: [
+                                        "quickmail",
+                                        "template",
+                                        "listall",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "quickmail",
-                                    "template",
-                                    "listall",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
                         ),
                     ],
                 ),
@@ -138,14 +109,10 @@
                         "--body",
                     ],
                     description: Some("Body of the mail"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Body",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -155,14 +122,13 @@
                         "--attachment",
                     ],
                     description: Some("Path to attachment file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Attachment file",
-                            source: Files,
+                            template: [
+                                FilePaths,
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -172,23 +138,16 @@
                         "--lessgo",
                     ],
                     description: Some("Skip confirmation, and send mail"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "template",
-            aliases: [],
             description: Some("Manage templates"),
             subcommands: [
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Add a new template"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -196,34 +155,23 @@
                                 "--help",
                             ],
                             description: Some("Get help regarding template add subcommand"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "-n",
                             ],
                             description: Some("Set template id"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Template id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "listall",
-                    aliases: [],
                     description: Some("List all templates stored"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -231,18 +179,12 @@
                                 "--help",
                             ],
                             description: Some("Get help regarding template listall subcommand"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "edit",
-                    aliases: [],
                     description: Some("Edit any particular template"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -250,36 +192,29 @@
                                 "--help",
                             ],
                             description: Some("Get help regarding template edit subcommand"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "-n",
                             ],
                             description: Some("Edit template by id"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Template id",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "quickmail",
-                                            "template",
-                                            "listall",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "quickmail",
+                                                "template",
+                                                "listall",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -289,12 +224,8 @@
                         "--help",
                     ],
                     description: Some("Get help regarding template command"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -304,8 +235,6 @@
                 "--version",
             ],
             description: Some("Output cli version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -313,9 +242,9 @@
                 "--help",
             ],
             description: Some("Output cli help"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
+    parser_directives: Some((
+        flags_are_posix_noncompliant: true,
+    )),
 )

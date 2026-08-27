@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "create",
-            aliases: [],
             description: Some("Create new Redis Cache instance"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,16 +13,12 @@
                         "-l",
                     ],
                     description: Some("Location. Values from: az account list-locations. You can configure the default location using az configure --defaults location=<location>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "location",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -32,16 +26,12 @@
                         "-n",
                     ],
                     description: Some("Name of the Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -49,79 +39,94 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--sku",
                     ],
                     description: Some("Type of Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "sku",
-                            source: Static([
-                                "Basic",
-                                "Premium",
-                                "Standard",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "Basic",
+                                ),
+                                (
+                                    name: "Premium",
+                                ),
+                                (
+                                    name: "Standard",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--vm-size",
                     ],
                     description: Some("Size of Redis cache to deploy. Basic and Standard Cache sizes start with C. Premium Cache sizes start with P"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "vm-size",
-                            source: Static([
-                                "c0",
-                                "c1",
-                                "c2",
-                                "c3",
-                                "c4",
-                                "c5",
-                                "c6",
-                                "p1",
-                                "p2",
-                                "p3",
-                                "p4",
-                                "p5",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "c0",
+                                ),
+                                (
+                                    name: "c1",
+                                ),
+                                (
+                                    name: "c2",
+                                ),
+                                (
+                                    name: "c3",
+                                ),
+                                (
+                                    name: "c4",
+                                ),
+                                (
+                                    name: "c5",
+                                ),
+                                (
+                                    name: "c6",
+                                ),
+                                (
+                                    name: "p1",
+                                ),
+                                (
+                                    name: "p2",
+                                ),
+                                (
+                                    name: "p3",
+                                ),
+                                (
+                                    name: "p4",
+                                ),
+                                (
+                                    name: "p5",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--enable-non-ssl-port",
                     ],
                     description: Some("If specified, then the non-ssl redis server port (6379) will be enabled"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "enable-non-ssl-port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -130,14 +135,9 @@
                         "--mi-system-assigned",
                     ],
                     description: Some("Flag to specify system assigned identity"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "mi-system-assigned",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -146,14 +146,9 @@
                         "--mi-user-assigned",
                     ],
                     description: Some("One or more space separated resource IDs of user assigned identities"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "mi-user-assigned",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -162,18 +157,20 @@
                         "--minimum-tls-version",
                     ],
                     description: Some("Specifies the TLS version required by clients to connect to cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "minimum-tls-version",
-                            source: Static([
-                                "1.0",
-                                "1.1",
-                                "1.2",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "1.0",
+                                ),
+                                (
+                                    name: "1.1",
+                                ),
+                                (
+                                    name: "1.2",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -182,14 +179,9 @@
                         "--redis-configuration",
                     ],
                     description: Some("A json file used to set redis-configuration settings. You may encounter parse errors if the json file is invalid"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "redis-configuration",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -197,15 +189,10 @@
                     names: [
                         "--redis-version",
                     ],
-                    description: Some("Redis version. This should be in the form \'major[.minor]\' (only \'major\' is required) or the value \'latest\' which refers to the latest stable Redis version that is available. Supported versions: 4.0, 6.0 (latest). Default value is \'latest\'"),
-                    takes_value: true,
+                    description: Some("Redis version. This should be in the form 'major[.minor]' (only 'major' is required) or the value 'latest' which refers to the latest stable Redis version that is available. Supported versions: 4.0, 6.0 (latest). Default value is 'latest'"),
                     arguments: [
                         (
                             name: "redis-version",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -214,14 +201,9 @@
                         "--replicas-per-master",
                     ],
                     description: Some("The number of replicas to be created per master"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "replicas-per-master",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -230,14 +212,9 @@
                         "--shard-count",
                     ],
                     description: Some("The number of shards to be created on a Premium Cluster Cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "shard-count",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -246,14 +223,9 @@
                         "--static-ip",
                     ],
                     description: Some("Specify a static ip if required for the VNET. If you do not specify a static IP then an IP address is chosen automatically"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "static-ip",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -262,14 +234,9 @@
                         "--subnet-id",
                     ],
                     description: Some("The full resource ID of a subnet in a virtual network to deploy the redis cache in. Example format /subscriptions/{subid}/resourceGroups/{resourceGroupName}/providers/Microsoft.{Network|ClassicNetwork}/virtualNetworks/vnet1/subnets/subnet1"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subnet-id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -278,14 +245,9 @@
                         "--tags",
                     ],
                     description: Some("Space-separated tags: key[=value] [key[=value] ...]. Use \"\" to clear existing tags"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "tags",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -294,14 +256,9 @@
                         "--tenant-settings",
                     ],
                     description: Some("Space-separated tenant settings in key[=value] format"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "tenant-settings",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -311,44 +268,37 @@
                         "-z",
                     ],
                     description: Some("Space-separated list of availability zones into which to provision the resource"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "zones",
-                            source: Static([
-                                "1",
-                                "2",
-                                "3",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "1",
+                                ),
+                                (
+                                    name: "2",
+                                ),
+                                (
+                                    name: "3",
+                                ),
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "delete",
-            aliases: [],
             description: Some("Deletes a Redis cache"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -358,14 +308,9 @@
                         "-n",
                     ],
                     description: Some("Name of the Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -375,14 +320,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -391,14 +331,9 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -408,50 +343,36 @@
                         "-y",
                     ],
                     description: Some("Do not prompt for confirmation"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "export",
-            aliases: [],
             description: Some("Export data stored in a Redis cache"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--container",
                     ],
                     description: Some("SAS url for container where data needs to be exported to"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "container",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--prefix",
                     ],
                     description: Some("Prefix to use for exported files"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "prefix",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -459,17 +380,17 @@
                         "--auth-method",
                     ],
                     description: Some("Preferred auth method to communicate to storage account used for data archive, default value is SAS"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "preferred-data-archive-auth-method",
-                            source: Static([
-                                "ManagedIdentity",
-                                "SAS",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "ManagedIdentity",
+                                ),
+                                (
+                                    name: "SAS",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -478,14 +399,9 @@
                         "--file-format",
                     ],
                     description: Some("Format of the blob (Currently rdb is the only supported format, with other formats expected in the future)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file-format",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -493,15 +409,10 @@
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -511,14 +422,9 @@
                         "-n",
                     ],
                     description: Some("Name of the Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -528,14 +434,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -544,60 +445,49 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "force-reboot",
-            aliases: [],
             description: Some("Reboot specified Redis node(s)"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--reboot-type",
                     ],
                     description: Some("Which Redis node(s) to reboot. Depending on this value data loss is possible"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "reboot-type",
-                            source: Static([
-                                "AllNodes",
-                                "PrimaryNode",
-                                "SecondaryNode",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "AllNodes",
+                                ),
+                                (
+                                    name: "PrimaryNode",
+                                ),
+                                (
+                                    name: "SecondaryNode",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -607,14 +497,9 @@
                         "-n",
                     ],
                     description: Some("Name of the Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -624,14 +509,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -640,14 +520,9 @@
                         "--shard-id",
                     ],
                     description: Some("If clustering is enabled, the ID of the shard to be rebooted"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "shard-id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -656,42 +531,29 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "import",
-            aliases: [],
             description: Some("Import data into a Redis cache"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--files",
                     ],
                     description: Some("SAS url for blobs that needs to be imported"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "files",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -699,17 +561,17 @@
                         "--auth-method",
                     ],
                     description: Some("Preferred auth method to communicate to storage account used for data archive, default value is SAS"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "preferred-data-archive-auth-method",
-                            source: Static([
-                                "ManagedIdentity",
-                                "SAS",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "ManagedIdentity",
+                                ),
+                                (
+                                    name: "SAS",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -718,14 +580,9 @@
                         "--file-format",
                     ],
                     description: Some("Format of the blob (Currently rdb is the only supported format, with other formats expected in the future)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file-format",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -733,15 +590,10 @@
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -751,14 +603,9 @@
                         "-n",
                     ],
                     description: Some("Name of the Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -768,14 +615,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -784,42 +626,29 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "import-method",
-            aliases: [],
             description: Some("Import data into Redis cache"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--files",
                     ],
                     description: Some("SAS url for blobs that needs to be imported"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "files",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -827,17 +656,17 @@
                         "--auth-method",
                     ],
                     description: Some("Preferred auth method to communicate to storage account used for data archive, default value is SAS"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "preferred-data-archive-auth-method",
-                            source: Static([
-                                "ManagedIdentity",
-                                "SAS",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "ManagedIdentity",
+                                ),
+                                (
+                                    name: "SAS",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -846,14 +675,9 @@
                         "--file-format",
                     ],
                     description: Some("Format of the blob (Currently rdb is the only supported format, with other formats expected in the future)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file-format",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -861,15 +685,10 @@
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -879,14 +698,9 @@
                         "-n",
                     ],
                     description: Some("Name of the Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -896,14 +710,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -912,26 +721,17 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "list",
-            aliases: [],
             description: Some("List Redis Caches"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -939,40 +739,26 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "list-keys",
-            aliases: [],
-            description: Some("Retrieve a Redis cache\'s access keys"),
-            subcommands: [],
+            description: Some("Retrieve a Redis cache's access keys"),
             options: [
                 (
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -982,14 +768,9 @@
                         "-n",
                     ],
                     description: Some("Name of the Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -999,14 +780,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1015,59 +791,46 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "regenerate-keys",
-            aliases: [],
-            description: Some("Regenerate Redis cache\'s access keys"),
-            subcommands: [],
+            description: Some("Regenerate Redis cache's access keys"),
             options: [
                 (
                     names: [
                         "--key-type",
                     ],
                     description: Some("The Redis access key to regenerate"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "key-type",
-                            source: Static([
-                                "Primary",
-                                "Secondary",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "Primary",
+                                ),
+                                (
+                                    name: "Secondary",
+                                ),
+                            ],
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1077,14 +840,9 @@
                         "-n",
                     ],
                     description: Some("Name of the Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1094,14 +852,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1110,40 +863,26 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "show",
-            aliases: [],
             description: Some("Gets a Redis cache (resource description)"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1153,14 +892,9 @@
                         "-n",
                     ],
                     description: Some("Name of the Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1170,14 +904,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1186,40 +915,26 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "update",
-            aliases: [],
             description: Some("Update a Redis cache"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--add",
                     ],
                     description: Some("Add an object to a list of objects by specifying a path and key value pairs. Example: --add property.listProperty <key=value, string or JSON string>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "add",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1227,23 +942,16 @@
                     names: [
                         "--force-string",
                     ],
-                    description: Some("When using \'set\' or \'add\', preserve string literals instead of attempting to convert to JSON"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("When using 'set' or 'add', preserve string literals instead of attempting to convert to JSON"),
                 ),
                 (
                     names: [
                         "--ids",
                     ],
-                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                    takes_value: true,
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                     arguments: [
                         (
                             name: "ids",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1253,14 +961,9 @@
                         "-n",
                     ],
                     description: Some("Name of the Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1269,14 +972,9 @@
                         "--remove",
                     ],
                     description: Some("Remove a property or an element from a list. Example: --remove property.list OR --remove propertyToRemove"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "remove",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1286,14 +984,9 @@
                         "-g",
                     ],
                     description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "resource-group",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1302,14 +995,9 @@
                         "--set",
                     ],
                     description: Some("Update an object by specifying a property path and value to set. Example: --set property1.property2="),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "set",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1318,18 +1006,20 @@
                         "--sku",
                     ],
                     description: Some("Type of Redis cache"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "sku",
-                            source: Static([
-                                "Basic",
-                                "Premium",
-                                "Standard",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "Basic",
+                                ),
+                                (
+                                    name: "Premium",
+                                ),
+                                (
+                                    name: "Standard",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1338,14 +1028,9 @@
                         "--subscription",
                     ],
                     description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "subscription",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1354,60 +1039,71 @@
                         "--vm-size",
                     ],
                     description: Some("Size of Redis cache to deploy. Basic and Standard Cache sizes start with C. Premium Cache sizes start with P"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "vm-size",
-                            source: Static([
-                                "c0",
-                                "c1",
-                                "c2",
-                                "c3",
-                                "c4",
-                                "c5",
-                                "c6",
-                                "p1",
-                                "p2",
-                                "p3",
-                                "p4",
-                                "p5",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "c0",
+                                ),
+                                (
+                                    name: "c1",
+                                ),
+                                (
+                                    name: "c2",
+                                ),
+                                (
+                                    name: "c3",
+                                ),
+                                (
+                                    name: "c4",
+                                ),
+                                (
+                                    name: "c5",
+                                ),
+                                (
+                                    name: "c6",
+                                ),
+                                (
+                                    name: "p1",
+                                ),
+                                (
+                                    name: "p2",
+                                ),
+                                (
+                                    name: "p3",
+                                ),
+                                (
+                                    name: "p4",
+                                ),
+                                (
+                                    name: "p5",
+                                ),
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "firewall-rules",
-            aliases: [],
             description: Some("Manage Redis firewall rules"),
             subcommands: [
                 (
                     name: "create",
-                    aliases: [],
                     description: Some("Create a redis cache firewall rule"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--end-ip",
                             ],
                             description: Some("Highest IP address included in the range"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "end-ip",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1415,16 +1111,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1432,88 +1124,63 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--rule-name",
                             ],
                             description: Some("The name of the firewall rule"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "rule-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--start-ip",
                             ],
                             description: Some("Lowest IP address included in the range"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "start-ip",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Deletes a single firewall rule in a specified redis cache"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--rule-name",
                             ],
                             description: Some("The name of the firewall rule"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "rule-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1523,14 +1190,9 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1540,14 +1202,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1556,26 +1213,17 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("Gets all firewall rules in the specified redis cache"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1583,16 +1231,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -1600,56 +1244,39 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "show",
-                    aliases: [],
                     description: Some("Gets a single firewall rule in a specified redis cache"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--rule-name",
                             ],
                             description: Some("The name of the firewall rule"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "rule-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1659,14 +1286,9 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1676,14 +1298,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1692,88 +1309,62 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "update",
-                    aliases: [],
                     description: Some("Update a redis cache firewall rule"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--end-ip",
                             ],
                             description: Some("Highest IP address included in the range"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "end-ip",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--rule-name",
                             ],
                             description: Some("The name of the firewall rule"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "rule-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--start-ip",
                             ],
                             description: Some("Lowest IP address included in the range"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "start-ip",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1783,14 +1374,9 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1800,14 +1386,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1816,50 +1397,32 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "identity",
-            aliases: [],
             description: Some("Manage identity assigned to Azure cache for Redis"),
             subcommands: [
                 (
                     name: "assign",
-                    aliases: [],
                     description: Some("Assign identity for Azure cache for Redis"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1868,14 +1431,9 @@
                                 "--mi-system-assigned",
                             ],
                             description: Some("Flag to specify system assigned identity"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "mi-system-assigned",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1884,14 +1442,9 @@
                                 "--mi-user-assigned",
                             ],
                             description: Some("One or more space separated resource IDs of user assigned identities"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "mi-user-assigned",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1901,14 +1454,9 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1918,14 +1466,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1934,40 +1477,26 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "remove",
-                    aliases: [],
                     description: Some("Remove the identity already assigned for Azure cache for Redis"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1976,14 +1505,9 @@
                                 "--mi-system-assigned",
                             ],
                             description: Some("Flag to specify system assigned identity"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "mi-system-assigned",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1992,14 +1516,9 @@
                                 "--mi-user-assigned",
                             ],
                             description: Some("One or more space separated resource IDs of user assigned identities"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "mi-user-assigned",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2009,14 +1528,9 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2026,14 +1540,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2042,40 +1551,26 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "show",
-                    aliases: [],
                     description: Some("Show the identity assigned for Azure cache for Redis"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--ids",
                             ],
-                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
-                            takes_value: true,
+                            description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of 'Resource Id' arguments. You should provide either --ids or other 'Resource Id' arguments"),
                             arguments: [
                                 (
                                     name: "ids",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2085,14 +1580,9 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2102,14 +1592,9 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2118,36 +1603,23 @@
                                 "--subscription",
                             ],
                             description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "subscription",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "patch-schedule",
-            aliases: [],
             description: Some("Manage Redis patch schedules"),
             subcommands: [
                 (
                     name: "create",
-                    aliases: [],
                     description: Some("Create patching schedule for Redis cache"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2155,16 +1627,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -2172,42 +1640,30 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--schedule-entries",
                             ],
                             description: Some("List of Patch schedule entries. Example Value:[{\"dayOfWeek\":\"Monday\",\"startHourUtc\":\"00\",\"maintenanceWindow\":\"PT5H\"}]"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "schedule-entries",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Deletes the patching schedule of a redis cache"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2215,16 +1671,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -2232,26 +1684,18 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "show",
-                    aliases: [],
                     description: Some("Gets the patching schedule of a redis cache"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2259,16 +1703,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -2276,26 +1716,18 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "update",
-                    aliases: [],
                     description: Some("Update the patching schedule for Redis cache"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2303,16 +1735,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -2320,52 +1748,36 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--schedule-entries",
                             ],
                             description: Some("List of Patch schedule entries. Example Value:[{\"dayOfWeek\":\"Monday\",\"startHourUtc\":\"00\",\"maintenanceWindow\":\"PT5H\"}]"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "schedule-entries",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "server-link",
-            aliases: [],
             description: Some("Manage Redis server links"),
             subcommands: [
                 (
                     name: "create",
-                    aliases: [],
                     description: Some("Adds a server link to the Redis cache (requires Premium SKU)"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2373,35 +1785,32 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--replication-role",
                             ],
                             description: Some("Role of the redis cache to be linked"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "replication-role",
-                                    source: Static([
-                                        "Primary",
-                                        "Secondary",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "Primary",
+                                        ),
+                                        (
+                                            name: "Secondary",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -2409,58 +1818,42 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
                                 "--server-to-link",
                             ],
                             description: Some("Resource ID or name of the redis cache to be linked"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "server-to-link",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Deletes the linked server from a redis cache (requires Premium SKU)"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--linked-server-name",
                             ],
                             description: Some("Name of the linked redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "linked-server-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -2468,16 +1861,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -2485,26 +1874,18 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("Gets the list of linked servers associated with this redis cache (requires Premium SKU)"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2512,16 +1893,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -2529,42 +1906,30 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "show",
-                    aliases: [],
                     description: Some("Gets the detailed information about a linked server of a redis cache (requires Premium SKU)"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--linked-server-name",
                             ],
                             description: Some("Name of the linked redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "linked-server-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -2572,16 +1937,12 @@
                                 "-n",
                             ],
                             description: Some("Name of the Redis cache"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                         (
                             names: [
@@ -2589,27 +1950,16 @@
                                 "-g",
                             ],
                             description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "resource-group",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
-    options: [],
-    arguments: [],
 )

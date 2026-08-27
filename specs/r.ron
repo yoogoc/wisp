@@ -5,23 +5,15 @@
     subcommands: [
         (
             name: "RHOME",
-            aliases: [],
             description: Some("Print path to R home directory and exit"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "CMD",
-            aliases: [],
             description: Some("Invoke an R tool"),
             subcommands: [
                 (
                     name: "BATCH",
-                    aliases: [],
                     description: Some("Batch Execution of R"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -29,8 +21,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -38,53 +31,44 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
                                 "--no-timing",
                             ],
                             description: Some("Do not report the timings"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--",
                             ],
                             description: Some("End processing of options"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "infile",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            description: Some("A file with R code to be executed"),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                ),
+                            ],
                         ),
                         (
                             name: "outfile",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("A file to which to write output. If not given, the name used is that of infile, with a possible .R extension stripped, and .Rout appended"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "COMPILE",
-                    aliases: [],
                     description: Some("Compile files for use with R (not available on Windows)"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -92,8 +76,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -101,30 +86,29 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                     ],
                     arguments: [
                         (
                             name: "files",
-                            source: Unavailable,
-                            optional: false,
+                            description: Some("Source files to be compiled"),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "SHLIB",
-                    aliases: [],
                     description: Some("Compile the given source files and then link all specified object files"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -132,8 +116,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -141,8 +126,9 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
@@ -150,16 +136,12 @@
                                 "-c",
                             ],
                             description: Some("Remove files created during compilation"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--preclean",
                             ],
                             description: Some("Remove files created during a previous run"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -167,16 +149,13 @@
                                 "-o",
                             ],
                             description: Some("Name for the built library"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "LIB",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Full name for the built library"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
@@ -184,24 +163,24 @@
                                 "-n",
                             ],
                             description: Some("Dry run; shows commands that would be used"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--use-LTO",
                             ],
                             description: Some("Use Link-Time Optimization"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--no-use-LTO",
+                            ],
                         ),
                         (
                             names: [
                                 "--no-use-LTO",
                             ],
                             description: Some("Do not use Link-Time Optimization"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--use-LTO",
+                            ],
                         ),
                         (
                             names: [
@@ -209,30 +188,29 @@
                                 "-d",
                             ],
                             description: Some("Build a debug DLL (Windows only)"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("🪲"),
+                            ),
                         ),
                     ],
                     arguments: [
                         (
                             name: "files",
-                            source: Unavailable,
-                            optional: false,
+                            description: Some("The object files to be included in the shared object/DLL"),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "INSTALL",
-                    aliases: [],
                     description: Some("Utility for installing add-on packages"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -240,8 +218,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -249,8 +228,9 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
@@ -258,16 +238,12 @@
                                 "-c",
                             ],
                             description: Some("Remove files created during compilation"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--preclean",
                             ],
                             description: Some("Remove files created during a previous run"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -275,8 +251,9 @@
                                 "-d",
                             ],
                             description: Some("Turn on debugging messages"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("🪲"),
+                            ),
                         ),
                         (
                             names: [
@@ -284,451 +261,412 @@
                                 "-l",
                             ],
                             description: Some("Install packages to library tree LIB"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "LIB",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "Rscript",
-                                            "-e",
-                                            ".libPaths()",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    description: Some("Path to the R library tree to install to"),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "Rscript",
+                                                "-e",
+                                                ".libPaths()",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--no-configure",
                             ],
-                            description: Some("Do not use the package\'s configure script"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Do not use the package's configure script"),
                         ),
                         (
                             names: [
                                 "--no-docs",
                             ],
                             description: Some("Do not install HTML, LaTeX or examples help"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--html",
                             ],
                             description: Some("Build HTML help"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--no-html",
+                            ],
                         ),
                         (
                             names: [
                                 "--no-html",
                             ],
                             description: Some("Do not build HTML help"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--html",
+                            ],
                         ),
                         (
                             names: [
                                 "--latex",
                             ],
                             description: Some("Install LaTeX help"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--example",
                             ],
                             description: Some("Install R code for help examples"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--fake",
                             ],
                             description: Some("Do minimal install for testing purposes"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-lock",
                             ],
                             description: Some("Install on top of any existing installation without using a lock directory"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--lock",
+                                "--pkglock",
+                            ],
                         ),
                         (
                             names: [
                                 "--lock",
                             ],
                             description: Some("Use a per-library lock directory (default)"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--no-lock",
+                                "--pkglock",
+                            ],
                         ),
                         (
                             names: [
                                 "--pkglock",
                             ],
                             description: Some("Use a per-package lock directory (default for a single package)"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--no-lock",
+                                "--lock",
+                            ],
                         ),
                         (
                             names: [
                                 "--build",
                             ],
                             description: Some("Build binaries of the installed package(s)"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("🛠"),
+                            ),
                         ),
                         (
                             names: [
                                 "--install-tests",
                             ],
                             description: Some("Install package-specific tests (if any)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-R",
                             ],
                             description: Some("Suppress installation of the package R code"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-libs",
                             ],
                             description: Some("Suppress installation of the package libs"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-data",
                             ],
                             description: Some("Suppress installation of the package data"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-help",
                             ],
                             description: Some("Suppress installation of the package help"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-demo",
                             ],
                             description: Some("Suppress installation of the package demo"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-exec",
                             ],
-                            description: Some("Suppress installation of the \'exec\' directory"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Suppress installation of the 'exec' directory"),
                         ),
                         (
                             names: [
                                 "--no-inst",
                             ],
-                            description: Some("Suppress installation of the \'inst\' directory"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Suppress installation of the 'inst' directory"),
                         ),
                         (
                             names: [
                                 "--no-multiarch",
                             ],
                             description: Some("Build only the main architecture"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--libs-only",
                             ],
                             description: Some("Only install the libs directory"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--data-compress",
                             ],
                             description: Some("Compression to be used for lazy-loading of data"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "compression",
-                                    source: Static([
-                                        "gzip",
-                                        "none",
-                                        "bzip2",
-                                        "xz",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Compression method"),
+                                    suggestions: [
+                                        (
+                                            name: "gzip",
+                                        ),
+                                        (
+                                            name: "none",
+                                        ),
+                                        (
+                                            name: "bzip2",
+                                        ),
+                                        (
+                                            name: "xz",
+                                        ),
+                                    ],
+                                    default: Some("gzip"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--resave-data",
                             ],
                             description: Some("Re-save data files as compactly as possible"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--compact-docs",
                             ],
                             description: Some("Re-compress PDF files under inst/doc"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--with-keep.source",
                             ],
-                            description: Some("\'keep.source\' for R code"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("'keep.source' for R code"),
+                            exclusive_on: [
+                                "--without-keep.source",
+                            ],
                         ),
                         (
                             names: [
                                 "--without-keep.source",
                             ],
-                            description: Some("Do not use \'keep.source\' for R code"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Do not use 'keep.source' for R code"),
+                            exclusive_on: [
+                                "--with-keep.source",
+                            ],
                         ),
                         (
                             names: [
                                 "--with-keep.parse.data",
                             ],
-                            description: Some("Use \'keep.parse.data\' for R code"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Use 'keep.parse.data' for R code"),
+                            exclusive_on: [
+                                "--without-keep.parse.data",
+                            ],
                         ),
                         (
                             names: [
                                 "--without-keep.parse.data",
                             ],
-                            description: Some("Do not \'keep.parse.data\' for R code"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Do not 'keep.parse.data' for R code"),
+                            exclusive_on: [
+                                "--with-keep.parse.data",
+                            ],
                         ),
                         (
                             names: [
                                 "--byte-compile",
                             ],
                             description: Some("Byte-compile R code"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--no-byte-compile",
+                            ],
                         ),
                         (
                             names: [
                                 "--no-byte-compile",
                             ],
                             description: Some("Do not byte-compile R code"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--byte-compile",
+                            ],
                         ),
                         (
                             names: [
                                 "--staged-install",
                             ],
                             description: Some("Install to a temporary directory and then move to the target directory (default)"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--staged-install",
+                            ],
                         ),
                         (
                             names: [
                                 "--no-staged-install",
                             ],
                             description: Some("Install directly to the target directory"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--no-staged-install",
+                            ],
                         ),
                         (
                             names: [
                                 "--no-test-load",
                             ],
                             description: Some("Skip test of loading installed package"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-clean-on-error",
                             ],
                             description: Some("Do not remove installed package on error"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--merge-multiarch",
                             ],
                             description: Some("Multi-arch by merging (from a single tarball only)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--use-vanilla",
                             ],
                             description: Some("Do not read any Renviron or Rprofile files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--use-LTO",
                             ],
                             description: Some("Use Link-Time Optimization"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--no-use-LTO",
+                            ],
                         ),
                         (
                             names: [
                                 "--no-use-LTO",
                             ],
                             description: Some("Do not use Link-Time Optimization"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--use-LTO",
+                            ],
                         ),
                         (
                             names: [
                                 "--configure-args",
                             ],
                             description: Some("Set arguments for the configure scripts"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "ARGS",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Arguments for the configure script"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--configure-vars",
                             ],
                             description: Some("Set variables for the configure scripts"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "ARGS",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Variables for the configure scripts"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--strip",
                             ],
                             description: Some("Strip shared object(s) (Unix only)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--strip-lib",
                             ],
-                            description: Some("Strip static/dynamic libraries under \'lib/\' (Unix only)"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Strip static/dynamic libraries under 'lib/' (Unix only)"),
                         ),
                         (
                             names: [
                                 "--dsym",
                             ],
                             description: Some("Generate dSYM directory (macOS only)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--built-timestamp",
                             ],
-                            description: Some("Set timestamp for \'Built\' entry in DESCRIPTION (Unix only)"),
-                            takes_value: true,
+                            description: Some("Set timestamp for 'Built' entry in DESCRIPTION (Unix only)"),
                             arguments: [
                                 (
                                     name: "STAMP",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("A timestamp for the build (Unix only)"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--force-biarch",
                             ],
                             description: Some("Attempt to build both architectures (Windows only)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--compile-both",
                             ],
                             description: Some("Compile both architectures on 32-bit Windows (Windows only)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "packages",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
+                            description: Some("Directories with the package sources"),
+                            generators: [
+                                (
+                                    template: [
+                                        Folders,
+                                    ],
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "REMOVE",
-                    aliases: [],
                     description: Some("Remove add-on packages"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -736,8 +674,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -745,8 +684,9 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
@@ -754,42 +694,40 @@
                                 "-l",
                             ],
                             description: Some("The library tree to remove from"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "LIB",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [
-                                            "Rscript",
-                                            "-e",
-                                            ".libPaths()",
-                                        ],
-                                        has_post_process: true,
-                                        has_custom: false,
-                                    )),
+                                    description: Some("Library tree"),
+                                    generators: [
+                                        (
+                                            script: [
+                                                "Rscript",
+                                                "-e",
+                                                ".libPaths()",
+                                            ],
+                                            has_post_process: true,
+                                        ),
+                                    ],
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                     ],
                     arguments: [
                         (
                             name: "packages",
-                            source: Files,
-                            optional: false,
+                            description: Some("Packages to remove"),
                             variadic: true,
-                            imported_generator: None,
+                            dangerous: true,
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("🗑"),
+                    ),
                 ),
                 (
                     name: "build",
-                    aliases: [],
                     description: Some("Build R packages from package sources"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -797,8 +735,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -806,59 +745,63 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
                                 "--force",
                             ],
                             description: Some("Force removal of INDEX file"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                dangerous: true,
+                            ),
                         ),
                         (
                             names: [
                                 "--keep-empty-dirs",
                             ],
                             description: Some("Do not remove empty dirs"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-build-vignettes",
                             ],
                             description: Some("Do not (re)build package vignettes"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-manual",
                             ],
                             description: Some("Do not build the PDF manual"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--resave-data",
                             ],
                             description: Some("Re-save data files as compactly as possible"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Compression method",
-                                    source: Static([
-                                        "best",
-                                        "gzip",
-                                        "no",
-                                    ]),
+                                    suggestions: [
+                                        (
+                                            name: "best",
+                                        ),
+                                        (
+                                            name: "gzip",
+                                        ),
+                                        (
+                                            name: "no",
+                                        ),
+                                    ],
                                     optional: true,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("best"),
                                 ),
+                            ],
+                            requires_separator: Some("="),
+                            exclusive_on: [
+                                "--no-resave-data",
                             ],
                         ),
                         (
@@ -866,89 +809,103 @@
                                 "--no-resave-data",
                             ],
                             description: Some("Do not save data"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--resave-data",
+                            ],
                         ),
                         (
                             names: [
                                 "--compact-vignettes",
                             ],
-                            description: Some("Try to compact PDF files under \'inst/doc\'"),
-                            takes_value: true,
+                            description: Some("Try to compact PDF files under 'inst/doc'"),
                             arguments: [
                                 (
                                     name: "Compression method",
-                                    source: Static([
-                                        "no",
-                                        "qpdf",
-                                        "gs",
-                                        "gs+qpdf",
-                                        "both",
-                                    ]),
+                                    suggestions: [
+                                        (
+                                            name: "no",
+                                        ),
+                                        (
+                                            name: "qpdf",
+                                        ),
+                                        (
+                                            name: "gs",
+                                        ),
+                                        (
+                                            name: "gs+qpdf",
+                                        ),
+                                        (
+                                            name: "both",
+                                        ),
+                                    ],
                                     optional: true,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("no"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--compression",
                             ],
                             description: Some("Type of compression to be used on tarball"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Compression method",
-                                    source: Static([
-                                        "gzip",
-                                        "none",
-                                        "bzip2",
-                                        "xz",
-                                    ]),
+                                    suggestions: [
+                                        (
+                                            name: "gzip",
+                                        ),
+                                        (
+                                            name: "none",
+                                        ),
+                                        (
+                                            name: "bzip2",
+                                        ),
+                                        (
+                                            name: "xz",
+                                        ),
+                                    ],
                                     optional: true,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("gzip"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--md5",
                             ],
                             description: Some("Add MD5 sums"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--log",
                             ],
-                            description: Some("Log to file \'pkg-00build.log\' when processing the pkgdir with basename \'pkg\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Log to file 'pkg-00build.log' when processing the pkgdir with basename 'pkg'"),
                         ),
                     ],
                     arguments: [
                         (
                             name: "pakgdirs",
-                            source: Unavailable,
-                            optional: false,
+                            description: Some("Package directories"),
+                            generators: [
+                                (
+                                    template: [
+                                        Folders,
+                                    ],
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("🛠"),
+                    ),
                 ),
                 (
                     name: "check",
-                    aliases: [],
                     description: Some("Check R packages from package sources"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -956,8 +913,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -965,8 +923,9 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
@@ -974,18 +933,18 @@
                                 "-lib",
                             ],
                             description: Some("Library used for test installation of packages"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "LIB",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [],
-                                        has_post_process: false,
-                                        has_custom: false,
-                                    )),
+                                    description: Some("Library tree"),
+                                    generators: [
+                                        (
+                                            template: [
+                                                Folders,
+                                            ],
+                                        ),
+                                    ],
+                                    default: Some("."),
                                 ),
                             ],
                         ),
@@ -995,258 +954,238 @@
                                 "-o",
                             ],
                             description: Some("Directory for output"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "directory",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [],
-                                        has_post_process: false,
-                                        has_custom: false,
-                                    )),
+                                    description: Some("Directory for output"),
+                                    generators: [
+                                        (
+                                            template: [
+                                                Folders,
+                                            ],
+                                        ),
+                                    ],
+                                    default: Some("."),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--no-clean",
                             ],
-                            description: Some("Do not clean \'outdir\' before using it"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Do not clean 'outdir' before using it"),
                         ),
                         (
                             names: [
                                 "--no-codoc",
                             ],
                             description: Some("Do not check for code/documentation mismatches"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-examples",
                             ],
                             description: Some("Do not run the examples in the Rd files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-install",
                             ],
                             description: Some("Skip installation and associated tests"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-tests",
                             ],
-                            description: Some("Do not run code in \'tests\' subdirectory"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Do not run code in 'tests' subdirectory"),
                         ),
                         (
                             names: [
                                 "--no-manual",
                             ],
                             description: Some("Do not produce the PDF manual"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-vignettes",
                             ],
                             description: Some("Do not run R code in vignettes nor build outputs"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-build-vignettes",
                             ],
                             description: Some("Do not build vignette outputs"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--ignore-vignettes",
                             ],
                             description: Some("Skip all tests on vignettes"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--run-dontrun",
                             ],
                             description: Some("Do run `dontrun{}` sections in the Rd files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--run-donttest",
                             ],
                             description: Some("Do run `donttest{}` sections in the Rd files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--use-gct",
                             ],
                             description: Some("Use `gctorture(TRUE)` when running examples, tests"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--use-valgrind",
                             ],
                             description: Some("Use `valgrind` when running examples, tests, vignettes"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--timings",
                             ],
                             description: Some("Record timings for examples"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("⏱"),
+                            ),
                         ),
                         (
                             names: [
                                 "--install-args",
                             ],
                             description: Some("Command-line args to be passed to INSTALL"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "args",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Command-line args to be passed to INSTALL"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--test-dir",
                             ],
                             description: Some("Look in this subdirectory for test scripts"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "directory",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [],
-                                        has_post_process: false,
-                                        has_custom: false,
-                                    )),
+                                    description: Some("Directory with the tests directory"),
+                                    generators: [
+                                        (
+                                            template: [
+                                                Folders,
+                                            ],
+                                        ),
+                                    ],
+                                    default: Some("tests"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--no-stop-on-test-error",
                             ],
                             description: Some("Do not stop running tests after first error"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--check-subdirs",
                             ],
                             description: Some("Run checks on the package subdirectories"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "yes-or-no",
-                                    source: Static([
-                                        "default",
-                                        "yes",
-                                        "no",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Run checks on subdirectories?"),
+                                    suggestions: [
+                                        (
+                                            name: "default",
+                                        ),
+                                        (
+                                            name: "yes",
+                                        ),
+                                        (
+                                            name: "no",
+                                        ),
+                                    ],
+                                    default: Some("default"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--as-cran",
                             ],
                             description: Some("Select customizations similar to those used by CRAN"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("https://www.r-project.org/favicon-32x32.png"),
+                            ),
                         ),
                         (
                             names: [
                                 "--extra-arch",
                             ],
                             description: Some("Do only runtime tests needed for an additional sub-architecture"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--multiarch",
                             ],
                             description: Some("Do runtime tests on all installed sub-archs"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--no-multiarch",
+                            ],
                         ),
                         (
                             names: [
                                 "--no-multiarch",
                             ],
                             description: Some("Do runtime tests only on the main sub-architecture"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--multiarch",
+                            ],
                         ),
                         (
                             names: [
                                 "--force-multiarch",
                             ],
                             description: Some("Run tests on all sub-archs even for packages with no compiled code"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--no-multiarch",
+                            ],
                         ),
                     ],
                     arguments: [
                         (
                             name: "packages",
-                            source: Unavailable,
-                            optional: false,
+                            description: Some("Packages to check"),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("✅"),
+                    ),
                 ),
                 (
                     name: "LINK",
-                    aliases: [],
                     description: Some("Perform the specified linkcmd"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1254,8 +1193,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -1263,26 +1203,24 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                     ],
                     arguments: [
                         (
                             name: "linkcmd",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Command for linkcmd"),
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("🔗"),
+                    ),
                 ),
                 (
                     name: "rprof",
-                    aliases: [],
                     description: Some("Post-process profiling information from `Rprof()`"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1290,8 +1228,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -1299,102 +1238,105 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
                                 "--lines",
                             ],
                             description: Some("Print line information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--total",
                             ],
                             description: Some("Print only by total"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--self",
                             ],
                             description: Some("Print only by self"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--linesonly",
                             ],
                             description: Some("Print only by line"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--min%total",
                             ],
-                            description: Some("Minimum % to print for \'by total\'"),
-                            takes_value: true,
+                            description: Some("Minimum % to print for 'by total'"),
                             arguments: [
                                 (
                                     name: "min % total",
-                                    source: Static([
-                                        "1",
-                                        "10",
-                                        "50",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Minimum % to print for 'by total'"),
+                                    suggestions: [
+                                        (
+                                            name: "1",
+                                        ),
+                                        (
+                                            name: "10",
+                                        ),
+                                        (
+                                            name: "50",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--min%self",
                             ],
-                            description: Some("Minimum % to print for \'by self\'"),
-                            takes_value: true,
+                            description: Some("Minimum % to print for 'by self'"),
                             arguments: [
                                 (
                                     name: "min % self",
-                                    source: Static([
-                                        "1",
-                                        "10",
-                                        "50",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Minimum % to print for 'by self'"),
+                                    suggestions: [
+                                        (
+                                            name: "1",
+                                        ),
+                                        (
+                                            name: "10",
+                                        ),
+                                        (
+                                            name: "50",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                     ],
                     arguments: [
                         (
                             name: "Rprof output file",
-                            source: Unavailable,
+                            description: Some("File generated by `Rprof()`"),
+                            generators: [
+                                (
+                                    template: [
+                                        FilePaths,
+                                    ],
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
+                            default: Some("Rprof.out"),
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("⏱"),
+                    ),
                 ),
                 (
                     name: "Rdconv",
-                    aliases: [],
                     description: Some("Convert R documentation to other formats"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1402,8 +1344,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -1411,8 +1354,9 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
@@ -1420,53 +1364,55 @@
                                 "-t",
                             ],
                             description: Some("Output format type"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "type",
-                                    source: Static([
-                                        "txt",
-                                        "html",
-                                        "latex",
-                                        "example",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Output format type"),
+                                    suggestions: [
+                                        (
+                                            name: "txt",
+                                        ),
+                                        (
+                                            name: "html",
+                                        ),
+                                        (
+                                            name: "latex",
+                                        ),
+                                        (
+                                            name: "example",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            required: true,
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--encoding",
                             ],
                             description: Some("Encoding of the output"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "enc",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Output encoding"),
+                                    default: Some("UTF-8"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--package",
                             ],
                             description: Some("Package name"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Package name"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
@@ -1474,77 +1420,76 @@
                                 "-o",
                             ],
                             description: Some("The output file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "output file",
-                                    source: Static([
-                                        "\"\"",
-                                        "-",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Name of the output file, '\"\"' to use the input file without '.Rd'"),
+                                    suggestions: [
+                                        (
+                                            name: "\"\"",
+                                        ),
+                                        (
+                                            name: "-",
+                                        ),
+                                    ],
+                                    default: Some("\"\""),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--os",
                                 "--OS",
                             ],
-                            description: Some("Set name of OS (\'unix\' or \'windows\')"),
-                            takes_value: true,
+                            description: Some("Set name of OS ('unix' or 'windows')"),
                             arguments: [
                                 (
                                     name: "OS",
-                                    source: Static([
-                                        "unix",
-                                        "windows",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Name of the OS"),
+                                    suggestions: [
+                                        (
+                                            name: "unix",
+                                        ),
+                                        (
+                                            name: "windows",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--RdMacros",
                             ],
                             description: Some("Packages from which to get Rd macros"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "package list",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("List of packages"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                     ],
                     arguments: [
                         (
                             name: "file",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            description: Some("R doc file to convert"),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "Rd2pdf",
-                    aliases: [],
                     description: Some("Generate PDF output from R documentation files"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1552,8 +1497,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -1561,84 +1507,77 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
                                 "--batch",
                             ],
                             description: Some("No interaction between files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-clean",
                             ],
                             description: Some("Do not remove created temporary files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-preview",
                             ],
                             description: Some("Do not preview generated PDF file"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--encoding",
                             ],
                             description: Some("Set the default input encoding"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "enc",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Output encoding"),
+                                    default: Some("UTF-8"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--outputEncoding",
                             ],
                             description: Some("Set the default output encoding"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "enc",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Output encoding"),
+                                    default: Some("UTF-8"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--os",
                                 "--OS",
                             ],
-                            description: Some("Set name of OS (\'unix\' or \'windows\')"),
-                            takes_value: true,
+                            description: Some("Set name of OS ('unix' or 'windows')"),
                             arguments: [
                                 (
                                     name: "OS",
-                                    source: Static([
-                                        "unix",
-                                        "windows",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Name of the OS"),
+                                    suggestions: [
+                                        (
+                                            name: "unix",
+                                        ),
+                                        (
+                                            name: "windows",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
@@ -1646,122 +1585,105 @@
                                 "-o",
                             ],
                             description: Some("Write output to a file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "file",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Name of output file"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--force",
                             ],
                             description: Some("Overwrite output file if it exists"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                dangerous: true,
+                            ),
                         ),
                         (
                             names: [
                                 "--title",
                             ],
                             description: Some("Set the title of the document"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "title",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Title of the document"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--no-index",
                             ],
                             description: Some("Do not index output"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-description",
                             ],
                             description: Some("Do not typeset the description of a package"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--internals",
                             ],
-                            description: Some("Typeset \'internal\' documentation (usually skipped)"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Typeset 'internal' documentation (usually skipped)"),
                         ),
                         (
                             names: [
                                 "--build_dir",
                             ],
                             description: Some("Set the working directory"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "working dir",
-                                    source: Unavailable,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: Some((
-                                        script: [],
-                                        has_post_process: false,
-                                        has_custom: false,
-                                    )),
+                                    description: Some("Working directory for the build"),
+                                    generators: [
+                                        (
+                                            template: [
+                                                Folders,
+                                            ],
+                                        ),
+                                    ],
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--RdMacros",
                             ],
                             description: Some("Packages from which to get Rd macros"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "package list",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("List of packages"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                     ],
                     arguments: [
                         (
                             name: "files or pkgs",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
+                            description: Some("Rd files, or a directory with the sources of a pkg, or an installed pkg"),
+                            generators: [
+                                (
+                                    template: [
+                                        Folders,
+                                    ],
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "Rd2txt",
-                    aliases: [],
                     description: Some("Convert R documentation to text"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1769,8 +1691,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -1778,8 +1701,9 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
@@ -1787,53 +1711,59 @@
                                 "-t",
                             ],
                             description: Some("Output format type"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "type",
-                                    source: Static([
-                                        "txt",
-                                        "html",
-                                        "latex",
-                                        "example",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Output format type"),
+                                    suggestions: [
+                                        (
+                                            name: "txt",
+                                        ),
+                                        (
+                                            name: "html",
+                                        ),
+                                        (
+                                            name: "latex",
+                                        ),
+                                        (
+                                            name: "example",
+                                        ),
+                                    ],
+                                    default: Some("txt"),
                                 ),
                             ],
+                            required: true,
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--encoding",
                             ],
                             description: Some("Encoding of the output"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "enc",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Output encoding"),
+                                    default: Some("UTF-8"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--package",
                             ],
                             description: Some("Package name"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Package name"),
                                 ),
                             ],
+                            requires_separator: Some("="),
+                            presentation: (
+                                icon: Some("📦"),
+                            ),
                         ),
                         (
                             names: [
@@ -1841,77 +1771,76 @@
                                 "-o",
                             ],
                             description: Some("The output file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "output file",
-                                    source: Static([
-                                        "\"\"",
-                                        "-",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Name of the output file, '\"\"' to use the input file without '.Rd'"),
+                                    suggestions: [
+                                        (
+                                            name: "\"\"",
+                                        ),
+                                        (
+                                            name: "-",
+                                        ),
+                                    ],
+                                    default: Some("\"\""),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--os",
                                 "--OS",
                             ],
-                            description: Some("Set name of OS (\'unix\' or \'windows\')"),
-                            takes_value: true,
+                            description: Some("Set name of OS ('unix' or 'windows')"),
                             arguments: [
                                 (
                                     name: "OS",
-                                    source: Static([
-                                        "unix",
-                                        "windows",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Name of the OS"),
+                                    suggestions: [
+                                        (
+                                            name: "unix",
+                                        ),
+                                        (
+                                            name: "windows",
+                                        ),
+                                    ],
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--RdMacros",
                             ],
                             description: Some("Packages from which to get Rd macros"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "package list",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("List of packages"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                     ],
                     arguments: [
                         (
                             name: "file",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            description: Some("R doc file to convert"),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "Stangle",
-                    aliases: [],
                     description: Some("A front-end for Stangle and other vignette engines"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1919,8 +1848,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -1928,82 +1858,80 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
                                 "--engine",
                             ],
                             description: Some("Use named vignette engine"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "pkg::engine",
-                                    source: Static([
-                                        "Stangle",
-                                        "knitr::knit",
-                                        "utils::Sweave",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Vignette engine"),
+                                    suggestions: [
+                                        (
+                                            name: "Stangle",
+                                        ),
+                                        (
+                                            name: "knitr::knit",
+                                        ),
+                                        (
+                                            name: "utils::Sweave",
+                                        ),
+                                    ],
+                                    default: Some("Stangle"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--encoding",
                             ],
                             description: Some("Set the encoding for file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "enc",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("File encoding"),
+                                    default: Some("UTF-8"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--options",
                             ],
                             description: Some("Comma-separated list of Stangle options"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "options",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Options for Stangle"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                     ],
                     arguments: [
                         (
                             name: "file",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
+                            description: Some("File to process"),
+                            generators: [
+                                (
+                                    template: [
+                                        Folders,
+                                    ],
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "Sweave",
-                    aliases: [],
                     description: Some("A front-end for Sweave and other vignette engines"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2011,8 +1939,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -2020,143 +1949,145 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
                                 "--driver",
                             ],
                             description: Some("Use named Sweave driver"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "driver",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Sweave driver"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--engine",
                             ],
                             description: Some("Use named vignette engine"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "pkg::engine",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Vignette engine"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--encoding=enc",
                             ],
-                            description: Some("Default encoding \'enc\' for file"),
-                            takes_value: true,
+                            description: Some("Default encoding 'enc' for file"),
                             arguments: [
                                 (
                                     name: "enc",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("File encoding"),
+                                    default: Some("UTF-8"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--clean",
                             ],
                             description: Some("Remove some of the created files"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "method",
-                                    source: Static([
-                                        "default",
-                                        "keepOuts",
-                                    ]),
+                                    description: Some("How to clean the results"),
+                                    suggestions: [
+                                        (
+                                            name: "default",
+                                        ),
+                                        (
+                                            name: "keepOuts",
+                                        ),
+                                    ],
                                     optional: true,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("default"),
                                 ),
                             ],
+                            requires_separator: Some("="),
+                            presentation: (
+                                icon: Some("🧹"),
+                            ),
                         ),
                         (
                             names: [
                                 "--options",
                             ],
                             description: Some("Comma-separated list of Sweave/engine options"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "options",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Options for Sweave/engine"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                         (
                             names: [
                                 "--pdf",
                             ],
                             description: Some("Convert to PDF document"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--compact",
                             ],
                             description: Some("Try to compact PDF document"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Compacting method",
-                                    source: Static([
-                                        "no",
-                                        "qpdf",
-                                        "gs",
-                                        "gs+qpdf",
-                                        "both",
-                                    ]),
+                                    description: Some("How to compact the PDF doc"),
+                                    suggestions: [
+                                        (
+                                            name: "no",
+                                        ),
+                                        (
+                                            name: "qpdf",
+                                        ),
+                                        (
+                                            name: "gs",
+                                        ),
+                                        (
+                                            name: "gs+qpdf",
+                                        ),
+                                        (
+                                            name: "both",
+                                        ),
+                                    ],
                                     optional: true,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    default: Some("qpdf"),
                                 ),
                             ],
+                            requires_separator: Some("="),
                         ),
                     ],
                     arguments: [
                         (
                             name: "file",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
+                            description: Some("Vignette to build"),
+                            generators: [
+                                (
+                                    template: [
+                                        FilePaths,
+                                    ],
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "Rdiff",
-                    aliases: [],
                     description: Some("Diff R output files, discarding the R startup message"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2164,8 +2095,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -2173,41 +2105,39 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                     ],
                     arguments: [
                         (
                             name: "from",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
+                            description: Some("'From' R output file (or '-' for stdin)"),
+                            generators: [
+                                (
+                                    template: [
+                                        FilePaths,
+                                    ],
+                                ),
+                            ],
                         ),
                         (
                             name: "to",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: false,
-                            )),
+                            description: Some("'To' R output file"),
+                            generators: [
+                                (
+                                    template: [
+                                        FilePaths,
+                                    ],
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "config",
-                    aliases: [],
                     description: Some("Get the value of a basic R configure variable"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2215,8 +2145,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -2224,127 +2155,233 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
                                 "--cppflags",
                             ],
                             description: Some("Print pre-processor flags required to compile a C/C++ file as part of a front-end using R as a library"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--ldflags",
                             ],
                             description: Some("Print linker flags needed for linking a front-end against the R library"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-user-files",
                             ],
-                            description: Some("Ignore customization files under \'~/.R\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Ignore customization files under '~/.R'"),
                         ),
                         (
                             names: [
                                 "--no-site-files",
                             ],
-                            description: Some("Ignore site customization files under \'R_HOME/etc\'"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Ignore site customization files under 'R_HOME/etc'"),
                         ),
                         (
                             names: [
                                 "--all",
                             ],
                             description: Some("Print names and values of all variables"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "variable",
-                            source: Static([
-                                "AR",
-                                "BLAS_LIBS",
-                                "CC",
-                                "CFLAGS",
-                                "CPICFLAGS",
-                                "CPPFLAGS",
-                                "CXX",
-                                "CXXFLAGS",
-                                "CXXPICFLAGS",
-                                "CXX11",
-                                "CXX11STD",
-                                "CXX11FLAGS",
-                                "CXX11PICFLAGS",
-                                "CXX14",
-                                "CXX14STD",
-                                "CXX14FLAGS",
-                                "CXX14PICFLAGS",
-                                "CXX17",
-                                "CXX17STD",
-                                "CXX17FLAGS",
-                                "CXX17PICFLAGS",
-                                "CXX20",
-                                "CXX20STD",
-                                "CXX20FLAGS",
-                                "CXX20PICFLAGS",
-                                "DYLIB_EXT",
-                                "DYLIB_LD",
-                                "DYLIB_LDFLAGS",
-                                "FC",
-                                "FFLAGS",
-                                "FCFLAGS",
-                                "FLIBS",
-                                "FPICFLAGS",
-                                "JAR",
-                                "JAVA",
-                                "JAVAC",
-                                "JAVAH",
-                                "JAVA_HOME",
-                                "JAVA_LIBS",
-                                "JAVA_CPPFLAGS",
-                                "LAPACK_LIBS",
-                                "LIBnn",
-                                "LDFLAGS",
-                                "LTO",
-                                "MAKE",
-                                "NM",
-                                "OBJC",
-                                "OBJCFLAGS",
-                                "RANLIB",
-                                "SAFE_FFLAGS",
-                                "SHLIB_CFLAGS",
-                                "SHLIB_CXXFLAGS",
-                                "SHLIB_CXXLD",
-                                "SHLIB_CXXLDFLAGS",
-                                "SHLIB_EXT",
-                                "SHLIB_FFLAGS",
-                                "SHLIB_LD",
-                                "SHLIB_LDFLAGS",
-                                "TCLTK_CPPFLAGS",
-                                "TCLTK_LIBS",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("R config variable"),
+                            suggestions: [
+                                (
+                                    name: "AR",
+                                ),
+                                (
+                                    name: "BLAS_LIBS",
+                                ),
+                                (
+                                    name: "CC",
+                                ),
+                                (
+                                    name: "CFLAGS",
+                                ),
+                                (
+                                    name: "CPICFLAGS",
+                                ),
+                                (
+                                    name: "CPPFLAGS",
+                                ),
+                                (
+                                    name: "CXX",
+                                ),
+                                (
+                                    name: "CXXFLAGS",
+                                ),
+                                (
+                                    name: "CXXPICFLAGS",
+                                ),
+                                (
+                                    name: "CXX11",
+                                ),
+                                (
+                                    name: "CXX11STD",
+                                ),
+                                (
+                                    name: "CXX11FLAGS",
+                                ),
+                                (
+                                    name: "CXX11PICFLAGS",
+                                ),
+                                (
+                                    name: "CXX14",
+                                ),
+                                (
+                                    name: "CXX14STD",
+                                ),
+                                (
+                                    name: "CXX14FLAGS",
+                                ),
+                                (
+                                    name: "CXX14PICFLAGS",
+                                ),
+                                (
+                                    name: "CXX17",
+                                ),
+                                (
+                                    name: "CXX17STD",
+                                ),
+                                (
+                                    name: "CXX17FLAGS",
+                                ),
+                                (
+                                    name: "CXX17PICFLAGS",
+                                ),
+                                (
+                                    name: "CXX20",
+                                ),
+                                (
+                                    name: "CXX20STD",
+                                ),
+                                (
+                                    name: "CXX20FLAGS",
+                                ),
+                                (
+                                    name: "CXX20PICFLAGS",
+                                ),
+                                (
+                                    name: "DYLIB_EXT",
+                                ),
+                                (
+                                    name: "DYLIB_LD",
+                                ),
+                                (
+                                    name: "DYLIB_LDFLAGS",
+                                ),
+                                (
+                                    name: "FC",
+                                ),
+                                (
+                                    name: "FFLAGS",
+                                ),
+                                (
+                                    name: "FCFLAGS",
+                                ),
+                                (
+                                    name: "FLIBS",
+                                ),
+                                (
+                                    name: "FPICFLAGS",
+                                ),
+                                (
+                                    name: "JAR",
+                                ),
+                                (
+                                    name: "JAVA",
+                                ),
+                                (
+                                    name: "JAVAC",
+                                ),
+                                (
+                                    name: "JAVAH",
+                                ),
+                                (
+                                    name: "JAVA_HOME",
+                                ),
+                                (
+                                    name: "JAVA_LIBS",
+                                ),
+                                (
+                                    name: "JAVA_CPPFLAGS",
+                                ),
+                                (
+                                    name: "LAPACK_LIBS",
+                                ),
+                                (
+                                    name: "LIBnn",
+                                ),
+                                (
+                                    name: "LDFLAGS",
+                                ),
+                                (
+                                    name: "LTO",
+                                ),
+                                (
+                                    name: "MAKE",
+                                ),
+                                (
+                                    name: "NM",
+                                ),
+                                (
+                                    name: "OBJC",
+                                ),
+                                (
+                                    name: "OBJCFLAGS",
+                                ),
+                                (
+                                    name: "RANLIB",
+                                ),
+                                (
+                                    name: "SAFE_FFLAGS",
+                                ),
+                                (
+                                    name: "SHLIB_CFLAGS",
+                                ),
+                                (
+                                    name: "SHLIB_CXXFLAGS",
+                                ),
+                                (
+                                    name: "SHLIB_CXXLD",
+                                ),
+                                (
+                                    name: "SHLIB_CXXLDFLAGS",
+                                ),
+                                (
+                                    name: "SHLIB_EXT",
+                                ),
+                                (
+                                    name: "SHLIB_FFLAGS",
+                                ),
+                                (
+                                    name: "SHLIB_LD",
+                                ),
+                                (
+                                    name: "SHLIB_LDFLAGS",
+                                ),
+                                (
+                                    name: "TCLTK_CPPFLAGS",
+                                ),
+                                (
+                                    name: "TCLTK_LIBS",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "javareconf",
-                    aliases: [],
                     description: Some("Detect current Java setup and update the corresponding configuration in R"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2352,8 +2389,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -2361,31 +2399,26 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
                                 "-n",
                                 "--dry-run",
                             ],
-                            description: Some("Perform Java detection, but don\'t touch any configuration files"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Perform Java detection, but don't touch any configuration files"),
                         ),
                         (
                             names: [
                                 "-e",
                             ],
-                            description: Some("Same as -n but exports all detected variables and runs \'<prog>\'"),
-                            takes_value: true,
+                            description: Some("Same as -n but exports all detected variables and runs '<prog>'"),
                             arguments: [
                                 (
                                     name: "program",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("Program to run or '' to use shell"),
                                 ),
                             ],
                         ),
@@ -2393,23 +2426,25 @@
                     arguments: [
                         (
                             name: "expression",
-                            source: Static([
-                                "JAVA_HOME=/usr/lib/java",
-                                "JAVAC=/usr/bin/javac",
-                                "JAR=/usr/bin/jar",
-                            ]),
+                            description: Some("Evaluate the corresponding expression"),
+                            suggestions: [
+                                (
+                                    name: "JAVA_HOME=/usr/lib/java",
+                                ),
+                                (
+                                    name: "JAVAC=/usr/bin/javac",
+                                ),
+                                (
+                                    name: "JAR=/usr/bin/jar",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "rtags",
-                    aliases: [],
                     description: Some("Tag C, R, and Rd files under a directory"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2417,8 +2452,9 @@
                                 "-h",
                             ],
                             description: Some("Print help message and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("❔"),
+                            ),
                         ),
                         (
                             names: [
@@ -2426,8 +2462,9 @@
                                 "-v",
                             ],
                             description: Some("Print version info and exit"),
-                            takes_value: false,
-                            arguments: [],
+                            presentation: (
+                                icon: Some("📣"),
+                            ),
                         ),
                         (
                             names: [
@@ -2435,14 +2472,11 @@
                                 "-o",
                             ],
                             description: Some("Write output to a file"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "file",
-                                    source: Files,
+                                    description: Some("Output file name"),
                                     optional: true,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2451,32 +2485,24 @@
                                 "--no-c",
                             ],
                             description: Some("Do not tag C (.c, .h) files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-R",
                             ],
                             description: Some("Do not tag R (.R, .r, .S, .s) files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-Rd",
                             ],
                             description: Some("Do not tag Rd (.Rd) files"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--ctags",
                             ],
                             description: Some("Write Ctags format (default is Etags)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2484,8 +2510,6 @@
                                 "-a",
                             ],
                             description: Some("Append to output file (overwrites by default)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2493,25 +2517,18 @@
                                 "-V",
                             ],
                             description: Some("Echo the name of files processed"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
+                            description: Some("Directory in which files will be tagged"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("."),
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -2521,8 +2538,9 @@
                 "-h",
             ],
             description: Some("Print help message and exit"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                icon: Some("❔"),
+            ),
         ),
         (
             names: [
@@ -2530,162 +2548,149 @@
                 "-v",
             ],
             description: Some("Print version info and exit"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                icon: Some("📣"),
+            ),
         ),
         (
             names: [
                 "--encoding",
             ],
             description: Some("Specify encoding to be used for stdin"),
-            takes_value: true,
             arguments: [
                 (
                     name: "encoding",
-                    source: Static([
-                        "UTF-8",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "UTF-8",
+                        ),
+                    ],
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "--save",
             ],
             description: Some("Save workspace at the end of the session"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-save",
+                "--vanilla",
+            ],
         ),
         (
             names: [
                 "--no-save",
             ],
             description: Some("Do not save workspace at the end of the session"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--save",
+            ],
         ),
         (
             names: [
                 "--no-environ",
             ],
             description: Some("Do not read the site and user environment files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-site-file",
             ],
             description: Some("Do not read the site-wide Rprofile"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-init-file",
             ],
             description: Some("Do not read the user R profile"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--restore",
             ],
             description: Some("Do restore previously saved objects at startup"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-restore-data",
+                "--vanilla",
+            ],
         ),
         (
             names: [
                 "--no-restore-data",
             ],
             description: Some("Do not restore previously saved objects"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--restore",
+            ],
         ),
         (
             names: [
                 "--no-restore-history",
             ],
             description: Some("Do not restore the R history file"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-restore",
             ],
             description: Some("Do not restore anything"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--vanilla",
             ],
             description: Some("Combine --no-save, --no-restore, --no-site-file, --no-init-file and --no-environ"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--save",
+                "--restore",
+            ],
         ),
         (
             names: [
                 "--no-readline",
             ],
             description: Some("Do not use readline for command-line editing"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--max-ppsize",
             ],
             description: Some("Set max size of protect stack"),
-            takes_value: true,
             arguments: [
                 (
                     name: "max size",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Max size of protect stack"),
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "--min-nsize",
             ],
-            description: Some("Set min number of fixed size obj\'s (\'cons cells\')"),
-            takes_value: true,
+            description: Some("Set min number of fixed size obj's ('cons cells')"),
             arguments: [
                 (
                     name: "min size",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Minimum number of fixed size objects"),
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "--min-vsize",
             ],
-            description: Some("Set vector heap minimum (in bytes or \'4M\' = 4 MegaB)"),
-            takes_value: true,
+            description: Some("Set vector heap minimum (in bytes or '4M' = 4 MegaB)"),
             arguments: [
                 (
                     name: "min vsize",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Minimum vector heap size"),
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
@@ -2694,8 +2699,9 @@
                 "-q",
             ],
             description: Some("Do not print startup message"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--verbose",
+            ],
         ),
         (
             names: [
@@ -2703,24 +2709,28 @@
                 "-s",
             ],
             description: Some("Make R run as quietly as possible"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--interactive",
             ],
             description: Some("Force an interactive session"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--verbose",
             ],
             description: Some("Print more information about progress"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--quiet",
+                "--silent",
+                "-q",
+                "--no-echo",
+                "-s",
+            ],
+            presentation: (
+                icon: Some("📣"),
+            ),
         ),
         (
             names: [
@@ -2728,32 +2738,29 @@
                 "-d",
             ],
             description: Some("Run R through a debugger"),
-            takes_value: true,
             arguments: [
                 (
                     name: "debugger",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Debugger to use"),
                 ),
             ],
+            requires_separator: Some("="),
+            presentation: (
+                icon: Some("🪲"),
+            ),
         ),
         (
             names: [
                 "--debugger-args",
             ],
             description: Some("Pass arguments to the debugger"),
-            takes_value: true,
             arguments: [
                 (
                     name: "args",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Arguments for the debugger"),
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
@@ -2761,43 +2768,41 @@
                 "-g",
             ],
             description: Some("Type of GUI to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "gui",
-                    source: Static([
-                        "X11",
-                        "Tk",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Type of GUI"),
+                    suggestions: [
+                        (
+                            name: "X11",
+                        ),
+                        (
+                            name: "Tk",
+                        ),
+                    ],
+                    default: Some("X11"),
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "--arch",
             ],
             description: Some("Specify a sub-architecture"),
-            takes_value: true,
             arguments: [
                 (
                     name: "arch",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Sub-architecture"),
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "--args",
             ],
             description: Some("Skip the rest of the command line"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -2805,37 +2810,36 @@
                 "-f",
             ],
             description: Some("Take input from a file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    description: Some("File to run"),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
+            requires_separator: Some("="),
         ),
         (
             names: [
                 "-e",
             ],
             description: Some("Execute and R expression and exit"),
-            takes_value: true,
             arguments: [
                 (
                     name: "expr",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Expression to evaluate"),
                 ),
             ],
+            requires_separator: Some("="),
         ),
     ],
-    arguments: [],
+    presentation: (
+        icon: Some("https://www.r-project.org/favicon-32x32.png"),
+    ),
 )

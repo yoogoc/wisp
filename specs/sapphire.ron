@@ -9,7 +9,6 @@
                 "n",
             ],
             description: Some("Creates a new Sapphire project"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -17,20 +16,19 @@
                         "--verbose",
                     ],
                     description: Some("Enable verbose logging"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "name",
-                    source: Files,
+                    description: Some("Project name"),
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                priority: Some(100.0),
+                display_name: Some("Create a new Sapphire project 📂"),
+            ),
         ),
         (
             name: "generate",
@@ -38,25 +36,24 @@
                 "g",
             ],
             description: Some("Generates a component/piece"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "component",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Component/piece name"),
                 ),
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("File name"),
+                    template: [
+                        FilePaths,
+                    ],
+                    suggest_current_token: true,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                priority: Some(90.0),
+                display_name: Some("Generate a component/piece 📄"),
+            ),
         ),
         (
             name: "init",
@@ -64,27 +61,28 @@
                 "i",
             ],
             description: Some("Creates a config file on an existing Sapphire project"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                priority: Some(80.0),
+                display_name: Some("Initalize CLI on an existing project ⚙️"),
+            ),
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Display help for command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
+                    description: Some("Command to display help for"),
+                    template: [
+                        Help,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                priority: Some(70.0),
+                display_name: Some("Display help for a command 📖"),
+            ),
         ),
     ],
     options: [
@@ -94,8 +92,10 @@
                 "-h",
             ],
             description: Some("Show help for sapphire"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
+            presentation: (
+                priority: Some(10.0),
+            ),
         ),
         (
             names: [
@@ -103,9 +103,9 @@
                 "-V",
             ],
             description: Some("Output the version number"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                priority: Some(1.0),
+            ),
         ),
     ],
-    arguments: [],
 )

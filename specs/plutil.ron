@@ -2,49 +2,48 @@
     version: 1,
     command: "plutil",
     description: Some("Check the syntax of property list files, or convert a plist file from one format to another. Specifying - as an input file reads from stdin"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-help",
             ],
             description: Some("Show the usage information for the command and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-p",
             ],
             description: Some("Print the property list in a human-readable fashion"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-lint",
             ],
             description: Some("Check the named property list files for syntax errors. This is the default command option if none is specified"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-convert",
             ],
             description: Some("Convert the named file to the indicated format and write back to the file system"),
-            takes_value: true,
             arguments: [
                 (
                     name: "format",
-                    source: Static([
-                        "xml1",
-                        "binary1",
-                        "json",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Format to convert the named file to"),
+                    suggestions: [
+                        (
+                            name: "xml1",
+                            description: Some("For version 1 of the XML plist format"),
+                        ),
+                        (
+                            name: "binary1",
+                            description: Some("For version 1 of the binary plist"),
+                        ),
+                        (
+                            name: "json",
+                            description: Some("For the JSON format"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -53,38 +52,27 @@
                 "--",
             ],
             description: Some("Specifies that all further arguments are file names"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-s",
             ],
-            description: Some("Don\'t print anything on success"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't print anything on success"),
         ),
         (
             names: [
                 "-r",
             ],
             description: Some("For JSON, add whitespace and indentation to make the output more human-readable"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-o",
             ],
             description: Some("Specify an alternate path name for the result of the -convert operation; this option is only useful with a single file to be converted. Specifying - as the path outputs to stdout"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -93,14 +81,9 @@
                 "-e",
             ],
             description: Some("Specify an alternate extension for converted files, and the output file names are otherwise the same"),
-            takes_value: true,
             arguments: [
                 (
                     name: "extension",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -108,10 +91,11 @@
     arguments: [
         (
             name: "file",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            description: Some("File to check the syntax of or convert"),
         ),
     ],
+    parser_directives: Some((
+        flags_are_posix_noncompliant: true,
+        options_must_precede_arguments: true,
+    )),
 )

@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "add",
-            aliases: [],
             description: Some("Add a new directory or increment its rank"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,8 +13,6 @@
                         "--help",
                     ],
                     description: Some("Print help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -24,43 +20,38 @@
                         "--version",
                     ],
                     description: Some("Print version information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "paths",
-                    source: Directories,
-                    optional: false,
+                    template: [
+                        Folders,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "import",
-            aliases: [],
             description: Some("Import entries from another application"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--from",
                     ],
                     description: Some("Application to import from"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "from",
-                            source: Static([
-                                "autojump",
-                                "z",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "autojump",
+                                ),
+                                (
+                                    name: "z",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -69,8 +60,6 @@
                         "--merge",
                     ],
                     description: Some("Merge into existing database"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -78,8 +67,6 @@
                         "--help",
                     ],
                     description: Some("Print help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -87,40 +74,30 @@
                         "--version",
                     ],
                     description: Some("Print version information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
             description: Some("Generate shell configuration"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--cmd",
                     ],
                     description: Some("Changes the prefix of the `z` and `zi` commands"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cmd",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -128,19 +105,22 @@
                     names: [
                         "--hook",
                     ],
-                    description: Some("Changes how often zoxide increments a directory\'s score"),
-                    takes_value: true,
+                    description: Some("Changes how often zoxide increments a directory's score"),
                     arguments: [
                         (
                             name: "hook",
-                            source: Static([
-                                "none",
-                                "prompt",
-                                "pwd",
-                            ]),
+                            suggestions: [
+                                (
+                                    name: "none",
+                                ),
+                                (
+                                    name: "prompt",
+                                ),
+                                (
+                                    name: "pwd",
+                                ),
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -149,8 +129,6 @@
                         "--no-cmd",
                     ],
                     description: Some("Prevents zoxide from defining the `z` and `zi` commands"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -158,8 +136,6 @@
                         "--help",
                     ],
                     description: Some("Print help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -167,49 +143,56 @@
                         "--version",
                     ],
                     description: Some("Print version information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "shell",
-                    source: Static([
-                        "bash",
-                        "elvish",
-                        "fish",
-                        "nushell",
-                        "posix",
-                        "powershell",
-                        "xonsh",
-                        "zsh",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "bash",
+                        ),
+                        (
+                            name: "elvish",
+                        ),
+                        (
+                            name: "fish",
+                        ),
+                        (
+                            name: "nushell",
+                        ),
+                        (
+                            name: "posix",
+                        ),
+                        (
+                            name: "powershell",
+                        ),
+                        (
+                            name: "xonsh",
+                        ),
+                        (
+                            name: "zsh",
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "query",
-            aliases: [],
             description: Some("Search for a directory in the database"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--exclude",
                     ],
                     description: Some("Exclude a path from results"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "exclude",
-                            source: Directories,
+                            template: [
+                                Folders,
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -218,8 +201,6 @@
                         "--all",
                     ],
                     description: Some("Show deleted directories"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -227,8 +208,10 @@
                         "--interactive",
                     ],
                     description: Some("Use interactive selection"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-l",
+                        "--list",
+                    ],
                 ),
                 (
                     names: [
@@ -236,8 +219,10 @@
                         "--list",
                     ],
                     description: Some("List all matching directories"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "-i",
+                        "--interactive",
+                    ],
                 ),
                 (
                     names: [
@@ -245,8 +230,6 @@
                         "--score",
                     ],
                     description: Some("Print score with results"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -254,8 +237,6 @@
                         "--help",
                     ],
                     description: Some("Print help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -263,26 +244,18 @@
                         "--version",
                     ],
                     description: Some("Print version information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "keywords",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "remove",
-            aliases: [],
             description: Some("Remove a directory from the database"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -290,8 +263,6 @@
                         "--interactive",
                     ],
                     description: Some("Use interactive selection"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -299,8 +270,6 @@
                         "--help",
                     ],
                     description: Some("Print help information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -308,20 +277,17 @@
                         "--version",
                     ],
                     description: Some("Print version information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "paths",
-                    source: Directories,
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -331,8 +297,6 @@
                 "--help",
             ],
             description: Some("Print help information"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -340,9 +304,6 @@
                 "--version",
             ],
             description: Some("Print version information"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

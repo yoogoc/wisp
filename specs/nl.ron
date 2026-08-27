@@ -2,25 +2,30 @@
     version: 1,
     command: "nl",
     description: Some("Line numbering filter"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-b",
             ],
             description: Some("Specify the logical page body lines to be numbered"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "a",
-                        "t",
-                        "pexpr",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "a",
+                            description: Some("Number all lines"),
+                        ),
+                        (
+                            name: "t",
+                            description: Some("Number only non-empty lines"),
+                        ),
+                        (
+                            name: "pexpr",
+                            description: Some("Only those lines that contain the basic regular expression specified by 'expr'"),
+                        ),
+                    ],
+                    default: Some("t"),
                 ),
             ],
         ),
@@ -29,16 +34,15 @@
                 "-d",
             ],
             description: Some("Specify the delimiter characters used to indicate the\nstart of a logical page section in the input file. At most two\ncharacters may be specified; if only one character is specified,\nthe first character is replaced and the second character remains unchanged"),
-            takes_value: true,
             arguments: [
                 (
                     name: "delim",
-                    source: Static([
-                        "\\:",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "\\:",
+                        ),
+                    ],
+                    default: Some("\\:"),
                 ),
             ],
         ),
@@ -47,16 +51,15 @@
                 "-f",
             ],
             description: Some("Specify the same as -b type except for logical page footer lines"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "n",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "n",
+                        ),
+                    ],
+                    default: Some("n"),
                 ),
             ],
         ),
@@ -65,16 +68,15 @@
                 "-h",
             ],
             description: Some("Specify the same as -b type except for logical page header lines"),
-            takes_value: true,
             arguments: [
                 (
                     name: "type",
-                    source: Static([
-                        "n",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "n",
+                        ),
+                    ],
+                    default: Some("n"),
                 ),
             ],
         ),
@@ -83,16 +85,15 @@
                 "-i",
             ],
             description: Some("Specify the increment value used to number logical page lines"),
-            takes_value: true,
             arguments: [
                 (
                     name: "incr",
-                    source: Static([
-                        "1",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "1",
+                        ),
+                    ],
+                    default: Some("1"),
                 ),
             ],
         ),
@@ -101,16 +102,15 @@
                 "-l",
             ],
             description: Some("If numbering of all lines is specified for the current\nlogical section using the corresponding -b a, -f a or -h a option, specify\nthe number of adjacent blank lines to be considered as one. For example,\n-l 2 results in only the second adjacent blank line being numbered"),
-            takes_value: true,
             arguments: [
                 (
                     name: "num",
-                    source: Static([
-                        "1",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "1",
+                        ),
+                    ],
+                    default: Some("1"),
                 ),
             ],
         ),
@@ -119,18 +119,24 @@
                 "-n",
             ],
             description: Some("Specify the line numbering output format"),
-            takes_value: true,
             arguments: [
                 (
                     name: "format",
-                    source: Static([
-                        "ln",
-                        "rn",
-                        "rz",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "ln",
+                            description: Some("Left justified"),
+                        ),
+                        (
+                            name: "rn",
+                            description: Some("Right justified (leading zeros suppressed)"),
+                        ),
+                        (
+                            name: "rz",
+                            description: Some("Right justified (leading zeros kept)"),
+                        ),
+                    ],
+                    default: Some("rz"),
                 ),
             ],
         ),
@@ -139,24 +145,21 @@
                 "-p",
             ],
             description: Some("Specify that line numbering should not be restarted at logical page delimiters"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-s",
             ],
             description: Some("Specify the characters used in separating the line\nnumber and the corresponding text line.  The default\nsep setting is a single tab character"),
-            takes_value: true,
             arguments: [
                 (
                     name: "sep",
-                    source: Static([
-                        "\\t",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "\\t",
+                        ),
+                    ],
+                    default: Some("\\t"),
                 ),
             ],
         ),
@@ -165,18 +168,21 @@
                 "-v",
             ],
             description: Some("Specify the initial value used to number logical page lines; see also the description of the -p option"),
-            takes_value: true,
             arguments: [
                 (
                     name: "startnum",
-                    source: Static([
-                        "1",
-                        "2",
-                        "3",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "1",
+                        ),
+                        (
+                            name: "2",
+                        ),
+                        (
+                            name: "3",
+                        ),
+                    ],
+                    default: Some("1"),
                 ),
             ],
         ),
@@ -185,21 +191,30 @@
                 "-w",
             ],
             description: Some("Specify the number of characters to be occupied by the\nline number; in case the width is insufficient to hold the line number,\nit will be truncated to its width least significant digits"),
-            takes_value: true,
             arguments: [
                 (
                     name: "width",
-                    source: Static([
-                        "6",
-                        "5",
-                        "4",
-                        "3",
-                        "2",
-                        "1",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "6",
+                        ),
+                        (
+                            name: "5",
+                        ),
+                        (
+                            name: "4",
+                        ),
+                        (
+                            name: "3",
+                        ),
+                        (
+                            name: "2",
+                        ),
+                        (
+                            name: "1",
+                        ),
+                    ],
+                    default: Some("6"),
                 ),
             ],
         ),
@@ -207,10 +222,13 @@
     arguments: [
         (
             name: "file",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            description: Some("File(s) to number"),
+            template: [
+                FilePaths,
+            ],
         ),
     ],
+    parser_directives: Some((
+        options_must_precede_arguments: true,
+    )),
 )

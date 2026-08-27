@@ -2,7 +2,6 @@
     version: 1,
     command: "rich",
     description: Some("Rich text and formatting in the terminal"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "--print",
             ],
             description: Some("Print console markup. See https://rich.readthedocs.io/en/latest/markup.html"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,8 +16,6 @@
                 "--rule",
             ],
             description: Some("Display a horizontal rule"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -28,8 +23,6 @@
                 "--json",
             ],
             description: Some("Display as JSON"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -37,48 +30,36 @@
                 "--markdown",
             ],
             description: Some("Display as markdown"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--rst",
             ],
             description: Some("Display restructured text"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--csv",
             ],
             description: Some("Display CSV as a table"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ipynb",
             ],
             description: Some("Display Jupyter notebook"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--syntax",
             ],
             description: Some("Syntax highlighting"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--inspect",
             ],
             description: Some("Inspect a python object"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -86,15 +67,14 @@
                 "--head",
             ],
             description: Some("Display first LINES of the file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "lines",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "--syntax",
+                "--csv",
             ],
         ),
         (
@@ -103,15 +83,14 @@
                 "--tail",
             ],
             description: Some("Display last LINES of the file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "lines",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "--syntax",
+                "--csv",
             ],
         ),
         (
@@ -119,8 +98,6 @@
                 "--emoji",
             ],
             description: Some("Enable emoji code. e.g. :sparkle:"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -128,8 +105,6 @@
                 "--left",
             ],
             description: Some("Align to left"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -137,8 +112,6 @@
                 "--right",
             ],
             description: Some("Align to right"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -146,8 +119,6 @@
                 "--center",
             ],
             description: Some("Align to center"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -155,8 +126,6 @@
                 "--text-left",
             ],
             description: Some("Justify text to left"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -164,8 +133,6 @@
                 "--text-right",
             ],
             description: Some("Justify text to right"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -173,8 +140,6 @@
                 "--text-center",
             ],
             description: Some("Justify text to center"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -182,16 +147,15 @@
                 "--text-full",
             ],
             description: Some("Justify text to both left and right edges"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--soft",
             ],
             description: Some("Enable soft wrapping of text"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "--print",
+            ],
         ),
         (
             names: [
@@ -199,8 +163,9 @@
                 "--expand",
             ],
             description: Some("Expand to full width"),
-            takes_value: false,
-            arguments: [],
+            depends_on: [
+                "--panel",
+            ],
         ),
         (
             names: [
@@ -208,14 +173,9 @@
                 "--width",
             ],
             description: Some("Fit output to SIZE characters"),
-            takes_value: true,
             arguments: [
                 (
                     name: "size",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -225,14 +185,9 @@
                 "--max-width",
             ],
             description: Some("Set maximum width to SIZE characters"),
-            takes_value: true,
             arguments: [
                 (
                     name: "size",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -242,18 +197,19 @@
                 "--style",
             ],
             description: Some("Set text style to STYLE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "style",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            trigger: Some(OnMatch([
+                                    " ",
+                                ])),
+                            query_term: Some(AfterLast(" ")),
+                        ),
+                    ],
+                    filter_strategy: Fuzzy,
                 ),
             ],
         ),
@@ -262,19 +218,23 @@
                 "--rule-style",
             ],
             description: Some("Set rule style to STYLE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "style",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            trigger: Some(OnMatch([
+                                    " ",
+                                ])),
+                            query_term: Some(AfterLast(" ")),
+                        ),
+                    ],
+                    filter_strategy: Fuzzy,
                 ),
+            ],
+            depends_on: [
+                "--rule",
             ],
         ),
         (
@@ -282,15 +242,13 @@
                 "--rule-char",
             ],
             description: Some("Use CHARACTER to generate a line with --rule"),
-            takes_value: true,
             arguments: [
                 (
                     name: "character",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "--rule",
             ],
         ),
         (
@@ -299,18 +257,15 @@
                 "--padding",
             ],
             description: Some("Padding around output. 1, 2 or 4 comma separated integers, e.g. 2,4"),
-            takes_value: true,
             arguments: [
                 (
                     name: "top,right,bottom,left",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -320,22 +275,32 @@
                 "--panel",
             ],
             description: Some("Set panel type to BOX"),
-            takes_value: true,
             arguments: [
                 (
                     name: "box",
-                    source: Static([
-                        "ascii",
-                        "ascii2",
-                        "double",
-                        "heavy",
-                        "none",
-                        "rounded",
-                        "square",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "ascii",
+                        ),
+                        (
+                            name: "ascii2",
+                        ),
+                        (
+                            name: "double",
+                        ),
+                        (
+                            name: "heavy",
+                        ),
+                        (
+                            name: "none",
+                        ),
+                        (
+                            name: "rounded",
+                        ),
+                        (
+                            name: "square",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -345,19 +310,23 @@
                 "--panel-style",
             ],
             description: Some("Set the panel style to STYLE"),
-            takes_value: true,
             arguments: [
                 (
                     name: "style",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            trigger: Some(OnMatch([
+                                    " ",
+                                ])),
+                            query_term: Some(AfterLast(" ")),
+                        ),
+                    ],
+                    filter_strategy: Fuzzy,
                 ),
+            ],
+            depends_on: [
+                "--panel",
             ],
         ),
         (
@@ -365,62 +334,153 @@
                 "--theme",
             ],
             description: Some("Set syntax theme to THEME. See https://pygments.org/styles/"),
-            takes_value: true,
             arguments: [
                 (
                     name: "theme",
-                    source: Static([
-                        "default",
-                        "bw",
-                        "sas",
-                        "staroffice",
-                        "xcode",
-                        "github-dark",
-                        "rrt",
-                        "abap",
-                        "algol",
-                        "algol_nu",
-                        "arduino",
-                        "autumn",
-                        "borland",
-                        "colorful",
-                        "igor",
-                        "lovelace",
-                        "murphy",
-                        "pastie",
-                        "rainbow_dash",
-                        "stata",
-                        "stata-light",
-                        "trac",
-                        "vs",
-                        "emacs",
-                        "tango",
-                        "solarized-light",
-                        "manni",
-                        "gruvbox-light",
-                        "friendly",
-                        "friendly_grayscale",
-                        "perldoc",
-                        "paraiso-light",
-                        "zenburn",
-                        "nord",
-                        "material",
-                        "one-dark",
-                        "dracula",
-                        "nord-darker",
-                        "gruvbox-dark",
-                        "monokai",
-                        "stata-dark",
-                        "paraiso-dark",
-                        "solarized-dark",
-                        "native",
-                        "inkpot",
-                        "fruity",
-                        "vim",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "default",
+                        ),
+                        (
+                            name: "bw",
+                        ),
+                        (
+                            name: "sas",
+                        ),
+                        (
+                            name: "staroffice",
+                        ),
+                        (
+                            name: "xcode",
+                        ),
+                        (
+                            name: "github-dark",
+                        ),
+                        (
+                            name: "rrt",
+                        ),
+                        (
+                            name: "abap",
+                        ),
+                        (
+                            name: "algol",
+                        ),
+                        (
+                            name: "algol_nu",
+                        ),
+                        (
+                            name: "arduino",
+                        ),
+                        (
+                            name: "autumn",
+                        ),
+                        (
+                            name: "borland",
+                        ),
+                        (
+                            name: "colorful",
+                        ),
+                        (
+                            name: "igor",
+                        ),
+                        (
+                            name: "lovelace",
+                        ),
+                        (
+                            name: "murphy",
+                        ),
+                        (
+                            name: "pastie",
+                        ),
+                        (
+                            name: "rainbow_dash",
+                        ),
+                        (
+                            name: "stata",
+                        ),
+                        (
+                            name: "stata-light",
+                        ),
+                        (
+                            name: "trac",
+                        ),
+                        (
+                            name: "vs",
+                        ),
+                        (
+                            name: "emacs",
+                        ),
+                        (
+                            name: "tango",
+                        ),
+                        (
+                            name: "solarized-light",
+                        ),
+                        (
+                            name: "manni",
+                        ),
+                        (
+                            name: "gruvbox-light",
+                        ),
+                        (
+                            name: "friendly",
+                        ),
+                        (
+                            name: "friendly_grayscale",
+                        ),
+                        (
+                            name: "perldoc",
+                        ),
+                        (
+                            name: "paraiso-light",
+                        ),
+                        (
+                            name: "zenburn",
+                        ),
+                        (
+                            name: "nord",
+                        ),
+                        (
+                            name: "material",
+                        ),
+                        (
+                            name: "one-dark",
+                        ),
+                        (
+                            name: "dracula",
+                        ),
+                        (
+                            name: "nord-darker",
+                        ),
+                        (
+                            name: "gruvbox-dark",
+                        ),
+                        (
+                            name: "monokai",
+                        ),
+                        (
+                            name: "stata-dark",
+                        ),
+                        (
+                            name: "paraiso-dark",
+                        ),
+                        (
+                            name: "solarized-dark",
+                        ),
+                        (
+                            name: "native",
+                        ),
+                        (
+                            name: "inkpot",
+                        ),
+                        (
+                            name: "fruity",
+                        ),
+                        (
+                            name: "vim",
+                        ),
+                    ],
+                    filter_strategy: Fuzzy,
                 ),
             ],
         ),
@@ -430,8 +490,6 @@
                 "--line-numbers",
             ],
             description: Some("Enable line number in syntax"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -439,8 +497,6 @@
                 "--guides",
             ],
             description: Some("Enable indentation guides in syntax highlighting"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -448,552 +504,1623 @@
                 "--lexer",
             ],
             description: Some("Use LEXER for syntax highlighting. See https://pygments.org/docs/lexers/"),
-            takes_value: true,
             arguments: [
                 (
                     name: "lexer",
-                    source: Static([
-                        "ActionScript3",
-                        "ActionScript",
-                        "Mxml",
-                        "Ada",
-                        "BC",
-                        "GAPConsole",
-                        "GAP",
-                        "Mathematica",
-                        "MuPAD",
-                        "AmbientTalk",
-                        "AMDGPU",
-                        "Ampl",
-                        "apdlexer",
-                        "APL",
-                        "Adl",
-                        "Cadl",
-                        "Odin",
-                        "Arrow",
-                        "Asc",
-                        "CObjdump",
-                        "Ca65",
-                        "CppObjdump",
-                        "DObjdump",
-                        "Dasm16",
-                        "Gas",
-                        "Hsail",
-                        "Llvm",
-                        "LlvmMirBody",
-                        "LlvmMir",
-                        "Nasm",
-                        "NasmObjdump",
-                        "Objdump",
-                        "Tasm",
-                        "AutoIt",
-                        "Autohotkey",
-                        "Bare",
-                        "BBCBasic",
-                        "BlitzBasic",
-                        "BlitzMax",
-                        "CbmBasicV2",
-                        "Monkey",
-                        "QBasic",
-                        "VBScript",
-                        "Bdd",
-                        "Berry",
-                        "BST",
-                        "BibTeX",
-                        "Boa",
-                        "ABAP",
-                        "CobolFreeformat",
-                        "Cobol",
-                        "GoodDataCL",
-                        "Maql",
-                        "OpenEdge",
-                        "C",
-                        "Cpp",
-                        "Arduino",
-                        "Charmci",
-                        "Clay",
-                        "Cuda",
-                        "EC",
-                        "Mql",
-                        "NesC",
-                        "OmgIdl",
-                        "Pike",
-                        "Swig",
-                        "Vala",
-                        "CapnProto",
-                        "Cddl",
-                        "Chapel",
-                        "Clean",
-                        "Comal80",
-                        "ApacheConf",
-                        "Augeas",
-                        "Cfengine3",
-                        "Docker",
-                        "Ini",
-                        "Kconfig",
-                        "LighttpdConf",
-                        "NestedText",
-                        "NginxConf",
-                        "PacmanConf",
-                        "PkgConfig",
-                        "Properties",
-                        "Regedit",
-                        "Singularity",
-                        "SquidConf",
-                        "TOML",
-                        "Termcap",
-                        "Terminfo",
-                        "Terraform",
-                        "UnixConfig",
-                        "PyPyLog",
-                        "VCTreeStatus",
-                        "Cplint",
-                        "Crystal",
-                        "CsoundDocument",
-                        "CsoundOrchestra",
-                        "CsoundScore",
-                        "Css",
-                        "LessCss",
-                        "Sass",
-                        "Scss",
-                        "Croc",
-                        "D",
-                        "MiniD",
-                        "Smali",
-                        "JsonBareObject",
-                        "JsonLd",
-                        "Json",
-                        "Yaml",
-                        "Devicetree",
-                        "DarcsPatch",
-                        "Diff",
-                        "WDiff",
-                        "Boo",
-                        "CSharpAspx",
-                        "CSharp",
-                        "FSharp",
-                        "Nemerle",
-                        "VbNetAspx",
-                        "VbNet",
-                        "Alloy",
-                        "Crmsh",
-                        "Flatline",
-                        "Mscgen",
-                        "Pan",
-                        "ProtoBuf",
-                        "Puppet",
-                        "Rsl",
-                        "Snowball",
-                        "Thrift",
-                        "VGL",
-                        "Zeek",
-                        "DylanConsole",
-                        "Dylan",
-                        "DylanLid",
-                        "ECL",
-                        "Eiffel",
-                        "Elm",
-                        "Elpi",
-                        "Email",
-                        "ElixirConsole",
-                        "Elixir",
-                        "Erlang",
-                        "ErlangShell",
-                        "Aheui",
-                        "Befunge",
-                        "Brainfuck",
-                        "CAmkES",
-                        "CapDL",
-                        "Redcode",
-                        "Ezhil",
-                        "Factor",
-                        "Fantom",
-                        "Felix",
-                        "FloScript",
-                        "Forth",
-                        "FortranFixed",
-                        "Fortran",
-                        "FoxPro",
-                        "FreeFem",
-                        "Futhark",
-                        "Gcode",
-                        "GDScript",
-                        "Go",
-                        "Abnf",
-                        "Bnf",
-                        "Jsgf",
-                        "Peg",
-                        "Cypher",
-                        "Asymptote",
-                        "GLShader",
-                        "Gnuplot",
-                        "HLSLShader",
-                        "PostScript",
-                        "Povray",
-                        "Graphviz",
-                        "GSQL",
-                        "Agda",
-                        "Cryptol",
-                        "Haskell",
-                        "Hspec",
-                        "Idris",
-                        "Koka",
-                        "LiterateAgda",
-                        "LiterateCryptol",
-                        "LiterateHaskell",
-                        "LiterateIdris",
-                        "Haxe",
-                        "Hxml",
-                        "SystemVerilog",
-                        "Verilog",
-                        "Vhdl",
-                        "Hexdump",
-                        "Dtd",
-                        "Haml",
-                        "Html",
-                        "Pug",
-                        "Scaml",
-                        "Xml",
-                        "Xslt",
-                        "IDL",
-                        "Igor",
-                        "Limbo",
-                        "DebianControl",
-                        "NSIS",
-                        "RPMSpec",
-                        "SourcesList",
-                        "Inform6",
-                        "Inform6Template",
-                        "Inform7",
-                        "Tads3",
-                        "Io",
-                        "J",
-                        "CoffeeScript",
-                        "Dart",
-                        "EarlGrey",
-                        "Javascript",
-                        "Juttle",
-                        "Kal",
-                        "Lasso",
-                        "LiveScript",
-                        "Mask",
-                        "NodeConsole",
-                        "ObjectiveJ",
-                        "TypeScript",
-                        "JMESPath",
-                        "JSLT",
-                        "JuliaConsole",
-                        "Julia",
-                        "AspectJ",
-                        "Ceylon",
-                        "Clojure",
-                        "ClojureScript",
-                        "Golo",
-                        "Gosu",
-                        "GosuTemplate",
-                        "Groovy",
-                        "Ioke",
-                        "Jasmin",
-                        "Java",
-                        "Kotlin",
-                        "Pig",
-                        "Sarl",
-                        "Scala",
-                        "Xtend",
-                        "Kuin",
-                        "LilyPond",
-                        "CPSA",
-                        "CommonLisp",
-                        "EmacsLisp",
-                        "Fennel",
-                        "Hy",
-                        "NewLisp",
-                        "Racket",
-                        "Scheme",
-                        "Shen",
-                        "Xtlang",
-                        "Macaulay2",
-                        "BaseMakefile",
-                        "CMake",
-                        "Makefile",
-                        "BBCode",
-                        "Groff",
-                        "Markdown",
-                        "MoinWiki",
-                        "MozPreprocCss",
-                        "MozPreprocHash",
-                        "MozPreprocJavascript",
-                        "MozPreprocPercent",
-                        "MozPreprocXul",
-                        "Rst",
-                        "Tex",
-                        "TiddlyWiki5",
-                        "Matlab",
-                        "MatlabSession",
-                        "Octave",
-                        "Scilab",
-                        "Maxima",
-                        "MCFunction",
-                        "SNBT",
-                        "Meson",
-                        "MIME",
-                        "FStar",
-                        "Ocaml",
-                        "Opa",
-                        "Reason",
-                        "SML",
-                        "Bugs",
-                        "Jags",
-                        "Modelica",
-                        "Stan",
-                        "Modula2",
-                        "Monte",
-                        "Mosel",
-                        "NCL",
-                        "Nimrod",
-                        "Nit",
-                        "Nix",
-                        "ComponentPascal",
-                        "Logos",
-                        "ObjectiveC",
-                        "ObjectiveCpp",
-                        "Swift",
-                        "Ooc",
-                        "ParaSail",
-                        "AntlrActionScript",
-                        "AntlrCSharp",
-                        "AntlrCpp",
-                        "AntlrJava",
-                        "Antlr",
-                        "AntlrObjectiveC",
-                        "AntlrPerl",
-                        "AntlrPython",
-                        "AntlrRuby",
-                        "Ebnf",
-                        "RagelC",
-                        "RagelCpp",
-                        "RagelD",
-                        "RagelEmbedded",
-                        "RagelJava",
-                        "Ragel",
-                        "RagelObjectiveC",
-                        "RagelRuby",
-                        "Treetop",
-                        "Delphi",
-                        "Pawn",
-                        "SourcePawn",
-                        "Perl6",
-                        "Perl",
-                        "Php",
-                        "PsyshConsole",
-                        "Zephir",
-                        "Pointless",
-                        "Pony",
-                        "Praat",
-                        "Procfile",
-                        "Logtalk",
-                        "Prolog",
-                        "PromQL",
-                        "Cython",
-                        "Dg",
-                        "NumPy",
-                        "Python2",
-                        "Python2Traceback",
-                        "PythonConsole",
-                        "Python",
-                        "PythonTraceback",
-                        "K",
-                        "Q",
-                        "Qlik",
-                        "QVTo",
-                        "RConsole",
-                        "Rd",
-                        "S",
-                        "ShExC",
-                        "Sparql",
-                        "Turtle",
-                        "Rebol",
-                        "Red",
-                        "Resource",
-                        "Ride",
-                        "Rita",
-                        "RNCCompact",
-                        "RoboconfGraph",
-                        "RoboconfInstances",
-                        "RobotFramework",
-                        "Fancy",
-                        "RubyConsole",
-                        "Ruby",
-                        "Rust",
-                        "SAS",
-                        "Savi",
-                        "Scdoc",
-                        "AppleScript",
-                        "Chaiscript",
-                        "Easytrieve",
-                        "Hybris",
-                        "Jcl",
-                        "LSL",
-                        "Lua",
-                        "MOOCode",
-                        "MiniScript",
-                        "MoonScript",
-                        "Rexx",
-                        "SmartGameFormat",
-                        "Bash",
-                        "BashSession",
-                        "Batch",
-                        "Execline",
-                        "FishShell",
-                        "MSDOSSession",
-                        "PowerShell",
-                        "PowerShellSession",
-                        "SlurmBash",
-                        "Tcsh",
-                        "TcshSession",
-                        "Sieve",
-                        "Slash",
-                        "Newspeak",
-                        "Smalltalk",
-                        "Smithy",
-                        "NuSMV",
-                        "Snobol",
-                        "Solidity",
-                        "Sophia",
-                        "Output",
-                        "RawToken",
-                        "Text",
-                        "Spice",
-                        "MySql",
-                        "PlPgsql",
-                        "PostgresConsole",
-                        "Postgres",
-                        "Rql",
-                        "Sql",
-                        "SqliteConsole",
-                        "TransactSql",
-                        "Srcinfo",
-                        "Stata",
-                        "SuperCollider",
-                        "Tal",
-                        "Tcl",
-                        "Teal",
-                        "Angular2Html",
-                        "Angular2",
-                        "CheetahHtml",
-                        "CheetahJavascript",
-                        "Cheetah",
-                        "CheetahXml",
-                        "ColdfusionCFC",
-                        "ColdfusionHtml",
-                        "Coldfusion",
-                        "CssDjango",
-                        "CssErb",
-                        "CssGenshi",
-                        "CssPhp",
-                        "CssSmarty",
-                        "Django",
-                        "Erb",
-                        "EvoqueHtml",
-                        "Evoque",
-                        "EvoqueXml",
-                        "Genshi",
-                        "GenshiText",
-                        "HandlebarsHtml",
-                        "Handlebars",
-                        "HtmlDjango",
-                        "HtmlGenshi",
-                        "HtmlPhp",
-                        "HtmlSmarty",
-                        "JavascriptDjango",
-                        "JavascriptErb",
-                        "JavascriptGenshi",
-                        "JavascriptPhp",
-                        "JavascriptSmarty",
-                        "Jsp",
-                        "LassoCss",
-                        "LassoHtml",
-                        "LassoJavascript",
-                        "LassoXml",
-                        "Liquid",
-                        "MakoCss",
-                        "MakoHtml",
-                        "MakoJavascript",
-                        "Mako",
-                        "MakoXml",
-                        "Mason",
-                        "MyghtyCss",
-                        "MyghtyHtml",
-                        "MyghtyJavascript",
-                        "Myghty",
-                        "MyghtyXml",
-                        "Rhtml",
-                        "Smarty",
-                        "SqlJinja",
-                        "Ssp",
-                        "TeaTemplate",
-                        "TwigHtml",
-                        "Twig",
-                        "VelocityHtml",
-                        "Velocity",
-                        "VelocityXml",
-                        "XmlDjango",
-                        "XmlErb",
-                        "XmlPhp",
-                        "XmlSmarty",
-                        "YamlJinja",
-                        "TeraTerm",
-                        "Gherkin",
-                        "TAP",
-                        "Awk",
-                        "Sed",
-                        "Vim",
-                        "Gettext",
-                        "Http",
-                        "IrcLogs",
-                        "KernelLog",
-                        "Notmuch",
-                        "Todotxt",
-                        "Coq",
-                        "Isabelle",
-                        "Lean",
-                        "ThingsDB",
-                        "TNT",
-                        "Rts",
-                        "TypoScriptCssData",
-                        "TypoScriptHtmlData",
-                        "TypoScript",
-                        "CSSUL4",
-                        "HTMLUL4",
-                        "JavascriptUL4",
-                        "PythonUL4",
-                        "UL4",
-                        "XMLUL4",
-                        "Icon",
-                        "Ucode",
-                        "Unicon",
-                        "Urbiscript",
-                        "Usd",
-                        "VCL",
-                        "VCLSnippet",
-                        "Boogie",
-                        "Silver",
-                        "Wat",
-                        "WebIDL",
-                        "Cirru",
-                        "Duel",
-                        "Qml",
-                        "Slim",
-                        "XQuery",
-                        "Whiley",
-                        "X10",
-                        "Xorg",
-                        "Yang",
-                        "Zig",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "ActionScript3",
+                        ),
+                        (
+                            name: "ActionScript",
+                        ),
+                        (
+                            name: "Mxml",
+                        ),
+                        (
+                            name: "Ada",
+                        ),
+                        (
+                            name: "BC",
+                        ),
+                        (
+                            name: "GAPConsole",
+                        ),
+                        (
+                            name: "GAP",
+                        ),
+                        (
+                            name: "Mathematica",
+                        ),
+                        (
+                            name: "MuPAD",
+                        ),
+                        (
+                            name: "AmbientTalk",
+                        ),
+                        (
+                            name: "AMDGPU",
+                        ),
+                        (
+                            name: "Ampl",
+                        ),
+                        (
+                            name: "apdlexer",
+                        ),
+                        (
+                            name: "APL",
+                        ),
+                        (
+                            name: "Adl",
+                        ),
+                        (
+                            name: "Cadl",
+                        ),
+                        (
+                            name: "Odin",
+                        ),
+                        (
+                            name: "Arrow",
+                        ),
+                        (
+                            name: "Asc",
+                        ),
+                        (
+                            name: "CObjdump",
+                        ),
+                        (
+                            name: "Ca65",
+                        ),
+                        (
+                            name: "CppObjdump",
+                        ),
+                        (
+                            name: "DObjdump",
+                        ),
+                        (
+                            name: "Dasm16",
+                        ),
+                        (
+                            name: "Gas",
+                        ),
+                        (
+                            name: "Hsail",
+                        ),
+                        (
+                            name: "Llvm",
+                        ),
+                        (
+                            name: "LlvmMirBody",
+                        ),
+                        (
+                            name: "LlvmMir",
+                        ),
+                        (
+                            name: "Nasm",
+                        ),
+                        (
+                            name: "NasmObjdump",
+                        ),
+                        (
+                            name: "Objdump",
+                        ),
+                        (
+                            name: "Tasm",
+                        ),
+                        (
+                            name: "AutoIt",
+                        ),
+                        (
+                            name: "Autohotkey",
+                        ),
+                        (
+                            name: "Bare",
+                        ),
+                        (
+                            name: "BBCBasic",
+                        ),
+                        (
+                            name: "BlitzBasic",
+                        ),
+                        (
+                            name: "BlitzMax",
+                        ),
+                        (
+                            name: "CbmBasicV2",
+                        ),
+                        (
+                            name: "Monkey",
+                        ),
+                        (
+                            name: "QBasic",
+                        ),
+                        (
+                            name: "VBScript",
+                        ),
+                        (
+                            name: "Bdd",
+                        ),
+                        (
+                            name: "Berry",
+                        ),
+                        (
+                            name: "BST",
+                        ),
+                        (
+                            name: "BibTeX",
+                        ),
+                        (
+                            name: "Boa",
+                        ),
+                        (
+                            name: "ABAP",
+                        ),
+                        (
+                            name: "CobolFreeformat",
+                        ),
+                        (
+                            name: "Cobol",
+                        ),
+                        (
+                            name: "GoodDataCL",
+                        ),
+                        (
+                            name: "Maql",
+                        ),
+                        (
+                            name: "OpenEdge",
+                        ),
+                        (
+                            name: "C",
+                        ),
+                        (
+                            name: "Cpp",
+                        ),
+                        (
+                            name: "Arduino",
+                        ),
+                        (
+                            name: "Charmci",
+                        ),
+                        (
+                            name: "Clay",
+                        ),
+                        (
+                            name: "Cuda",
+                        ),
+                        (
+                            name: "EC",
+                        ),
+                        (
+                            name: "Mql",
+                        ),
+                        (
+                            name: "NesC",
+                        ),
+                        (
+                            name: "OmgIdl",
+                        ),
+                        (
+                            name: "Pike",
+                        ),
+                        (
+                            name: "Swig",
+                        ),
+                        (
+                            name: "Vala",
+                        ),
+                        (
+                            name: "CapnProto",
+                        ),
+                        (
+                            name: "Cddl",
+                        ),
+                        (
+                            name: "Chapel",
+                        ),
+                        (
+                            name: "Clean",
+                        ),
+                        (
+                            name: "Comal80",
+                        ),
+                        (
+                            name: "ApacheConf",
+                        ),
+                        (
+                            name: "Augeas",
+                        ),
+                        (
+                            name: "Cfengine3",
+                        ),
+                        (
+                            name: "Docker",
+                        ),
+                        (
+                            name: "Ini",
+                        ),
+                        (
+                            name: "Kconfig",
+                        ),
+                        (
+                            name: "LighttpdConf",
+                        ),
+                        (
+                            name: "NestedText",
+                        ),
+                        (
+                            name: "NginxConf",
+                        ),
+                        (
+                            name: "PacmanConf",
+                        ),
+                        (
+                            name: "PkgConfig",
+                        ),
+                        (
+                            name: "Properties",
+                        ),
+                        (
+                            name: "Regedit",
+                        ),
+                        (
+                            name: "Singularity",
+                        ),
+                        (
+                            name: "SquidConf",
+                        ),
+                        (
+                            name: "TOML",
+                        ),
+                        (
+                            name: "Termcap",
+                        ),
+                        (
+                            name: "Terminfo",
+                        ),
+                        (
+                            name: "Terraform",
+                        ),
+                        (
+                            name: "UnixConfig",
+                        ),
+                        (
+                            name: "PyPyLog",
+                        ),
+                        (
+                            name: "VCTreeStatus",
+                        ),
+                        (
+                            name: "Cplint",
+                        ),
+                        (
+                            name: "Crystal",
+                        ),
+                        (
+                            name: "CsoundDocument",
+                        ),
+                        (
+                            name: "CsoundOrchestra",
+                        ),
+                        (
+                            name: "CsoundScore",
+                        ),
+                        (
+                            name: "Css",
+                        ),
+                        (
+                            name: "LessCss",
+                        ),
+                        (
+                            name: "Sass",
+                        ),
+                        (
+                            name: "Scss",
+                        ),
+                        (
+                            name: "Croc",
+                        ),
+                        (
+                            name: "D",
+                        ),
+                        (
+                            name: "MiniD",
+                        ),
+                        (
+                            name: "Smali",
+                        ),
+                        (
+                            name: "JsonBareObject",
+                        ),
+                        (
+                            name: "JsonLd",
+                        ),
+                        (
+                            name: "Json",
+                        ),
+                        (
+                            name: "Yaml",
+                        ),
+                        (
+                            name: "Devicetree",
+                        ),
+                        (
+                            name: "DarcsPatch",
+                        ),
+                        (
+                            name: "Diff",
+                        ),
+                        (
+                            name: "WDiff",
+                        ),
+                        (
+                            name: "Boo",
+                        ),
+                        (
+                            name: "CSharpAspx",
+                        ),
+                        (
+                            name: "CSharp",
+                        ),
+                        (
+                            name: "FSharp",
+                        ),
+                        (
+                            name: "Nemerle",
+                        ),
+                        (
+                            name: "VbNetAspx",
+                        ),
+                        (
+                            name: "VbNet",
+                        ),
+                        (
+                            name: "Alloy",
+                        ),
+                        (
+                            name: "Crmsh",
+                        ),
+                        (
+                            name: "Flatline",
+                        ),
+                        (
+                            name: "Mscgen",
+                        ),
+                        (
+                            name: "Pan",
+                        ),
+                        (
+                            name: "ProtoBuf",
+                        ),
+                        (
+                            name: "Puppet",
+                        ),
+                        (
+                            name: "Rsl",
+                        ),
+                        (
+                            name: "Snowball",
+                        ),
+                        (
+                            name: "Thrift",
+                        ),
+                        (
+                            name: "VGL",
+                        ),
+                        (
+                            name: "Zeek",
+                        ),
+                        (
+                            name: "DylanConsole",
+                        ),
+                        (
+                            name: "Dylan",
+                        ),
+                        (
+                            name: "DylanLid",
+                        ),
+                        (
+                            name: "ECL",
+                        ),
+                        (
+                            name: "Eiffel",
+                        ),
+                        (
+                            name: "Elm",
+                        ),
+                        (
+                            name: "Elpi",
+                        ),
+                        (
+                            name: "Email",
+                        ),
+                        (
+                            name: "ElixirConsole",
+                        ),
+                        (
+                            name: "Elixir",
+                        ),
+                        (
+                            name: "Erlang",
+                        ),
+                        (
+                            name: "ErlangShell",
+                        ),
+                        (
+                            name: "Aheui",
+                        ),
+                        (
+                            name: "Befunge",
+                        ),
+                        (
+                            name: "Brainfuck",
+                        ),
+                        (
+                            name: "CAmkES",
+                        ),
+                        (
+                            name: "CapDL",
+                        ),
+                        (
+                            name: "Redcode",
+                        ),
+                        (
+                            name: "Ezhil",
+                        ),
+                        (
+                            name: "Factor",
+                        ),
+                        (
+                            name: "Fantom",
+                        ),
+                        (
+                            name: "Felix",
+                        ),
+                        (
+                            name: "FloScript",
+                        ),
+                        (
+                            name: "Forth",
+                        ),
+                        (
+                            name: "FortranFixed",
+                        ),
+                        (
+                            name: "Fortran",
+                        ),
+                        (
+                            name: "FoxPro",
+                        ),
+                        (
+                            name: "FreeFem",
+                        ),
+                        (
+                            name: "Futhark",
+                        ),
+                        (
+                            name: "Gcode",
+                        ),
+                        (
+                            name: "GDScript",
+                        ),
+                        (
+                            name: "Go",
+                        ),
+                        (
+                            name: "Abnf",
+                        ),
+                        (
+                            name: "Bnf",
+                        ),
+                        (
+                            name: "Jsgf",
+                        ),
+                        (
+                            name: "Peg",
+                        ),
+                        (
+                            name: "Cypher",
+                        ),
+                        (
+                            name: "Asymptote",
+                        ),
+                        (
+                            name: "GLShader",
+                        ),
+                        (
+                            name: "Gnuplot",
+                        ),
+                        (
+                            name: "HLSLShader",
+                        ),
+                        (
+                            name: "PostScript",
+                        ),
+                        (
+                            name: "Povray",
+                        ),
+                        (
+                            name: "Graphviz",
+                        ),
+                        (
+                            name: "GSQL",
+                        ),
+                        (
+                            name: "Agda",
+                        ),
+                        (
+                            name: "Cryptol",
+                        ),
+                        (
+                            name: "Haskell",
+                        ),
+                        (
+                            name: "Hspec",
+                        ),
+                        (
+                            name: "Idris",
+                        ),
+                        (
+                            name: "Koka",
+                        ),
+                        (
+                            name: "LiterateAgda",
+                        ),
+                        (
+                            name: "LiterateCryptol",
+                        ),
+                        (
+                            name: "LiterateHaskell",
+                        ),
+                        (
+                            name: "LiterateIdris",
+                        ),
+                        (
+                            name: "Haxe",
+                        ),
+                        (
+                            name: "Hxml",
+                        ),
+                        (
+                            name: "SystemVerilog",
+                        ),
+                        (
+                            name: "Verilog",
+                        ),
+                        (
+                            name: "Vhdl",
+                        ),
+                        (
+                            name: "Hexdump",
+                        ),
+                        (
+                            name: "Dtd",
+                        ),
+                        (
+                            name: "Haml",
+                        ),
+                        (
+                            name: "Html",
+                        ),
+                        (
+                            name: "Pug",
+                        ),
+                        (
+                            name: "Scaml",
+                        ),
+                        (
+                            name: "Xml",
+                        ),
+                        (
+                            name: "Xslt",
+                        ),
+                        (
+                            name: "IDL",
+                        ),
+                        (
+                            name: "Igor",
+                        ),
+                        (
+                            name: "Limbo",
+                        ),
+                        (
+                            name: "DebianControl",
+                        ),
+                        (
+                            name: "NSIS",
+                        ),
+                        (
+                            name: "RPMSpec",
+                        ),
+                        (
+                            name: "SourcesList",
+                        ),
+                        (
+                            name: "Inform6",
+                        ),
+                        (
+                            name: "Inform6Template",
+                        ),
+                        (
+                            name: "Inform7",
+                        ),
+                        (
+                            name: "Tads3",
+                        ),
+                        (
+                            name: "Io",
+                        ),
+                        (
+                            name: "J",
+                        ),
+                        (
+                            name: "CoffeeScript",
+                        ),
+                        (
+                            name: "Dart",
+                        ),
+                        (
+                            name: "EarlGrey",
+                        ),
+                        (
+                            name: "Javascript",
+                        ),
+                        (
+                            name: "Juttle",
+                        ),
+                        (
+                            name: "Kal",
+                        ),
+                        (
+                            name: "Lasso",
+                        ),
+                        (
+                            name: "LiveScript",
+                        ),
+                        (
+                            name: "Mask",
+                        ),
+                        (
+                            name: "NodeConsole",
+                        ),
+                        (
+                            name: "ObjectiveJ",
+                        ),
+                        (
+                            name: "TypeScript",
+                        ),
+                        (
+                            name: "JMESPath",
+                        ),
+                        (
+                            name: "JSLT",
+                        ),
+                        (
+                            name: "JuliaConsole",
+                        ),
+                        (
+                            name: "Julia",
+                        ),
+                        (
+                            name: "AspectJ",
+                        ),
+                        (
+                            name: "Ceylon",
+                        ),
+                        (
+                            name: "Clojure",
+                        ),
+                        (
+                            name: "ClojureScript",
+                        ),
+                        (
+                            name: "Golo",
+                        ),
+                        (
+                            name: "Gosu",
+                        ),
+                        (
+                            name: "GosuTemplate",
+                        ),
+                        (
+                            name: "Groovy",
+                        ),
+                        (
+                            name: "Ioke",
+                        ),
+                        (
+                            name: "Jasmin",
+                        ),
+                        (
+                            name: "Java",
+                        ),
+                        (
+                            name: "Kotlin",
+                        ),
+                        (
+                            name: "Pig",
+                        ),
+                        (
+                            name: "Sarl",
+                        ),
+                        (
+                            name: "Scala",
+                        ),
+                        (
+                            name: "Xtend",
+                        ),
+                        (
+                            name: "Kuin",
+                        ),
+                        (
+                            name: "LilyPond",
+                        ),
+                        (
+                            name: "CPSA",
+                        ),
+                        (
+                            name: "CommonLisp",
+                        ),
+                        (
+                            name: "EmacsLisp",
+                        ),
+                        (
+                            name: "Fennel",
+                        ),
+                        (
+                            name: "Hy",
+                        ),
+                        (
+                            name: "NewLisp",
+                        ),
+                        (
+                            name: "Racket",
+                        ),
+                        (
+                            name: "Scheme",
+                        ),
+                        (
+                            name: "Shen",
+                        ),
+                        (
+                            name: "Xtlang",
+                        ),
+                        (
+                            name: "Macaulay2",
+                        ),
+                        (
+                            name: "BaseMakefile",
+                        ),
+                        (
+                            name: "CMake",
+                        ),
+                        (
+                            name: "Makefile",
+                        ),
+                        (
+                            name: "BBCode",
+                        ),
+                        (
+                            name: "Groff",
+                        ),
+                        (
+                            name: "Markdown",
+                        ),
+                        (
+                            name: "MoinWiki",
+                        ),
+                        (
+                            name: "MozPreprocCss",
+                        ),
+                        (
+                            name: "MozPreprocHash",
+                        ),
+                        (
+                            name: "MozPreprocJavascript",
+                        ),
+                        (
+                            name: "MozPreprocPercent",
+                        ),
+                        (
+                            name: "MozPreprocXul",
+                        ),
+                        (
+                            name: "Rst",
+                        ),
+                        (
+                            name: "Tex",
+                        ),
+                        (
+                            name: "TiddlyWiki5",
+                        ),
+                        (
+                            name: "Matlab",
+                        ),
+                        (
+                            name: "MatlabSession",
+                        ),
+                        (
+                            name: "Octave",
+                        ),
+                        (
+                            name: "Scilab",
+                        ),
+                        (
+                            name: "Maxima",
+                        ),
+                        (
+                            name: "MCFunction",
+                        ),
+                        (
+                            name: "SNBT",
+                        ),
+                        (
+                            name: "Meson",
+                        ),
+                        (
+                            name: "MIME",
+                        ),
+                        (
+                            name: "FStar",
+                        ),
+                        (
+                            name: "Ocaml",
+                        ),
+                        (
+                            name: "Opa",
+                        ),
+                        (
+                            name: "Reason",
+                        ),
+                        (
+                            name: "SML",
+                        ),
+                        (
+                            name: "Bugs",
+                        ),
+                        (
+                            name: "Jags",
+                        ),
+                        (
+                            name: "Modelica",
+                        ),
+                        (
+                            name: "Stan",
+                        ),
+                        (
+                            name: "Modula2",
+                        ),
+                        (
+                            name: "Monte",
+                        ),
+                        (
+                            name: "Mosel",
+                        ),
+                        (
+                            name: "NCL",
+                        ),
+                        (
+                            name: "Nimrod",
+                        ),
+                        (
+                            name: "Nit",
+                        ),
+                        (
+                            name: "Nix",
+                        ),
+                        (
+                            name: "ComponentPascal",
+                        ),
+                        (
+                            name: "Logos",
+                        ),
+                        (
+                            name: "ObjectiveC",
+                        ),
+                        (
+                            name: "ObjectiveCpp",
+                        ),
+                        (
+                            name: "Swift",
+                        ),
+                        (
+                            name: "Ooc",
+                        ),
+                        (
+                            name: "ParaSail",
+                        ),
+                        (
+                            name: "AntlrActionScript",
+                        ),
+                        (
+                            name: "AntlrCSharp",
+                        ),
+                        (
+                            name: "AntlrCpp",
+                        ),
+                        (
+                            name: "AntlrJava",
+                        ),
+                        (
+                            name: "Antlr",
+                        ),
+                        (
+                            name: "AntlrObjectiveC",
+                        ),
+                        (
+                            name: "AntlrPerl",
+                        ),
+                        (
+                            name: "AntlrPython",
+                        ),
+                        (
+                            name: "AntlrRuby",
+                        ),
+                        (
+                            name: "Ebnf",
+                        ),
+                        (
+                            name: "RagelC",
+                        ),
+                        (
+                            name: "RagelCpp",
+                        ),
+                        (
+                            name: "RagelD",
+                        ),
+                        (
+                            name: "RagelEmbedded",
+                        ),
+                        (
+                            name: "RagelJava",
+                        ),
+                        (
+                            name: "Ragel",
+                        ),
+                        (
+                            name: "RagelObjectiveC",
+                        ),
+                        (
+                            name: "RagelRuby",
+                        ),
+                        (
+                            name: "Treetop",
+                        ),
+                        (
+                            name: "Delphi",
+                        ),
+                        (
+                            name: "Pawn",
+                        ),
+                        (
+                            name: "SourcePawn",
+                        ),
+                        (
+                            name: "Perl6",
+                        ),
+                        (
+                            name: "Perl",
+                        ),
+                        (
+                            name: "Php",
+                        ),
+                        (
+                            name: "PsyshConsole",
+                        ),
+                        (
+                            name: "Zephir",
+                        ),
+                        (
+                            name: "Pointless",
+                        ),
+                        (
+                            name: "Pony",
+                        ),
+                        (
+                            name: "Praat",
+                        ),
+                        (
+                            name: "Procfile",
+                        ),
+                        (
+                            name: "Logtalk",
+                        ),
+                        (
+                            name: "Prolog",
+                        ),
+                        (
+                            name: "PromQL",
+                        ),
+                        (
+                            name: "Cython",
+                        ),
+                        (
+                            name: "Dg",
+                        ),
+                        (
+                            name: "NumPy",
+                        ),
+                        (
+                            name: "Python2",
+                        ),
+                        (
+                            name: "Python2Traceback",
+                        ),
+                        (
+                            name: "PythonConsole",
+                        ),
+                        (
+                            name: "Python",
+                        ),
+                        (
+                            name: "PythonTraceback",
+                        ),
+                        (
+                            name: "K",
+                        ),
+                        (
+                            name: "Q",
+                        ),
+                        (
+                            name: "Qlik",
+                        ),
+                        (
+                            name: "QVTo",
+                        ),
+                        (
+                            name: "RConsole",
+                        ),
+                        (
+                            name: "Rd",
+                        ),
+                        (
+                            name: "S",
+                        ),
+                        (
+                            name: "ShExC",
+                        ),
+                        (
+                            name: "Sparql",
+                        ),
+                        (
+                            name: "Turtle",
+                        ),
+                        (
+                            name: "Rebol",
+                        ),
+                        (
+                            name: "Red",
+                        ),
+                        (
+                            name: "Resource",
+                        ),
+                        (
+                            name: "Ride",
+                        ),
+                        (
+                            name: "Rita",
+                        ),
+                        (
+                            name: "RNCCompact",
+                        ),
+                        (
+                            name: "RoboconfGraph",
+                        ),
+                        (
+                            name: "RoboconfInstances",
+                        ),
+                        (
+                            name: "RobotFramework",
+                        ),
+                        (
+                            name: "Fancy",
+                        ),
+                        (
+                            name: "RubyConsole",
+                        ),
+                        (
+                            name: "Ruby",
+                        ),
+                        (
+                            name: "Rust",
+                        ),
+                        (
+                            name: "SAS",
+                        ),
+                        (
+                            name: "Savi",
+                        ),
+                        (
+                            name: "Scdoc",
+                        ),
+                        (
+                            name: "AppleScript",
+                        ),
+                        (
+                            name: "Chaiscript",
+                        ),
+                        (
+                            name: "Easytrieve",
+                        ),
+                        (
+                            name: "Hybris",
+                        ),
+                        (
+                            name: "Jcl",
+                        ),
+                        (
+                            name: "LSL",
+                        ),
+                        (
+                            name: "Lua",
+                        ),
+                        (
+                            name: "MOOCode",
+                        ),
+                        (
+                            name: "MiniScript",
+                        ),
+                        (
+                            name: "MoonScript",
+                        ),
+                        (
+                            name: "Rexx",
+                        ),
+                        (
+                            name: "SmartGameFormat",
+                        ),
+                        (
+                            name: "Bash",
+                        ),
+                        (
+                            name: "BashSession",
+                        ),
+                        (
+                            name: "Batch",
+                        ),
+                        (
+                            name: "Execline",
+                        ),
+                        (
+                            name: "FishShell",
+                        ),
+                        (
+                            name: "MSDOSSession",
+                        ),
+                        (
+                            name: "PowerShell",
+                        ),
+                        (
+                            name: "PowerShellSession",
+                        ),
+                        (
+                            name: "SlurmBash",
+                        ),
+                        (
+                            name: "Tcsh",
+                        ),
+                        (
+                            name: "TcshSession",
+                        ),
+                        (
+                            name: "Sieve",
+                        ),
+                        (
+                            name: "Slash",
+                        ),
+                        (
+                            name: "Newspeak",
+                        ),
+                        (
+                            name: "Smalltalk",
+                        ),
+                        (
+                            name: "Smithy",
+                        ),
+                        (
+                            name: "NuSMV",
+                        ),
+                        (
+                            name: "Snobol",
+                        ),
+                        (
+                            name: "Solidity",
+                        ),
+                        (
+                            name: "Sophia",
+                        ),
+                        (
+                            name: "Output",
+                        ),
+                        (
+                            name: "RawToken",
+                        ),
+                        (
+                            name: "Text",
+                        ),
+                        (
+                            name: "Spice",
+                        ),
+                        (
+                            name: "MySql",
+                        ),
+                        (
+                            name: "PlPgsql",
+                        ),
+                        (
+                            name: "PostgresConsole",
+                        ),
+                        (
+                            name: "Postgres",
+                        ),
+                        (
+                            name: "Rql",
+                        ),
+                        (
+                            name: "Sql",
+                        ),
+                        (
+                            name: "SqliteConsole",
+                        ),
+                        (
+                            name: "TransactSql",
+                        ),
+                        (
+                            name: "Srcinfo",
+                        ),
+                        (
+                            name: "Stata",
+                        ),
+                        (
+                            name: "SuperCollider",
+                        ),
+                        (
+                            name: "Tal",
+                        ),
+                        (
+                            name: "Tcl",
+                        ),
+                        (
+                            name: "Teal",
+                        ),
+                        (
+                            name: "Angular2Html",
+                        ),
+                        (
+                            name: "Angular2",
+                        ),
+                        (
+                            name: "CheetahHtml",
+                        ),
+                        (
+                            name: "CheetahJavascript",
+                        ),
+                        (
+                            name: "Cheetah",
+                        ),
+                        (
+                            name: "CheetahXml",
+                        ),
+                        (
+                            name: "ColdfusionCFC",
+                        ),
+                        (
+                            name: "ColdfusionHtml",
+                        ),
+                        (
+                            name: "Coldfusion",
+                        ),
+                        (
+                            name: "CssDjango",
+                        ),
+                        (
+                            name: "CssErb",
+                        ),
+                        (
+                            name: "CssGenshi",
+                        ),
+                        (
+                            name: "CssPhp",
+                        ),
+                        (
+                            name: "CssSmarty",
+                        ),
+                        (
+                            name: "Django",
+                        ),
+                        (
+                            name: "Erb",
+                        ),
+                        (
+                            name: "EvoqueHtml",
+                        ),
+                        (
+                            name: "Evoque",
+                        ),
+                        (
+                            name: "EvoqueXml",
+                        ),
+                        (
+                            name: "Genshi",
+                        ),
+                        (
+                            name: "GenshiText",
+                        ),
+                        (
+                            name: "HandlebarsHtml",
+                        ),
+                        (
+                            name: "Handlebars",
+                        ),
+                        (
+                            name: "HtmlDjango",
+                        ),
+                        (
+                            name: "HtmlGenshi",
+                        ),
+                        (
+                            name: "HtmlPhp",
+                        ),
+                        (
+                            name: "HtmlSmarty",
+                        ),
+                        (
+                            name: "JavascriptDjango",
+                        ),
+                        (
+                            name: "JavascriptErb",
+                        ),
+                        (
+                            name: "JavascriptGenshi",
+                        ),
+                        (
+                            name: "JavascriptPhp",
+                        ),
+                        (
+                            name: "JavascriptSmarty",
+                        ),
+                        (
+                            name: "Jsp",
+                        ),
+                        (
+                            name: "LassoCss",
+                        ),
+                        (
+                            name: "LassoHtml",
+                        ),
+                        (
+                            name: "LassoJavascript",
+                        ),
+                        (
+                            name: "LassoXml",
+                        ),
+                        (
+                            name: "Liquid",
+                        ),
+                        (
+                            name: "MakoCss",
+                        ),
+                        (
+                            name: "MakoHtml",
+                        ),
+                        (
+                            name: "MakoJavascript",
+                        ),
+                        (
+                            name: "Mako",
+                        ),
+                        (
+                            name: "MakoXml",
+                        ),
+                        (
+                            name: "Mason",
+                        ),
+                        (
+                            name: "MyghtyCss",
+                        ),
+                        (
+                            name: "MyghtyHtml",
+                        ),
+                        (
+                            name: "MyghtyJavascript",
+                        ),
+                        (
+                            name: "Myghty",
+                        ),
+                        (
+                            name: "MyghtyXml",
+                        ),
+                        (
+                            name: "Rhtml",
+                        ),
+                        (
+                            name: "Smarty",
+                        ),
+                        (
+                            name: "SqlJinja",
+                        ),
+                        (
+                            name: "Ssp",
+                        ),
+                        (
+                            name: "TeaTemplate",
+                        ),
+                        (
+                            name: "TwigHtml",
+                        ),
+                        (
+                            name: "Twig",
+                        ),
+                        (
+                            name: "VelocityHtml",
+                        ),
+                        (
+                            name: "Velocity",
+                        ),
+                        (
+                            name: "VelocityXml",
+                        ),
+                        (
+                            name: "XmlDjango",
+                        ),
+                        (
+                            name: "XmlErb",
+                        ),
+                        (
+                            name: "XmlPhp",
+                        ),
+                        (
+                            name: "XmlSmarty",
+                        ),
+                        (
+                            name: "YamlJinja",
+                        ),
+                        (
+                            name: "TeraTerm",
+                        ),
+                        (
+                            name: "Gherkin",
+                        ),
+                        (
+                            name: "TAP",
+                        ),
+                        (
+                            name: "Awk",
+                        ),
+                        (
+                            name: "Sed",
+                        ),
+                        (
+                            name: "Vim",
+                        ),
+                        (
+                            name: "Gettext",
+                        ),
+                        (
+                            name: "Http",
+                        ),
+                        (
+                            name: "IrcLogs",
+                        ),
+                        (
+                            name: "KernelLog",
+                        ),
+                        (
+                            name: "Notmuch",
+                        ),
+                        (
+                            name: "Todotxt",
+                        ),
+                        (
+                            name: "Coq",
+                        ),
+                        (
+                            name: "Isabelle",
+                        ),
+                        (
+                            name: "Lean",
+                        ),
+                        (
+                            name: "ThingsDB",
+                        ),
+                        (
+                            name: "TNT",
+                        ),
+                        (
+                            name: "Rts",
+                        ),
+                        (
+                            name: "TypoScriptCssData",
+                        ),
+                        (
+                            name: "TypoScriptHtmlData",
+                        ),
+                        (
+                            name: "TypoScript",
+                        ),
+                        (
+                            name: "CSSUL4",
+                        ),
+                        (
+                            name: "HTMLUL4",
+                        ),
+                        (
+                            name: "JavascriptUL4",
+                        ),
+                        (
+                            name: "PythonUL4",
+                        ),
+                        (
+                            name: "UL4",
+                        ),
+                        (
+                            name: "XMLUL4",
+                        ),
+                        (
+                            name: "Icon",
+                        ),
+                        (
+                            name: "Ucode",
+                        ),
+                        (
+                            name: "Unicon",
+                        ),
+                        (
+                            name: "Urbiscript",
+                        ),
+                        (
+                            name: "Usd",
+                        ),
+                        (
+                            name: "VCL",
+                        ),
+                        (
+                            name: "VCLSnippet",
+                        ),
+                        (
+                            name: "Boogie",
+                        ),
+                        (
+                            name: "Silver",
+                        ),
+                        (
+                            name: "Wat",
+                        ),
+                        (
+                            name: "WebIDL",
+                        ),
+                        (
+                            name: "Cirru",
+                        ),
+                        (
+                            name: "Duel",
+                        ),
+                        (
+                            name: "Qml",
+                        ),
+                        (
+                            name: "Slim",
+                        ),
+                        (
+                            name: "XQuery",
+                        ),
+                        (
+                            name: "Whiley",
+                        ),
+                        (
+                            name: "X10",
+                        ),
+                        (
+                            name: "Xorg",
+                        ),
+                        (
+                            name: "Yang",
+                        ),
+                        (
+                            name: "Zig",
+                        ),
+                    ],
+                    filter_strategy: Fuzzy,
                 ),
             ],
         ),
@@ -1003,30 +2130,21 @@
                 "--hyperlinks",
             ],
             description: Some("Render hyperlinks in markdown"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-wrap",
             ],
-            description: Some("Don\'t word wrap syntax highlighted files"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't word wrap syntax highlighted files"),
         ),
         (
             names: [
                 "--title",
             ],
             description: Some("Set panel title to TEXT"),
-            takes_value: true,
             arguments: [
                 (
                     name: "text",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1035,14 +2153,9 @@
                 "--caption",
             ],
             description: Some("Set panel caption to TEXT"),
-            takes_value: true,
             arguments: [
                 (
                     name: "text",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -1051,8 +2164,6 @@
                 "--force-terminal",
             ],
             description: Some("Force terminal output when not writing to a terminal"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -1060,14 +2171,13 @@
                 "--export-html",
             ],
             description: Some("Write HTML to PATH"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
+                    suggest_current_token: true,
                 ),
             ],
         ),
@@ -1076,14 +2186,13 @@
                 "--export-svg",
             ],
             description: Some("Write SVG to PATH"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
+                    suggest_current_token: true,
                 ),
             ],
         ),
@@ -1092,8 +2201,6 @@
                 "--pager",
             ],
             description: Some("Display in an interactive pager"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -1101,27 +2208,29 @@
                 "--version",
             ],
             description: Some("Print version and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--help",
             ],
             description: Some("Show this message and exit"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "path/text/url",
-            source: Static([
-                "-",
-            ]),
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            suggestions: [
+                (
+                    name: "-",
+                    description: Some("Read from stdin"),
+                    presentation: (
+                        hidden: true,
+                    ),
+                ),
+            ],
+            template: [
+                FilePaths,
+            ],
         ),
     ],
 )

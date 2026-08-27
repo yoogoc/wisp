@@ -2,15 +2,12 @@
     version: 1,
     command: "yo",
     description: Some("Yeoman generator"),
-    subcommands: [],
     options: [
         (
             names: [
                 "--help",
             ],
-            description: Some("Print info and generator\'s options and usage"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Print info and generator's options and usage"),
         ),
         (
             names: [
@@ -18,75 +15,77 @@
                 "--force",
             ],
             description: Some("Overwrite files that already exist"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                dangerous: true,
+            ),
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Print version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-color",
             ],
             description: Some("Disable color"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--insight",
             ],
             description: Some("Enable anonymous tracking"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-insight",
             ],
             description: Some("Disable anonymous tracking"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--generators",
             ],
             description: Some("Print available generators"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--local-only",
             ],
             description: Some("Disable lookup of globally-installed generators"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "generator",
-            source: Static([
-                "doctor",
-                "completion",
-            ]),
+            suggestions: [
+                (
+                    name: "doctor",
+                    description: Some("Running sanity checks on your system"),
+                    presentation: (
+                        icon: Some("fig://icon?type=alert"),
+                    ),
+                ),
+                (
+                    name: "completion",
+                    description: Some("To enable shell completion for the yo command"),
+                    presentation: (
+                        icon: Some("fig://icon?type=asterisk"),
+                    ),
+                ),
+            ],
+            generators: [
+                (
+                    script: [
+                        "yo",
+                        "--generators",
+                    ],
+                    has_post_process: true,
+                ),
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: Some((
-                script: [
-                    "yo",
-                    "--generators",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
+            is_command: true,
         ),
     ],
 )

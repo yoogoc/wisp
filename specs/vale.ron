@@ -5,29 +5,17 @@
     subcommands: [
         (
             name: "ls-config",
-            aliases: [],
             description: Some("Print the current configuration to stdout"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ls-metrics",
-            aliases: [],
-            description: Some("Print the given file\'s internal metrics to stdout"),
-            subcommands: [],
-            options: [],
+            description: Some("Print the given file's internal metrics to stdout"),
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("The path to a file you want to analyze"),
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -37,8 +25,6 @@
                 "-h",
             ],
             description: Some("Show help for vale"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -46,133 +32,142 @@
                 "-v",
             ],
             description: Some("Print the current version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ignore-syntax",
             ],
             description: Some("Lint all files line-by-line"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-exit",
             ],
-            description: Some("Don\'t return a nonzero exit code on errors"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't return a nonzero exit code on errors"),
         ),
         (
             names: [
                 "--no-wrap",
             ],
-            description: Some("Don\'t wrap CLI output"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't wrap CLI output"),
         ),
         (
             names: [
                 "--ext",
             ],
             description: Some("An extension to associate with stdin"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ext",
-                    source: Static([
-                        ".md",
-                        ".rst",
-                        ".adoc",
-                        ".html",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: ".md",
+                        ),
+                        (
+                            name: ".rst",
+                        ),
+                        (
+                            name: ".adoc",
+                        ),
+                        (
+                            name: ".html",
+                        ),
+                    ],
                 ),
             ],
+            requires_separator: Some("="),
+            presentation: (
+                display_name: Some("--ext=<ext>"),
+            ),
         ),
         (
             names: [
                 "--glob",
             ],
             description: Some("A glob pattern"),
-            takes_value: true,
             arguments: [
                 (
                     name: "glob",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            requires_separator: Some("="),
+            presentation: (
+                display_name: Some("--glob=<glob>"),
+            ),
         ),
         (
             names: [
                 "--minAlertLevel",
             ],
             description: Some("The minimum level to display"),
-            takes_value: true,
             arguments: [
                 (
                     name: "level",
-                    source: Static([
-                        "suggestion",
-                        "warning",
-                        "error",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "suggestion",
+                        ),
+                        (
+                            name: "warning",
+                        ),
+                        (
+                            name: "error",
+                        ),
+                    ],
                 ),
             ],
+            requires_separator: Some("="),
+            presentation: (
+                display_name: Some("--minAlertLevel=<level>"),
+            ),
         ),
         (
             names: [
                 "--output",
             ],
             description: Some("The alert output style to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "style",
-                    source: Static([
-                        "line",
-                        "JSON",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "line",
+                        ),
+                        (
+                            name: "JSON",
+                        ),
+                    ],
                 ),
             ],
+            requires_separator: Some("="),
+            presentation: (
+                display_name: Some("--output=<style>"),
+            ),
         ),
         (
             names: [
                 "--config",
             ],
             description: Some("A path to a .vale.ini file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            requires_separator: Some("="),
+            presentation: (
+                display_name: Some("--config=<path>"),
+            ),
         ),
     ],
     arguments: [
         (
-            name: "value",
-            source: Directories,
-            optional: false,
+            name: "",
+            template: [
+                FilePaths,
+                Folders,
+            ],
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

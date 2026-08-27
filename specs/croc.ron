@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "send",
-            aliases: [],
             description: Some("Send file(s), or folder"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,14 +13,9 @@
                         "-c",
                     ],
                     description: Some("Codephrase used to connect to relay"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "codephrase",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -31,18 +24,20 @@
                         "--hash",
                     ],
                     description: Some("Hash algorithm"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Static([
-                                "xxhash",
-                                "imohash",
-                                "md5",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            suggestions: [
+                                (
+                                    name: "xxhash",
+                                ),
+                                (
+                                    name: "imohash",
+                                ),
+                                (
+                                    name: "md5",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -52,14 +47,9 @@
                         "-t",
                     ],
                     description: Some("Send some text"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "text",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -68,56 +58,42 @@
                         "--no-local",
                     ],
                     description: Some("Disable local relay when sending"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-multi",
                     ],
                     description: Some("Disable multiplexing"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--ports",
                     ],
                     description: Some("Ports of the local relay"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
-                    name: "value",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        FilePaths,
+                        Folders,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "relay",
-            aliases: [],
             description: Some("Start your own relay"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--host",
                     ],
                     description: Some("Host of the relay"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -126,20 +102,13 @@
                         "--ports",
                     ],
                     description: Some("Ports of the local relay"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "ports",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "help",
@@ -147,18 +116,14 @@
                 "h",
             ],
             description: Some("Shows a list of commands or help for one command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Help,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -168,107 +133,90 @@
                 "-h",
             ],
             description: Some("Show help for croc"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--internal-dns",
             ],
             description: Some("Use a built-in DNS stub resolver rather than the host operating system"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--remember",
             ],
             description: Some("Save these settings to reuse next time"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--debug",
             ],
             description: Some("Toggle debug mode"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--yes",
             ],
             description: Some("Automatically agree to all prompts"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--stdout",
             ],
             description: Some("Redirect file to stdout"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-compress",
             ],
             description: Some("Disable compression"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ask",
             ],
             description: Some("Make sure sender and recipient are prompted"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--local",
             ],
             description: Some("Force to use only local connections"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ignore-stdin",
             ],
             description: Some("Ignore piped stdin"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--overwrite",
             ],
             description: Some("Do not prompt to overwrite"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--curve",
             ],
             description: Some("Choose an encryption curve"),
-            takes_value: true,
             arguments: [
                 (
                     name: "value",
-                    source: Static([
-                        "p521",
-                        "p256",
-                        "p384",
-                        "siec",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "p521",
+                        ),
+                        (
+                            name: "p256",
+                        ),
+                        (
+                            name: "p384",
+                        ),
+                        (
+                            name: "siec",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -277,14 +225,9 @@
                 "--ip",
             ],
             description: Some("Set sender ip if known"),
-            takes_value: true,
             arguments: [
                 (
                     name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -293,14 +236,9 @@
                 "--relay",
             ],
             description: Some("Address of the relay"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ipv4 address",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -309,14 +247,9 @@
                 "--relay6",
             ],
             description: Some("Ipv6 address of the relay"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ipv6 address",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -325,14 +258,9 @@
                 "--out",
             ],
             description: Some("Specify an output folder to receive the file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "output folder",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -341,14 +269,9 @@
                 "--pass",
             ],
             description: Some("Password for the relay (default: \"pass123\")"),
-            takes_value: true,
             arguments: [
                 (
                     name: "password",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -357,14 +280,9 @@
                 "--socks5",
             ],
             description: Some("Add a socks5 proxy"),
-            takes_value: true,
             arguments: [
                 (
                     name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -373,14 +291,9 @@
                 "--throttleUpload",
             ],
             description: Some("Throttle the upload speed e.g. 500k"),
-            takes_value: true,
             arguments: [
                 (
                     name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -390,17 +303,12 @@
                 "-v",
             ],
             description: Some("Print the version"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "secret-code",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            description: Some("Receive a file using code"),
         ),
     ],
 )

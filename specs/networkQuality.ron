@@ -2,53 +2,39 @@
     version: 1,
     command: "networkQuality",
     description: Some("Measure the different aspects of network quality"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-h",
             ],
             description: Some("Show help for networkQuality"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-c",
             ],
             description: Some("Produce computer readable output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-s",
             ],
             description: Some("Run tests sequentially instead of in parallel"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-v",
             ],
             description: Some("Verbose output"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-C",
             ],
             description: Some("Use a custom configuration URL"),
-            takes_value: true,
             arguments: [
                 (
                     name: "URL",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -57,24 +43,20 @@
                 "-I",
             ],
             description: Some("Bind test to interface"),
-            takes_value: true,
             arguments: [
                 (
                     name: "interface",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "networksetup",
-                            "-listallhardwareports",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "networksetup",
+                                "-listallhardwareports",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
     ],
-    arguments: [],
 )

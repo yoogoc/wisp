@@ -2,7 +2,6 @@
     version: 1,
     command: "hyperfine",
     description: Some("A command-line benchmarking tool"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,14 +9,9 @@
                 "-w",
             ],
             description: Some("Perform warmupruns (number) before the actual benchmarking starts"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -27,14 +21,10 @@
                 "-m",
             ],
             description: Some("Perform at least NUM runs for each command"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("10"),
                 ),
             ],
         ),
@@ -44,14 +34,9 @@
                 "-M",
             ],
             description: Some("Perform at most NUM runs for each command. Default: no limit"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -61,14 +46,9 @@
                 "-r",
             ],
             description: Some("Perform exactly NUM runs for each command"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -78,14 +58,10 @@
                 "-s",
             ],
             description: Some("Execute cmd once before each set of timing runs"),
-            takes_value: true,
             arguments: [
                 (
                     name: "CMD",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    is_command: true,
                 ),
             ],
         ),
@@ -95,14 +71,10 @@
                 "-p",
             ],
             description: Some("Execute cmd before each timing run. This is useful for clearing disk caches, for example"),
-            takes_value: true,
             arguments: [
                 (
                     name: "CMD ...",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    is_command: true,
                 ),
             ],
         ),
@@ -112,14 +84,10 @@
                 "-c",
             ],
             description: Some("Execute cmd after the completion of all benchmarking runs for each individual command to be benchmarked"),
-            takes_value: true,
             arguments: [
                 (
                     name: "CMD",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    is_command: true,
                 ),
             ],
         ),
@@ -129,28 +97,15 @@
                 "-P",
             ],
             description: Some("Perform benchmark runs for each value in the range min..max"),
-            takes_value: true,
             arguments: [
                 (
                     name: "VAR",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "MIN",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "MAX",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -160,15 +115,14 @@
                 "-D",
             ],
             description: Some("This argument requires --parameter-scan to be specified as well. Traverse the range min..max in steps of delta"),
-            takes_value: true,
             arguments: [
                 (
                     name: "delta",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "--parameter-scan",
+                "-P",
             ],
         ),
         (
@@ -177,21 +131,12 @@
                 "-L",
             ],
             description: Some("Perform benchmark runs for each value in the comma-separated list of values"),
-            takes_value: true,
             arguments: [
                 (
                     name: "VAR",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "VALS",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -200,20 +145,31 @@
                 "--style",
             ],
             description: Some("Set output style type"),
-            takes_value: true,
             arguments: [
                 (
                     name: "STYLE",
-                    source: Static([
-                        "basic",
-                        "full",
-                        "nocolor",
-                        "color",
-                        "none",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "basic",
+                            description: Some("Disable output coloring and interactive elements"),
+                        ),
+                        (
+                            name: "full",
+                            description: Some("Enable all effects even if no interactive terminal was detected"),
+                        ),
+                        (
+                            name: "nocolor",
+                            description: Some("Keep the interactive output without any colors"),
+                        ),
+                        (
+                            name: "color",
+                            description: Some("Keep the colors without any interactive output"),
+                        ),
+                        (
+                            name: "none",
+                            description: Some("Disable all the output of the tool"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -223,21 +179,35 @@
                 "-S",
             ],
             description: Some("Set the shell to use for executing benchmarked commands"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SHELL",
-                    source: Static([
-                        "bash",
-                        "zsh",
-                        "sh",
-                        "fish",
-                        "pwsh",
-                        "powershell",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "bash",
+                            description: Some("Use bash as the shell"),
+                        ),
+                        (
+                            name: "zsh",
+                            description: Some("Use zsh as the shell"),
+                        ),
+                        (
+                            name: "sh",
+                            description: Some("Use sh as the shell"),
+                        ),
+                        (
+                            name: "fish",
+                            description: Some("Use fish as the shell"),
+                        ),
+                        (
+                            name: "pwsh",
+                            description: Some("Use pwsh as the shell"),
+                        ),
+                        (
+                            name: "powershell",
+                            description: Some("Use powershell as the shell"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -247,8 +217,6 @@
                 "-i",
             ],
             description: Some("Ignore non-zero exit codes of the benchmarked commands"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -256,17 +224,18 @@
                 "-u",
             ],
             description: Some("Set the time unit to use for the benchmark results"),
-            takes_value: true,
             arguments: [
                 (
                     name: "UNIT",
-                    source: Static([
-                        "millisecond",
-                        "second",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "millisecond",
+                        ),
+                        (
+                            name: "second",
+                        ),
+                    ],
+                    default: Some("second"),
                 ),
             ],
         ),
@@ -275,14 +244,12 @@
                 "--export-asciidoc",
             ],
             description: Some("Export the timing summary statistics as an AsciiDoc table to the given file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -291,14 +258,12 @@
                 "--export-csv",
             ],
             description: Some("Export the timing summary statistics as CSV to the given file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -307,14 +272,12 @@
                 "--export-json",
             ],
             description: Some("Export the timing summary statistics and timings of individual runs as JSON to the given file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -323,14 +286,12 @@
                 "--export-markdown",
             ],
             description: Some("Export the timing summary statistics as a Markdown table to the given file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -339,22 +300,15 @@
                 "--show-output",
             ],
             description: Some("Print the stdout and stderr of the benchmark instead of suppressing it"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--command-name",
             ],
             description: Some("Identify a command with the given name"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NAME",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -363,25 +317,19 @@
                 "--help",
             ],
             description: Some("Prints help message"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Shows version information"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "CMD",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            description: Some("Command to benchmark"),
+            is_command: true,
         ),
     ],
 )

@@ -2,7 +2,6 @@
     version: 1,
     command: "rollup",
     description: Some("Next-generation ES module bundler"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,18 +9,16 @@
                 "--config",
             ],
             description: Some("Use this config file (if argument is used but value is unspecified, defaults to rollup.config.js)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -30,15 +27,13 @@
                 "-d",
                 "--dir",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "dirname",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Directory for chunks (if absent, prints to stdout)"),
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -47,15 +42,10 @@
                 "-e",
                 "--external",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "ids",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Comma-separate list of module IDs to exclude"),
                 ),
             ],
         ),
@@ -64,22 +54,30 @@
                 "-f",
                 "--format",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "format",
-                    source: Static([
-                        "amd",
-                        "cjs",
-                        "es",
-                        "iife",
-                        "umd",
-                        "system",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Type of output (amd, cjs, es, iife, umd, system)"),
+                    suggestions: [
+                        (
+                            name: "amd",
+                        ),
+                        (
+                            name: "cjs",
+                        ),
+                        (
+                            name: "es",
+                        ),
+                        (
+                            name: "iife",
+                        ),
+                        (
+                            name: "umd",
+                        ),
+                        (
+                            name: "system",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -88,15 +86,10 @@
                 "-g",
                 "--globals",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "pairs",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Comma-separate list of `moduleID:Global` pairs"),
                 ),
             ],
         ),
@@ -106,23 +99,19 @@
                 "--help",
             ],
             description: Some("Show help message"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-i",
                 "--input",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Input (alternative to <entry file>)"),
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -132,23 +121,16 @@
                 "--sourcemap",
             ],
             description: Some("Generate sourcemap (`-m inline` for inline map)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-n",
                 "--name",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name for UMD export"),
                 ),
             ],
         ),
@@ -157,15 +139,10 @@
                 "-o",
                 "--file",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "output",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Single output file (if absent, prints to stdout)"),
                 ),
             ],
         ),
@@ -174,15 +151,10 @@
                 "-p",
                 "--plugin",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "plugin",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Use the plugin specified (may be repeated)"),
                 ),
             ],
         ),
@@ -192,8 +164,6 @@
                 "--version",
             ],
             description: Some("Show version number"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -201,22 +171,15 @@
                 "--watch",
             ],
             description: Some("Watch files in bundle and rebuild on changes"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--amd.id",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "id",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("ID for AMD module (default is anonymous)"),
                 ),
             ],
         ),
@@ -225,22 +188,15 @@
                 "--amd.autoId",
             ],
             description: Some("Generate the AMD ID based off the chunk name"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--amd.basePath",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "prefix",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Path to prepend to auto generated AMD ID"),
                 ),
             ],
         ),
@@ -248,15 +204,10 @@
             names: [
                 "--amd.define",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "name",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Function to use in place of 'define'"),
                 ),
             ],
         ),
@@ -264,15 +215,10 @@
             names: [
                 "--assetFileNames",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "pattern",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name pattern for emitted assets"),
                 ),
             ],
         ),
@@ -280,15 +226,10 @@
             names: [
                 "--banner",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "text",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Code to insert at top of bundle (outside wrapper)"),
                 ),
             ],
         ),
@@ -296,15 +237,10 @@
             names: [
                 "--chunkFileNames",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "pattern",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name pattern for emitted secondary chunks"),
                 ),
             ],
         ),
@@ -313,22 +249,15 @@
                 "--compact",
             ],
             description: Some("Minify wrapper code"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--context",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "variable",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Specify top-level 'this' value"),
                 ),
             ],
         ),
@@ -336,15 +265,10 @@
             names: [
                 "--entryFileNames",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "pattern",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Name pattern for emitted entry chunks"),
                 ),
             ],
         ),
@@ -352,15 +276,10 @@
             names: [
                 "--environment",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "values",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Settings passed to config file"),
                 ),
             ],
         ),
@@ -369,22 +288,15 @@
                 "--no-esModule",
             ],
             description: Some("Do not add __esmodule property"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--exports",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "mode",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Specify export mode (auto, default, named, none)"),
                 ),
             ],
         ),
@@ -393,38 +305,27 @@
                 "--extend",
             ],
             description: Some("Extend global variable defined by --name"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-externalLiveBindings",
             ],
             description: Some("Do not generate code to support live bindings"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--failAfterWarnings",
             ],
             description: Some("Exit with an error if the build produced warnings"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--footer",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "text",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Code to insert at end of bundle (outside wrapper)"),
                 ),
             ],
         ),
@@ -433,54 +334,39 @@
                 "--no-freeze",
             ],
             description: Some("Do not freeze namespace objects"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-hoistTransistiveImports",
             ],
             description: Some("Do not hoist transistive imports into entry chunks"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-indent",
             ],
-            description: Some("Don\'t indent result"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't indent result"),
         ),
         (
             names: [
                 "--no-interop",
             ],
             description: Some("Do not include interop block"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--inlineDynamicImports",
             ],
             description: Some("Create a single bundle when using dynamic imports"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--intro",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "text",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Code to insert at top of bundle (inside wrapper)"),
                 ),
             ],
         ),
@@ -489,38 +375,27 @@
                 "--minifyInternalImports",
             ],
             description: Some("Force or disable minification of internal imports"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--namespaceToStringTag",
             ],
-            description: Some("Create proper \'.toString\' methods for namespaces"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Create proper '.toString' methods for namespaces"),
         ),
         (
             names: [
                 "--noConflict",
             ],
             description: Some("Generate a noConflict method for UMD globals"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--outro",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "text",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Code to insert at end of bundle (inside wrapper)"),
                 ),
             ],
         ),
@@ -528,87 +403,64 @@
             names: [
                 "--preferConst",
             ],
-            description: Some("Use \'const\' instead of \'var\' for exports"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Use 'const' instead of 'var' for exports"),
         ),
         (
             names: [
                 "--no-preserveEntrySignatures",
             ],
             description: Some("Avoid facade chunks for entry points"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--preserveModules",
             ],
             description: Some("Preserve module structure"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--preserveModulesRoot",
             ],
             description: Some("Put preserved modules under this path at root level"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--preserveSymlinks",
             ],
             description: Some("Do not follow symlinks when resolving files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-sanitizeFileName",
             ],
             description: Some("Do not replace invalid characters in file names"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--shimMissingExports",
             ],
             description: Some("Create shim variables for missing exports"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--silent",
             ],
-            description: Some("Don\'t print warnings"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't print warnings"),
         ),
         (
             names: [
                 "--sourcemapExcludeSources",
             ],
             description: Some("Do not include source code in source maps"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--sourcemapFile",
             ],
             description: Some("Specify bundle position for source maps"),
-            takes_value: true,
             arguments: [
                 (
                     name: "file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -617,110 +469,81 @@
                 "--stdin=ext",
             ],
             description: Some("Specify file extension used for stdin input"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-stdin",
             ],
             description: Some("Do not read \"-\" from stdin"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-strict",
             ],
-            description: Some("Don\'t emit \'\"use strict\"; in the generated modules"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't emit '\"use strict\"; in the generated modules"),
         ),
         (
             names: [
                 "--strictDeprecations",
             ],
             description: Some("Throw errors for deprecated features"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--systemNullSetters",
             ],
-            description: Some("Replace empty SystemJS setters with \'null\'"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Replace empty SystemJS setters with 'null'"),
         ),
         (
             names: [
                 "--no-treeshake",
             ],
             description: Some("Disable tree-shaking optimizations"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-treeshake.annotations",
             ],
             description: Some("Ignore pure call annotations"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-treeshake.moduleSideEffects",
             ],
             description: Some("Assume modules have no side effects"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-treeshake.propertyReadSideEffects",
             ],
             description: Some("Ignore property access side-effects"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-treeshake.tryCatchDeoptimization",
             ],
             description: Some("Do not turn off try-catch-tree-shaking"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-treeshake.unknownGlobalSideEffects",
             ],
             description: Some("Assume unknown globals do not throw"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--waitForBuildInput",
             ],
             description: Some("Wait for bundle input files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--watch.buildDelay",
             ],
             description: Some("Throttle watch rebuilds"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -729,30 +552,21 @@
                 "--no-watch.clearScreen",
             ],
             description: Some("Do not clear the screen when rebuilding"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--watch.skipWrite",
             ],
             description: Some("Do not write files to disk when watching"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--watch.exclude",
             ],
             description: Some("Exclude files from being watched"),
-            takes_value: true,
             arguments: [
                 (
                     name: "files",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -761,14 +575,9 @@
                 "--watch.include",
             ],
             description: Some("Limit watching to specified files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "files",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -777,9 +586,6 @@
                 "--validate",
             ],
             description: Some("Validate output"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

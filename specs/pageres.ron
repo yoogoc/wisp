@@ -2,7 +2,6 @@
     version: 1,
     command: "pageres",
     description: Some("Capture website screenshots"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "-v",
             ],
             description: Some("Verbose output to see errors if you need to troubleshoot"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,8 +16,9 @@
                 "-c",
             ],
             description: Some("Crop to the set height"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--no-crop",
+            ],
         ),
         (
             names: [
@@ -28,14 +26,9 @@
                 "-d",
             ],
             description: Some("Delay screenshot capture"),
-            takes_value: true,
             arguments: [
                 (
                     name: "time",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -44,14 +37,10 @@
                 "--filename",
             ],
             description: Some("Custom filename"),
-            takes_value: true,
             arguments: [
                 (
                     name: "template",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("--filename='<%= date %> - <%= url %>'"),
                 ),
             ],
         ),
@@ -60,22 +49,15 @@
                 "--overwrite",
             ],
             description: Some("Overwrite destination file if it exists. Defaults to appending (n) to the file name if --overwrite is not set"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--selector",
             ],
             description: Some("Capture DOM element"),
-            takes_value: true,
             arguments: [
                 (
                     name: "element",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -84,14 +66,9 @@
                 "--hide",
             ],
             description: Some("Hide DOM element. Can be set multiple times"),
-            takes_value: true,
             arguments: [
                 (
                     name: "element",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -100,22 +77,22 @@
                 "--no-crop",
             ],
             description: Some("Override a global crop option within a group"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--crop",
+                "-c",
+            ],
         ),
         (
             names: [
                 "--css",
             ],
             description: Some("Apply custom CSS to the webpage. Specify some CSS or the path to a CSS file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -124,14 +101,9 @@
                 "--cookie",
             ],
             description: Some("Browser cookie. Can be set multiple times"),
-            takes_value: true,
             arguments: [
                 (
                     name: "cookie",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -140,14 +112,9 @@
                 "--header",
             ],
             description: Some("Custom HTTP request header. Can be set multiple times"),
-            takes_value: true,
             arguments: [
                 (
                     name: "header",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -156,14 +123,9 @@
                 "--username",
             ],
             description: Some("Username for HTTP auth"),
-            takes_value: true,
             arguments: [
                 (
                     name: "username",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -172,14 +134,9 @@
                 "--password",
             ],
             description: Some("Password for HTTP auth"),
-            takes_value: true,
             arguments: [
                 (
                     name: "password",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -188,14 +145,9 @@
                 "--scale",
             ],
             description: Some("Scale webpage n of times"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -204,17 +156,18 @@
                 "--format",
             ],
             description: Some("Image format. Either png (default) or jpg"),
-            takes_value: true,
             arguments: [
                 (
                     name: "format",
-                    source: Static([
-                        "png",
-                        "jpg",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "png",
+                        ),
+                        (
+                            name: "jpg",
+                        ),
+                    ],
+                    default: Some("png"),
                 ),
             ],
         ),
@@ -223,14 +176,9 @@
                 "--user-agent",
             ],
             description: Some("Custom user agent"),
-            takes_value: true,
             arguments: [
                 (
                     name: "string",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -239,32 +187,25 @@
                 "--transparent",
             ],
             description: Some("Set background color to transparent instead of white if no background is set"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--darkMode",
             ],
             description: Some("Emulate preference of dark color scheme"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "url | filepath",
-            source: Files,
-            optional: false,
+            template: [
+                FilePaths,
+            ],
             variadic: true,
-            imported_generator: None,
         ),
         (
             name: "resolution",
-            source: Files,
-            optional: false,
             variadic: true,
-            imported_generator: None,
         ),
     ],
 )

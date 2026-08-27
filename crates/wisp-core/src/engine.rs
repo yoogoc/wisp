@@ -2,27 +2,25 @@ use std::{
     collections::HashSet,
     ffi::OsStr,
     path::{Path, PathBuf},
-    process::Stdio,
     sync::Arc,
-    time::Duration,
 };
 
-use tokio::{io::AsyncReadExt, process::Command, time::timeout};
-use tracing::debug;
 use wisp_config::GeneratorConfig;
 use wisp_protocol::{BufferSnapshot, Candidate, CandidateKind};
 
 use crate::{
-    ArgumentSpec, CommandSpec, CompletionContext, ImportedGenerator, ImportedGeneratorOutput,
-    OptionSpec, SpecStore, SubcommandSpec, SuggestionSource, parse_completion_context,
+    ArgumentSpec, CommandSpec, CompletionContext, FilterStrategy, GeneratorRuntime, GeneratorSpec,
+    Native, OptionSpec, ParserDirectives, Presentation, QueryTerm, Repeat, SpecStore,
+    SubcommandSpec, Suggestion, SuggestionKind, SuggestionSpec, SuggestionType, Template,
+    parse_completion_context,
 };
 
 #[derive(Debug, Clone)]
 pub struct CompletionEngine {
     specs: SpecStore,
     commands: Arc<[String]>,
+    generators: Arc<GeneratorRuntime>,
     max_candidates: usize,
-    generator: GeneratorConfig,
 }
 
 impl Default for CompletionEngine {
@@ -30,8 +28,8 @@ impl Default for CompletionEngine {
         Self {
             specs: SpecStore::builtins(),
             commands: discover_commands().into(),
+            generators: Arc::clone(GeneratorRuntime::shared()),
             max_candidates: 0,
-            generator: GeneratorConfig::default(),
         }
     }
 }
@@ -41,8 +39,8 @@ impl CompletionEngine {
         Self {
             specs,
             commands: discover_commands().into(),
+            generators: Arc::clone(GeneratorRuntime::shared()),
             max_candidates: 0,
-            generator: GeneratorConfig::default(),
         }
     }
 
@@ -52,8 +50,8 @@ impl CompletionEngine {
         self
     }
 
-    pub fn with_generator_config(mut self, generator: GeneratorConfig) -> Self {
-        self.generator = generator;
+    pub fn with_generator_config(mut self, config: GeneratorConfig) -> Self {
+        self.generators = GeneratorRuntime::new(config);
         self
     }
 
@@ -106,84 +104,111 @@ impl CompletionEngine {
         };
 
         let resolved = self.resolve_node(spec, &context.args);
+        let token = context.current_token.as_str();
 
-        if context.current_token.starts_with('-') {
-            return resolved
-                .node
-                .options()
-                .iter()
-                .flat_map(|option| {
-                    option.names.iter().filter_map(|name| {
-                        make_candidate(
-                            name,
-                            name,
-                            option.description.clone(),
-                            CandidateKind::Option,
-                            context,
-                        )
-                    })
-                })
-                .collect();
+        // `--message=<value>`: the option is already settled, so complete the
+        // value after the separator and replace only that part of the token.
+        if let Some((argument, offset)) = resolved.separated_argument(token) {
+            let inner = CompletionContext {
+                command: context.command.clone(),
+                args: context.args.clone(),
+                current_token: token[offset..].to_owned(),
+                replace_range: (context.replace_range.start + offset)..context.replace_range.end,
+            };
+            return self
+                .complete_argument(argument, &resolved, &inner, cwd)
+                .await;
+        }
+
+        if token.starts_with('-') && token != "-" {
+            return resolved.option_candidates(context);
         }
 
         if let Some(argument) = resolved.pending_argument {
-            return self.complete_argument(argument, context, cwd).await;
+            return self
+                .complete_argument(argument, &resolved, context, cwd)
+                .await;
         }
 
         let mut candidates: Vec<Candidate> = resolved
             .node
             .subcommands()
             .iter()
+            .filter(|subcommand| !subcommand.presentation.hidden)
             .flat_map(|subcommand| {
                 std::iter::once(&subcommand.name)
                     .chain(subcommand.aliases.iter())
                     .filter_map(|name| {
-                        make_candidate(
+                        present(
                             name,
-                            name,
+                            &subcommand.presentation,
                             subcommand.description.clone(),
                             CandidateKind::Subcommand,
                             context,
                         )
                     })
             })
-            .chain(resolved.node.options().iter().flat_map(|option| {
-                option.names.iter().filter_map(|name| {
-                    make_candidate(
-                        name,
-                        name,
-                        option.description.clone(),
-                        CandidateKind::Option,
-                        context,
-                    )
-                })
-            }))
+            .chain(
+                resolved
+                    .node
+                    .additional_suggestions()
+                    .iter()
+                    .filter_map(|suggestion| {
+                        suggestion_candidate(suggestion, CandidateKind::Subcommand, context)
+                    }),
+            )
             .collect();
 
-        if let Some(argument) = argument_at(resolved.node.arguments(), resolved.positional_index) {
-            candidates.extend(self.complete_argument(argument, context, cwd).await);
-        } else if candidates.is_empty() {
-            candidates.extend(complete_paths(context, cwd, false));
+        apply_filter_strategy(
+            &mut candidates,
+            resolved.node.filter_strategy(),
+            &context.current_token,
+        );
+
+        // A command that insists on a subcommand offers nothing else.
+        if !resolved.node.requires_subcommand() {
+            if !resolved.options_are_closed() {
+                candidates.extend(resolved.option_candidates(context));
+            }
+            if let Some(argument) =
+                argument_at(resolved.node.arguments(), resolved.positional_index)
+            {
+                candidates.extend(
+                    self.complete_argument(argument, &resolved, context, cwd)
+                        .await,
+                );
+            } else if candidates.is_empty() {
+                candidates.extend(complete_paths(context, cwd, false));
+            }
         }
         candidates
     }
 
     fn resolve_node<'a>(&'a self, spec: &'a CommandSpec, args: &'a [String]) -> ResolvedNode<'a> {
         let mut node = NodeRef::Root(spec);
+        let mut parent = None;
+        let mut path = vec![spec.command.as_str()];
         let mut positional_index = 0;
         let mut pending_argument = None;
+        let mut persistent: Vec<&'a OptionSpec> = Vec::new();
+        let mut used: Vec<&'a str> = Vec::new();
+        let mut directives = node.parser_directives();
 
-        for token in args {
+        let mut rest = args;
+        while let Some((token, tail)) = rest.split_first() {
+            rest = tail;
             if pending_argument.take().is_some() {
                 continue;
             }
 
-            if token.starts_with('-') {
-                if let Some(option) = find_option(node.options(), token) {
-                    pending_argument = option.arguments.first();
-                    if pending_argument.is_none() && option.takes_value {
-                        // A legacy takes-value option consumes one token without suggestions.
-                        pending_argument = Some(&UNAVAILABLE_ARGUMENT);
+            if is_option_token(token) && !variadic_swallows_options(node, positional_index) {
+                let name =
+                    split_separator(token, directives).map_or(token.as_str(), |(name, _)| name);
+                used.push(name);
+                if let Some(option) = find_option(node.options(), &persistent, name) {
+                    // A separated option carries its value inside the token.
+                    if split_separator(token, directives).is_none() {
+                        pending_argument = option.arguments.first();
                     }
                 }
                 continue;
@@ -194,208 +219,254 @@ impl CompletionEngine {
                 .iter()
                 .find(|subcommand| subcommand.matches(token))
             {
+                persistent.extend(node.options().iter().filter(|option| option.persistent));
+                parent = Some(node);
+                path.push(subcommand.name.as_str());
                 node = NodeRef::Subcommand(subcommand);
-                positional_index = 0;
-                if let Some(load_spec) = &subcommand.load_spec
-                    && let Some(loaded) = self.specs.get_by_id(load_spec)
-                {
+                if let Some(loaded) = self.load(subcommand.load_spec.as_deref()) {
                     node = NodeRef::Root(loaded);
+                } else if let Some(inline) = &subcommand.load_spec_inline {
+                    node = NodeRef::Subcommand(inline);
                 }
+                directives = node.parser_directives().or(directives);
+                positional_index = 0;
+                used.clear();
                 continue;
+            }
+
+            // `sudo <command>` and friends: the rest of the line is a command
+            // line of its own, so resolution restarts from that command's spec.
+            if let Some(argument) = argument_at(node.arguments(), positional_index)
+                && argument.is_command
+                && let Some(nested) = self.specs.get(token)
+            {
+                return self.resolve_node(nested, rest);
             }
             positional_index += 1;
         }
 
         ResolvedNode {
             node,
+            parent,
+            path: path.join(" "),
             positional_index,
             pending_argument,
+            persistent,
+            used,
+            directives,
         }
     }
 
+    fn load(&self, id: Option<&str>) -> Option<&CommandSpec> {
+        id.and_then(|id| self.specs.get_by_id(id))
+            .filter(|spec| !spec.placeholder)
+    }
+
+    /// Fig lets an argument carry fixed suggestions, prebuilt templates, and
+    /// generators at once, and contributes whatever each of them yields.
     async fn complete_argument(
         &self,
         argument: &ArgumentSpec,
+        resolved: &ResolvedNode<'_>,
         context: &CompletionContext,
         cwd: &Path,
     ) -> Vec<Candidate> {
-        if let Some(generator) = argument
-            .imported_generator
-            .as_ref()
-            .filter(|generator| generator.is_executable())
-        {
-            return self.run_imported_generator(generator, context, cwd).await;
-        }
+        let mut candidates: Vec<Candidate> = argument
+            .suggestions
+            .iter()
+            .filter_map(|suggestion| {
+                suggestion_candidate(suggestion, CandidateKind::Subcommand, context)
+            })
+            .collect();
 
-        match &argument.source {
-            SuggestionSource::Files => complete_paths(context, cwd, false),
-            SuggestionSource::Directories => complete_paths(context, cwd, true),
-            SuggestionSource::Static(values) => values
-                .iter()
-                .filter_map(|value| {
-                    make_candidate(
-                        value,
-                        value,
-                        Some(argument.name.clone()),
-                        CandidateKind::Subcommand,
-                        context,
-                    )
-                })
-                .collect(),
-            SuggestionSource::Generator(generator) => {
-                self.run_generator(generator, context, cwd).await
+        for template in &argument.template {
+            match template {
+                Template::FilePaths => candidates.extend(complete_paths(context, cwd, false)),
+                Template::Folders => candidates.extend(complete_paths(context, cwd, true)),
+                Template::History => candidates.extend(candidates_from(
+                    Native::History.suggest(cwd, self.generators.history_limit()),
+                    SuggestionKind::Value,
+                    context,
+                )),
+                // Fig's help template lists the siblings of the subcommand the
+                // argument belongs to -- what `git help <command>` offers.
+                Template::Help => {
+                    if let Some(parent) = resolved.parent {
+                        candidates.extend(parent.subcommands().iter().filter_map(|subcommand| {
+                            present(
+                                &subcommand.name,
+                                &subcommand.presentation,
+                                subcommand.description.clone(),
+                                CandidateKind::Subcommand,
+                                context,
+                            )
+                        }));
+                    }
+                }
             }
-            SuggestionSource::Unavailable => Vec::new(),
-        }
-    }
-
-    async fn run_imported_generator(
-        &self,
-        generator: &ImportedGenerator,
-        context: &CompletionContext,
-        cwd: &Path,
-    ) -> Vec<Candidate> {
-        let Some((program, args)) = generator.script.split_first() else {
-            return Vec::new();
-        };
-        if !command_is_available(program, cwd) {
-            return Vec::new();
         }
 
-        let Some(stdout) = execute_generator(program, args, cwd, &self.generator).await else {
-            debug!(program, "imported completion generator timed out or failed");
-            return Vec::new();
-        };
+        // An argument can load a whole spec, whose subcommands are its values.
+        if let Some(loaded) = self.load(argument.load_spec.as_deref()) {
+            candidates.extend(loaded.subcommands.iter().filter_map(|subcommand| {
+                present(
+                    &subcommand.name,
+                    &subcommand.presentation,
+                    subcommand.description.clone(),
+                    CandidateKind::Subcommand,
+                    context,
+                )
+            }));
+        }
 
-        parse_imported_generator_output(&stdout, &generator.output, context)
-    }
+        let mut javascript_only = false;
+        apply_filter_strategy(
+            &mut candidates,
+            argument.filter_strategy,
+            &context.current_token,
+        );
 
-    async fn run_generator(
-        &self,
-        generator: &str,
-        context: &CompletionContext,
-        cwd: &Path,
-    ) -> Vec<Candidate> {
-        let (program, args, kind) = match generator {
-            "git.branches" => (
-                "git",
-                vec![
-                    "for-each-ref",
-                    "--format=%(refname:short)",
-                    "refs/heads",
-                    "refs/remotes",
-                ],
-                CandidateKind::Branch,
-            ),
-            "docker.containers" => (
-                "docker",
-                vec!["ps", "--format", "{{.Names}}"],
-                CandidateKind::Subcommand,
-            ),
-            _ => return Vec::new(),
-        };
+        for generator in &argument.generators {
+            if generator.script.is_empty() {
+                javascript_only = true;
+                continue;
+            }
+            // Fig's `getQueryTerm` says which part of the token filters the
+            // suggestions -- everything after the last `/`, say.
+            let inner = query_context(generator, context);
+            let inner = inner.as_ref().unwrap_or(context);
+            let suggestions = self
+                .generators
+                .run(generator, &inner.current_token, cwd)
+                .await;
+            let kind = self.generators.kind_of(generator);
+            candidates.extend(candidates_from(suggestions, kind, inner));
+        }
 
-        let Some(stdout) = execute_generator(program, &args, cwd, &self.generator).await else {
-            debug!(generator, "completion generator timed out or failed");
-            return Vec::new();
-        };
-
-        String::from_utf8_lossy(&stdout)
-            .lines()
-            .filter(|line| !line.is_empty())
-            .filter_map(|line| make_candidate(line, line, None, kind, context))
-            .collect()
+        // Every generator here was a JavaScript callback. Some of them ask a
+        // question Wisp can answer by reading a file.
+        if javascript_only && let Some(native) = self.generators.native(&resolved.path) {
+            candidates.extend(candidates_from(
+                native.suggest(cwd, self.generators.history_limit()),
+                SuggestionKind::Value,
+                context,
+            ));
+        }
+        candidates
     }
 }
 
-async fn execute_generator<S: AsRef<OsStr>>(
-    program: &str,
-    args: &[S],
-    cwd: &Path,
-    config: &GeneratorConfig,
-) -> Option<Vec<u8>> {
-    let mut command = Command::new(program);
-    command
-        .args(args)
-        .current_dir(cwd)
-        .stdin(Stdio::null())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::null())
-        .kill_on_drop(true);
-    let mut child = command.spawn().ok()?;
-    let stdout = child.stdout.take()?;
-    let limit = u64::try_from(config.max_output_bytes)
-        .unwrap_or(u64::MAX)
-        .saturating_add(1);
-    let operation = async move {
-        let mut bytes = Vec::new();
-        stdout.take(limit).read_to_end(&mut bytes).await.ok()?;
-        if bytes.len() > config.max_output_bytes {
-            let _ = child.kill().await;
-            let _ = child.wait().await;
-            return None;
-        }
-        child.wait().await.ok()?.success().then_some(bytes)
-    };
-    timeout(Duration::from_millis(config.timeout_ms), operation)
-        .await
-        .ok()
-        .flatten()
-}
-
-impl ImportedGenerator {
-    fn is_executable(&self) -> bool {
-        !self.script.is_empty() && !self.has_post_process && !self.has_custom
-    }
-}
-
-fn parse_imported_generator_output(
-    stdout: &[u8],
-    output: &ImportedGeneratorOutput,
+fn candidates_from(
+    suggestions: Vec<Suggestion>,
+    kind: SuggestionKind,
     context: &CompletionContext,
 ) -> Vec<Candidate> {
-    match output {
-        ImportedGeneratorOutput::Lines => String::from_utf8_lossy(stdout)
-            .lines()
-            .map(str::trim)
-            .filter(|line| !line.is_empty())
-            .filter_map(|line| make_candidate(line, line, None, CandidateKind::Subcommand, context))
-            .collect(),
-        ImportedGeneratorOutput::Json {
-            name_field,
-            description_field,
-        } => parse_generator_json(stdout)
-            .into_iter()
-            .filter_map(|value| {
-                let name = value.get(name_field)?.as_str()?;
-                let description = description_field
-                    .as_ref()
-                    .and_then(|field| value.get(field))
-                    .and_then(serde_json::Value::as_str)
-                    .map(str::to_owned);
-                make_candidate(name, name, description, CandidateKind::Subcommand, context)
-            })
-            .collect(),
-    }
-}
-
-fn parse_generator_json(stdout: &[u8]) -> Vec<serde_json::Value> {
-    if let Ok(values) = serde_json::from_slice::<Vec<serde_json::Value>>(stdout) {
-        return values;
-    }
-    String::from_utf8_lossy(stdout)
-        .lines()
-        .filter_map(|line| serde_json::from_str(line).ok())
+    let kind = match kind {
+        SuggestionKind::Value => CandidateKind::Subcommand,
+        SuggestionKind::Branch => CandidateKind::Branch,
+        SuggestionKind::File => CandidateKind::File,
+        SuggestionKind::Directory => CandidateKind::Directory,
+    };
+    suggestions
+        .into_iter()
+        .filter_map(|suggestion| {
+            let insert = suggestion.insert.as_deref().unwrap_or(&suggestion.name);
+            make_candidate(
+                &suggestion.name,
+                &shell_escape(insert),
+                suggestion.description,
+                kind,
+                context,
+            )
+        })
         .collect()
 }
 
-static UNAVAILABLE_ARGUMENT: ArgumentSpec = ArgumentSpec {
-    name: String::new(),
-    source: SuggestionSource::Unavailable,
-    optional: false,
-    variadic: false,
-    imported_generator: None,
-};
+fn suggestion_candidate(
+    suggestion: &SuggestionSpec,
+    fallback: CandidateKind,
+    context: &CompletionContext,
+) -> Option<Candidate> {
+    if suggestion.presentation.hidden {
+        return None;
+    }
+    let kind = match suggestion.kind {
+        Some(SuggestionType::Folder) => CandidateKind::Directory,
+        Some(SuggestionType::File) => CandidateKind::File,
+        Some(SuggestionType::Subcommand) => CandidateKind::Subcommand,
+        Some(SuggestionType::Option) => CandidateKind::Option,
+        _ => fallback,
+    };
+    present(
+        &suggestion.name,
+        &suggestion.presentation,
+        suggestion.description.clone(),
+        kind,
+        context,
+    )
+}
+
+/// Fig lets a node ask for prefix matching where fuzzy matching would be
+/// noise -- a list of file extensions, say.
+fn apply_filter_strategy(candidates: &mut Vec<Candidate>, strategy: FilterStrategy, token: &str) {
+    if strategy != FilterStrategy::Prefix || token.is_empty() {
+        return;
+    }
+    let token = token.to_lowercase();
+    candidates.retain(|candidate| candidate.label.to_lowercase().starts_with(&token));
+}
+
+/// Narrows the context to the part of the token a generator filters on.
+fn query_context(
+    generator: &GeneratorSpec,
+    context: &CompletionContext,
+) -> Option<CompletionContext> {
+    let QueryTerm::AfterLast(separator) = generator.query_term.as_ref()?;
+    let offset = context.current_token.rfind(separator.as_str())? + separator.len();
+    Some(CompletionContext {
+        command: context.command.clone(),
+        args: context.args.clone(),
+        current_token: context.current_token[offset..].to_owned(),
+        replace_range: (context.replace_range.start + offset)..context.replace_range.end,
+    })
+}
+
+/// Builds a candidate honouring Fig's display metadata: what the menu shows,
+/// what gets inserted, and how far up the list it sits.
+fn present(
+    name: &str,
+    presentation: &Presentation,
+    description: Option<String>,
+    kind: CandidateKind,
+    context: &CompletionContext,
+) -> Option<Candidate> {
+    let label = presentation.display_name.as_deref().unwrap_or(name);
+    let insert = presentation.insert_value.as_deref().unwrap_or(name);
+    let mut candidate = make_candidate(label, insert, description, kind, context)?;
+    if presentation.dangerous {
+        // Fig flags what cannot be undone; say so where the description shows.
+        candidate.description = Some(match candidate.description {
+            Some(description) => format!("{DANGEROUS} {description}"),
+            None => DANGEROUS.to_owned(),
+        });
+    }
+    // Fig ranks around a default priority of 50; keep the nudge small enough
+    // that a better textual match still wins.
+    if let Some(priority) = presentation.priority {
+        candidate.score += f64::from(priority - DEFAULT_PRIORITY) / 1_000.0;
+    }
+    Some(candidate)
+}
+
+const DEFAULT_PRIORITY: f32 = 50.0;
+
+/// Marks a suggestion Fig considers destructive.
+const DANGEROUS: &str = "[dangerous]";
+
+/// Fig's `{cursor}` marker has no place in the text handed to the shell.
+fn strip_cursor_marker(value: &str) -> String {
+    value.replace("{cursor}", "")
+}
 
 #[derive(Clone, Copy)]
 enum NodeRef<'a> {
@@ -424,19 +495,187 @@ impl<'a> NodeRef<'a> {
             Self::Subcommand(spec) => &spec.arguments,
         }
     }
+
+    fn additional_suggestions(self) -> &'a [SuggestionSpec] {
+        match self {
+            Self::Root(spec) => &spec.additional_suggestions,
+            Self::Subcommand(spec) => &spec.additional_suggestions,
+        }
+    }
+
+    fn requires_subcommand(self) -> bool {
+        match self {
+            Self::Root(spec) => spec.requires_subcommand,
+            Self::Subcommand(spec) => spec.requires_subcommand,
+        }
+    }
+
+    fn filter_strategy(self) -> FilterStrategy {
+        match self {
+            Self::Root(spec) => spec.filter_strategy,
+            Self::Subcommand(spec) => spec.filter_strategy,
+        }
+    }
+
+    fn parser_directives(self) -> Option<&'a ParserDirectives> {
+        match self {
+            Self::Root(spec) => spec.parser_directives.as_ref(),
+            Self::Subcommand(spec) => spec.parser_directives.as_ref(),
+        }
+    }
 }
 
 struct ResolvedNode<'a> {
     node: NodeRef<'a>,
+    /// The node one level up, which is where Fig's `help` template looks.
+    parent: Option<NodeRef<'a>>,
+    /// The command and the subcommands entered so far, such as `npm run`.
+    path: String,
     positional_index: usize,
     pending_argument: Option<&'a ArgumentSpec>,
+    /// Options inherited from every ancestor that marked them persistent.
+    persistent: Vec<&'a OptionSpec>,
+    /// Option names already on the command line at this node.
+    used: Vec<&'a str>,
+    directives: Option<&'a ParserDirectives>,
 }
 
-fn find_option<'a>(options: &'a [OptionSpec], token: &str) -> Option<&'a OptionSpec> {
-    let name = token.split_once('=').map_or(token, |(name, _)| name);
+impl<'a> ResolvedNode<'a> {
+    /// The argument hiding behind an option's separator, as in
+    /// `--message=<value>`, and where its value starts in the token.
+    fn separated_argument(&self, token: &str) -> Option<(&'a ArgumentSpec, usize)> {
+        if !is_option_token(token) {
+            return None;
+        }
+        let (name, separator) = split_separator(token, self.directives)?;
+        let option = find_option(self.node.options(), &self.persistent, name)?;
+        let argument = option.arguments.first()?;
+        Some((argument, name.len() + separator))
+    }
+
+    /// Some commands stop accepting options once a positional argument has
+    /// been given, which Fig records as `optionsMustPrecedeArguments`.
+    fn options_are_closed(&self) -> bool {
+        self.positional_index > 0
+            && self
+                .directives
+                .is_some_and(|directives| directives.options_must_precede_arguments)
+    }
+
+    /// Options still worth offering: not hidden, not already used unless they
+    /// repeat, not excluded by something already typed, and not waiting on a
+    /// dependency that is missing.
+    fn option_candidates(&self, context: &CompletionContext) -> Vec<Candidate> {
+        self.node
+            .options()
+            .iter()
+            .chain(self.persistent.iter().copied())
+            .filter(|option| self.is_available(option))
+            .flat_map(|option| {
+                let separator = option.requires_separator.as_deref().unwrap_or("");
+                option.names.iter().filter_map(move |name| {
+                    let insert = format!(
+                        "{}{separator}",
+                        option.presentation.insert_value.as_deref().unwrap_or(name)
+                    );
+                    let mut candidate = make_candidate(
+                        option.presentation.display_name.as_deref().unwrap_or(name),
+                        &strip_cursor_marker(&insert),
+                        option.description.clone(),
+                        CandidateKind::Option,
+                        context,
+                    )?;
+                    if let Some(priority) = option.presentation.priority {
+                        candidate.score += f64::from(priority - DEFAULT_PRIORITY) / 1_000.0;
+                    }
+                    // What the command cannot run without belongs at the top.
+                    if option.required {
+                        candidate.score += 0.05;
+                    }
+                    Some(candidate)
+                })
+            })
+            .collect()
+    }
+
+    fn is_available(&self, option: &OptionSpec) -> bool {
+        if option.presentation.hidden {
+            return false;
+        }
+        let uses = self.used.iter().filter(|name| option.matches(name)).count();
+        let allowed = match option.repeat {
+            Repeat::Once => 1,
+            Repeat::Many => usize::MAX,
+            Repeat::Times(times) => times as usize,
+        };
+        if uses >= allowed {
+            return false;
+        }
+        if option
+            .exclusive_on
+            .iter()
+            .any(|name| self.used.contains(&name.as_str()))
+        {
+            return false;
+        }
+        option
+            .depends_on
+            .iter()
+            .all(|name| self.used.contains(&name.as_str()))
+    }
+}
+
+/// Once a variadic argument has started, Fig treats what follows as more of
+/// its values rather than options, unless the argument opts out.
+fn variadic_swallows_options(node: NodeRef<'_>, positional_index: usize) -> bool {
+    argument_at(node.arguments(), positional_index)
+        .is_some_and(|argument| argument.variadic && !argument.options_can_break_variadic)
+        && positional_index > 0
+}
+
+/// A token is an option when it leads with a dash and is not a bare `-` or a
+/// negative number a command might take as a value.
+fn is_option_token(token: &str) -> bool {
+    token.starts_with('-') && token != "-" && token != "--"
+}
+
+/// Splits `--name=value` into its name and the length of the separator.
+fn split_separator<'t>(
+    token: &'t str,
+    directives: Option<&ParserDirectives>,
+) -> Option<(&'t str, usize)> {
+    let declared: Vec<&str> = directives
+        .map(|directives| {
+            directives
+                .option_arg_separators
+                .iter()
+                .map(String::as_str)
+                .collect()
+        })
+        .unwrap_or_default();
+    // `=` is what an option separator is, unless a spec says otherwise.
+    let separators: &[&str] = if declared.is_empty() {
+        &["="]
+    } else {
+        &declared
+    };
+    separators.iter().find_map(|separator| {
+        token
+            .find(separator)
+            .filter(|index| *index > 0)
+            .map(|index| (&token[..index], separator.len()))
+    })
+}
+
+fn find_option<'a>(
+    options: &'a [OptionSpec],
+    persistent: &[&'a OptionSpec],
+    name: &str,
+) -> Option<&'a OptionSpec> {
     options
         .iter()
-        .find(|option| option.names.iter().any(|candidate| candidate == name))
+        .chain(persistent.iter().copied())
+        .find(|option| option.matches(name))
 }
 
 fn argument_at(arguments: &[ArgumentSpec], index: usize) -> Option<&ArgumentSpec> {
@@ -763,6 +1002,175 @@ mod tests {
         );
     }
 
+    fn labels(candidates: &[Candidate]) -> Vec<&str> {
+        candidates
+            .iter()
+            .map(|candidate| candidate.label.as_str())
+            .collect()
+    }
+
+    #[tokio::test]
+    async fn a_separated_option_completes_its_value_after_the_separator() {
+        let values = CompletionEngine::default()
+            .complete(&snapshot("eza --color-scale=a"))
+            .await;
+        assert!(
+            labels(&values).contains(&"all"),
+            "got {:?}",
+            labels(&values)
+        );
+        let all = values
+            .iter()
+            .find(|candidate| candidate.label == "all")
+            .expect("the value is offered");
+        // Only the text after `=` is replaced.
+        assert_eq!(all.insert_text, "all");
+        assert_eq!(all.replace_end - all.replace_start, 1);
+    }
+
+    #[tokio::test]
+    async fn an_option_that_requires_a_separator_inserts_it() {
+        let values = CompletionEngine::default()
+            .complete(&snapshot("eza --color-sc"))
+            .await;
+        let option = values
+            .iter()
+            .find(|candidate| candidate.label == "--color-scale")
+            .expect("the option is offered");
+        assert_eq!(option.insert_text, "--color-scale=");
+    }
+
+    #[tokio::test]
+    async fn an_excluded_option_disappears_once_its_counterpart_is_typed() {
+        let engine = CompletionEngine::default();
+        let offered = engine.complete(&snapshot("cal -")).await;
+        assert!(labels(&offered).contains(&"-m"));
+
+        let excluded = engine.complete(&snapshot("cal -y -")).await;
+        assert!(
+            !labels(&excluded).contains(&"-m"),
+            "-m is exclusive on -y, got {:?}",
+            labels(&excluded)
+        );
+    }
+
+    #[tokio::test]
+    async fn an_option_that_cannot_repeat_is_offered_only_once() {
+        let engine = CompletionEngine::default();
+        assert!(labels(&engine.complete(&snapshot("cal -")).await).contains(&"-y"));
+        let repeated = engine.complete(&snapshot("cal -y -")).await;
+        assert!(
+            !labels(&repeated).contains(&"-y"),
+            "got {:?}",
+            labels(&repeated)
+        );
+    }
+
+    #[tokio::test]
+    async fn a_command_argument_restarts_completion_from_that_command() {
+        let values = CompletionEngine::default()
+            .complete(&snapshot("sudo git check"))
+            .await;
+        assert!(
+            labels(&values).contains(&"checkout"),
+            "expected git's subcommands after sudo, got {:?}",
+            labels(&values)
+        );
+    }
+
+    #[tokio::test]
+    async fn hidden_suggestions_stay_out_of_the_menu() {
+        let values = CompletionEngine::default()
+            .complete(&snapshot("cargo build --"))
+            .await;
+        assert!(labels(&values).contains(&"--workspace"));
+        // `--all` is a deprecated alias cargo's spec marks hidden.
+        assert!(
+            !labels(&values).contains(&"--all"),
+            "got {:?}",
+            labels(&values)
+        );
+    }
+
+    fn scratch(name: &str) -> PathBuf {
+        let directory = std::env::temp_dir().join(format!("wisp-{name}-{}", std::process::id()));
+        std::fs::create_dir_all(&directory).expect("create the scratch directory");
+        directory
+    }
+
+    #[tokio::test]
+    async fn the_help_template_lists_the_sibling_subcommands() {
+        let directory = scratch("help-template");
+        // `ls` stands in for any installed command; the spec is what is tested.
+        std::fs::write(
+            directory.join("ls.ron"),
+            r#"(
+                version: 1,
+                command: "ls",
+                subcommands: [
+                    (name: "build"),
+                    (name: "deploy"),
+                    (name: "help", arguments: [(name: "command", template: [Help])]),
+                ],
+            )"#,
+        )
+        .expect("write the spec");
+        let mut specs = SpecStore::default();
+        specs.load_dir(&directory).expect("load the spec");
+
+        let values = CompletionEngine::new(specs)
+            .complete(&snapshot("ls help "))
+            .await;
+        assert!(
+            labels(&values).contains(&"build"),
+            "got {:?}",
+            labels(&values)
+        );
+        assert!(labels(&values).contains(&"deploy"));
+    }
+
+    #[tokio::test]
+    async fn make_targets_stand_in_for_a_javascript_generator() {
+        let directory = scratch("make-native");
+        std::fs::write(
+            directory.join("Makefile"),
+            "build:\n\tcargo build\nlint:\n\tcargo clippy\n",
+        )
+        .expect("write the makefile");
+        let mut snapshot = snapshot("make ");
+        snapshot.cwd = directory;
+
+        let values = CompletionEngine::default().complete(&snapshot).await;
+        assert!(
+            labels(&values).contains(&"build"),
+            "got {:?}",
+            labels(&values)
+        );
+        assert!(labels(&values).contains(&"lint"));
+    }
+
+    #[tokio::test]
+    async fn an_imported_generator_completes_git_branches() {
+        let repository = Path::new(env!("CARGO_MANIFEST_DIR"));
+        let inside_repository = std::process::Command::new("git")
+            .args(["rev-parse", "--git-dir"])
+            .current_dir(repository)
+            .output()
+            .is_ok_and(|output| output.status.success());
+        if !inside_repository {
+            return;
+        }
+        let mut snapshot = snapshot("git checkout ");
+        snapshot.cwd = repository.to_path_buf();
+        let values = CompletionEngine::default().complete(&snapshot).await;
+        assert!(
+            values
+                .iter()
+                .any(|candidate| candidate.kind == CandidateKind::Branch),
+            "expected a branch from the imported generator, got {values:?}"
+        );
+    }
+
     #[test]
     fn unavailable_commands_are_filtered_from_command_candidates() {
         let unavailable = format!("wisp-command-that-does-not-exist-{}", std::process::id());
@@ -844,96 +1252,6 @@ mod tests {
             .complete(&snapshot("git commit --cleanup "))
             .await;
         assert!(values.iter().any(|value| value.label == "strip"));
-    }
-
-    #[tokio::test]
-    async fn runs_ron_static_script_generators_without_a_shell_wrapper() {
-        let context = parse_completion_context("printf ", "printf ".chars().count());
-        let generator = ImportedGenerator {
-            script: vec![
-                "/bin/sh".into(),
-                "-c".into(),
-                "printf 'alpha\\nbeta\\n'".into(),
-            ],
-            output: ImportedGeneratorOutput::Lines,
-            has_post_process: false,
-            has_custom: false,
-        };
-
-        let values = CompletionEngine::default()
-            .run_imported_generator(&generator, &context, Path::new(env!("CARGO_MANIFEST_DIR")))
-            .await;
-
-        assert_eq!(
-            values
-                .iter()
-                .map(|candidate| candidate.label.as_str())
-                .collect::<Vec<_>>(),
-            ["alpha", "beta"]
-        );
-    }
-
-    #[tokio::test]
-    async fn generator_output_and_runtime_are_bounded() {
-        let cwd = Path::new(env!("CARGO_MANIFEST_DIR"));
-        let oversized = execute_generator(
-            "/bin/sh",
-            &["-c", "printf '12345'"],
-            cwd,
-            &GeneratorConfig {
-                timeout_ms: 500,
-                max_output_bytes: 4,
-            },
-        )
-        .await;
-        assert!(oversized.is_none());
-
-        let started = std::time::Instant::now();
-        let timed_out = execute_generator(
-            "/bin/sh",
-            &["-c", "sleep 2"],
-            cwd,
-            &GeneratorConfig {
-                timeout_ms: 20,
-                max_output_bytes: 64,
-            },
-        )
-        .await;
-        assert!(timed_out.is_none());
-        assert!(started.elapsed() < Duration::from_millis(500));
-    }
-
-    #[test]
-    fn parses_declarative_json_generator_output() {
-        let context = parse_completion_context("example al", "example al".chars().count());
-        let output = br#"[
-            {"name":"alpha","detail":"first item"},
-            {"name":"beta","detail":"second item"}
-        ]"#;
-        let values = parse_imported_generator_output(
-            output,
-            &ImportedGeneratorOutput::Json {
-                name_field: "name".into(),
-                description_field: Some("detail".into()),
-            },
-            &context,
-        );
-
-        assert_eq!(values.len(), 1);
-        assert_eq!(values[0].label, "alpha");
-        assert_eq!(values[0].description.as_deref(), Some("first item"));
-    }
-
-    #[test]
-    fn javascript_callback_generators_remain_disabled() {
-        let generator = ImportedGenerator {
-            script: vec!["example".into()],
-            output: ImportedGeneratorOutput::Lines,
-            has_post_process: true,
-            has_custom: false,
-        };
-
-        assert!(!generator.is_executable());
     }
 
     #[tokio::test]

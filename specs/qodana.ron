@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "init",
-            aliases: [],
             description: Some("Configure project for Qodana"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,26 +13,24 @@
                         "--project-dir",
                     ],
                     description: Some("Root directory of the project to configure (default \".\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                priority: Some(100.0),
+                icon: Some("fig://template?badge=🔧"),
+            ),
         ),
         (
             name: "scan",
-            aliases: [],
             description: Some("Scan a project with Qodana"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -42,14 +38,9 @@
                         "--analysis-id",
                     ],
                     description: Some("Unique report identifier (GUID) to be used by Qodana Cloud"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -59,14 +50,9 @@
                         "--baseline",
                     ],
                     description: Some("Provide the path to an existing SARIF report to be used in the baseline state calculation"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -75,22 +61,15 @@
                         "--baseline-include-absent",
                     ],
                     description: Some("Include in the output report the results from the baseline run that are absent in the current run"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--cache-dir",
                     ],
                     description: Some("Override cache directory (default <userCacheDir>/JetBrains/<linter>/cache)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -100,24 +79,18 @@
                         "--changes",
                     ],
                     description: Some("Override the docker image to be used for the analysis"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--clear-cache",
                     ],
                     description: Some("Clear the local Qodana cache before running the analysis"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--disable-sanity",
                     ],
                     description: Some("Skip running the inspections configured by the sanity profile"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -125,30 +98,21 @@
                         "--env",
                     ],
                     description: Some("Define additional environment variables for the Qodana container (you can use the flag multiple times). CLI is not reading full host environment variables and does not pass it to the Qodana container for security reasons"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "stringArray",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
                 (
                     names: [
                         "--fail-threshold",
                     ],
                     description: Some("Set the number of problems that will serve as a quality gate. If this number is reached, the inspection run is terminated with a non-zero exit code"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -158,14 +122,9 @@
                         "--linter",
                     ],
                     description: Some("Override linter to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -174,14 +133,9 @@
                         "--port",
                     ],
                     description: Some("Port to serve the report on (default 8080)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "int",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -190,8 +144,6 @@
                         "--print-problems",
                     ],
                     description: Some("Print all found problems by Qodana in the CLI output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -199,14 +151,9 @@
                         "--profile-name",
                     ],
                     description: Some("Profile name defined in the project"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -216,14 +163,12 @@
                         "--profile-path",
                     ],
                     description: Some("Path to the profile file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -233,14 +178,12 @@
                         "--project-dir",
                     ],
                     description: Some("Root directory of the inspected project (default \".\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -249,16 +192,14 @@
                         "--property",
                     ],
                     description: Some("Set a JVM property to be used while running Qodana using the --property property.name=value1,value2,...,valueN notation"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "stringArray",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("--property {cursor}="),
+                    ),
                 ),
                 (
                     names: [
@@ -266,14 +207,9 @@
                         "--results-dir",
                     ],
                     description: Some("Override directory to save Qodana inspection results to (default <userCacheDir>/JetBrains/<linter>/results)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -281,18 +217,18 @@
                     names: [
                         "--run-promo",
                     ],
-                    description: Some("Set to \'true\' to have the application run the inspections configured by the promo profile; set to \'false\' otherwise (default: \'true\' only if Qodana is executed with the default profile)"),
-                    takes_value: true,
+                    description: Some("Set to 'true' to have the application run the inspections configured by the promo profile; set to 'false' otherwise (default: 'true' only if Qodana is executed with the default profile)"),
                     arguments: [
                         (
                             name: "string",
-                            source: Static([
-                                "true",
-                                "false",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "true",
+                                ),
+                                (
+                                    name: "false",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -302,22 +238,18 @@
                         "--save-report",
                     ],
                     description: Some("Generate HTML report (default true)"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        priority: Some(99.0),
+                    ),
                 ),
                 (
                     names: [
                         "--script",
                     ],
                     description: Some("Override the run scenario (default \"default\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -325,9 +257,10 @@
                     names: [
                         "--send-report",
                     ],
-                    description: Some("Send the inspection report to Qodana Cloud, requires the \'--token\' option to be specified"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Send the inspection report to Qodana Cloud, requires the '--token' option to be specified"),
+                    depends_on: [
+                        "--token",
+                    ],
                 ),
                 (
                     names: [
@@ -335,16 +268,15 @@
                         "--show-report",
                     ],
                     description: Some("Serve HTML report on port"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        priority: Some(100.0),
+                    ),
                 ),
                 (
                     names: [
                         "--skip-pull",
                     ],
                     description: Some("Skip pulling the latest Qodana container"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -352,14 +284,9 @@
                         "--source-directory",
                     ],
                     description: Some("Directory inside the project-dir directory must be inspected. If not specified, the whole project is inspected"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -368,14 +295,9 @@
                         "--stub-profile",
                     ],
                     description: Some("Absolute path to the fallback profile file. This option is applied in case the profile was not specified using any available options"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -384,15 +306,10 @@
                         "-u",
                         "--user",
                     ],
-                    description: Some("User to run Qodana container as. Please specify user id – \'$UID\' or user id and group id $(id -u):$(id -g). Use \'root\' to run as the root user (default: the current user)"),
-                    takes_value: true,
+                    description: Some("User to run Qodana container as. Please specify user id – '$UID' or user id and group id $(id -u):$(id -g). Use 'root' to run as the root user (default: the current user)"),
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -402,35 +319,29 @@
                         "--volume",
                     ],
                     description: Some("Define additional volumes for the Qodana container (you can use the flag multiple times)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    repeat: Many,
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                priority: Some(99.0),
+                icon: Some("fig://template?badge=🔧"),
+            ),
         ),
         (
             name: "show",
-            aliases: [],
             description: Some("Show Qodana report"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-d",
                         "--dir-only",
                     ],
-                    description: Some("Open report directory only, don\'t serve it"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Open report directory only, don't serve it"),
                 ),
                 (
                     names: [
@@ -438,16 +349,14 @@
                         "--port",
                     ],
                     description: Some("Specify port to serve report at (default 8080)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "int",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        priority: Some(100.0),
+                    ),
                 ),
                 (
                     names: [
@@ -455,14 +364,12 @@
                         "--project-dir",
                     ],
                     description: Some("Root directory of the inspected project (default \".\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -472,26 +379,24 @@
                         "--report-dir",
                     ],
                     description: Some("Specify HTML report path (the one with index.html inside) (default <userCacheDir>/JetBrains/<linter>/results/report)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                priority: Some(98.0),
+                icon: Some("fig://template?badge=🔧"),
+            ),
         ),
         (
             name: "view",
-            aliases: [],
             description: Some("View SARIF files in CLI"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -499,20 +404,20 @@
                         "--sarif-file",
                     ],
                     description: Some("Path to the SARIF file (default \"./qodana.sarif.json\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "string",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                priority: Some(97.0),
+                icon: Some("fig://template?badge=🔧"),
+            ),
         ),
     ],
     options: [
@@ -522,8 +427,10 @@
                 "--help",
             ],
             description: Some("Show help page for command"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
+            presentation: (
+                priority: Some(1.0),
+            ),
         ),
         (
             names: [
@@ -531,9 +438,6 @@
                 "--version",
             ],
             description: Some("Version for Qodana"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

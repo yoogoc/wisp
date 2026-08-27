@@ -5,52 +5,48 @@
     subcommands: [
         (
             name: "add",
-            aliases: [],
             description: Some("Installs a package and any packages that it depends on. By default, any new package is installed as a production dependency"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--offline",
                     ],
-                    description: Some("If true, pnpm will use only packages already available in the store. If a package won\'t be found locally, the installation will fail"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("If true, pnpm will use only packages already available in the store. If a package won't be found locally, the installation will fail"),
                 ),
                 (
                     names: [
                         "--prefer-offline",
                     ],
                     description: Some("If true, staleness checks for cached data will be bypassed, but missing data will be requested from the server. To force full offline mode, use --offline"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--ignore-scripts",
                     ],
                     description: Some("Do not execute any scripts defined in the project package.json and its dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--reporter",
                     ],
                     description: Some("Allows you to choose the reporter that will log debug info to the terminal about the installation progress"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Reporter Type",
-                            source: Static([
-                                "silent",
-                                "default",
-                                "append-only",
-                                "ndjson",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "silent",
+                                ),
+                                (
+                                    name: "default",
+                                ),
+                                (
+                                    name: "append-only",
+                                ),
+                                (
+                                    name: "ndjson",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -60,8 +56,6 @@
                         "--save-prod",
                     ],
                     description: Some("Install the specified packages as regular dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -69,8 +63,6 @@
                         "--save-dev",
                     ],
                     description: Some("Install the specified packages as devDependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -78,33 +70,25 @@
                         "--save-optional",
                     ],
                     description: Some("Install the specified packages as optionalDependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-save",
                     ],
                     description: Some("Prevents saving to `dependencies`"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-E",
                         "--save-exact",
                     ],
-                    description: Some("Saved dependencies will be configured with an exact version rather than using pnpm\'s default semver range operator"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Saved dependencies will be configured with an exact version rather than using pnpm's default semver range operator"),
                 ),
                 (
                     names: [
                         "--save-peer",
                     ],
                     description: Some("Using --save-peer will add one or more packages to peerDependencies and install them as dev dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -112,8 +96,6 @@
                         "-W#",
                     ],
                     description: Some("Adding a new dependency to the root workspace package fails, unless the --ignore-workspace-root-check or -W flag is used.\nFor instance, pnpm add debug -W"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -121,30 +103,25 @@
                         "-g",
                     ],
                     description: Some("Install a package globally"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--workspace",
                     ],
                     description: Some("Only adds the new dependency if it is found in the workspace"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Filepath / Package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -152,17 +129,21 @@
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            query_term: Some(AfterLast("@")),
+                            cache: Some((
+                                ttl_ms: Some(172800000),
+                                stale_while_revalidate: true,
+                            )),
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "install",
@@ -170,22 +151,26 @@
                 "i",
             ],
             description: Some("Pnpm install is used to install all dependencies for a project.\nIn a CI environment, installation fails if a lockfile is present but needs an update.\nInside a workspace, pnpm install installs all dependencies in all the projects.\nIf you want to disable this behavior, set the recursive-install setting to false"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            query_term: Some(AfterLast("@")),
+                            cache: Some((
+                                ttl_ms: Some(172800000),
+                                stale_while_revalidate: true,
+                            )),
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    debounce: true,
                 ),
             ],
-            load_spec: None,
+            has_generate_spec: true,
         ),
         (
             name: "install-test",
@@ -193,50 +178,47 @@
                 "it",
             ],
             description: Some("Runs pnpm install followed immediately by pnpm test. It takes exactly the same arguments as pnpm install"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--offline",
                     ],
-                    description: Some("If true, pnpm will use only packages already available in the store. If a package won\'t be found locally, the installation will fail"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("If true, pnpm will use only packages already available in the store. If a package won't be found locally, the installation will fail"),
                 ),
                 (
                     names: [
                         "--prefer-offline",
                     ],
                     description: Some("If true, staleness checks for cached data will be bypassed, but missing data will be requested from the server. To force full offline mode, use --offline"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--ignore-scripts",
                     ],
                     description: Some("Do not execute any scripts defined in the project package.json and its dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--reporter",
                     ],
                     description: Some("Allows you to choose the reporter that will log debug info to the terminal about the installation progress"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Reporter Type",
-                            source: Static([
-                                "silent",
-                                "default",
-                                "append-only",
-                                "ndjson",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "silent",
+                                ),
+                                (
+                                    name: "default",
+                                ),
+                                (
+                                    name: "append-only",
+                                ),
+                                (
+                                    name: "ndjson",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -246,8 +228,6 @@
                         "--save-prod",
                     ],
                     description: Some("Pnpm will not install any package listed in devDependencies if the NODE_ENV environment variable is set to production.\nUse this flag to instruct pnpm to ignore NODE_ENV and take its production status from this flag instead"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -255,52 +235,38 @@
                         "--save-dev",
                     ],
                     description: Some("Only devDependencies are installed regardless of the NODE_ENV"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-optional",
                     ],
                     description: Some("OptionalDependencies are not installed"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--lockfile-only",
                     ],
                     description: Some("When used, only updates pnpm-lock.yaml and package.json instead of checking node_modules and downloading dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--frozen-lockfile",
                     ],
-                    description: Some("If true, pnpm doesn\'t generate a lockfile and fails to install if the lockfile is out of sync with the manifest / an update is needed or no lockfile is present"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("If true, pnpm doesn't generate a lockfile and fails to install if the lockfile is out of sync with the manifest / an update is needed or no lockfile is present"),
                 ),
                 (
                     names: [
                         "--use-store-server",
                     ],
                     description: Some("Starts a store server in the background. The store server will keep running after installation is done. To stop the store server, run pnpm server stop"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--shamefully-hoist",
                     ],
                     description: Some("Creates a flat node_modules structure, similar to that of npm or yarn. WARNING: This is highly discouraged"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "update",
@@ -309,7 +275,6 @@
                 "up",
             ],
             description: Some("Pnpm update updates packages to their latest version based on the specified range.\nWhen used without arguments, updates all dependencies. You can use patterns to update specific dependencies"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -317,8 +282,6 @@
                         "-r",
                     ],
                     description: Some("Concurrently runs update in all subdirectories with a package.json (excluding node_modules)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -326,16 +289,12 @@
                         "-L",
                     ],
                     description: Some("Ignores the version range specified in package.json. Instead, the version specified by the latest tag will be used (potentially upgrading the packages across major versions)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--global",
                     ],
                     description: Some("Update global packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -343,8 +302,6 @@
                         "--save-prod",
                     ],
                     description: Some("Only update packages in dependencies and optionalDependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -352,16 +309,12 @@
                         "--save-dev",
                     ],
                     description: Some("Only update packages in devDependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-optional",
                     ],
-                    description: Some("Don\'t update packages in optionalDependencies"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't update packages in optionalDependencies"),
                 ),
                 (
                     names: [
@@ -369,30 +322,25 @@
                         "-i",
                     ],
                     description: Some("Show outdated dependencies and select which ones to update"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--workspace",
                     ],
                     description: Some("Tries to link all packages from the workspace. Versions are updated to match the versions of packages inside the workspace.\nIf specific packages are updated, the command will fail if any of the updated dependencies are not found inside the workspace. For instance, the following command fails if express is not a workspace package: pnpm up -r --workspace express"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Filepath / Package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -400,21 +348,21 @@
             arguments: [
                 (
                     name: "Package",
-                    source: Unavailable,
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     optional: true,
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    filter_strategy: Fuzzy,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "remove",
@@ -423,8 +371,7 @@
                 "uninstall",
                 "un",
             ],
-            description: Some("Removes packages from node_modules and from the project\'s package.json"),
-            subcommands: [],
+            description: Some("Removes packages from node_modules and from the project's package.json"),
             options: [
                 (
                     names: [
@@ -432,16 +379,12 @@
                         "-r",
                     ],
                     description: Some("When used inside a workspace, removes a dependency (or dependencies) from every workspace package.\nWhen used not inside a workspace, removes a dependency (or dependencies) from every package found in subdirectories"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--global",
                     ],
                     description: Some("Remove a global package"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -449,8 +392,6 @@
                         "--save-prod",
                     ],
                     description: Some("Only remove the dependency from dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -458,8 +399,6 @@
                         "--save-dev",
                     ],
                     description: Some("Only remove the dependency from devDependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -467,22 +406,19 @@
                         "-O",
                     ],
                     description: Some("Only remove the dependency from optionalDependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Filepath / Package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -490,21 +426,20 @@
             arguments: [
                 (
                     name: "Package",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    filter_strategy: Fuzzy,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "link",
@@ -512,7 +447,6 @@
                 "ln",
             ],
             description: Some("Makes the current local package accessible system-wide, or in another location"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -520,49 +454,41 @@
                         "-C",
                     ],
                     description: Some("Changes the link location to <dir>"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--global",
                     ],
                     description: Some("Links the specified package (<pkg>) from global node_modules to the node_nodules of package from where this command was executed or specified via --dir option"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "Package",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    filter_strategy: Fuzzy,
                 ),
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "unlink",
-            aliases: [],
             description: Some("Unlinks a system-wide package (inverse of pnpm link).\nIf called without arguments, all linked dependencies will be unlinked.\nThis is similar to yarn unlink, except pnpm re-installs the dependency after removing the external link"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -570,22 +496,19 @@
                         "-r",
                     ],
                     description: Some("Unlink in every package found in subdirectories or in every workspace package, when executed inside a workspace"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Filepath / Package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -593,37 +516,30 @@
             arguments: [
                 (
                     name: "Package",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    filter_strategy: Fuzzy,
                 ),
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "import",
-            aliases: [],
             description: Some("Pnpm import generates a pnpm-lock.yaml from an npm package-lock.json (or npm-shrinkwrap.json) file"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "rebuild",
@@ -631,7 +547,6 @@
                 "rb",
             ],
             description: Some("Rebuild a package"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -639,22 +554,19 @@
                         "-r",
                     ],
                     description: Some("This command runs the pnpm rebuild command in every package of the monorepo"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Filepath / Package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -662,172 +574,134 @@
             arguments: [
                 (
                     name: "Package",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    filter_strategy: Fuzzy,
                 ),
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "prune",
-            aliases: [],
             description: Some("Removes unnecessary packages"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--prod",
                     ],
                     description: Some("Remove the packages specified in devDependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-optional",
                     ],
                     description: Some("Remove the packages specified in optionalDependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "fetch",
-            aliases: [],
             description: Some("EXPERIMENTAL FEATURE: Fetch packages from a lockfile into virtual store, package manifest is ignored: https://pnpm.io/cli/fetch"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--prod",
                     ],
                     description: Some("Development packages will not be fetched"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--dev",
                     ],
                     description: Some("Only development packages will be fetched"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "patch",
-            aliases: [],
             description: Some("This command will cause a package to be extracted in a temporary directory intended to be editable at will"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--edit-dir",
                     ],
                     description: Some("The package that needs to be patched will be extracted to this directory"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "package",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "pnpm",
-                            "ls",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "pnpm",
+                                "ls",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "patch-commit",
-            aliases: [],
             description: Some("Generate a patch out of a directory"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "dir",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "patch-remove",
-            aliases: [],
-            description: None,
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "package",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "audit",
-            aliases: [],
             description: Some("Checks for known security issues with the installed packages.\nIf security issues are found, try to update your dependencies via pnpm update.\nIf a simple update does not fix all the issues, use overrides to force versions that are not vulnerable.\nFor instance, if lodash@<2.1.0 is vulnerable, use overrides to force lodash@^2.1.0.\nDetails at: https://pnpm.io/cli/audit"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--audit-level",
                     ],
                     description: Some("Only print advisories with severity greater than or equal to <severity>"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Audit Level",
-                            source: Static([
-                                "low",
-                                "moderate",
-                                "high",
-                                "critical",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "low",
+                                ),
+                                (
+                                    name: "moderate",
+                                ),
+                                (
+                                    name: "high",
+                                ),
+                                (
+                                    name: "critical",
+                                ),
+                            ],
+                            default: Some("low"),
                         ),
                     ],
                 ),
@@ -836,16 +710,12 @@
                         "--fix",
                     ],
                     description: Some("Add overrides to the package.json file in order to force non-vulnerable versions of the dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Output audit report in JSON format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -853,8 +723,6 @@
                         "-D",
                     ],
                     description: Some("Only audit dev dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -862,28 +730,20 @@
                         "-P",
                     ],
                     description: Some("Only audit production dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-optional",
                     ],
-                    description: Some("Don\'t audit optionalDependencies"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't audit optionalDependencies"),
                 ),
                 (
                     names: [
                         "--ignore-registry-errors",
                     ],
                     description: Some("If the registry responds with a non-200 status code, the process should exit with 0. So the process will fail only if the registry actually successfully responds with found vulnerabilities"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "list",
@@ -891,7 +751,6 @@
                 "ls",
             ],
             description: Some("This command will output all the versions of packages that are installed, as well as their dependencies, in a tree-structure.\nPositional arguments are name-pattern@version-range identifiers, which will limit the results to only the packages named. For example, pnpm list \"babel-*\" \"eslint-*\" semver@5"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -899,54 +758,39 @@
                         "-r",
                     ],
                     description: Some("Perform command on every package in subdirectories or on every workspace package, when executed inside a workspace"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Log output in JSON format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--long",
                     ],
                     description: Some("Show extended information"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--parseable",
                     ],
                     description: Some("Outputs package directories in a parseable format instead of their tree view"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--global",
                     ],
                     description: Some("List packages in the global install directory instead of in the current project"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--depth",
                     ],
                     description: Some("Max display depth of the dependency tree.\npnpm ls --depth 0 will list direct dependencies only. pnpm ls --depth -1 will list projects only. Useful inside a workspace when used with the -r option"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "number",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -956,8 +800,6 @@
                         "-D",
                     ],
                     description: Some("Only list dev dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -965,42 +807,33 @@
                         "-P",
                     ],
                     description: Some("Only list production dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-optional",
                     ],
-                    description: Some("Don\'t list optionalDependencies"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't list optionalDependencies"),
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Filepath / Package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "outdated",
-            aliases: [],
             description: Some("Checks for outdated packages. The check can be limited to a subset of the installed packages by providing arguments (patterns are supported)"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1008,40 +841,30 @@
                         "-r",
                     ],
                     description: Some("Check for outdated dependencies in every package found in subdirectories, or in every workspace package when executed inside a workspace"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--long",
                     ],
                     description: Some("Print details"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--global",
                     ],
                     description: Some("List outdated global packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-table",
                     ],
                     description: Some("Prints the outdated dependencies in a list format instead of the default table. Good for small consoles"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--compatible",
                     ],
                     description: Some("Prints only versions that satisfy specifications in package.json"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1049,8 +872,6 @@
                         "-D",
                     ],
                     description: Some("Only list dev dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1058,26 +879,18 @@
                         "-P",
                     ],
                     description: Some("Only list production dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-optional",
                     ],
-                    description: Some("Doesn\'t check optionalDependencies"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Doesn't check optionalDependencies"),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "why",
-            aliases: [],
             description: Some("Shows all packages that depend on the specified package"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1085,40 +898,30 @@
                         "-r",
                     ],
                     description: Some("Show the dependency tree for the specified package on every package in subdirectories or on every workspace package when executed inside a workspace"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Log output in JSON format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--long",
                     ],
                     description: Some("Show verbose output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--parseable",
                     ],
                     description: Some("Show parseable output instead of tree view"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--global",
                     ],
                     description: Some("List packages in the global install directory instead of in the current project"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1126,8 +929,6 @@
                         "-D",
                     ],
                     description: Some("Only display the dependency tree for packages in devDependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1135,22 +936,19 @@
                         "-P",
                     ],
                     description: Some("Only display the dependency tree for packages in dependencies"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Filepath / Package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -1158,76 +956,65 @@
             arguments: [
                 (
                     name: "Scripts",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    filter_strategy: Fuzzy,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "run",
             aliases: [
                 "run-script",
             ],
-            description: Some("Runs a script defined in the package\'s manifest file"),
-            subcommands: [],
+            description: Some("Runs a script defined in the package's manifest file"),
             options: [
                 (
                     names: [
                         "-r",
                         "--recursive",
                     ],
-                    description: Some("This runs an arbitrary command from each package\'s \"scripts\" object. If a package doesn\'t have the command, it is skipped. If none of the packages have the command, the command fails"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("This runs an arbitrary command from each package's \"scripts\" object. If a package doesn't have the command, it is skipped. If none of the packages have the command, the command fails"),
                 ),
                 (
                     names: [
                         "--if-present",
                     ],
                     description: Some("You can use the --if-present flag to avoid exiting with a non-zero exit code when the script is undefined. This lets you run potentially undefined scripts without breaking the execution chain"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--parallel",
                     ],
                     description: Some("Completely disregard concurrency and topological sorting, running a given script immediately in all matching packages with prefixed streaming output. This is the preferred flag for long-running processes over many packages, for instance, a lengthy build process"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--stream",
                     ],
                     description: Some("Stream output from child processes immediately, prefixed with the originating package directory. This allows output from different packages to be interleaved"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Filepath / Package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -1235,27 +1022,28 @@
             arguments: [
                 (
                     name: "Scripts",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                            ],
+                            has_post_process: true,
+                            cache: Some((
+                                by_directory: true,
+                                stale_while_revalidate: true,
+                            )),
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    filter_strategy: Fuzzy,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "exec",
-            aliases: [],
             description: Some("Execute a shell command in scope of a project.\nnode_modules/.bin is added to the PATH, so pnpm exec allows executing commands of dependencies"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1263,30 +1051,25 @@
                         "--recursive",
                     ],
                     description: Some("Execute the shell command in every project of the workspace.\nThe name of the current package is available through the environment variable PNPM_PACKAGE_NAME (supported from pnpm v2.22.0 onwards)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--parallel",
                     ],
                     description: Some("Completely disregard concurrency and topological sorting, running a given script immediately in all matching packages with prefixed streaming output. This is the preferred flag for long-running processes over many packages, for instance, a lengthy build process"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Filepath / Package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -1294,21 +1077,20 @@
             arguments: [
                 (
                     name: "Scripts",
-                    source: Unavailable,
-                    optional: false,
+                    generators: [
+                        (
+                            script: [
+                                "bash",
+                                "-c",
+                                "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                     variadic: true,
-                    imported_generator: Some((
-                        script: [
-                            "bash",
-                            "-c",
-                            "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    filter_strategy: Fuzzy,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "test",
@@ -1316,40 +1098,24 @@
                 "t",
                 "tst",
             ],
-            description: Some("Runs an arbitrary command specified in the package\'s test property of its scripts object.\nThe intended usage of the property is to specify a command that runs unit or integration testing for your program"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Runs an arbitrary command specified in the package's test property of its scripts object.\nThe intended usage of the property is to specify a command that runs unit or integration testing for your program"),
         ),
         (
             name: "start",
-            aliases: [],
-            description: Some("Runs an arbitrary command specified in the package\'s start property of its scripts object. If no start property is specified on the scripts object, it will attempt to run node server.js as a default, failing if neither are present.\nThe intended usage of the property is to specify a command that starts your program"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Runs an arbitrary command specified in the package's start property of its scripts object. If no start property is specified on the scripts object, it will attempt to run node server.js as a default, failing if neither are present.\nThe intended usage of the property is to specify a command that starts your program"),
         ),
         (
             name: "publish",
-            aliases: [],
             description: Some("Publishes a package to the registry.\nWhen publishing a package inside a workspace, the LICENSE file from the root of the workspace is packed with the package (unless the package has a license of its own).\nYou may override some fields before publish, using the publishConfig field in package.json. You also can use the publishConfig.directory to customize the published subdirectory (usually using third party build tools).\nWhen running this command recursively (pnpm -r publish), pnpm will publish all the packages that have versions not yet published to the registry"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--tag",
                     ],
                     description: Some("Publishes the package with the given tag. By default, pnpm publish updates the latest tag"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "<tag>",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1358,41 +1124,35 @@
                         "--dry-run",
                     ],
                     description: Some("Does everything a publish would do except actually publishing to the registry"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--ignore-scripts",
                     ],
                     description: Some("Ignores any publish related lifecycle scripts (prepublishOnly, postpublish, and the like)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-git-checks",
                     ],
-                    description: Some("Don\'t check if current branch is your publish branch, clean, and up-to-date"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't check if current branch is your publish branch, clean, and up-to-date"),
                 ),
                 (
                     names: [
                         "--access",
                     ],
                     description: Some("Tells the registry whether the published package should be public or restricted"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Type",
-                            source: Static([
-                                "public",
-                                "private",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "public",
+                                ),
+                                (
+                                    name: "private",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1401,30 +1161,25 @@
                         "--force",
                     ],
                     description: Some("Try to publish packages even if their current version is already found in the registry"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--report-summary",
                     ],
                     description: Some("Save the list of published packages to pnpm-publish-summary.json. Useful when some other tooling is used to report the list of published packages"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Filepath / Package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -1432,21 +1187,18 @@
             arguments: [
                 (
                     name: "Branch",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "git",
-                            "branch",
-                            "--no-color",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "git",
+                                "branch",
+                                "--no-color",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "recursive",
@@ -1459,52 +1211,48 @@
             subcommands: [
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Installs a package and any packages that it depends on. By default, any new package is installed as a production dependency"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--offline",
                             ],
-                            description: Some("If true, pnpm will use only packages already available in the store. If a package won\'t be found locally, the installation will fail"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("If true, pnpm will use only packages already available in the store. If a package won't be found locally, the installation will fail"),
                         ),
                         (
                             names: [
                                 "--prefer-offline",
                             ],
                             description: Some("If true, staleness checks for cached data will be bypassed, but missing data will be requested from the server. To force full offline mode, use --offline"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--ignore-scripts",
                             ],
                             description: Some("Do not execute any scripts defined in the project package.json and its dependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--reporter",
                             ],
                             description: Some("Allows you to choose the reporter that will log debug info to the terminal about the installation progress"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Reporter Type",
-                                    source: Static([
-                                        "silent",
-                                        "default",
-                                        "append-only",
-                                        "ndjson",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "silent",
+                                        ),
+                                        (
+                                            name: "default",
+                                        ),
+                                        (
+                                            name: "append-only",
+                                        ),
+                                        (
+                                            name: "ndjson",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1514,8 +1262,6 @@
                                 "--save-prod",
                             ],
                             description: Some("Install the specified packages as regular dependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1523,8 +1269,6 @@
                                 "--save-dev",
                             ],
                             description: Some("Install the specified packages as devDependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1532,33 +1276,25 @@
                                 "--save-optional",
                             ],
                             description: Some("Install the specified packages as optionalDependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-save",
                             ],
                             description: Some("Prevents saving to `dependencies`"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "-E",
                                 "--save-exact",
                             ],
-                            description: Some("Saved dependencies will be configured with an exact version rather than using pnpm\'s default semver range operator"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Saved dependencies will be configured with an exact version rather than using pnpm's default semver range operator"),
                         ),
                         (
                             names: [
                                 "--save-peer",
                             ],
                             description: Some("Using --save-peer will add one or more packages to peerDependencies and install them as dev dependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1566,8 +1302,6 @@
                                 "-W#",
                             ],
                             description: Some("Adding a new dependency to the root workspace package fails, unless the --ignore-workspace-root-check or -W flag is used.\nFor instance, pnpm add debug -W"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1575,30 +1309,25 @@
                                 "-g",
                             ],
                             description: Some("Install a package globally"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--workspace",
                             ],
                             description: Some("Only adds the new dependency if it is found in the workspace"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--filter",
                             ],
                             description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Filepath / Package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1606,17 +1335,21 @@
                     arguments: [
                         (
                             name: "package",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    query_term: Some(AfterLast("@")),
+                                    cache: Some((
+                                        ttl_ms: Some(172800000),
+                                        stale_while_revalidate: true,
+                                    )),
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            debounce: true,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "install",
@@ -1624,22 +1357,26 @@
                         "i",
                     ],
                     description: Some("Pnpm install is used to install all dependencies for a project.\nIn a CI environment, installation fails if a lockfile is present but needs an update.\nInside a workspace, pnpm install installs all dependencies in all the projects.\nIf you want to disable this behavior, set the recursive-install setting to false"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "package",
-                            source: Unavailable,
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    query_term: Some(AfterLast("@")),
+                                    cache: Some((
+                                        ttl_ms: Some(172800000),
+                                        stale_while_revalidate: true,
+                                    )),
+                                ),
+                            ],
                             optional: true,
                             variadic: true,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            debounce: true,
                         ),
                     ],
-                    load_spec: None,
+                    has_generate_spec: true,
                 ),
                 (
                     name: "update",
@@ -1648,7 +1385,6 @@
                         "up",
                     ],
                     description: Some("Pnpm update updates packages to their latest version based on the specified range.\nWhen used without arguments, updates all dependencies. You can use patterns to update specific dependencies"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1656,8 +1392,6 @@
                                 "-r",
                             ],
                             description: Some("Concurrently runs update in all subdirectories with a package.json (excluding node_modules)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1665,16 +1399,12 @@
                                 "-L",
                             ],
                             description: Some("Ignores the version range specified in package.json. Instead, the version specified by the latest tag will be used (potentially upgrading the packages across major versions)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--global",
                             ],
                             description: Some("Update global packages"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1682,8 +1412,6 @@
                                 "--save-prod",
                             ],
                             description: Some("Only update packages in dependencies and optionalDependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1691,16 +1419,12 @@
                                 "--save-dev",
                             ],
                             description: Some("Only update packages in devDependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-optional",
                             ],
-                            description: Some("Don\'t update packages in optionalDependencies"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Don't update packages in optionalDependencies"),
                         ),
                         (
                             names: [
@@ -1708,30 +1432,25 @@
                                 "-i",
                             ],
                             description: Some("Show outdated dependencies and select which ones to update"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--workspace",
                             ],
                             description: Some("Tries to link all packages from the workspace. Versions are updated to match the versions of packages inside the workspace.\nIf specific packages are updated, the command will fail if any of the updated dependencies are not found inside the workspace. For instance, the following command fails if express is not a workspace package: pnpm up -r --workspace express"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--filter",
                             ],
                             description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Filepath / Package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1739,21 +1458,21 @@
                     arguments: [
                         (
                             name: "Package",
-                            source: Unavailable,
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             optional: true,
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            filter_strategy: Fuzzy,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "remove",
@@ -1762,8 +1481,7 @@
                         "uninstall",
                         "un",
                     ],
-                    description: Some("Removes packages from node_modules and from the project\'s package.json"),
-                    subcommands: [],
+                    description: Some("Removes packages from node_modules and from the project's package.json"),
                     options: [
                         (
                             names: [
@@ -1771,16 +1489,12 @@
                                 "-r",
                             ],
                             description: Some("When used inside a workspace, removes a dependency (or dependencies) from every workspace package.\nWhen used not inside a workspace, removes a dependency (or dependencies) from every package found in subdirectories"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--global",
                             ],
                             description: Some("Remove a global package"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1788,8 +1502,6 @@
                                 "--save-prod",
                             ],
                             description: Some("Only remove the dependency from dependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1797,8 +1509,6 @@
                                 "--save-dev",
                             ],
                             description: Some("Only remove the dependency from devDependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -1806,22 +1516,19 @@
                                 "-O",
                             ],
                             description: Some("Only remove the dependency from optionalDependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--filter",
                             ],
                             description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Filepath / Package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1829,27 +1536,24 @@
                     arguments: [
                         (
                             name: "Package",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            filter_strategy: Fuzzy,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "unlink",
-                    aliases: [],
                     description: Some("Unlinks a system-wide package (inverse of pnpm link).\nIf called without arguments, all linked dependencies will be unlinked.\nThis is similar to yarn unlink, except pnpm re-installs the dependency after removing the external link"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1857,22 +1561,19 @@
                                 "-r",
                             ],
                             description: Some("Unlink in every package found in subdirectories or in every workspace package, when executed inside a workspace"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--filter",
                             ],
                             description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Filepath / Package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1880,28 +1581,26 @@
                     arguments: [
                         (
                             name: "Package",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            filter_strategy: Fuzzy,
                         ),
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "rebuild",
@@ -1909,7 +1608,6 @@
                         "rb",
                     ],
                     description: Some("Rebuild a package"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1917,22 +1615,19 @@
                                 "-r",
                             ],
                             description: Some("This command runs the pnpm rebuild command in every package of the monorepo"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--filter",
                             ],
                             description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Filepath / Package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -1940,28 +1635,26 @@
                     arguments: [
                         (
                             name: "Package",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            filter_strategy: Fuzzy,
                         ),
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
@@ -1969,7 +1662,6 @@
                         "ls",
                     ],
                     description: Some("This command will output all the versions of packages that are installed, as well as their dependencies, in a tree-structure.\nPositional arguments are name-pattern@version-range identifiers, which will limit the results to only the packages named. For example, pnpm list \"babel-*\" \"eslint-*\" semver@5"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -1977,54 +1669,39 @@
                                 "-r",
                             ],
                             description: Some("Perform command on every package in subdirectories or on every workspace package, when executed inside a workspace"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--json",
                             ],
                             description: Some("Log output in JSON format"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--long",
                             ],
                             description: Some("Show extended information"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--parseable",
                             ],
                             description: Some("Outputs package directories in a parseable format instead of their tree view"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--global",
                             ],
                             description: Some("List packages in the global install directory instead of in the current project"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--depth",
                             ],
                             description: Some("Max display depth of the dependency tree.\npnpm ls --depth 0 will list direct dependencies only. pnpm ls --depth -1 will list projects only. Useful inside a workspace when used with the -r option"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "number",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2034,8 +1711,6 @@
                                 "-D",
                             ],
                             description: Some("Only list dev dependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2043,42 +1718,33 @@
                                 "-P",
                             ],
                             description: Some("Only list production dependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-optional",
                             ],
-                            description: Some("Don\'t list optionalDependencies"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Don't list optionalDependencies"),
                         ),
                         (
                             names: [
                                 "--filter",
                             ],
                             description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Filepath / Package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "outdated",
-                    aliases: [],
                     description: Some("Checks for outdated packages. The check can be limited to a subset of the installed packages by providing arguments (patterns are supported)"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2086,40 +1752,30 @@
                                 "-r",
                             ],
                             description: Some("Check for outdated dependencies in every package found in subdirectories, or in every workspace package when executed inside a workspace"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--long",
                             ],
                             description: Some("Print details"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--global",
                             ],
                             description: Some("List outdated global packages"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-table",
                             ],
                             description: Some("Prints the outdated dependencies in a list format instead of the default table. Good for small consoles"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--compatible",
                             ],
                             description: Some("Prints only versions that satisfy specifications in package.json"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2127,8 +1783,6 @@
                                 "-D",
                             ],
                             description: Some("Only list dev dependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2136,26 +1790,18 @@
                                 "-P",
                             ],
                             description: Some("Only list production dependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-optional",
                             ],
-                            description: Some("Doesn\'t check optionalDependencies"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Doesn't check optionalDependencies"),
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "why",
-                    aliases: [],
                     description: Some("Shows all packages that depend on the specified package"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2163,40 +1809,30 @@
                                 "-r",
                             ],
                             description: Some("Show the dependency tree for the specified package on every package in subdirectories or on every workspace package when executed inside a workspace"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--json",
                             ],
                             description: Some("Log output in JSON format"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--long",
                             ],
                             description: Some("Show verbose output"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--parseable",
                             ],
                             description: Some("Show parseable output instead of tree view"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--global",
                             ],
                             description: Some("List packages in the global install directory instead of in the current project"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2204,8 +1840,6 @@
                                 "-D",
                             ],
                             description: Some("Only display the dependency tree for packages in devDependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
@@ -2213,22 +1847,19 @@
                                 "-P",
                             ],
                             description: Some("Only display the dependency tree for packages in dependencies"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--filter",
                             ],
                             description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Filepath / Package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2236,76 +1867,65 @@
                     arguments: [
                         (
                             name: "Scripts",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            filter_strategy: Fuzzy,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "run",
                     aliases: [
                         "run-script",
                     ],
-                    description: Some("Runs a script defined in the package\'s manifest file"),
-                    subcommands: [],
+                    description: Some("Runs a script defined in the package's manifest file"),
                     options: [
                         (
                             names: [
                                 "-r",
                                 "--recursive",
                             ],
-                            description: Some("This runs an arbitrary command from each package\'s \"scripts\" object. If a package doesn\'t have the command, it is skipped. If none of the packages have the command, the command fails"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("This runs an arbitrary command from each package's \"scripts\" object. If a package doesn't have the command, it is skipped. If none of the packages have the command, the command fails"),
                         ),
                         (
                             names: [
                                 "--if-present",
                             ],
                             description: Some("You can use the --if-present flag to avoid exiting with a non-zero exit code when the script is undefined. This lets you run potentially undefined scripts without breaking the execution chain"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--parallel",
                             ],
                             description: Some("Completely disregard concurrency and topological sorting, running a given script immediately in all matching packages with prefixed streaming output. This is the preferred flag for long-running processes over many packages, for instance, a lengthy build process"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--stream",
                             ],
                             description: Some("Stream output from child processes immediately, prefixed with the originating package directory. This allows output from different packages to be interleaved"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--filter",
                             ],
                             description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Filepath / Package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2313,27 +1933,28 @@
                     arguments: [
                         (
                             name: "Scripts",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                                    ],
+                                    has_post_process: true,
+                                    cache: Some((
+                                        by_directory: true,
+                                        stale_while_revalidate: true,
+                                    )),
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            filter_strategy: Fuzzy,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "exec",
-                    aliases: [],
                     description: Some("Execute a shell command in scope of a project.\nnode_modules/.bin is added to the PATH, so pnpm exec allows executing commands of dependencies"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
@@ -2341,30 +1962,25 @@
                                 "--recursive",
                             ],
                             description: Some("Execute the shell command in every project of the workspace.\nThe name of the current package is available through the environment variable PNPM_PACKAGE_NAME (supported from pnpm v2.22.0 onwards)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--parallel",
                             ],
                             description: Some("Completely disregard concurrency and topological sorting, running a given script immediately in all matching packages with prefixed streaming output. This is the preferred flag for long-running processes over many packages, for instance, a lengthy build process"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--filter",
                             ],
                             description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Filepath / Package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2372,21 +1988,20 @@
                     arguments: [
                         (
                             name: "Scripts",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    script: [
+                                        "bash",
+                                        "-c",
+                                        "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [
-                                    "bash",
-                                    "-c",
-                                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            filter_strategy: Fuzzy,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "test",
@@ -2394,31 +2009,20 @@
                         "t",
                         "tst",
                     ],
-                    description: Some("Runs an arbitrary command specified in the package\'s test property of its scripts object.\nThe intended usage of the property is to specify a command that runs unit or integration testing for your program"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    description: Some("Runs an arbitrary command specified in the package's test property of its scripts object.\nThe intended usage of the property is to specify a command that runs unit or integration testing for your program"),
                 ),
                 (
                     name: "publish",
-                    aliases: [],
                     description: Some("Publishes a package to the registry.\nWhen publishing a package inside a workspace, the LICENSE file from the root of the workspace is packed with the package (unless the package has a license of its own).\nYou may override some fields before publish, using the publishConfig field in package.json. You also can use the publishConfig.directory to customize the published subdirectory (usually using third party build tools).\nWhen running this command recursively (pnpm -r publish), pnpm will publish all the packages that have versions not yet published to the registry"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--tag",
                             ],
                             description: Some("Publishes the package with the given tag. By default, pnpm publish updates the latest tag"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "<tag>",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2427,41 +2031,35 @@
                                 "--dry-run",
                             ],
                             description: Some("Does everything a publish would do except actually publishing to the registry"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--ignore-scripts",
                             ],
                             description: Some("Ignores any publish related lifecycle scripts (prepublishOnly, postpublish, and the like)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-git-checks",
                             ],
-                            description: Some("Don\'t check if current branch is your publish branch, clean, and up-to-date"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Don't check if current branch is your publish branch, clean, and up-to-date"),
                         ),
                         (
                             names: [
                                 "--access",
                             ],
                             description: Some("Tells the registry whether the published package should be public or restricted"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Type",
-                                    source: Static([
-                                        "public",
-                                        "private",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "public",
+                                        ),
+                                        (
+                                            name: "private",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -2470,30 +2068,25 @@
                                 "--force",
                             ],
                             description: Some("Try to publish packages even if their current version is already found in the registry"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--report-summary",
                             ],
                             description: Some("Save the list of published packages to pnpm-publish-summary.json. Useful when some other tooling is used to report the list of published packages"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--filter",
                             ],
                             description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Filepath / Package",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2501,21 +2094,18 @@
                     arguments: [
                         (
                             name: "Branch",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "git",
-                                    "branch",
-                                    "--no-color",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "git",
+                                        "branch",
+                                        "--no-color",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
             options: [
@@ -2524,16 +2114,14 @@
                         "--link-workspace-packages",
                     ],
                     description: Some("Link locally available packages in workspaces of a monorepo into node_modules instead of re-downloading them from the registry. This emulates functionality similar to yarn workspaces.\nWhen this is set to deep, local packages can also be linked to subdependencies.\nBe advised that it is encouraged instead to use npmrc for this setting, to enforce the same behaviour in all environments. This option exists solely so you may override that if necessary"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "bool or `deep`",
-                            source: Static([
-                                "dee[",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "dee[",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -2542,14 +2130,9 @@
                         "--workspace-concurrency",
                     ],
                     description: Some("Set the maximum number of tasks to run simultaneously. For unlimited concurrency use Infinity"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "<number>",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -2558,93 +2141,70 @@
                         "--bail",
                     ],
                     description: Some("Stops when a task throws an error"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-bail",
                     ],
-                    description: Some("Don\'t stop when a task throws an error"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't stop when a task throws an error"),
                 ),
                 (
                     names: [
                         "--sort",
                     ],
                     description: Some("Packages are sorted topologically (dependencies before dependents)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-sort",
                     ],
                     description: Some("Disable packages sorting"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--reverse",
                     ],
                     description: Some("The order of packages is reversed"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--filter",
                     ],
                     description: Some("Filtering allows you to restrict commands to specific subsets of packages.\npnpm supports a rich selector syntax for picking packages by name or by relation.\nMore details: https://pnpm.io/filtering"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Filepath / Package",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("To only select packages under the specified directory, you may specify any absolute path, typically in POSIX format"),
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "server",
-            aliases: [],
             description: Some("Manage a store server"),
             subcommands: [
                 (
                     name: "start",
-                    aliases: [],
                     description: Some("Starts a server that performs all interactions with the store. Other commands will delegate any store-related tasks to this server"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--background",
                             ],
                             description: Some("Runs the server in the background, similar to daemonizing on UNIX systems"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--network-concurrency",
                             ],
                             description: Some("The maximum number of network requests to process simultaneously"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "number",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2653,18 +2213,20 @@
                                 "--protocol",
                             ],
                             description: Some("The communication protocol used by the server. When this is set to auto, IPC is used on all systems except for Windows, which uses TCP"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Type",
-                                    source: Static([
-                                        "auto",
-                                        "tcp",
-                                        "ipc",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "auto",
+                                        ),
+                                        (
+                                            name: "tcp",
+                                        ),
+                                        (
+                                            name: "ipc",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -2673,14 +2235,9 @@
                                 "--port",
                             ],
                             description: Some("The port number to use when TCP is used for communication. If a port is specified and the protocol is set to auto, regardless of system type, the protocol is automatically set to use TCP"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "port number",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -2689,14 +2246,12 @@
                                 "--store-dir",
                             ],
                             description: Some("The directory to use for the content addressable store"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "Path",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    template: [
+                                        FilePaths,
+                                    ],
                                 ),
                             ],
                         ),
@@ -2705,123 +2260,66 @@
                                 "--lock",
                             ],
                             description: Some("Set to make the package store immutable to external processes while the server is running or not"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-lock",
                             ],
                             description: Some("Set to make the package store mutable to external processes while the server is running or not"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--ignore-stop-requests",
                             ],
                             description: Some("Prevents you from stopping the server using pnpm server stop"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--ignore-upload-requests",
                             ],
                             description: Some("Prevents creating a new side effect cache during install"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "stop",
-                    aliases: [],
                     description: Some("Stops the store server"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "status",
-                    aliases: [],
                     description: Some("Prints information about the running server"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "store",
-            aliases: [],
             description: Some("Managing the package store"),
             subcommands: [
                 (
                     name: "status",
-                    aliases: [],
                     description: Some("Checks for modified packages in the store.\nReturns exit code 0 if the content of the package is the same as it was at the time of unpacking"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Functionally equivalent to pnpm add,\nexcept this adds new packages to the store directly without modifying any projects or files outside of the store"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "prune",
-                    aliases: [],
                     description: Some("Removes orphan packages from the store.\nPruning the store will save disk space, however may slow down future installations involving pruned packages.\nUltimately, it is a safe operation, however not recommended if you have orphaned packages from a package you intend to reinstall.\nPlease read the FAQ for more information on unreferenced packages and best practices.\nPlease note that this is prohibited when a store server is running"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "path",
-                    aliases: [],
                     description: Some("Returns the path to the active store directory"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
-            description: Some("Creates a basic package.json file in the current directory, if it doesn\'t exist already"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Creates a basic package.json file in the current directory, if it doesn't exist already"),
         ),
         (
             name: "doctor",
-            aliases: [],
             description: Some("Checks for known common issues with pnpm configuration"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -2831,16 +2329,15 @@
                 "--dir",
             ],
             description: Some("Run as if pnpm was started in <path> instead of the current working directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
@@ -2848,16 +2345,12 @@
                 "--workspace-root",
             ],
             description: Some("Run as if pnpm was started in the root of the <workspace> instead of the current working directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "workspace",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
@@ -2865,34 +2358,37 @@
                 "--help",
             ],
             description: Some("Output usage information"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "-v",
                 "--version",
             ],
-            description: Some("Show pnpm\'s version"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Show pnpm's version"),
         ),
     ],
     arguments: [
         (
             name: "Scripts",
-            source: Unavailable,
-            optional: false,
+            generators: [
+                (
+                    script: [
+                        "bash",
+                        "-c",
+                        "until [[ -f package.json ]] || [[ $PWD = '/' ]]; do cd ..; done; cat package.json",
+                    ],
+                    has_post_process: true,
+                    cache: Some((
+                        by_directory: true,
+                        stale_while_revalidate: true,
+                    )),
+                ),
+            ],
             variadic: true,
-            imported_generator: Some((
-                script: [
-                    "bash",
-                    "-c",
-                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
+            filter_strategy: Fuzzy,
         ),
     ],
+    filter_strategy: Fuzzy,
+    has_generate_spec: true,
 )

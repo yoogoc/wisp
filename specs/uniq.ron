@@ -2,7 +2,6 @@
     version: 1,
     command: "uniq",
     description: Some("Report or omit repeated line"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "--count",
             ],
             description: Some("Prefix lines by the number of occurrences"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,8 +16,6 @@
                 "--repeated",
             ],
             description: Some("Only print duplicate lines"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -28,18 +23,22 @@
                 "--all-repeated",
             ],
             description: Some("Print all duplicate lines. Delimiting is done with blank lines"),
-            takes_value: true,
             arguments: [
                 (
                     name: "delimit-method",
-                    source: Static([
-                        "none",
-                        "prepend",
-                        "separate",
-                    ]),
+                    suggestions: [
+                        (
+                            name: "none",
+                        ),
+                        (
+                            name: "prepend",
+                        ),
+                        (
+                            name: "separate",
+                        ),
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("none"),
                 ),
             ],
         ),
@@ -49,14 +48,9 @@
                 "--skip-fields",
             ],
             description: Some("Avoid comparing the first N fields"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -66,8 +60,6 @@
                 "--ignore-case",
             ],
             description: Some("Ignore differences in case when comparing"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -75,14 +67,9 @@
                 "--skip-chars",
             ],
             description: Some("Avoid comparing the first N characters"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -92,8 +79,6 @@
                 "--unique",
             ],
             description: Some("Only print unique lines"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -101,8 +86,6 @@
                 "--zero-terminated",
             ],
             description: Some("End lines with 0 byte, not newline"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -110,14 +93,9 @@
                 "--check-chars",
             ],
             description: Some("Compare no more than N characters in lines"),
-            takes_value: true,
             arguments: [
                 (
                     name: "number",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -126,32 +104,26 @@
                 "--help",
             ],
             description: Some("Display this help and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Output version information and exit"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "input",
-            source: Directories,
+            template: [
+                FilePaths,
+                Folders,
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: None,
         ),
         (
             name: "output",
-            source: Files,
             optional: true,
-            variadic: false,
-            imported_generator: None,
         ),
     ],
 )

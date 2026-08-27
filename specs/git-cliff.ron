@@ -1,8 +1,7 @@
 (
     version: 1,
     command: "git-cliff",
-    description: Some("A highly customizable changelog generator ⛰\u{fe0f}"),
-    subcommands: [],
+    description: Some("A highly customizable changelog generator ⛰️"),
     options: [
         (
             names: [
@@ -10,8 +9,9 @@
                 "-v",
             ],
             description: Some("Increases the logging verbosity"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                priority: Some(1.0),
+            ),
         ),
         (
             names: [
@@ -19,8 +19,6 @@
                 "-i",
             ],
             description: Some("Writes the default configuration file to cliff.toml"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -28,16 +26,20 @@
                 "-l",
             ],
             description: Some("Processes the commits starting from the latest tag"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--current",
+                "-u",
+            ],
         ),
         (
             names: [
                 "--current",
             ],
             description: Some("Processes the commits that belong to the current tag"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "-l",
+                "-u",
+            ],
         ),
         (
             names: [
@@ -45,24 +47,22 @@
                 "-u",
             ],
             description: Some("Processes the commits that do not belong to a tag"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "-l",
+                "--current",
+            ],
         ),
         (
             names: [
                 "--date-order",
             ],
             description: Some("Sorts the tags chronologically"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--context",
             ],
             description: Some("Prints changelog context as JSON"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -70,8 +70,9 @@
                 "-h",
             ],
             description: Some("Prints help information"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                priority: Some(1.0),
+            ),
         ),
         (
             names: [
@@ -79,8 +80,9 @@
                 "-V",
             ],
             description: Some("Prints version information"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                priority: Some(1.0),
+            ),
         ),
         (
             names: [
@@ -88,14 +90,14 @@
                 "-c",
             ],
             description: Some("Sets the configuration file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
+                    suggest_current_token: true,
+                    default: Some("cliff.toml"),
                 ),
             ],
         ),
@@ -105,14 +107,13 @@
                 "-w",
             ],
             description: Some("Sets the working directory"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
+                    suggest_current_token: true,
                 ),
             ],
         ),
@@ -122,14 +123,13 @@
                 "-r",
             ],
             description: Some("Sets the git repository"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
+                    suggest_current_token: true,
                 ),
             ],
         ),
@@ -138,14 +138,11 @@
                 "--include-path",
             ],
             description: Some("Sets the path to include related commits"),
-            takes_value: true,
             arguments: [
                 (
                     name: "pattern",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
+                    options_can_break_variadic: true,
                 ),
             ],
         ),
@@ -154,14 +151,11 @@
                 "--exclude-path",
             ],
             description: Some("Sets the path to exclude related commits"),
-            takes_value: true,
             arguments: [
                 (
                     name: "pattern",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
+                    options_can_break_variadic: true,
                 ),
             ],
         ),
@@ -170,14 +164,11 @@
                 "--with-commit",
             ],
             description: Some("Sets custom commit messages to include in the changelog"),
-            takes_value: true,
             arguments: [
                 (
                     name: "msg",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
+                    options_can_break_variadic: true,
                 ),
             ],
         ),
@@ -187,14 +178,13 @@
                 "-p",
             ],
             description: Some("Prepends entries to the given changelog file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
+                    suggest_current_token: true,
                 ),
             ],
         ),
@@ -204,14 +194,13 @@
                 "-o",
             ],
             description: Some("Writes output to the given file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
+                    suggest_current_token: true,
                 ),
             ],
         ),
@@ -221,14 +210,9 @@
                 "-t",
             ],
             description: Some("Sets the tag for the latest version"),
-            takes_value: true,
             arguments: [
                 (
                     name: "tag",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -238,14 +222,9 @@
                 "-b",
             ],
             description: Some("Sets the template for the changelog body"),
-            takes_value: true,
             arguments: [
                 (
                     name: "template",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -255,18 +234,20 @@
                 "-s",
             ],
             description: Some("Strips the given parts from the changelog"),
-            takes_value: true,
             arguments: [
                 (
                     name: "part",
-                    source: Static([
-                        "header",
-                        "footer",
-                        "all",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "header",
+                        ),
+                        (
+                            name: "footer",
+                        ),
+                        (
+                            name: "all",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -275,17 +256,18 @@
                 "--sort",
             ],
             description: Some("Sets sorting of the commits inside sections"),
-            takes_value: true,
             arguments: [
                 (
                     name: "sort",
-                    source: Static([
-                        "oldest",
-                        "newest",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "oldest",
+                        ),
+                        (
+                            name: "newest",
+                        ),
+                    ],
+                    default: Some("oldest"),
                 ),
             ],
         ),
@@ -293,20 +275,23 @@
     arguments: [
         (
             name: "range",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [
-                    "git",
-                    "rev-list",
-                    "--all",
-                    "--oneline",
-                    "--abbrev-commit",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
+            description: Some("Sets the commit range to process"),
+            generators: [
+                (
+                    script: [
+                        "git",
+                        "rev-list",
+                        "--all",
+                        "--oneline",
+                        "--abbrev-commit",
+                    ],
+                    has_post_process: true,
+                    trigger: Some(OnMatch([
+                            "..",
+                        ])),
+                    query_term: Some(AfterLast(".")),
+                ),
+            ],
         ),
     ],
 )

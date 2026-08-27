@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "run",
-            aliases: [],
             description: Some("Run a shortcut"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,14 +13,12 @@
                         "--input-path",
                     ],
                     description: Some("The input to provide to the shortcut"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "input-path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -32,14 +28,12 @@
                         "--output-path",
                     ],
                     description: Some("Where to write the shortcut output, if applicable"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "output-path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -48,21 +42,35 @@
                         "--output-type",
                     ],
                     description: Some("What type to output data in, in Universal Type Identifier format"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "output-type",
-                            source: Static([
-                                "public.json",
-                                "public.plain-text",
-                                "public.html",
-                                "public.xml",
-                                "com.adobe.pdf",
-                                "public.vcard",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "public.json",
+                                    description: Some("JavaScript Object Notation (JSON)"),
+                                ),
+                                (
+                                    name: "public.plain-text",
+                                    description: Some("Plain text"),
+                                ),
+                                (
+                                    name: "public.html",
+                                    description: Some("HTML"),
+                                ),
+                                (
+                                    name: "public.xml",
+                                    description: Some("XML"),
+                                ),
+                                (
+                                    name: "com.adobe.pdf",
+                                    description: Some("Adobe PDF"),
+                                ),
+                                (
+                                    name: "public.vcard",
+                                    description: Some("VCard"),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -70,26 +78,25 @@
             arguments: [
                 (
                     name: "shortcut-name",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "shortcuts",
-                            "list",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("The name of the shortcut to run"),
+                    generators: [
+                        (
+                            script: [
+                                "shortcuts",
+                                "list",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("▶️"),
+            ),
         ),
         (
             name: "list",
-            aliases: [],
             description: Some("List your shortcuts"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -97,22 +104,19 @@
                         "-f",
                     ],
                     description: Some("The name of the folder to list"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "folder-name",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [
-                                    "shortcuts",
-                                    "list",
-                                    "--folders",
-                                ],
-                                has_post_process: true,
-                                has_custom: false,
-                            )),
+                            generators: [
+                                (
+                                    script: [
+                                        "shortcuts",
+                                        "list",
+                                        "--folders",
+                                    ],
+                                    has_post_process: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -121,42 +125,40 @@
                         "--folders",
                     ],
                     description: Some("List folders instead of shortcuts"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        icon: Some("📂"),
+                    ),
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("📂"),
+            ),
         ),
         (
             name: "view",
-            aliases: [],
             description: Some("View a shortcut in Shortcuts"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "shortcut-name",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "shortcuts",
-                            "list",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    description: Some("The name of the shortcut to view"),
+                    generators: [
+                        (
+                            script: [
+                                "shortcuts",
+                                "list",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("🔍"),
+            ),
         ),
         (
             name: "sign",
-            aliases: [],
             description: Some("Sign a shortcut file"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -164,18 +166,16 @@
                         "-i",
                     ],
                     description: Some("The shortcut file to sign"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "input",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -185,14 +185,12 @@
                         "-o",
                     ],
                     description: Some("Output path for the signed shortcut file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "output",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -202,71 +200,58 @@
                         "-m",
                     ],
                     description: Some("The signing mode. (default: people-who-know-me)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "mode",
-                            source: Static([
-                                "people-who-know-me",
-                                "anyone",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "people-who-know-me",
+                                ),
+                                (
+                                    name: "anyone",
+                                ),
+                            ],
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("🔏"),
+            ),
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Show help information"),
             subcommands: [
                 (
                     name: "run",
-                    aliases: [],
                     description: Some("Run a shortcut"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("▶️"),
+                    ),
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List your shortcuts"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("📂"),
+                    ),
                 ),
                 (
                     name: "view",
-                    aliases: [],
                     description: Some("View a shortcut in Shortcuts"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("🔍"),
+                    ),
                 ),
                 (
                     name: "sign",
-                    aliases: [],
                     description: Some("Sign a shortcut file"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
+                    presentation: (
+                        icon: Some("🔏"),
+                    ),
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
-    options: [],
-    arguments: [],
 )

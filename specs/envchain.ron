@@ -9,7 +9,6 @@
                 "--set",
             ],
             description: Some("Add keychain item of environment variable +ENV+ for namespace +NAMESPACE+"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -17,8 +16,6 @@
                         "--noecho",
                     ],
                     description: Some("Do not echo user input"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -26,8 +23,9 @@
                         "--require-passphrase",
                     ],
                     description: Some("Always ask for keychain passphrase"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-require-passphrase",
+                    ],
                 ),
                 (
                     names: [
@@ -35,34 +33,32 @@
                         "--no-require-passphrase",
                     ],
                     description: Some("Do not ask for keychain passphrase"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--require-passphrase",
+                    ],
                 ),
             ],
             arguments: [
                 (
                     name: "NAMESPACE",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "envchain",
-                            "--list",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "envchain",
+                                "--list",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "ENV",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                icon: Some("fig://icon?type=option"),
+            ),
         ),
         (
             name: "-l",
@@ -70,34 +66,27 @@
                 "--list",
             ],
             description: Some("List namespaces that have been created"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            presentation: (
+                icon: Some("fig://icon?type=option"),
+            ),
         ),
     ],
-    options: [],
     arguments: [
         (
             name: "NAMESPACE",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [
-                    "envchain",
-                    "--list",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
+            generators: [
+                (
+                    script: [
+                        "envchain",
+                        "--list",
+                    ],
+                    has_post_process: true,
+                ),
+            ],
         ),
         (
             name: "CMD",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            is_command: true,
         ),
     ],
 )

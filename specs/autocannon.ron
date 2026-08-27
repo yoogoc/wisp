@@ -2,7 +2,6 @@
     version: 1,
     command: "autocannon",
     description: Some("Fast HTTP/1.1 benchmarking tool written in Node.js"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,14 +9,10 @@
                 "--connections",
             ],
             description: Some("The number of concurrent connections to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("10"),
                 ),
             ],
         ),
@@ -27,14 +22,10 @@
                 "--pipelining",
             ],
             description: Some("The number of pipelined requests to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("1"),
                 ),
             ],
         ),
@@ -44,15 +35,15 @@
                 "--duration",
             ],
             description: Some("The number of seconds to run the autocannon"),
-            takes_value: true,
             arguments: [
                 (
                     name: "SEC",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("10"),
                 ),
+            ],
+            exclusive_on: [
+                "-a",
+                "--amount",
             ],
         ),
         (
@@ -61,15 +52,14 @@
                 "--amount",
             ],
             description: Some("The number of requests to make before exiting the benchmark"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            exclusive_on: [
+                "-d",
+                "--duration",
             ],
         ),
         (
@@ -77,14 +67,10 @@
                 "-L",
             ],
             description: Some("The number of milliseconds to elapse between taking samples. This controls the sample interval, & therefore the total number of samples, which affects statistical analyses"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("1"),
                 ),
             ],
         ),
@@ -94,14 +80,9 @@
                 "--socketPath",
             ],
             description: Some("A path to a Unix Domain Socket or a Windows Named Pipe. A URL is still required to send the correct Host header and path"),
-            takes_value: true,
             arguments: [
                 (
                     name: "PATH",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -111,14 +92,10 @@
                 "--workers",
             ],
             description: Some("Number of worker threads to use to fire requests"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("1"),
                 ),
             ],
         ),
@@ -128,21 +105,14 @@
                 "--warmup",
             ],
             description: Some("Use a warm up interval before starting sampling. This enables startup processes to finish and traffic to normalize before sampling begins"),
-            takes_value: true,
             arguments: [
                 (
                     name: "-c",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("1"),
                 ),
                 (
                     name: "-d",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("3"),
                 ),
             ],
         ),
@@ -151,14 +121,9 @@
                 "--on-port",
             ],
             description: Some("Start the command listed after -- on the command line. When it starts listening on a port, start sending requests to that port. A URL is still required to send requests to the correct path. The hostname can be omitted, `localhost` will be used by default"),
-            takes_value: true,
             arguments: [
                 (
                     name: "PORT",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -168,23 +133,36 @@
                 "--method",
             ],
             description: Some("The HTTP method to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "METHOD",
-                    source: Static([
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "DELETE",
-                        "PATCH",
-                        "HEAD",
-                        "OPTIONS",
-                        "TRACE",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "GET",
+                        ),
+                        (
+                            name: "POST",
+                        ),
+                        (
+                            name: "PUT",
+                        ),
+                        (
+                            name: "DELETE",
+                        ),
+                        (
+                            name: "PATCH",
+                        ),
+                        (
+                            name: "HEAD",
+                        ),
+                        (
+                            name: "OPTIONS",
+                        ),
+                        (
+                            name: "TRACE",
+                        ),
+                    ],
+                    default: Some("GET"),
                 ),
             ],
         ),
@@ -194,14 +172,10 @@
                 "--timeout",
             ],
             description: Some("The number of seconds before timing out and resetting a connection"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("10"),
                 ),
             ],
         ),
@@ -211,14 +185,9 @@
                 "--title",
             ],
             description: Some("The title to place in the results for identification"),
-            takes_value: true,
             arguments: [
                 (
                     name: "TITLE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -228,15 +197,14 @@
                 "--body",
             ],
             description: Some("The body of the request"),
-            takes_value: true,
             arguments: [
                 (
                     name: "BODY",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
+            ],
+            depends_on: [
+                "-H",
+                "--headers",
             ],
         ),
         (
@@ -244,15 +212,9 @@
                 "-F",
                 "--form",
             ],
-            description: None,
-            takes_value: true,
             arguments: [
                 (
                     name: "FORM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -262,19 +224,21 @@
                 "--input",
             ],
             description: Some("The body of the request"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            template: [
+                                FilePaths,
+                            ],
+                        ),
+                    ],
                 ),
+            ],
+            depends_on: [
+                "-H",
+                "--headers",
             ],
         ),
         (
@@ -283,30 +247,24 @@
                 "--headers",
             ],
             description: Some("The request headers"),
-            takes_value: true,
             arguments: [
                 (
                     name: "K=V",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
+            repeat: Many,
         ),
         (
             names: [
                 "--har",
             ],
             description: Some("When provided, Autocannon will use requests from the HAR file"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -316,14 +274,10 @@
                 "--bailout",
             ],
             description: Some("The number of failures before initiating a bailout"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("0"),
                 ),
             ],
         ),
@@ -333,14 +287,9 @@
                 "--maxConnectionRequests",
             ],
             description: Some("The max number of requests to make per connection to the server"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -350,14 +299,9 @@
                 "--maxOverallRequests",
             ],
             description: Some("The max number of requests to make overall to the server"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -367,14 +311,9 @@
                 "--connectionRate",
             ],
             description: Some("The max number of requests to make per second from an individual connection"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -384,14 +323,9 @@
                 "--overallRate",
             ],
             description: Some("The max number of requests to make per second from all connections"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -400,9 +334,7 @@
                 "-C",
                 "--ignoreCoordinatedOmission",
             ],
-            description: Some("Ignore the coordinated omission issue when requests should be sent at a fixed rate using \'connectionRate\' or \'overallRate\'"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Ignore the coordinated omission issue when requests should be sent at a fixed rate using 'connectionRate' or 'overallRate'"),
         ),
         (
             names: [
@@ -410,14 +342,9 @@
                 "--reconnectRate",
             ],
             description: Some("The number of requests to make before resetting a connections connection to the server"),
-            takes_value: true,
             arguments: [
                 (
                     name: "NUM",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -426,9 +353,7 @@
                 "-n",
                 "--no-progress",
             ],
-            description: Some("Don\'t render the progress bar. default: false"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't render the progress bar. default: false"),
         ),
         (
             names: [
@@ -436,8 +361,6 @@
                 "--latency",
             ],
             description: Some("Print all the latency data. default: false"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -445,8 +368,6 @@
                 "--idReplacement",
             ],
             description: Some("Enable replacement of [<id>] with a randomly generated ID within the request body. default: false"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -454,8 +375,6 @@
                 "--jsonPath",
             ],
             description: Some("Print the output as newline delimited JSON. This will cause the progress bar and results not to be rendered"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -463,8 +382,6 @@
                 "--forever",
             ],
             description: Some("Run the benchmark forever. Efficiently restarts the benchmark on completion"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -472,8 +389,6 @@
                 "--servername",
             ],
             description: Some("Server name for the SNI (Server Name Indication) TLS extension. Defaults to the hostname of the URL when it is not an IP address"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -481,8 +396,6 @@
                 "--excludeErrorStats",
             ],
             description: Some("Exclude error statistics (non-2xx HTTP responses) from the final latency and bytes per second averages. default: false"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -490,14 +403,9 @@
                 "--expectBody",
             ],
             description: Some("Ensure the body matches this value. If enabled, mismatches count towards bailout. Enabling this option will slow down the load testing"),
-            takes_value: true,
             arguments: [
                 (
                     name: "EXPECTED",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -506,22 +414,18 @@
                 "--renderStatusCodes",
             ],
             description: Some("Print status codes and their respective statistics"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--cert",
             ],
             description: Some("Path to cert chain in pem format"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -530,14 +434,12 @@
                 "--key",
             ],
             description: Some("Path to private key for specified cert in pem format"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
         ),
@@ -546,14 +448,13 @@
                 "--ca",
             ],
             description: Some("Path to trusted ca certificates for the test. This argument accepts both a single file as well as a list of files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "FILE",
-                    source: Files,
-                    optional: false,
+                    template: [
+                        FilePaths,
+                    ],
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -562,8 +463,6 @@
                 "--debug",
             ],
             description: Some("Print connection errors to stderr"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -571,8 +470,6 @@
                 "--version",
             ],
             description: Some("Print the version number"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -580,8 +477,6 @@
                 "--verbose",
             ],
             description: Some("Print the table with results (default: true)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -589,17 +484,15 @@
                 "--help",
             ],
             description: Some("Print help"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "URL",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            description: Some("The URL to benchmark"),
         ),
     ],
+    presentation: (
+        icon: Some("https://raw.githubusercontent.com/mcollina/autocannon/master/autocannon-logo-icon-100px.png"),
+    ),
 )

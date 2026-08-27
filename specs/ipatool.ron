@@ -5,37 +5,24 @@
     subcommands: [
         (
             name: "auth",
-            aliases: [],
             description: Some("Authenticate with the App Store"),
             subcommands: [
                 (
                     name: "info",
-                    aliases: [],
                     description: Some("Show current account info"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "login",
-                    aliases: [],
                     description: Some("Login to the App Store"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--auth-code",
                             ],
                             description: Some("2FA code for the Apple ID"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "2FA code",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -45,8 +32,7 @@
                                 "--email",
                             ],
                             description: Some("Apple ID email address"),
-                            takes_value: false,
-                            arguments: [],
+                            required: true,
                         ),
                         (
                             names: [
@@ -54,78 +40,41 @@
                                 "--password",
                             ],
                             description: Some("Apple ID password"),
-                            takes_value: false,
-                            arguments: [],
+                            required: true,
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "revoke",
-                    aliases: [],
                     description: Some("Revoke your App Store credentials"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "completion",
-            aliases: [],
             description: Some("Generate shell completion script"),
             subcommands: [
                 (
                     name: "bash",
-                    aliases: [],
                     description: Some("Generate the autocompletion script for bash"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "fish",
-                    aliases: [],
                     description: Some("Generate the autocompletion script for fish"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "powershell",
-                    aliases: [],
                     description: Some("Generate the autocompletion script for powershell"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "zsh",
-                    aliases: [],
                     description: Some("Generate the autocompletion script for zsh"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "download",
-            aliases: [],
             description: Some("Download (encrypted) iOS app packages from the App Store"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -133,20 +82,20 @@
                         "--bundle-identifier",
                     ],
                     description: Some("Bundle identifier of the app"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "identifier",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: true,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_dynamic_script: true,
+                                    has_post_process: true,
+                                ),
+                            ],
+                            filter_strategy: Fuzzy,
+                            debounce: true,
                         ),
                     ],
+                    required: true,
                 ),
                 (
                     names: [
@@ -154,14 +103,12 @@
                         "--output",
                     ],
                     description: Some("The destination path of the downloaded app package"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "output path",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
                 ),
@@ -170,35 +117,25 @@
                         "--purchase",
                     ],
                     description: Some("Obtain a license for the app if needed"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Display help for command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
+                    template: [
+                        Help,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "purchase",
-            aliases: [],
             description: Some("Obtain a license for the app from the App Store"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -206,30 +143,26 @@
                         "--bundle-identifier",
                     ],
                     description: Some("Bundle identifier of the app"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "identifier",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: true,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_dynamic_script: true,
+                                    has_post_process: true,
+                                ),
+                            ],
+                            filter_strategy: Fuzzy,
+                            debounce: true,
                         ),
                     ],
+                    required: true,
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "search",
-            aliases: [],
             description: Some("Search for iOS apps available on the App Store"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -237,14 +170,10 @@
                         "--limit",
                     ],
                     description: Some("Limit the number of results"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "limit",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("5"),
                         ),
                     ],
                 ),
@@ -252,13 +181,8 @@
             arguments: [
                 (
                     name: "query",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -268,43 +192,42 @@
                 "--help",
             ],
             description: Some("Show help for ipatool"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--non-interactive",
             ],
             description: Some("Run in non-interactive session"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--verbose",
             ],
             description: Some("Enables verbose logs"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
         (
             names: [
                 "--format",
             ],
             description: Some("Output format"),
-            takes_value: true,
             arguments: [
                 (
                     name: "format",
-                    source: Static([
-                        "text",
-                        "json",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "text",
+                        ),
+                        (
+                            name: "json",
+                        ),
+                    ],
+                    default: Some("text"),
                 ),
             ],
+            persistent: true,
         ),
         (
             names: [
@@ -312,9 +235,9 @@
                 "--version",
             ],
             description: Some("Show version for ipatool"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
+    presentation: (
+        display_name: Some("IPATool"),
+    ),
 )

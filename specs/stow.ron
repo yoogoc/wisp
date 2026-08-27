@@ -2,7 +2,6 @@
     version: 1,
     command: "stow",
     description: Some("Manage farms of symbolic links"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,23 +9,19 @@
                 "--no",
             ],
             description: Some("Do not perform any operations that modify the filesystem; merely show what would happen"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-d",
                 "--dir",
             ],
-            description: Some("Set the stow directory to \'DIR\' instead of the current directory. This also has the effect of making the default target directory be the parent of \'DIR\'"),
-            takes_value: true,
+            description: Some("Set the stow directory to 'DIR' instead of the current directory. This also has the effect of making the default target directory be the parent of 'DIR'"),
             arguments: [
                 (
                     name: "DIR",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -35,15 +30,13 @@
                 "-t",
                 "--target",
             ],
-            description: Some("Set the target directory to \'DIR\' instead of the parent of the stow directory"),
-            takes_value: true,
+            description: Some("Set the target directory to 'DIR' instead of the parent of the stow directory"),
             arguments: [
                 (
                     name: "DIR",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
         ),
@@ -52,22 +45,30 @@
                 "-v",
                 "--verbose",
             ],
-            description: Some("Send verbose output to standard error describing what Stow is doing. Verbosity levels are from 0 to 5; 0 is the default. Using \'-v\' or \'--verbose\' increases the verbosity by one; using `--verbose=N\' sets it to N"),
-            takes_value: true,
+            description: Some("Send verbose output to standard error describing what Stow is doing. Verbosity levels are from 0 to 5; 0 is the default. Using '-v' or '--verbose' increases the verbosity by one; using `--verbose=N' sets it to N"),
             arguments: [
                 (
                     name: "level",
-                    source: Static([
-                        "0",
-                        "1",
-                        "2",
-                        "3",
-                        "4",
-                        "5",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "0",
+                        ),
+                        (
+                            name: "1",
+                        ),
+                        (
+                            name: "2",
+                        ),
+                        (
+                            name: "3",
+                        ),
+                        (
+                            name: "4",
+                        ),
+                        (
+                            name: "5",
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -77,8 +78,6 @@
                 "--stow",
             ],
             description: Some("Stow the packages that follow this option into the target directory. This is the default action and so can be omitted if you are only stowing packages rather than performing a mixture of stow/delete/restow actions"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -86,8 +85,6 @@
                 "--delete",
             ],
             description: Some("Unstow the packages that follow this option from the target directory rather than installing them"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -95,38 +92,30 @@
                 "--restow",
             ],
             description: Some("Restow packages (first unstow, then stow again). This is useful for pruning obsolete symlinks from the target tree after updating the software in a package"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--adopt",
             ],
             description: Some("This behaviour is specifically intended to alter the contents of your stow directory.  If you do not want that, this option is not for you"),
-            takes_value: false,
-            arguments: [],
+            presentation: (
+                dangerous: true,
+            ),
         ),
         (
             names: [
                 "--no-folding",
             ],
             description: Some("Disable folding of newly stowed directories when stowing, and refolding of newly foldable directories when unstowing"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ignore",
             ],
             description: Some("Ignore files ending in this Perl regex"),
-            takes_value: true,
             arguments: [
                 (
                     name: "REGEX",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -134,15 +123,10 @@
             names: [
                 "--defer",
             ],
-            description: Some("Don\'t stow files beginning with this Perl regex if the file is already stowed to another package"),
-            takes_value: true,
+            description: Some("Don't stow files beginning with this Perl regex if the file is already stowed to another package"),
             arguments: [
                 (
                     name: "REGEX",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -151,14 +135,9 @@
                 "--override",
             ],
             description: Some("Force stowing files beginning with this Perl regex if the file is already stowed to another package"),
-            takes_value: true,
             arguments: [
                 (
                     name: "REGEX",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -166,9 +145,7 @@
             names: [
                 "--dotfiles",
             ],
-            description: Some("Enable special handling for \'dotfiles\' (files or folders whose name begins with a period) in the package directory. If this option is enabled, Stow will add a preprocessing step for each file or folder whose name begins with \'dot - \', and replace the \'dot- \' prefix in the name by a period (.). This is useful when Stow is used to manage collections of dotfiles, to avoid having a package directory full of hidden files"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Enable special handling for 'dotfiles' (files or folders whose name begins with a period) in the package directory. If this option is enabled, Stow will add a preprocessing step for each file or folder whose name begins with 'dot - ', and replace the 'dot- ' prefix in the name by a period (.). This is useful when Stow is used to manage collections of dotfiles, to avoid having a package directory full of hidden files"),
         ),
         (
             names: [
@@ -176,8 +153,6 @@
                 "--version",
             ],
             description: Some("Show Stow version, and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -185,9 +160,6 @@
                 "--help",
             ],
             description: Some("Show Stow command syntax, and exit"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

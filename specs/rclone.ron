@@ -5,108 +5,78 @@
     subcommands: [
         (
             name: "about",
-            aliases: [],
             description: Some("Get quota information from the remote"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--full",
                     ],
                     description: Some("Full numbers instead of SI units"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Format output as JSON"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "remote:",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "authorize",
-            aliases: [],
             description: Some("Remote authorization"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--auth-no-open-browser",
                     ],
                     description: Some("Do not automatically open auth link in default browser"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "backend",
-            aliases: [],
             description: Some("Run a backend specific command"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--json",
                     ],
                     description: Some("Format output as JSON"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "cat",
-            aliases: [],
             description: Some("Concatenates any files and sends them to stdout"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--discard",
                     ],
                     description: Some("Discard the output instead of printing"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--count",
                     ],
                     description: Some("Only print N characters. (default -1)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "int",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -115,14 +85,9 @@
                         "--head",
                     ],
                     description: Some("Only print the first N characters"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "int",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -131,14 +96,9 @@
                         "--offset",
                     ],
                     description: Some("Start printing at offset N (or from end if -ve)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "int",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -147,14 +107,9 @@
                         "--tail",
                     ],
                     description: Some("Only print the last N characters"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "int",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -162,48 +117,39 @@
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "check",
-            aliases: [],
             description: Some("Checks the files in the source and destination match"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--download",
                     ],
                     description: Some("Check by downloading rather than with hash"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--combined",
                     ],
                     description: Some("Make a combined report of changes to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -212,14 +158,12 @@
                         "--differ",
                     ],
                     description: Some("Report all non-matching files to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -228,14 +172,12 @@
                         "--error",
                     ],
                     description: Some("Report all files with errors (hashing or reading) to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -244,14 +186,12 @@
                         "--match",
                     ],
                     description: Some("Report all matching files to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -260,14 +200,12 @@
                         "--missing-on-dst",
                     ],
                     description: Some("Report all files missing from the destination to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -276,14 +214,12 @@
                         "--missing-on-src",
                     ],
                     description: Some("Report all files missing from the source to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -292,226 +228,167 @@
                         "--one-way",
                     ],
                     description: Some("Check one way only, source files must exist on remote"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "source:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "cleanup",
-            aliases: [],
             description: Some("Clean up the remote if possible"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "config",
-            aliases: [],
             description: Some("Enter an interactive configuration session"),
             subcommands: [
                 (
                     name: "create",
-                    aliases: [],
                     description: Some("Create a new remote with name, type and options"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                         (
                             name: "type",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "copy",
-            aliases: [],
             description: Some("Copy files from source to dest, skipping already copied"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "source:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "dest:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "copyto",
-            aliases: [],
             description: Some("Copy files from source to dest, skipping already copied"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "source:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "dest:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "copyurl",
-            aliases: [],
             description: Some("Copy url content to dest"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "url",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
                 (
                     name: "dest:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "cryptcheck",
-            aliases: [],
             description: Some("Cryptcheck checks the integrity of a crypted remote"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--combined",
                     ],
                     description: Some("Make a combined report of changes to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -520,14 +397,12 @@
                         "--differ",
                     ],
                     description: Some("Report all non-matching files to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -536,14 +411,12 @@
                         "--error",
                     ],
                     description: Some("Report all files with errors (hashing or reading) to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -552,14 +425,12 @@
                         "--match",
                     ],
                     description: Some("Report all matching files to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -568,14 +439,12 @@
                         "--missing-on-dst",
                     ],
                     description: Some("Report all files missing from the destination to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -584,14 +453,12 @@
                         "--missing-on-src",
                     ],
                     description: Some("Report all files missing from the source to this file"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -600,119 +467,121 @@
                         "--one-way",
                     ],
                     description: Some("Check one way only, source files must exist on remote"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "cryptedremote",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "cryptdecode",
-            aliases: [],
             description: Some("Cryptdecode returns unencrypted file names"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--reverse",
                     ],
                     description: Some("Reverse cryptdecode, encrypts filenames"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "cryptedremote",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "encryptedfilename",
-                    source: Files,
-                    optional: false,
                     variadic: true,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "dedupe",
-            aliases: [],
             description: Some("Interactively find duplicate filenames and delete/rename them"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--by-hash",
                     ],
                     description: Some("Find identical hashes rather than names"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--dedupe-mode",
                     ],
                     description: Some("Dedupe mode"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "mode",
-                            source: Static([
-                                "interactive",
-                                "skip",
-                                "rename",
-                                "list",
-                                "first",
-                                "newest",
-                                "oldest",
-                                "largest",
-                                "smallest",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "interactive",
+                                    description: Some("Interactive"),
+                                ),
+                                (
+                                    name: "skip",
+                                    description: Some("Removes identical files then skips anything left"),
+                                ),
+                                (
+                                    name: "rename",
+                                    description: Some("Removes identical files then renames the rest to be different"),
+                                ),
+                                (
+                                    name: "list",
+                                    description: Some("Lists duplicate dirs and files only and changes nothing"),
+                                ),
+                                (
+                                    name: "first",
+                                    description: Some("removes identical files then keeps the first one."),
+                                ),
+                                (
+                                    name: "newest",
+                                    description: Some("removes identical files then keeps the newest one."),
+                                ),
+                                (
+                                    name: "oldest",
+                                    description: Some("removes identical files then keeps the oldest one."),
+                                ),
+                                (
+                                    name: "largest",
+                                    description: Some("removes identical files then keeps the largest one."),
+                                ),
+                                (
+                                    name: "smallest",
+                                    description: Some("removes identical files then keeps the smallest one."),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -720,191 +589,146 @@
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "delete",
-            aliases: [],
             description: Some("Remove the files in path"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--rmdirs",
                     ],
                     description: Some("Rmdirs removes empty directories but leaves root intact"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                dangerous: true,
+            ),
         ),
         (
             name: "deletefile",
-            aliases: [],
             description: Some("Remove a single file from remote"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                dangerous: true,
+            ),
         ),
         (
             name: "genautocomplete",
-            aliases: [],
             description: Some("Output completion script for a given shell"),
             subcommands: [
                 (
                     name: "bash",
-                    aliases: [],
                     description: Some("Output bash completion script for rclone."),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "output_file",
-                            source: Files,
+                            description: Some("If output_file is \"-\", then the output will be written to stdout"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "fish",
-                    aliases: [],
                     description: Some("Output fish completion script for rclone."),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "output_file",
-                            source: Files,
+                            description: Some("If output_file is \"-\", then the output will be written to stdout"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "zsh",
-                    aliases: [],
                     description: Some("Output zsh completion script for rclone."),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "output_file",
-                            source: Files,
+                            description: Some("If output_file is \"-\", then the output will be written to stdout"),
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "gendocs",
-            aliases: [],
             description: Some("Output markdown docs for rclone to the directory supplied"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "output_directory",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "hashsum",
-            aliases: [],
             description: Some("Produces a hashsum file for all the objects in the path"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--base64",
                     ],
                     description: Some("Output base64 encoded hashsum"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--download",
                     ],
                     description: Some("Download the file and hash it locally; if this flag is not specified, the hash is requested from the remote"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--output-file",
                     ],
                     description: Some("Output hashsums to a file rather than the terminal"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -912,74 +736,66 @@
             arguments: [
                 (
                     name: "hash",
-                    source: Static([
-                        "MD5",
-                        "SHA-1",
-                        "DropboxHash",
-                        "QuickXorHash",
-                        "Whirlpool",
-                        "CRC-32",
-                        "MailruHash",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "MD5",
+                        ),
+                        (
+                            name: "SHA-1",
+                        ),
+                        (
+                            name: "DropboxHash",
+                        ),
+                        (
+                            name: "QuickXorHash",
+                        ),
+                        (
+                            name: "Whirlpool",
+                        ),
+                        (
+                            name: "CRC-32",
+                        ),
+                        (
+                            name: "MailruHash",
+                        ),
+                    ],
                 ),
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Show help for rclone commands, flags and backends"),
             subcommands: [
                 (
                     name: "flags",
-                    aliases: [],
                     description: Some("List of global flags"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "link",
-            aliases: [],
             description: Some("Generate public link to file/folder"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--expire",
                     ],
                     description: Some("The amount of time that the link will be valid (default 100y)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "duration",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -988,125 +804,94 @@
                         "--unlink",
                     ],
                     description: Some("Remove existing public link to file/folder"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "listremotes",
-            aliases: [],
             description: Some("List all the remotes in the config file"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--long",
                     ],
                     description: Some("Show the type as well as names"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ls",
-            aliases: [],
             description: Some("List the objects in the path with size and path"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "lsd",
-            aliases: [],
             description: Some("List all directories/containers/buckets in the path"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "-R",
                         "--recursive",
                     ],
-                    description: None,
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "lsf",
-            aliases: [],
             description: Some("List directories and objects in remote:path formatted for parsing"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--dirs-only",
                     ],
                     description: Some("Only list directories"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--files-only",
                     ],
                     description: Some("Only list files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1114,24 +899,18 @@
                         "-R",
                     ],
                     description: Some("Recurse into the listing"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--absolute",
                     ],
                     description: Some("Put a leading / in front of path names"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--csv",
                     ],
                     description: Some("Output in CSV format"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1139,8 +918,6 @@
                         "--dir-slash",
                     ],
                     description: Some("Append a slash to directory names. (default true)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1148,22 +925,39 @@
                         "-F",
                     ],
                     description: Some("Output format - see  help for details (default \"p\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "format",
-                            source: Static([
-                                "p",
-                                "s",
-                                "t",
-                                "h",
-                                "i",
-                                "o",
-                                "m",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "p",
+                                    description: Some("path"),
+                                ),
+                                (
+                                    name: "s",
+                                    description: Some("size"),
+                                ),
+                                (
+                                    name: "t",
+                                    description: Some("modification time"),
+                                ),
+                                (
+                                    name: "h",
+                                    description: Some("hash"),
+                                ),
+                                (
+                                    name: "i",
+                                    description: Some("ID of object"),
+                                ),
+                                (
+                                    name: "o",
+                                    description: Some("Original ID of underlying object"),
+                                ),
+                                (
+                                    name: "m",
+                                    description: Some("MimeType of object if known"),
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1172,22 +966,32 @@
                         "--hash",
                     ],
                     description: Some("Use this hash when h is used in the format (default \"MD5\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "hash",
-                            source: Static([
-                                "MD5",
-                                "SHA-1",
-                                "DropboxHash",
-                                "QuickXorHash",
-                                "Whirlpool",
-                                "CRC-32",
-                                "MailruHash",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "MD5",
+                                ),
+                                (
+                                    name: "SHA-1",
+                                ),
+                                (
+                                    name: "DropboxHash",
+                                ),
+                                (
+                                    name: "QuickXorHash",
+                                ),
+                                (
+                                    name: "Whirlpool",
+                                ),
+                                (
+                                    name: "CRC-32",
+                                ),
+                                (
+                                    name: "MailruHash",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1197,14 +1001,9 @@
                         "-s",
                     ],
                     description: Some("Separator for the items in the format. (default \";\")"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "separator",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1212,42 +1011,33 @@
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "lsjson",
-            aliases: [],
             description: Some("List directories and objects in the path in JSON format"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--dirs-only",
                     ],
                     description: Some("Only list directories"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--files-only",
                     ],
                     description: Some("Only list files"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1255,8 +1045,6 @@
                         "-R",
                     ],
                     description: Some("Recurse into the listing"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -1264,38 +1052,44 @@
                         "-M",
                     ],
                     description: Some("Show the encrypted names"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--hash",
                     ],
                     description: Some("Include hashes in the output (may take longer)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--hash-type",
                     ],
                     description: Some("Show only this hash type (may be repeated)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "hashes",
-                            source: Static([
-                                "MD5",
-                                "SHA-1",
-                                "DropboxHash",
-                                "QuickXorHash",
-                                "Whirlpool",
-                                "CRC-32",
-                                "MailruHash",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "MD5",
+                                ),
+                                (
+                                    name: "SHA-1",
+                                ),
+                                (
+                                    name: "DropboxHash",
+                                ),
+                                (
+                                    name: "QuickXorHash",
+                                ),
+                                (
+                                    name: "Whirlpool",
+                                ),
+                                (
+                                    name: "CRC-32",
+                                ),
+                                (
+                                    name: "MailruHash",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1303,104 +1097,81 @@
                     names: [
                         "--no-mimetype",
                     ],
-                    description: Some("Don\'t read the mime type (can speed things up)"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't read the mime type (can speed things up)"),
                 ),
                 (
                     names: [
                         "--no-modtime",
                     ],
-                    description: Some("Don\'t read the modification time (can speed things up)"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't read the modification time (can speed things up)"),
                 ),
                 (
                     names: [
                         "--original",
                     ],
                     description: Some("Show the ID of the underlying Object"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "lsl",
-            aliases: [],
             description: Some("List the objects in path with modification time, size and path"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "md5sum",
-            aliases: [],
             description: Some("Produces an md5sum file for all the objects in the path"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--base64",
                     ],
                     description: Some("Output base64 encoded hashsum"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--download",
                     ],
                     description: Some("Download the file and hash it locally; if this flag is not specified, the hash is requested from the remote"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--output-file",
                     ],
                     description: Some("Output hashsums to a file rather than the terminal"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                     ],
                 ),
@@ -1408,427 +1179,256 @@
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "mkdir",
-            aliases: [],
-            description: Some("Make the path if it doesn\'t already exist"),
-            subcommands: [],
-            options: [],
+            description: Some("Make the path if it doesn't already exist"),
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "mount",
-            aliases: [],
             description: Some("Mount the remote as file system on a mountpoint"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "remote:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "mountpoint",
-                    source: Directories,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Folders,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "move",
-            aliases: [],
             description: Some("Move files from source to dest"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "moveto",
-            aliases: [],
             description: Some("Move file or directory from source to dest"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "ncdu",
-            aliases: [],
             description: Some("Explore a remote with a text based user interface"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "obscure",
-            aliases: [],
             description: Some("Obscure password for use in the rclone config file"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "purge",
-            aliases: [],
             description: Some("Remove the path and all of its contents"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
+            presentation: (
+                dangerous: true,
+            ),
         ),
         (
             name: "rc",
-            aliases: [],
             description: Some("Run a command against a running rclone"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "rcat",
-            aliases: [],
             description: Some("Copies standard input to file on remote"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "rcd",
-            aliases: [],
             description: Some("Run rclone listening to remote control commands only"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "rmdir",
-            aliases: [],
             description: Some("Remove the empty directory at path"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "rmdirs",
-            aliases: [],
             description: Some("Remove empty directories under the path"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "selfupdate",
-            aliases: [],
             description: Some("Update the rclone binary"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "serve",
-            aliases: [],
             description: Some("Serve a remote over a protocol"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "settier",
-            aliases: [],
             description: Some("Changes storage class/tier of objects in remote"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "sha1sum",
-            aliases: [],
             description: Some("Produces an sha1sum file for all the objects in the path"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "size",
-            aliases: [],
             description: Some("Prints the total size and number of objects in remote:path"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "sync",
-            aliases: [],
             description: Some("Make source and dest identical, modifying destination only"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "source:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
                 (
                     name: "dest:path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "rclone",
-                            "listremotes",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "rclone",
+                                "listremotes",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "test",
-            aliases: [],
             description: Some("Run a test command"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "touch",
-            aliases: [],
             description: Some("Create new file or change file modification time"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "tree",
-            aliases: [],
             description: Some("List the contents of the remote in a tree like fashion"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
-                    name: "value",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    name: "",
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "version",
-            aliases: [],
             description: Some("Show the version number"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -1837,8 +1437,6 @@
                 "--version",
             ],
             description: Some("View your current rclone version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -1846,9 +1444,6 @@
                 "-h",
             ],
             description: Some("Show help for rclone commands, flags and backends"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

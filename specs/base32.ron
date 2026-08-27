@@ -2,7 +2,6 @@
     version: 1,
     command: "base32",
     description: Some("Base32 encode/decode data and print to standard output"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,8 +9,6 @@
                 "-h",
             ],
             description: Some("Display this help and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -19,8 +16,6 @@
                 "-d",
             ],
             description: Some("Decode data"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -28,8 +23,6 @@
                 "-i",
             ],
             description: Some("When decoding, ignore non-alphabet characters"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -37,22 +30,33 @@
                 "-w",
             ],
             description: Some("Wrap encoded lines after COLS character (default 76).  Use 0 to disable line wrapping"),
-            takes_value: true,
             arguments: [
                 (
                     name: "COLS",
-                    source: Static([
-                        "76",
-                        "78",
-                        "80",
-                        "100",
-                        "120",
-                        "160",
-                        "0",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "76",
+                        ),
+                        (
+                            name: "78",
+                        ),
+                        (
+                            name: "80",
+                        ),
+                        (
+                            name: "100",
+                        ),
+                        (
+                            name: "120",
+                        ),
+                        (
+                            name: "160",
+                        ),
+                        (
+                            name: "0",
+                        ),
+                    ],
+                    default: Some("76"),
                 ),
             ],
         ),
@@ -61,17 +65,18 @@
                 "--version",
             ],
             description: Some("Output version information and exit"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
             name: "FILE",
-            source: Files,
-            optional: false,
-            variadic: false,
-            imported_generator: None,
+            description: Some("File to base32 encode/decode"),
+            template: [
+                FilePaths,
+            ],
         ),
     ],
+    parser_directives: Some((
+        options_must_precede_arguments: true,
+    )),
 )

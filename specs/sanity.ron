@@ -5,42 +5,32 @@
     subcommands: [
         (
             name: "help",
-            aliases: [],
             description: Some("Displays help information about Sanity"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "command",
-                    source: Files,
+                    template: [
+                        Help,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "build",
-            aliases: [],
             description: Some("Builds the current Sanity configuration to a static bundle"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--source-maps",
                     ],
                     description: Some("Enable source maps for built bundles (increases size of bundle)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-minify",
                     ],
                     description: Some("Skip minifying built JavaScript (speeds up build, increases size of bundle)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -48,40 +38,27 @@
                         "--yes",
                     ],
                     description: Some("Use unattended mode, accepting defaults and using only flags for choices"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "codemod",
-            aliases: [],
             description: Some("Runs a code modification script"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--dry",
                     ],
                     description: Some("Dry run (no changes are made to files)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--extensions",
                     ],
                     description: Some("Transform files with these file extensions (comma separated list) (default: js,ts,tsx)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "extensions",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -90,225 +67,148 @@
                         "--no-verify",
                     ],
                     description: Some("Skip verification before running codemod"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "configcheck",
-            aliases: [],
             description: Some("Checks if the required configuration files for plugins exists and are up to date"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "cors",
-            aliases: [],
             description: Some("Interact with CORS-entries for your project"),
             subcommands: [
                 (
                     name: "add",
-                    aliases: [],
                     description: Some("Allow a new origin to use your project API through CORS"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--credentials",
                             ],
                             description: Some("Allow credentials (token/cookie) to be sent from this origin"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--no-credentials",
+                            ],
                         ),
                         (
                             names: [
                                 "--no-credentials",
                             ],
                             description: Some("Disallow credentials (token/cookie) to be sent from this origin"),
-                            takes_value: false,
-                            arguments: [],
+                            exclusive_on: [
+                                "--credentials",
+                            ],
                         ),
                     ],
                     arguments: [
                         (
                             name: "origin",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The origin to allow"),
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Delete an existing CORS-origin from your project"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "origin",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("The origin to delete"),
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        dangerous: true,
+                    ),
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List all origins allowed to access the API for this project"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "dataset",
-            aliases: [],
             description: Some("Interact with datasets in your project"),
             subcommands: [
                 (
                     name: "alias",
-                    aliases: [],
                     description: Some("You can manage your dataset alias using this command"),
                     subcommands: [
                         (
                             name: "create",
-                            aliases: [],
-                            description: None,
-                            subcommands: [],
-                            options: [],
                             arguments: [
                                 (
                                     name: "alias-name",
-                                    source: Files,
                                     optional: true,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                                 (
                                     name: "target-dataset",
-                                    source: Files,
                                     optional: true,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
-                            load_spec: None,
                         ),
                         (
                             name: "delete",
-                            aliases: [],
-                            description: None,
-                            subcommands: [],
-                            options: [],
                             arguments: [
                                 (
                                     name: "alias-name",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
-                            load_spec: None,
+                            presentation: (
+                                dangerous: true,
+                            ),
                         ),
                         (
                             name: "link",
-                            aliases: [],
-                            description: None,
-                            subcommands: [],
                             options: [
                                 (
                                     names: [
                                         "--force",
                                     ],
                                     description: Some("Skips security prompt and forces link command"),
-                                    takes_value: false,
-                                    arguments: [],
                                 ),
                             ],
                             arguments: [
                                 (
                                     name: "alias-name",
-                                    source: Files,
                                     optional: true,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                                 (
                                     name: "target-dataset",
-                                    source: Files,
                                     optional: true,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
-                            load_spec: None,
                         ),
                         (
                             name: "unlink",
-                            aliases: [],
-                            description: None,
-                            subcommands: [],
-                            options: [],
                             arguments: [
                                 (
                                     name: "alias-name",
-                                    source: Files,
                                     optional: true,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
-                            load_spec: None,
                         ),
                     ],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "copy",
-                    aliases: [],
                     description: Some("Manages dataset copying, including starting a new copy job, listing copy jobs and following the progress of a running copy job"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--detach",
                             ],
                             description: Some("Start the copy without waiting for it to finish"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--attach",
                             ],
                             description: Some("Attach to the running copy process to show progress"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "job-id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -316,32 +216,26 @@
                             names: [
                                 "--skip-history",
                             ],
-                            description: Some("Don\'t preserve document history on copy"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Don't preserve document history on copy"),
                         ),
                         (
                             names: [
                                 "--list",
                             ],
                             description: Some("Lists all dataset copy jobs corresponding to a certain criteria"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--offset",
                             ],
                             description: Some("Start position in the list of jobs. Default 0. With --list"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "offset",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
+                            ],
+                            depends_on: [
+                                "--list",
                             ],
                         ),
                         (
@@ -349,58 +243,47 @@
                                 "--limit",
                             ],
                             description: Some("Maximum number of jobs returned. Default 10. Maximum 1000. With --list"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "limit",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
+                            ],
+                            depends_on: [
+                                "--list",
                             ],
                         ),
                     ],
                     arguments: [
                         (
                             name: "source-dataset",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                         (
                             name: "target-dataset",
-                            source: Files,
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "create",
-                    aliases: [],
                     description: Some("Create a new dataset within your project"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--visibility",
                             ],
                             description: Some("Set visibility for this dataset (public/private)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "visibility",
-                                    source: Static([
-                                        "public",
-                                        "private",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "public",
+                                        ),
+                                        (
+                                            name: "private",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -408,82 +291,57 @@
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Delete a dataset within your project"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "datasetName",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        dangerous: true,
+                    ),
                 ),
                 (
                     name: "export",
-                    aliases: [],
                     description: Some("Export dataset to local filesystem as a gzipped tarball"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--raw",
                             ],
                             description: Some("Extract only documents, without rewriting asset references"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-assets",
                             ],
                             description: Some("Export only non-asset documents and remove references to image assets"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-drafts",
                             ],
                             description: Some("Export only published versions of documents"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-compress",
                             ],
                             description: Some("Skips compressing tarball entries (still generates a gzip file)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--types",
                             ],
                             description: Some("Defines which document types to export"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "types",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -492,22 +350,15 @@
                                 "--overwrite",
                             ],
                             description: Some("Overwrite any file with the same name"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--asset-concurrency",
                             ],
                             description: Some("Concurrent number of asset downloads"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "num",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -515,244 +366,171 @@
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                         (
                             name: "destination",
-                            source: Directories,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                Folders,
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "import",
-                    aliases: [],
                     description: Some("Import documents to given dataset from ndjson file"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--missing",
                             ],
                             description: Some("On duplicate document IDs, skip importing document in question"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--replace",
                             ],
                             description: Some("On duplicate document IDs, replace existing document with imported document"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--allow-failing-assets",
                             ],
                             description: Some("Skip assets that cannot be fetched/uploaded"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--replace-assets",
                             ],
                             description: Some("Skip reuse of existing assets"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            template: [
+                                FilePaths,
+                            ],
                         ),
                         (
                             name: "target_dataset",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List datasets of your project"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "visibility",
-                    aliases: [],
                     description: Some("Set visibility of a dataset"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "dataset",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                         (
                             name: "mode",
-                            source: Static([
-                                "get",
-                                "set",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "get",
+                                ),
+                                (
+                                    name: "set",
+                                ),
+                            ],
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "debug",
-            aliases: [],
             description: Some("Gathers information on Sanity environment"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--secrets",
                     ],
                     description: Some("Include API keys in output"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "deploy",
-            aliases: [],
             description: Some("Deploys a statically built Sanity studio"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--source-maps",
                     ],
                     description: Some("Enable source maps for built bundles (increases size of bundle)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-minify",
                     ],
                     description: Some("Skip minifying built JavaScript (speeds up build, increases size of bundle)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-build",
                     ],
-                    description: Some("Don\'t build the studio prior to deploy, instead deploying the version currently in `dist/`"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Don't build the studio prior to deploy, instead deploying the version currently in `dist/`"),
                 ),
             ],
             arguments: [
                 (
                     name: "source_dir",
-                    source: Directories,
+                    template: [
+                        Folders,
+                    ],
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "docs",
-            aliases: [],
             description: Some("Opens the Sanity documentation"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "documents",
-            aliases: [],
             description: Some("Interact with documents in your project"),
             subcommands: [
                 (
                     name: "create",
-                    aliases: [],
                     description: Some("Create one or more documents"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--replace",
                             ],
                             description: Some("On duplicate document IDs, replace existing document with specified document(s)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--missing",
                             ],
-                            description: Some("On duplicate document IDs, don\'t modify the target document(s)"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("On duplicate document IDs, don't modify the target document(s)"),
                         ),
                         (
                             names: [
                                 "--watch",
                             ],
                             description: Some("Write the documents whenever the target file or buffer changes"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--json5",
                             ],
                             description: Some("Use JSON5 file type to allow a \"simplified\" version of JSON"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--id",
                             ],
                             description: Some("Specify a document ID to use. Will fetch remote document ID and populate editor"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "id",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -761,14 +539,9 @@
                                 "--dataset",
                             ],
                             description: Some("NAME to override dataset"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "dataset",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -776,33 +549,25 @@
                     arguments: [
                         (
                             name: "file",
-                            source: Files,
+                            template: [
+                                FilePaths,
+                            ],
                             optional: true,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Delete a document by ID"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--dataset",
                             ],
                             description: Some("NAME to override dataset"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "dataset",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -810,41 +575,31 @@
                     arguments: [
                         (
                             name: "id",
-                            source: Files,
-                            optional: false,
                             variadic: true,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        dangerous: true,
+                    ),
                 ),
                 (
                     name: "get",
-                    aliases: [],
                     description: Some("Get and print a document by ID"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--pretty",
                             ],
                             description: Some("Colorized JSON output"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--dataset",
                             ],
                             description: Some("NAME to override dataset"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "dataset",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -852,41 +607,27 @@
                     arguments: [
                         (
                             name: "document_id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "query",
-                    aliases: [],
                     description: Some("Query for documents"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--pretty",
                             ],
                             description: Some("Colorized JSON output"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--dataset",
                             ],
                             description: Some("NAME to override dataset"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "dataset",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -895,14 +636,9 @@
                                 "--api-version",
                             ],
                             description: Some("API version to use (defaults to `v1`)"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "version",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -910,77 +646,53 @@
                     arguments: [
                         (
                             name: "query",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "exec",
-            aliases: [],
             description: Some("Runs a script in Sanity context"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--with-user-token",
                     ],
-                    description: Some("Preload access token from CLI config into \'part:@sanity/base/client\' part"),
-                    takes_value: false,
-                    arguments: [],
+                    description: Some("Preload access token from CLI config into 'part:@sanity/base/client' part"),
                 ),
                 (
                     names: [
                         "--mock-browser-env",
                     ],
                     description: Some("Mocks a browser-like environment using jsdom"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "script",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "graphql",
-            aliases: [],
             description: Some("Interact with GraphQL APIs"),
             subcommands: [
                 (
                     name: "deploy",
-                    aliases: [],
                     description: Some("Deploy a GraphQL API from the current Sanity schema"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--dataset",
                             ],
                             description: Some("Deploy API for the given dataset"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "dataset",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -988,15 +700,10 @@
                             names: [
                                 "--tag",
                             ],
-                            description: Some("Deploy API to given tag (defaults to \'default\')"),
-                            takes_value: true,
+                            description: Some("Deploy API to given tag (defaults to 'default')"),
                             arguments: [
                                 (
                                     name: "tag",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1004,15 +711,10 @@
                             names: [
                                 "--generation",
                             ],
-                            description: Some("API generation to deploy (defaults to \'gen3\')"),
-                            takes_value: true,
+                            description: Some("API generation to deploy (defaults to 'gen3')"),
                             arguments: [
                                 (
                                     name: "generation",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1021,65 +723,43 @@
                                 "--non-null-document-fields",
                             ],
                             description: Some("Set document interface fields (_id, _type etc) as non-null"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--playground",
                             ],
                             description: Some("Deploy a GraphQL playground for easily testing queries (public)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--no-playground",
                             ],
                             description: Some("Skip playground prompt (do not deploy a playground)"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                         (
                             names: [
                                 "--force",
                             ],
                             description: Some("Deploy API without confirming breaking changes"),
-                            takes_value: false,
-                            arguments: [],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("Lists all the GraphQL endpoints deployed for this project"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "undeploy",
-                    aliases: [],
                     description: Some("Remove a deployed GraphQL API"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--dataset",
                             ],
                             description: Some("Delete GraphQL API for the given dataset"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "dataset",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1087,111 +767,64 @@
                             names: [
                                 "--tag",
                             ],
-                            description: Some("Delete GraphQL API for the given tag (defaults to \'default\')"),
-                            takes_value: true,
+                            description: Some("Delete GraphQL API for the given tag (defaults to 'default')"),
                             arguments: [
                                 (
                                     name: "tag",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "hook",
-            aliases: [],
             description: Some("Interact with hooks in your project"),
             subcommands: [
                 (
                     name: "attempt",
-                    aliases: [],
                     description: Some("Print details of a given webhook delivery attempt"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "attempt_id",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "create",
-                    aliases: [],
                     description: Some("Create a new hook for the given dataset"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "delete",
-                    aliases: [],
                     description: Some("Delete a hook within your project"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
+                    presentation: (
+                        dangerous: true,
+                    ),
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List hooks for a given project"),
-                    subcommands: [],
-                    options: [],
-                    arguments: [],
-                    load_spec: None,
                 ),
                 (
                     name: "logs",
-                    aliases: [],
                     description: Some("List latest log entries for a given hook"),
-                    subcommands: [],
-                    options: [],
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "init",
-            aliases: [],
             description: Some("Initialize a new Sanity project or plugin"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -1199,22 +832,15 @@
                         "--yes",
                     ],
                     description: Some("Use unattended mode, accepting defaults and using only flags for choices"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--project",
                     ],
                     description: Some("Project ID to use for the studio"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "projectId",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1223,14 +849,9 @@
                         "--organization",
                     ],
                     description: Some("Organization ID to use for the project"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "organizationId",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1239,14 +860,9 @@
                         "--dataset",
                     ],
                     description: Some("Dataset name for the studio"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "dataset",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1255,22 +871,15 @@
                         "--dataset-default",
                     ],
                     description: Some("Set up a project with a public dataset named \"production\""),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--output-path",
                     ],
                     description: Some("Path to write studio project to"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "path",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1279,14 +888,9 @@
                         "--template",
                     ],
                     description: Some("Project template to use [default: \"clean\"]"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "template",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1295,14 +899,9 @@
                         "--provider",
                     ],
                     description: Some("Login provider to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "provider",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1311,17 +910,17 @@
                         "--visibility",
                     ],
                     description: Some("Visibility mode for dataset (public/private)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "mode",
-                            source: Static([
-                                "public",
-                                "private",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "public",
+                                ),
+                                (
+                                    name: "private",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -1330,14 +929,9 @@
                         "--create-project",
                     ],
                     description: Some("Create a new project with the given name"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1346,14 +940,9 @@
                         "--project-plan",
                     ],
                     description: Some("Optionally select a plan for a new project"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1362,15 +951,13 @@
                         "--coupon",
                     ],
                     description: Some("Optionally select a coupon for a new project (cannot be used with --project-plan)"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
+                    ],
+                    exclusive_on: [
+                        "--project-plan",
                     ],
                 ),
                 (
@@ -1378,98 +965,59 @@
                         "--reconfigure",
                     ],
                     description: Some("Reconfigure Sanity studio in current folder with new project/dataset"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "install",
-            aliases: [],
             description: Some("Installs a Sanity plugin to the current Sanity configuration"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "plugin",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "login",
-            aliases: [],
             description: Some("Authenticates against the Sanity.io API (no flag) or a third-party identity provider (with --sso flag)"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--sso",
                     ],
                     description: Some("Authenticate against a third-party identity provider"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "slug",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "logout",
-            aliases: [],
             description: Some("Logs out of the Sanity.io session"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "manage",
-            aliases: [],
             description: Some("Opens the Sanity project management UI"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "projects",
-            aliases: [],
             description: Some("Interact with projects connected to your logged in user"),
             subcommands: [
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("Lists projects connected to your user"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--sort",
                             ],
                             description: Some("Sort output by specified column"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "field",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1478,48 +1026,36 @@
                                 "--order",
                             ],
                             description: Some("Sort output ascending/descending"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "order",
-                                    source: Static([
-                                        "asc",
-                                        "desc",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "asc",
+                                        ),
+                                        (
+                                            name: "desc",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "start",
-            aliases: [],
             description: Some("Starts a web server for the Content Studio"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--port",
                     ],
                     description: Some("TCP port to start server on. [default: 3333]"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "port",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1528,66 +1064,39 @@
                         "--host",
                     ],
                     description: Some("The local network interface at which to listen. [default: \"127.0.0.1\"]"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "host",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "undeploy",
-            aliases: [],
             description: Some("Removes the deployed studio from <hostname>.sanity.studio"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "uninstall",
-            aliases: [],
             description: Some("Removes a Sanity plugin from the current Sanity configuration"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "plugin",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "upgrade",
-            aliases: [],
             description: Some("Upgrades all (or some) Sanity modules to their latest versions"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--range",
                     ],
-                    description: Some("Version range to upgrade to, eg \'^2.2.7\' or \'2.1.x\'"),
-                    takes_value: true,
+                    description: Some("Version range to upgrade to, eg '^2.2.7' or '2.1.x'"),
                     arguments: [
                         (
                             name: "range",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1595,15 +1104,10 @@
                     names: [
                         "--tag",
                     ],
-                    description: Some("Tagged release to upgrade to, eg \'canary\' or \'some-feature\'"),
-                    takes_value: true,
+                    description: Some("Tagged release to upgrade to, eg 'canary' or 'some-feature'"),
                     arguments: [
                         (
                             name: "tag",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -1612,37 +1116,25 @@
                         "--save-exact",
                     ],
                     description: Some("Pin the resolved version numbers in package.json (no ^ prefix)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "users",
-            aliases: [],
             description: Some("Manage users of your project"),
             subcommands: [
                 (
                     name: "invite",
-                    aliases: [],
                     description: Some("Invite a new user to the project"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--role",
                             ],
                             description: Some("Role to invite the user as"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "role",
-                                    source: Files,
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
                                 ),
                             ],
                         ),
@@ -1650,54 +1142,47 @@
                     arguments: [
                         (
                             name: "email",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
-                    load_spec: None,
                 ),
                 (
                     name: "list",
-                    aliases: [],
                     description: Some("List users of the project"),
-                    subcommands: [],
                     options: [
                         (
                             names: [
                                 "--no-invitations",
                             ],
-                            description: Some("Don\'t include pending invitations"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Don't include pending invitations"),
                         ),
                         (
                             names: [
                                 "--no-robots",
                             ],
-                            description: Some("Don\'t include robots (token users)"),
-                            takes_value: false,
-                            arguments: [],
+                            description: Some("Don't include robots (token users)"),
                         ),
                         (
                             names: [
                                 "--sort",
                             ],
                             description: Some("Sort users by specified column: id, name, role, date"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "field",
-                                    source: Static([
-                                        "id",
-                                        "name",
-                                        "role",
-                                        "date",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "id",
+                                        ),
+                                        (
+                                            name: "name",
+                                        ),
+                                        (
+                                            name: "role",
+                                        ),
+                                        (
+                                            name: "date",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
@@ -1706,37 +1191,27 @@
                                 "--order",
                             ],
                             description: Some("Sort output ascending/descending"),
-                            takes_value: true,
                             arguments: [
                                 (
                                     name: "order",
-                                    source: Static([
-                                        "asc",
-                                        "desc",
-                                    ]),
-                                    optional: false,
-                                    variadic: false,
-                                    imported_generator: None,
+                                    suggestions: [
+                                        (
+                                            name: "asc",
+                                        ),
+                                        (
+                                            name: "desc",
+                                        ),
+                                    ],
                                 ),
                             ],
                         ),
                     ],
-                    arguments: [],
-                    load_spec: None,
                 ),
             ],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "versions",
-            aliases: [],
             description: Some("Shows the installed versions of Sanity CLI and core components"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -1746,9 +1221,6 @@
                 "-h",
             ],
             description: Some("Show help for sanity"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
-    arguments: [],
 )

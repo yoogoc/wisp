@@ -5,23 +5,16 @@
     subcommands: [
         (
             name: "build",
-            aliases: [],
             description: Some("Build the package(s) in the current directory/configuration"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--resolver",
                     ],
                     description: Some("Override resolver in project file"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "RESOLVER",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -30,417 +23,280 @@
                         "--bench",
                     ],
                     description: Some("Override resolver in project file"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--test",
                     ],
                     description: Some("Run complete test suite"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--copy-bins",
                     ],
                     description: Some("Enable copying any generated executables to the local bin path (default: disabled)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-copy-bins",
                     ],
                     description: Some("Disable copying any generated executables to the local bin path (default: disabled)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-copy-bins",
+                    ],
                 ),
                 (
                     names: [
                         "--haddock",
                     ],
                     description: Some("Enable generating Haddocks the package(s) in this directory/configuration (default: disabled)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-haddock",
                     ],
                     description: Some("Disable generating Haddocks the package(s) in this directory/configuration (default: disabled)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--no-haddock",
+                    ],
                 ),
                 (
                     names: [
                         "--open",
                     ],
                     description: Some("Enable opening the local Haddock"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-open",
                     ],
                     description: Some("Disable opening the local Haddock"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--haddock-deps",
                     ],
                     description: Some("Enable building Haddocks for dependencies (default: true if building Haddocks, false otherwise)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-haddock-deps",
                     ],
                     description: Some("Disable building Haddocks for dependencies (default: true if building Haddocks, false otherwise)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--haddock-deps",
+                    ],
                 ),
                 (
                     names: [
                         "--pedantic",
                     ],
                     description: Some("Turn on all warnings(-Wall) and errors(-Werror)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--only-locals",
                     ],
                     description: Some("Only build packages in the local database, fail if the build plan includes the snapshot database"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--file-watch",
                     ],
                     description: Some("Watch for changes in the files used to build the project, and kick off a new build when new changes are saved"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--watch-all",
                     ],
                     description: Some("Watch all local files not taking targets into account"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "-file-watch-poll",
                     ],
                     description: Some("Like --file-watch, but polling the filesystem instead of using events"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--only-snapshot",
                     ],
                     description: Some("Only build packages for the snapshot database, not the local database"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--only-configure",
                     ],
                     description: Some("Only perform the configure step, not any builds. Intended for tool usage, may break when used on multiple packages at once!"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--trace",
                     ],
                     description: Some("Enable profiling in libraries, executables, etc. for all expressions and generate a backtrace on exception"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--profile",
                     ],
                     description: Some("Runs profiling in libraries, executables, etc. for all expressions and generate a profiling report in tests or benchmarks"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-strip",
                     ],
                     description: Some("Disable DWARF debugging symbol stripping in libraries, executables, etc. for all expressions, producing larger executables but allowing the use of standard debuggers/profiling tools/other utilities that use debugging symbols"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--library-profiling",
                     ],
                     description: Some("Enable library profiling for TARGETs and all its dependencies (default: disabled)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-library-profiling",
                     ],
                     description: Some("Disable library profiling for TARGETs and all its dependencies (default: disabled)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--executable-profiling",
                     ],
                     description: Some("Enable executable profiling for TARGETs and all its dependencies (default: disabled)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-executable-profiling",
                     ],
                     description: Some("Disable executable profiling for TARGETs and all its dependencies (default: disabled)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--executable-profiling",
+                    ],
                 ),
                 (
                     names: [
                         "--library-stripping",
                     ],
                     description: Some("Enable library stripping for TARGETs and all its dependencies (default: enabled"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-library-stripping",
                     ],
                     description: Some("Disable library stripping for TARGETs and all its dependencies (default: enabled"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--library-stripping",
+                    ],
                 ),
                 (
                     names: [
                         "--executable-stripping",
                     ],
                     description: Some("Enable executable stripping for TARGETs and all its dependencies (default: enabled)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-executable-stripping",
                     ],
                     description: Some("Disable executable stripping for TARGETs and all its dependencies (default: enabled)"),
-                    takes_value: false,
-                    arguments: [],
+                    exclusive_on: [
+                        "--executable-stripping",
+                    ],
                 ),
                 (
                     names: [
                         "--ghc-options",
                     ],
                     description: Some("Specify additional options passed to GHC for all local targets. Does not affect extra-dep and snapshot packages at all"),
-                    takes_value: true,
                     arguments: [
                         (
-                            name: "value",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            name: "",
                         ),
                     ],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "install",
-            aliases: [],
-            description: Some("Builds the package in current directory and copies it as an executable for system wide usage. Shortcut for \'build --copy-bins"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Builds the package in current directory and copies it as an executable for system wide usage. Shortcut for 'build --copy-bins"),
         ),
         (
             name: "test",
-            aliases: [],
-            description: Some("Shortcut for \'build --test\'"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Shortcut for 'build --test'"),
         ),
         (
             name: "bench",
-            aliases: [],
-            description: Some("Shortcut for \'build --bench\'"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Shortcut for 'build --bench'"),
         ),
         (
             name: "haddock",
-            aliases: [],
-            description: Some("Shortcut for \'build --haddock\'"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Shortcut for 'build --haddock'"),
         ),
         (
             name: "new",
-            aliases: [],
-            description: Some("Create a new project from a template. Run `stack templates\' to see available templates. Note: you can also specify a local file or a remote URL as a template"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Create a new project from a template. Run `stack templates' to see available templates. Note: you can also specify a local file or a remote URL as a template"),
         ),
         (
             name: "templates",
-            aliases: [],
-            description: Some("Show how to find templates available for `stack new\'. `stack new\' can accept a template from a remote repository (default: github), local file or remote URL. Note: this downloads the help file"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Show how to find templates available for `stack new'. `stack new' can accept a template from a remote repository (default: github), local file or remote URL. Note: this downloads the help file"),
         ),
         (
             name: "init",
-            aliases: [],
-            description: Some("Create stack project config from cabal or hpack package specifications\'"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Create stack project config from cabal or hpack package specifications'"),
         ),
         (
             name: "setup",
-            aliases: [],
             description: Some("Get the appropriate GHC for your project"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "path",
-            aliases: [],
             description: Some("Print out handy path information"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "ls",
-            aliases: [],
-            description: Some("List command. Supports snapshots, dependencies and stack\'s styles"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("List command. Supports snapshots, dependencies and stack's styles"),
         ),
         (
             name: "unpack",
-            aliases: [],
             description: Some("Unpack one or more packages locally"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "update",
-            aliases: [],
             description: Some("Update the package index"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "upgrade",
-            aliases: [],
             description: Some("Upgrade to the latest stack version"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "upload",
-            aliases: [],
             description: Some("Upload a package to Hackage"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "sdist",
-            aliases: [],
             description: Some("Create source distribution tarballs"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "dot",
-            aliases: [],
-            description: Some("Visualize your project\'s dependency graph using Graphviz dot"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Visualize your project's dependency graph using Graphviz dot"),
         ),
         (
             name: "hoogle",
-            aliases: [],
-            description: Some("Run hoogle, the Haskell API search engine. Use the \'-- ARGUMENT(S)\' syntax to pass Hoogle arguments, e.g. stack hoogle -- --count=20, or stack hoogle --server --local"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
+            description: Some("Run hoogle, the Haskell API search engine. Use the '-- ARGUMENT(S)' syntax to pass Hoogle arguments, e.g. stack hoogle -- --count=20, or stack hoogle --server --local"),
         ),
         (
             name: "exec",
-            aliases: [],
             description: Some("Execute a command. If the command is absent, the first of any arguments is taken as the command"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--snapshot-location-base",
                     ],
                     description: Some("The base location of LTS/Nightly snapshots"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -449,14 +305,9 @@
                         "--cwd",
                     ],
                     description: Some("Sets the working directory before executing the command"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "DIR",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -465,14 +316,9 @@
                         "--setup-info-yaml",
                     ],
                     description: Some("Alternate URL or relative / absolute path for stack dependencies"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -481,30 +327,21 @@
                         "--ghc-package-path",
                     ],
                     description: Some("Enable setting the GHC_PACKAGE_PATH variable for the subprocess (default: enabled)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-ghc-package-path",
                     ],
                     description: Some("Disable setting the GHC_PACKAGE_PATH variable for the subprocess (default: enabled)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--package",
                     ],
                     description: Some("Additional package(s) that must be installed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "PACKAGE(S)",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -513,38 +350,22 @@
                         "--stack-exe",
                     ],
                     description: Some("Enable setting the STACK_EXE environment variable to the path for the stack executable (default: enabled)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--no-stack-exe",
                     ],
                     description: Some("Disable setting the STACK_EXE environment variable to the path for the stack executable (default: enabled)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "run",
-            aliases: [],
             description: Some("Build and run an executable. Defaults to the first available executable if none is provided as the first argument"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "repl",
-            aliases: [],
             description: Some("Load a REPL"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -554,40 +375,30 @@
                 "-h",
             ],
             description: Some("Show help for stack"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Show version for stack"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--numeric-version",
             ],
             description: Some("Show only the numeric version for stack"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--hpack-numeric-version",
             ],
-            description: Some("Show only hpack\'s version number"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Show only hpack's version number"),
         ),
         (
             names: [
                 "--verbosity",
             ],
             description: Some("Verbosity: silent, error, warn, info, debug"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -595,80 +406,66 @@
                 "-v",
             ],
             description: Some("Enable verbose mode: verbosity level \"debug\""),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--silent",
             ],
             description: Some("Enable silent mode: verbosity level \"silent\""),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--stack-root",
             ],
             description: Some("Absolute path to the global stack root directory (Overrides any STACK_ROOT environment variable)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--work-dir",
             ],
-            description: Some("Relative path of work directory (Overrides any STACK_WORK environment variable, default is \'.stack-work\')"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Relative path of work directory (Overrides any STACK_WORK environment variable, default is '.stack-work')"),
         ),
         (
             names: [
                 "--system-ghc",
             ],
             description: Some("Enable using the system installed GHC (on the PATH) if it is available and its version matches. Disabled by default"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-system-ghc",
             ],
             description: Some("Disable using the system installed GHC (on the PATH) if it is available and its version matches. Disabled by default"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--system-ghc",
+            ],
         ),
         (
             names: [
                 "--install-ghc",
             ],
             description: Some("Enable downloading and installing GHC if necessary (can be done manually with stack setup). Enabled by default)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-install-ghc",
             ],
             description: Some("Disable downloading and installing GHC if necessary (can be done manually with stack setup). Enabled by default"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--install-ghc",
+            ],
         ),
         (
             names: [
                 "--ghc-variant",
             ],
             description: Some("Specialized GHC variant, e.g. integersimple (incompatible with --system-ghc)"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--ghc-build",
             ],
-            description: Some("Specialized GHC build, e.g. \'gmp4\' or \'standard\' (usually auto-detected)"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Specialized GHC build, e.g. 'gmp4' or 'standard' (usually auto-detected)"),
         ),
         (
             names: [
@@ -676,32 +473,24 @@
                 "-j",
             ],
             description: Some("Number of concurrent jobs to run. Should be provied as ARGS"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--extra-include-dirs",
             ],
             description: Some("Extra directories to check for C header files"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--extra-lib-dir",
             ],
             description: Some("Extra directories to check for libraries"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--custom-preprocessor-extensions",
             ],
             description: Some("Extensions used for custom preprocessors"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -709,18 +498,22 @@
                 "--colour",
             ],
             description: Some("Specify when to use color in output"),
-            takes_value: true,
             arguments: [
                 (
                     name: "WHEN",
-                    source: Static([
-                        "always",
-                        "never",
-                        "auto",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("WHEN is 'always', 'never', or 'auto'. On Windows versions before Windows 10, for terminals that do not support color codes, the default is 'never'; color may work on terminals that support color codes"),
+                    suggestions: [
+                        (
+                            name: "always",
+                        ),
+                        (
+                            name: "never",
+                        ),
+                        (
+                            name: "auto",
+                        ),
+                    ],
+                    default: Some("never"),
                 ),
             ],
         ),
@@ -729,14 +522,9 @@
                 "--compiler",
             ],
             description: Some("Use the specified compiler"),
-            takes_value: true,
             arguments: [
                 (
                     name: "COMPILER",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -745,31 +533,26 @@
                 "--terminal",
             ],
             description: Some("Enable overriding terminal detection in the case of running in a false terminal"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--no-terminal",
             ],
             description: Some("Disable overriding terminal detection in the case of running in a false terminal"),
-            takes_value: false,
-            arguments: [],
+            exclusive_on: [
+                "--teminal",
+            ],
         ),
         (
             names: [
                 "--stack-colors",
                 "--stack-colours",
             ],
-            description: Some("Specify stack\'s output styles"),
-            takes_value: true,
+            description: Some("Specify stack's output styles"),
             arguments: [
                 (
                     name: "STYLE",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("It a colon-delimited sequence of key=value, where 'key' is a style name and 'value' is a semicolon-delimited list of 'ANSI' SGR (Select Graphic Rendition) control codes (in decimal). Use 'stack ls stack-colors --basic' to see the current sequence. In shells where a semicolon is a command separator, enclose STYLES in quotes"),
                 ),
             ],
         ),
@@ -778,14 +561,9 @@
                 "--terminal-width",
             ],
             description: Some("Specify the width of the terminal, used for pretty-print messages"),
-            takes_value: true,
             arguments: [
                 (
                     name: "INT",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -794,14 +572,9 @@
                 "--stack-yaml",
             ],
             description: Some("Override project stack.yaml file (overrides any STACK_YAML environment variable)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "STACK-YAML",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -810,17 +583,12 @@
                 "--lock-file",
             ],
             description: Some("Specify how to interact with lock files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "ARG",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("Default: read/write. If resolver is overridden: read-only"),
                 ),
             ],
         ),
     ],
-    arguments: [],
 )

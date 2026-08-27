@@ -2,29 +2,25 @@
     version: 1,
     command: "kill",
     description: Some("Terminate or signal a process"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-s",
             ],
             description: Some("A symbolic signal name specifying the signal to be sent"),
-            takes_value: true,
             arguments: [
                 (
                     name: "signal_name",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [
-                            "env",
-                            "kill",
-                            "-l",
-                        ],
-                        has_post_process: true,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            script: [
+                                "env",
+                                "kill",
+                                "-l",
+                            ],
+                            has_post_process: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -33,14 +29,10 @@
                 "-l",
             ],
             description: Some("If no operand is given, list the signal names; otherwise, write the signal name corresponding to exit_status"),
-            takes_value: true,
             arguments: [
                 (
                     name: "exit_status",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -48,18 +40,17 @@
     arguments: [
         (
             name: "pid",
-            source: Unavailable,
-            optional: false,
+            generators: [
+                (
+                    script: [
+                        "bash",
+                        "-c",
+                        "ps axo pid,comm | sed 1d",
+                    ],
+                    has_post_process: true,
+                ),
+            ],
             variadic: true,
-            imported_generator: Some((
-                script: [
-                    "bash",
-                    "-c",
-                    "ps axo pid,comm | sed 1d",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
         ),
     ],
 )

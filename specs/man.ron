@@ -2,21 +2,15 @@
     version: 1,
     command: "man",
     description: Some("Format and display the on-line manual pages"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-C",
             ],
             description: Some("Specify the configuration file to use"),
-            takes_value: true,
             arguments: [
                 (
                     name: "config_file",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -25,18 +19,17 @@
                 "-M",
             ],
             description: Some("Specify the list of directories to search (colon separated)"),
-            takes_value: true,
             arguments: [
                 (
                     name: "path",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            template: [
+                                Folders,
+                            ],
+                            query_term: Some(AfterLast(":")),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -45,14 +38,9 @@
                 "-P",
             ],
             description: Some("Specify the pager program"),
-            takes_value: true,
             arguments: [
                 (
                     name: "pager",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -61,14 +49,10 @@
                 "-B",
             ],
             description: Some("Specify which browser to use for HTML files"),
-            takes_value: true,
             arguments: [
                 (
                     name: "browser",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("/usr/bin/less -is"),
                 ),
             ],
         ),
@@ -77,14 +61,10 @@
                 "-H",
             ],
             description: Some("Specify a command that renders HTML files as text"),
-            takes_value: true,
             arguments: [
                 (
                     name: "command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    default: Some("/bin/cat"),
                 ),
             ],
         ),
@@ -93,18 +73,16 @@
                 "-S",
             ],
             description: Some("Specify a colon-separated list of manual sections to search"),
-            takes_value: true,
             arguments: [
                 (
                     name: "sections",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: true,
-                    )),
+                    generators: [
+                        (
+                            has_custom: true,
+                            has_dynamic_trigger: true,
+                            has_dynamic_query_term: true,
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -113,40 +91,30 @@
                 "-a",
             ],
             description: Some("Open every matching page instead of just the first"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-c",
             ],
             description: Some("Reformat the source page, even when an up-to-date cat-page exists"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-d",
             ],
-            description: Some("Don\'t actually display the pages (dry run)"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't actually display the pages (dry run)"),
         ),
         (
             names: [
                 "-D",
             ],
             description: Some("Both display and print debugging info"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-f",
             ],
             description: Some("Equivalent to `whatis`"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -154,46 +122,33 @@
                 "--preformat",
             ],
             description: Some("Format only, do not display"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-h",
             ],
             description: Some("Print a help message and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-k",
             ],
             description: Some("Equivalent to apropos"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-K",
             ],
             description: Some("Search for a given string in all pages"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-m",
             ],
             description: Some("Specify an alternate set of pages to search based on the system name given"),
-            takes_value: true,
             arguments: [
                 (
                     name: "system",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -202,14 +157,9 @@
                 "-p",
             ],
             description: Some("Specify the sequence of preprocessors to run before nroff or troff"),
-            takes_value: true,
             arguments: [
                 (
                     name: "preprocessors",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -218,8 +168,6 @@
                 "-t",
             ],
             description: Some("Use `/usr/bin/groff -Tps -mandoc -c` to format the page"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -227,29 +175,26 @@
                 "--path",
             ],
             description: Some("Print the location of files that would be displayed"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-W",
             ],
             description: Some("Print file locations, one per line"),
-            takes_value: false,
-            arguments: [],
         ),
     ],
     arguments: [
         (
-            name: "value",
-            source: Unavailable,
+            name: "",
+            generators: [
+                (
+                    script_timeout_ms: Some(15000),
+                    has_custom: true,
+                    has_dynamic_trigger: true,
+                ),
+            ],
             optional: true,
             variadic: true,
-            imported_generator: Some((
-                script: [],
-                has_post_process: false,
-                has_custom: true,
-            )),
         ),
     ],
 )

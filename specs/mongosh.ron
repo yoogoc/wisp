@@ -2,7 +2,6 @@
     version: 1,
     command: "mongosh",
     description: Some("The MongoDB Shell, mongosh  is a fully functional JavaScript and Node.js 14.x REPL environment for interacting with MongoDB deployments"),
-    subcommands: [],
     options: [
         (
             names: [
@@ -10,30 +9,21 @@
                 "--version",
             ],
             description: Some("View your current mongosh version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--shell",
             ],
             description: Some("Enables the shell interface. If you invoke the mongosh command and specify a JavaScript file as an argument, or use --eval to specify JavaScript on the command line, the --shell option provides the user with a shell prompt after the file finishes executing"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--eval",
             ],
             description: Some("Evaluates a JavaScript expression that is specified as an argument. mongosh does not load its own environment when evaluating code. As a result many options of the shell environment are not available. The result of evaluating a JavaScript argument is printed to your command line"),
-            takes_value: true,
             arguments: [
                 (
                     name: "javascript",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -43,22 +33,15 @@
                 "-h",
             ],
             description: Some("Returns information on the options and use of the MongoDB Shell"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--authenticationDatabase",
             ],
             description: Some("Specifies the authentication database where the specified --username has been created. See Authentication Database"),
-            takes_value: true,
             arguments: [
                 (
                     name: "dbname",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -67,14 +50,10 @@
                 "--gssapiHostName",
             ],
             description: Some("Specify the hostname of a service using GSSAPI/Kerberos. Only required if the hostname of a machine does not match the hostname resolved by DNS"),
-            takes_value: true,
             arguments: [
                 (
                     name: "hostname",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("This option is available only in MongoDB Enterprise"),
                 ),
             ],
         ),
@@ -83,14 +62,10 @@
                 "--gssapiServiceName",
             ],
             description: Some("Specify the name of the service using GSSAPI/Kerberos. Only required if the service does not use the default name of mongodb"),
-            takes_value: true,
             arguments: [
                 (
                     name: "saslServiceName",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    description: Some("GssapiServiceName defaults to mongodb for all clients and MongoDB instances. If you change saslServiceName setting on a MongoDB instance, you must set gssapiServiceName to match that setting"),
                 ),
             ],
         ),
@@ -100,14 +75,9 @@
                 "-p",
             ],
             description: Some("Specifies a password with which to authenticate to a MongoDB database that uses authentication. Use in conjunction with the --username and --authenticationDatabase options"),
-            takes_value: true,
             arguments: [
                 (
                     name: "password",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -117,14 +87,9 @@
                 "-u",
             ],
             description: Some("Specifies a username with which to authenticate to a MongoDB database that uses authentication. Use in conjunction with the --password and --authenticationDatabase options"),
-            takes_value: true,
             arguments: [
                 (
                     name: "username",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -133,28 +98,37 @@
                 "--retryWrites",
             ],
             description: Some("Enables retryable writes as the default for sessions in the MongoDB Shell"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--authenticationMechanism",
             ],
             description: Some("Specifies the authentication mechanism the MongoDB Shell uses to authenticate to the mongod or mongos"),
-            takes_value: true,
             arguments: [
                 (
                     name: "authentication mechanism",
-                    source: Static([
-                        "SCRAM-SHA-1",
-                        "SCRAM-SHA-256",
-                        "MONGODB-X509",
-                        "GSSAPI (Kerberos)",
-                        "PLAIN (LDAP SASL)",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "SCRAM-SHA-1",
+                            description: Some("RFC 5802 standard Salted Challenge Response Authentication Mechanism using the SHA-1 hash function"),
+                        ),
+                        (
+                            name: "SCRAM-SHA-256",
+                            description: Some("RFC 7677 standard Salted Challenge Response Authentication Mechanism using the SHA-256 hash function"),
+                        ),
+                        (
+                            name: "MONGODB-X509",
+                            description: Some("MongoDB TLS SSL certificate authentication"),
+                        ),
+                        (
+                            name: "GSSAPI (Kerberos)",
+                            description: Some("External authentication using Kerberos. This mechanism is available only in MongoDB Enterprise"),
+                        ),
+                        (
+                            name: "PLAIN (LDAP SASL)",
+                            description: Some("External authentication using LDAP. You can also use PLAIN for authenticating in-database users. PLAIN transmits passwords in plain text. This mechanism is available only in MongoDB Enterprise"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -163,48 +137,39 @@
                 "--nodb",
             ],
             description: Some("Prevents the shell from connecting to any database instances"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--norc",
             ],
             description: Some("Prevents the shell from sourcing and evaluating ~/.mongoshrc.js on startup"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--quiet",
             ],
             description: Some("Skips all messages during startup (such as welcome messages and startup warnings) and goes directly to the prompt"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--verbose",
             ],
             description: Some("Increases the verbosity of the shell output during the connection process and when running commands"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--port",
             ],
             description: Some("Specifies the port where the mongod or mongos instance is listening. If --port is not specified, the MongoDB Shell attempts to connect to port 27017"),
-            takes_value: true,
             arguments: [
                 (
                     name: "port",
-                    source: Static([
-                        "27017",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "27017",
+                            description: Some("Default-port"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -213,43 +178,42 @@
                 "--tls",
             ],
             description: Some("Enables connection to a mongod or mongos that has TLS SSL support enabled"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tlsAllowInvalidHostnames",
             ],
-            description: Some("Disables the validation of the hostnames in the certificate presented by the mongod/mongos instance. Allows the MongoDB Shell to connect to MongoDB instances even if the hostname in the server certificates do not match the server\'s host"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Disables the validation of the hostnames in the certificate presented by the mongod/mongos instance. Allows the MongoDB Shell to connect to MongoDB instances even if the hostname in the server certificates do not match the server's host"),
         ),
         (
             names: [
                 "--tlsAllowInvalidCertificates",
             ],
             description: Some("Bypasses the validation checks for the certificates presented by the mongod/mongos instance and allows connections to servers that present invalid certificates"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--tlsDisabledProtocols",
             ],
             description: Some("Disables the specified TLS protocols"),
-            takes_value: true,
             arguments: [
                 (
                     name: "protocols",
-                    source: Static([
-                        "TLS1_0",
-                        "TLS1_1",
-                        "TLS1_2",
-                        "TLS1_3",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "TLS1_0",
+                        ),
+                        (
+                            name: "TLS1_1",
+                        ),
+                        (
+                            name: "TLS1_2",
+                        ),
+                        (
+                            name: "TLS1_3",
+                            description: Some("(Starting in version 4.0.4, 3.6.9, 3.4.24)"),
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -258,18 +222,16 @@
                 "--tlsCAFile",
             ],
             description: Some("Specifies the .pem file that contains the root certificate chain from the Certificate Authority. This file is used to validate the certificate presented by the mongod/mongos instance"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filePath",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            template: [
+                                FilePaths,
+                            ],
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -278,18 +240,16 @@
                 "--tlsCRLFile",
             ],
             description: Some("Specifies the .pem file that contains the root certificate chain from the Certificate Authority. This file is used to validate the certificate presented by the mongod/mongos instance"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filePath",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            template: [
+                                FilePaths,
+                            ],
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -298,18 +258,16 @@
                 "--tlsCertificateKeyFile",
             ],
             description: Some("Enables connection to a mongod or mongos that has TLS SSL support enabled"),
-            takes_value: true,
             arguments: [
                 (
                     name: "filePath",
-                    source: Unavailable,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: Some((
-                        script: [],
-                        has_post_process: false,
-                        has_custom: false,
-                    )),
+                    generators: [
+                        (
+                            template: [
+                                FilePaths,
+                            ],
+                        ),
+                    ],
                 ),
             ],
         ),
@@ -317,13 +275,21 @@
     arguments: [
         (
             name: "Connection String",
-            source: Static([
-                "mongodb://localhost:27017",
-                "mongodb+srv://cluster0.example.mongodb.net/sample_geospatial",
-            ]),
+            suggestions: [
+                (
+                    name: "mongodb://localhost:27017",
+                    description: Some("Default Connection String; Equivalent to running mongosh without any commands"),
+                ),
+                (
+                    name: "mongodb+srv://cluster0.example.mongodb.net/sample_geospatial",
+                    description: Some("Atlas Connection String Example"),
+                    presentation: (
+                        priority: Some(35.0),
+                    ),
+                ),
+            ],
             optional: true,
-            variadic: false,
-            imported_generator: None,
+            default: Some("mongodb://localhost:27017"),
         ),
     ],
 )

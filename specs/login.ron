@@ -2,37 +2,27 @@
     version: 1,
     command: "login",
     description: Some("Begin session on the system"),
-    subcommands: [],
     options: [
         (
             names: [
                 "-p",
             ],
             description: Some("Preserve environment"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-r",
             ],
             description: Some("Perform autologin protocol for rlogin"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "-h",
             ],
             description: Some("Specify host"),
-            takes_value: true,
             arguments: [
                 (
                     name: "host",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
         ),
@@ -40,25 +30,21 @@
             names: [
                 "-f",
             ],
-            description: Some("Don\'t authenticate user, user is preauthenticated"),
-            takes_value: false,
-            arguments: [],
+            description: Some("Don't authenticate user, user is preauthenticated"),
         ),
     ],
     arguments: [
         (
             name: "username",
-            source: Unavailable,
-            optional: false,
-            variadic: false,
-            imported_generator: Some((
-                script: [
-                    "cat",
-                    "/etc/passwd",
-                ],
-                has_post_process: true,
-                has_custom: false,
-            )),
+            generators: [
+                (
+                    script: [
+                        "cat",
+                        "/etc/passwd",
+                    ],
+                    has_post_process: true,
+                ),
+            ],
         ),
     ],
 )

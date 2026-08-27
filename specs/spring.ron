@@ -5,9 +5,7 @@
     subcommands: [
         (
             name: "init",
-            aliases: [],
             description: Some("Initialize a new project using Spring Initializr"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -15,14 +13,9 @@
                         "---artifact-id",
                     ],
                     description: Some("Project coordinates"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -32,18 +25,19 @@
                         "--boot-version",
                     ],
                     description: Some("Spring Boot version"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Version",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400000),
+                                        stale_while_revalidate: true,
+                                    )),
+                                ),
+                            ],
+                            debounce: true,
                         ),
                     ],
                 ),
@@ -52,17 +46,18 @@
                         "--build",
                     ],
                     description: Some("Build system to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "System",
-                            source: Static([
-                                "maven",
-                                "gradle",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "maven",
+                                ),
+                                (
+                                    name: "gradle",
+                                ),
+                            ],
+                            default: Some("maven"),
                         ),
                     ],
                 ),
@@ -72,18 +67,22 @@
                         "--dependencies",
                     ],
                     description: Some("Comma-separated list of dependency identifiers to include in the generated project"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Dependencies",
-                            source: Unavailable,
-                            optional: false,
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    has_dynamic_trigger: true,
+                                    has_dynamic_query_term: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400000),
+                                        stale_while_revalidate: true,
+                                    )),
+                                ),
+                            ],
                             variadic: true,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            debounce: true,
                         ),
                     ],
                 ),
@@ -92,16 +91,14 @@
                         "--description",
                     ],
                     description: Some("Project description"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "description",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    presentation: (
+                        insert_value: Some("--description '{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -109,25 +106,27 @@
                         "--force",
                     ],
                     description: Some("Force overwrite of existing files"),
-                    takes_value: false,
-                    arguments: [],
+                    presentation: (
+                        dangerous: true,
+                    ),
                 ),
                 (
                     names: [
                         "--format",
                     ],
                     description: Some("Format of the generated content"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Format",
-                            source: Static([
-                                "build",
-                                "project",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "build",
+                                ),
+                                (
+                                    name: "project",
+                                ),
+                            ],
+                            default: Some("build"),
                         ),
                     ],
                 ),
@@ -137,14 +136,9 @@
                         "--group-id",
                     ],
                     description: Some("Project coordinates"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Group ID",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -154,18 +148,19 @@
                         "--java-version",
                     ],
                     description: Some("Language level"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Version",
-                            source: Unavailable,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: Some((
-                                script: [],
-                                has_post_process: false,
-                                has_custom: true,
-                            )),
+                            generators: [
+                                (
+                                    has_custom: true,
+                                    cache: Some((
+                                        ttl_ms: Some(86400000),
+                                        stale_while_revalidate: true,
+                                    )),
+                                ),
+                            ],
+                            debounce: true,
                         ),
                     ],
                 ),
@@ -174,8 +169,6 @@
                         "--list",
                     ],
                     description: Some("List the capabilities of the service"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -183,14 +176,9 @@
                         "--name",
                     ],
                     description: Some("Project name"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -200,17 +188,17 @@
                         "--packaging",
                     ],
                     description: Some("Project packaging"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Packaging",
-                            source: Static([
-                                "jar",
-                                "war",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "jar",
+                                ),
+                                (
+                                    name: "war",
+                                ),
+                            ],
                         ),
                     ],
                 ),
@@ -219,14 +207,9 @@
                         "--package-name",
                     ],
                     description: Some("Package name"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Name",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -236,20 +219,32 @@
                         "--type",
                     ],
                     description: Some("Project type"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Type",
-                            source: Static([
-                                "gradle-build",
-                                "gradle-project",
-                                "gradle-project-kotlin",
-                                "maven-build",
-                                "maven-project",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "gradle-build",
+                                    description: Some("Generate a Gradle build file"),
+                                ),
+                                (
+                                    name: "gradle-project",
+                                    description: Some("Generate a Gradle based project archive using the Groovy DSL"),
+                                ),
+                                (
+                                    name: "gradle-project-kotlin",
+                                    description: Some("Generate a Gradle based project archive using the Kotlin DSL"),
+                                ),
+                                (
+                                    name: "maven-build",
+                                    description: Some("Generate a Maven pom.xml"),
+                                ),
+                                (
+                                    name: "maven-project",
+                                    description: Some("Generate a Maven based project archive"),
+                                ),
+                            ],
+                            default: Some("gradle-project"),
                         ),
                     ],
                 ),
@@ -258,14 +253,10 @@
                         "--target",
                     ],
                     description: Some("URL of the service to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "URL",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            default: Some("https://start.spring.io"),
                         ),
                     ],
                 ),
@@ -275,14 +266,9 @@
                         "--version",
                     ],
                     description: Some("Project version"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Version",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
                 ),
@@ -292,18 +278,12 @@
                         "--extract",
                     ],
                     description: Some("Extract the project archive. Inferred if a location is specified without an extension"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "encodepassword",
-            aliases: [],
             description: Some("Encode a password for use with Spring Security"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -311,18 +291,21 @@
                         "--algorithm",
                     ],
                     description: Some("The algorithm to use"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "Algorithm",
-                            source: Static([
-                                "default",
-                                "bcrypt",
-                                "pbkdf2",
-                            ]),
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            suggestions: [
+                                (
+                                    name: "default",
+                                ),
+                                (
+                                    name: "bcrypt",
+                                ),
+                                (
+                                    name: "pbkdf2",
+                                ),
+                            ],
+                            default: Some("default"),
                         ),
                     ],
                 ),
@@ -330,39 +313,24 @@
             arguments: [
                 (
                     name: "Password",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "shell",
-            aliases: [],
             description: Some("Start a nested shell"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
         (
             name: "help",
-            aliases: [],
             description: Some("Show help for other commands"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "Command",
-                    source: Files,
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    template: [
+                        Help,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
     ],
     options: [
@@ -371,25 +339,22 @@
                 "--help",
             ],
             description: Some("Show help for spring"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--version",
             ],
             description: Some("Get spring CLI version"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
                 "--debug",
             ],
             description: Some("Print additional status information for the command you are running"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
     ],
-    arguments: [],
+    presentation: (
+        icon: Some("https://start.spring.io/images/icon-48x48.png"),
+    ),
 )

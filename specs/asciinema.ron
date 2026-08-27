@@ -5,41 +5,31 @@
     subcommands: [
         (
             name: "rec",
-            aliases: [],
             description: Some("Start a recording"),
-            subcommands: [],
             options: [
                 (
                     names: [
                         "--stdin",
                     ],
                     description: Some("Enable stdin (keyboard) recording"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--append",
                     ],
                     description: Some("Append to existing recording"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--raw",
                     ],
                     description: Some("Save raw output, without timing or other metadata"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
                         "--overwrite",
                     ],
                     description: Some("Overwrite the recording if it already exists"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -47,16 +37,16 @@
                         "--command",
                     ],
                     description: Some("Specify command to record, defaults to $SHELL"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "command",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            is_command: true,
                         ),
                     ],
+                    requires_separator: Some("="),
+                    presentation: (
+                        insert_value: Some("-c='{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -64,16 +54,15 @@
                         "--env",
                     ],
                     description: Some("List of environment variables to capture"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "variables",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
+                    presentation: (
+                        insert_value: Some("-c='{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -81,16 +70,15 @@
                         "--title",
                     ],
                     description: Some("Specify the title of the asciicast"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "title",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
+                    presentation: (
+                        insert_value: Some("-t='{cursor}'"),
+                    ),
                 ),
                 (
                     names: [
@@ -98,48 +86,36 @@
                         "--idle-time-limit",
                     ],
                     description: Some("Limit recorded terminal inactivity to max amount of seconds"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "seconds",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--cols",
                     ],
                     description: Some("Override terminal columns for recorded process"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "cols",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
                         "--rows",
                     ],
                     description: Some("Override terminal rows for recorded process"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "rows",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
@@ -147,8 +123,6 @@
                         "--yes",
                     ],
                     description: Some("Answer “yes” to all prompts (e.g. upload confirmation)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
                 (
                     names: [
@@ -156,26 +130,18 @@
                         "--quiet",
                     ],
                     description: Some("Be quiet, suppress all notices/warnings (implies -y)"),
-                    takes_value: false,
-                    arguments: [],
                 ),
             ],
             arguments: [
                 (
                     name: "filename",
-                    source: Files,
                     optional: true,
-                    variadic: false,
-                    imported_generator: None,
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "play",
-            aliases: [],
             description: Some("Replay recorded asciicast in a terminal"),
-            subcommands: [],
             options: [
                 (
                     names: [
@@ -183,16 +149,13 @@
                         "--idle-time-linit",
                     ],
                     description: Some("Limit replayed terminal inactivity"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "seconds",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Can be fractional"),
                         ),
                     ],
+                    requires_separator: Some("="),
                 ),
                 (
                     names: [
@@ -200,77 +163,69 @@
                         "--speed",
                     ],
                     description: Some("Playback speed"),
-                    takes_value: true,
                     arguments: [
                         (
                             name: "factor",
-                            source: Files,
-                            optional: false,
-                            variadic: false,
-                            imported_generator: None,
+                            description: Some("Can be fractional"),
                         ),
+                    ],
+                    requires_separator: Some("="),
+                ),
+            ],
+            arguments: [
+                (
+                    name: "file or URL",
+                    suggestions: [
+                        (
+                            name: "-",
+                            description: Some("Stdin"),
+                        ),
+                    ],
+                    template: [
+                        FilePaths,
                     ],
                 ),
             ],
-            arguments: [
-                (
-                    name: "file or URL",
-                    source: Static([
-                        "-",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
-                ),
-            ],
-            load_spec: None,
         ),
         (
             name: "cat",
-            aliases: [],
             description: Some("Print full output of recorded asciicast to a terminal"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "file or URL",
-                    source: Static([
-                        "-",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "-",
+                            description: Some("Stdin"),
+                        ),
+                    ],
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "upload",
-            aliases: [],
             description: Some("Upload recorded asciicast to asciinema.org site"),
-            subcommands: [],
-            options: [],
             arguments: [
                 (
                     name: "file or URL",
-                    source: Static([
-                        "-",
-                    ]),
-                    optional: false,
-                    variadic: false,
-                    imported_generator: None,
+                    suggestions: [
+                        (
+                            name: "-",
+                            description: Some("Stdin"),
+                        ),
+                    ],
+                    template: [
+                        FilePaths,
+                    ],
                 ),
             ],
-            load_spec: None,
         ),
         (
             name: "auth",
-            aliases: [],
             description: Some("Link and manage your install ID with your asciinema.org user account"),
-            subcommands: [],
-            options: [],
-            arguments: [],
-            load_spec: None,
         ),
     ],
     options: [
@@ -279,8 +234,6 @@
                 "--version",
             ],
             description: Some("Ouput version information and exit"),
-            takes_value: false,
-            arguments: [],
         ),
         (
             names: [
@@ -288,9 +241,7 @@
                 "--help",
             ],
             description: Some("Output help message and exit"),
-            takes_value: false,
-            arguments: [],
+            persistent: true,
         ),
     ],
-    arguments: [],
 )
