@@ -23,6 +23,8 @@ use wisp_protocol::{
 };
 
 static OVERLAY_CONFIG: OnceLock<OverlayConfig> = OnceLock::new();
+#[cfg(target_os = "macos")]
+static STATUS_ITEM: OnceLock<usize> = OnceLock::new();
 
 fn overlay_config() -> &'static OverlayConfig {
     OVERLAY_CONFIG.get_or_init(OverlayConfig::default)
@@ -576,6 +578,10 @@ fn install_status_item() -> anyhow::Result<()> {
     };
     use objc::{class, msg_send, runtime::Object, sel, sel_impl};
 
+    if STATUS_ITEM.get().is_some() {
+        return Ok(());
+    }
+
     unsafe {
         let application = NSApp();
         let status_bar: *mut Object = msg_send![class!(NSStatusBar), systemStatusBar];
@@ -615,6 +621,13 @@ fn install_status_item() -> anyhow::Result<()> {
         let _: () = msg_send![quit_item, setTarget: application];
         let _: () = msg_send![menu, addItem: quit_item];
         let _: () = msg_send![status_item, setMenu: menu];
+        // NSStatusBar only keeps a weak lifecycle association with this item.
+        // Hold one retain for the lifetime of the process so the autorelease
+        // pool cannot remove the menu-bar icon after startup.
+        let _: *mut Object = msg_send![status_item, retain];
+        STATUS_ITEM
+            .set(status_item as usize)
+            .map_err(|_| anyhow::anyhow!("Wisp status item was already installed"))?;
     }
     Ok(())
 }
