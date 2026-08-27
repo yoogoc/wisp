@@ -60,10 +60,15 @@ impl Render for OverlayView {
             .take(visible.len())
             .map(|(index, candidate)| {
                 let label = display_candidate_label(&candidate.label, candidate.kind);
-                let has_description = candidate.description.is_some();
+                let description = candidate
+                    .description
+                    .as_deref()
+                    .map(display_candidate_description)
+                    .filter(|description| !description.is_empty());
+                let has_description = description.is_some();
                 let label_width = adaptive_label_width(&label);
                 let description_width = ROW_CONTENT_WIDTH - label_width;
-                let description_offset = candidate.description.as_deref().map_or(0.0, |text| {
+                let description_offset = description.as_deref().map_or(0.0, |text| {
                     if index == selected {
                         description_scroll_offset(
                             text,
@@ -106,7 +111,7 @@ impl Render for OverlayView {
                             .when(!has_description, |text| text.flex_1())
                             .child(label),
                     )
-                    .when_some(candidate.description.clone(), |row, description| {
+                    .when_some(description, |row, description| {
                         row.child(
                             div()
                                 .ml(px(12.0))
@@ -436,6 +441,10 @@ fn approximate_text_width(value: &str) -> f32 {
     UnicodeWidthStr::width(value) as f32 * APPROX_TEXT_COLUMN_WIDTH
 }
 
+fn display_candidate_description(description: &str) -> String {
+    description.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
 fn adaptive_label_width(label: &str) -> f32 {
     (approximate_text_width(label) + 8.0).clamp(MIN_LABEL_WIDTH, MAX_LABEL_WIDTH)
 }
@@ -471,7 +480,7 @@ fn selected_description_overflows(model: &RenderModel) -> bool {
         .and_then(|candidate| {
             candidate.description.as_deref().map(|description| {
                 let label = display_candidate_label(&candidate.label, candidate.kind);
-                description_overflows(&label, description)
+                description_overflows(&label, &display_candidate_description(description))
             })
         })
         .unwrap_or(false)
@@ -843,6 +852,15 @@ mod tests {
             0.0
         );
         assert!(description_scroll_offset(description, width, Duration::from_secs(2)) > 0.0);
+    }
+
+    #[test]
+    fn description_control_whitespace_is_collapsed_to_one_line() {
+        assert_eq!(
+            display_candidate_description("first line\r\nsecond\tline   tail"),
+            "first line second line tail"
+        );
+        assert_eq!(display_candidate_description("\n\r\t"), "");
     }
 
     #[test]
