@@ -86,19 +86,6 @@ impl CompletionEngine {
         if !command_is_available(command, cwd) {
             return Vec::new();
         }
-        if command == "cd" {
-            let mut candidates = complete_paths(context, cwd, true);
-            candidates.extend(["-", "~"].into_iter().filter_map(|value| {
-                make_candidate(
-                    value,
-                    value,
-                    Some("directory".into()),
-                    CandidateKind::Directory,
-                    context,
-                )
-            }));
-            return candidates;
-        }
         let Some(spec) = self.specs.get(command) else {
             return complete_paths(context, cwd, false);
         };
@@ -988,7 +975,11 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn cd_uses_native_directory_completion() {
+    async fn cd_uses_the_imported_folder_template() {
+        let specs = SpecStore::builtins();
+        let spec = specs.get("cd").expect("cd spec");
+        assert_eq!(spec.arguments[0].template, [Template::Folders]);
+
         let values = CompletionEngine::default()
             .complete(&snapshot("cd s"))
             .await;
@@ -1000,6 +991,21 @@ mod tests {
                 .iter()
                 .all(|candidate| candidate.kind == CandidateKind::Directory)
         );
+
+        let mut nested = snapshot("cd crates/");
+        nested.cwd = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .parent()
+            .and_then(Path::parent)
+            .expect("workspace root")
+            .to_path_buf();
+        let values = CompletionEngine::default().complete(&nested).await;
+        assert!(values.iter().any(|candidate| {
+            candidate.label == "crates/wisp-core/" && candidate.kind == CandidateKind::Directory
+        }));
+
+        let values = CompletionEngine::default().complete(&snapshot("cd ")).await;
+        assert!(!labels(&values).contains(&"-"));
+        assert!(!labels(&values).contains(&"~"));
     }
 
     fn labels(candidates: &[Candidate]) -> Vec<&str> {

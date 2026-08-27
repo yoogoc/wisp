@@ -167,13 +167,19 @@ function generator(value, indent) {
 function argument(value, indent, depth) {
   stats.arguments += 1;
   const suggestions = array(value.suggestions).map((item) => suggestion(item, indent + 8));
-  const generators = array(value.generators).filter(Boolean).map((item) => generator(item, indent + 8));
+  const generatorValues = array(value.generators).filter(Boolean);
+  const liftedTemplates = generatorValues
+    .map((item) => item.__wispTemplate)
+    .filter(Boolean);
+  const generators = generatorValues
+    .filter((item) => !item.__wispTemplate)
+    .map((item) => generator(item, indent + 8));
   const load = loadSpec(value.loadSpec, indent + 4, depth);
   return record([
     ["name", text(value.name ?? "")],
     ["description", some(value.description)],
     ["suggestions", list(suggestions, indent + 4)],
-    ["template", templates(value.template, indent + 4)],
+    ["template", templates([...array(value.template), ...liftedTemplates], indent + 4)],
     ["generators", list(generators, indent + 4)],
     ["optional", flag(value.isOptional)],
     ["variadic", flag(value.isVariadic)],

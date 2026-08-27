@@ -16,7 +16,7 @@ const IMPORTER_DEPENDENCIES = new Set([
 /// TypeScript specs import each other without a file extension, and import a
 /// directory to mean its index.ts; Node ESM resolves neither.
 export async function resolve(specifier, context, next) {
-  if (specifier === "@fig/autocomplete-generators" && context.parentURL?.endsWith("/scc.ts")) {
+  if (specifier === "@fig/autocomplete-generators") {
     return next(new URL("./shim-generators.mjs", import.meta.url).href, context);
   }
   if (IMPORTER_DEPENDENCIES.has(specifier)) {
