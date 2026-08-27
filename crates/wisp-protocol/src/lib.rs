@@ -152,6 +152,10 @@ pub enum ClientMessage {
         session_id: SessionId,
         direction: NavigationDirection,
     },
+    SelectCandidate {
+        session_id: SessionId,
+        index: usize,
+    },
     Accept {
         session_id: SessionId,
         target: AcceptTarget,

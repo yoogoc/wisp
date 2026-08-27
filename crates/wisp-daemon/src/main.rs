@@ -190,6 +190,10 @@ async fn handle_connection(stream: UnixStream, state: Arc<DaemonState>) -> anyho
             }
             send_message(&mut connection, &message).await?;
         }
+        ClientMessage::SelectCandidate { session_id, index } => {
+            let message = select_candidate(&state, &session_id, index).await;
+            send_message(&mut connection, &message).await?;
+        }
         ClientMessage::Accept { session_id, target } => {
             let message = accept(&state, &session_id, target).await;
             if matches!(message, ServerMessage::ApplyEdit { .. }) {
@@ -394,6 +398,24 @@ async fn navigate(
         NavigationDirection::Previous => (session.model.selected + len - 1) % len,
         NavigationDirection::Next => (session.model.selected + 1) % len,
     };
+    ServerMessage::Render {
+        model: session.model.clone(),
+    }
+}
+
+async fn select_candidate(state: &DaemonState, session_id: &str, index: usize) -> ServerMessage {
+    let mut sessions = state.sessions.lock().await;
+    let Some(session) = sessions.get_mut(session_id) else {
+        return ServerMessage::Error {
+            message: "no active completion session".into(),
+        };
+    };
+    if index >= session.model.candidates.len() {
+        return ServerMessage::Error {
+            message: "candidate index is out of range".into(),
+        };
+    }
+    session.model.selected = index;
     ServerMessage::Render {
         model: session.model.clone(),
     }

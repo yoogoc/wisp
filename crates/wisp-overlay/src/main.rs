@@ -1,5 +1,5 @@
 use std::{
-    path::PathBuf,
+    path::{Path, PathBuf},
     sync::{Arc, Mutex, mpsc},
     thread,
     time::{Duration, Instant},
@@ -8,16 +8,16 @@ use std::{
 use anyhow::Context;
 use clap::Parser;
 use gpui::{
-    App, Application, Bounds, Context as GpuiContext, Entity, Render, Timer, Window,
-    WindowBackgroundAppearance, WindowBounds, WindowKind, WindowOptions, div, point, prelude::*,
-    px, rgba, size,
+    App, Application, Bounds, Context as GpuiContext, Entity, Render, ScrollWheelEvent, Timer,
+    Window, WindowBackgroundAppearance, WindowBounds, WindowHandle, WindowKind, WindowOptions, div,
+    point, prelude::*, px, rgba, size,
 };
 use tokio::net::UnixStream;
 use tracing::debug;
 use tracing_subscriber::EnvFilter;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 use wisp_protocol::{
-    CandidateKind, ClientMessage, CursorAnchor, RenderModel, ServerMessage, framed,
+    Candidate, CandidateKind, ClientMessage, CursorAnchor, RenderModel, ServerMessage, framed,
     receive_message, send_message,
 };
 
@@ -32,6 +32,20 @@ const DESCRIPTION_SCROLL_PAUSE: Duration = Duration::from_millis(700);
 const DESCRIPTION_SCROLL_END_PAUSE: Duration = Duration::from_millis(500);
 const DESCRIPTION_SCROLL_SPEED: f32 = 34.0;
 const CURSOR_GAP: f32 = 8.0;
+const SCROLL_STEP_PIXELS: f32 = 18.0;
+const DETAIL_WIDTH: f32 = 400.0;
+const DETAIL_WINDOW_GAP: f32 = 8.0;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum OverlayPlacement {
+    Above,
+    Below,
+}
+
+#[derive(Debug)]
+enum OverlayAction {
+    Select { session_id: String, index: usize },
+}
 
 #[derive(Debug, Parser)]
 #[command(version, about = "Wisp GPUI autocomplete overlay")]
@@ -45,11 +59,145 @@ struct OverlayView {
     visible: bool,
     suppressed_until_new_request: Option<(String, u64)>,
     description_scroll_started: Instant,
+    scroll_accumulator: f32,
+    placement: OverlayPlacement,
+    detail_window: WindowHandle<CandidateDetailView>,
+    interaction_sender: mpsc::Sender<OverlayAction>,
+}
+
+#[derive(Clone)]
+struct CandidateDetailView {
+    candidate: Candidate,
+}
+
+impl Render for CandidateDetailView {
+    fn render(&mut self, _window: &mut Window, _cx: &mut GpuiContext<Self>) -> impl IntoElement {
+        let description = self
+            .candidate
+            .description
+            .as_deref()
+            .map(display_candidate_description)
+            .filter(|description| !description.is_empty());
+        let insert_text = (self.candidate.insert_text != self.candidate.label)
+            .then(|| self.candidate.insert_text.clone());
+
+        div()
+            .id("candidate-detail")
+            .flex()
+            .flex_col()
+            .gap(px(6.0))
+            .size_full()
+            .overflow_y_scroll()
+            .p(px(10.0))
+            .rounded(px(8.0))
+            .border_1()
+            .border_color(rgba(0x515768ff))
+            .bg(rgba(0x17191fff))
+            .shadow_lg()
+            .text_size(px(12.0))
+            .text_color(rgba(0xe7e9efff))
+            .child(
+                div()
+                    .flex()
+                    .items_center()
+                    .gap(px(8.0))
+                    .child(candidate_kind_icon(self.candidate.kind))
+                    .child(
+                        div()
+                            .min_w(px(0.0))
+                            .whitespace_normal()
+                            .child(self.candidate.label.clone()),
+                    ),
+            )
+            .when_some(description, |detail, description| {
+                detail.child(
+                    div()
+                        .whitespace_normal()
+                        .text_color(rgba(0xaeb4c2ff))
+                        .child(description),
+                )
+            })
+            .when_some(insert_text, |detail, insert_text| {
+                detail.child(
+                    div()
+                        .whitespace_normal()
+                        .text_color(rgba(0x7f8799ff))
+                        .child(format!("插入：{insert_text}")),
+                )
+            })
+    }
+}
+
+impl OverlayView {
+    fn scroll_candidates(&mut self, event: &ScrollWheelEvent, cx: &mut GpuiContext<Self>) {
+        if !self.visible || self.model.candidates.len() < 2 {
+            return;
+        }
+        let delta = event.delta.pixel_delta(px(32.0));
+        let y = f32::from(delta.y);
+        if y == 0.0 {
+            return;
+        }
+        if self.scroll_accumulator != 0.0 && self.scroll_accumulator.signum() != y.signum() {
+            self.scroll_accumulator = 0.0;
+        }
+        self.scroll_accumulator += y;
+        if self.scroll_accumulator.abs() < SCROLL_STEP_PIXELS {
+            return;
+        }
+        let steps = (self.scroll_accumulator.abs() / SCROLL_STEP_PIXELS).floor() as usize;
+        self.scroll_accumulator %= SCROLL_STEP_PIXELS;
+        let next = candidate_index_after_scroll(
+            self.model.selected,
+            self.model.candidates.len(),
+            y,
+            steps,
+        );
+        if next == self.model.selected {
+            return;
+        }
+        self.model.selected = next;
+        self.description_scroll_started = Instant::now();
+        let _ = self.interaction_sender.send(OverlayAction::Select {
+            session_id: self.model.session_id.clone(),
+            index: next,
+        });
+        cx.notify();
+    }
+}
+
+fn candidate_index_after_scroll(
+    selected: usize,
+    candidate_count: usize,
+    delta_y: f32,
+    steps: usize,
+) -> usize {
+    if candidate_count == 0 {
+        return 0;
+    }
+    if delta_y < 0.0 {
+        selected
+            .saturating_add(steps)
+            .min(candidate_count.saturating_sub(1))
+    } else {
+        selected.saturating_sub(steps)
+    }
+}
+
+fn hide_detail_window(detail_window: WindowHandle<CandidateDetailView>, cx: &mut App) {
+    if let Err(error) = detail_window.update(cx, |_, window, _| {
+        if let Err(error) = set_detail_window_visible(window, false) {
+            debug!(%error, "could not hide completion detail window");
+        }
+    }) {
+        debug!(%error, "could not update completion detail visibility");
+    }
 }
 
 impl Render for OverlayView {
-    fn render(&mut self, _window: &mut Window, _cx: &mut GpuiContext<Self>) -> impl IntoElement {
+    fn render(&mut self, _window: &mut Window, cx: &mut GpuiContext<Self>) -> impl IntoElement {
         let selected = self.model.selected;
+        let list_height = overlay_height(&self.model);
         let visible = visible_candidate_range(self.model.candidates.len(), selected);
         let candidates = self
             .model
@@ -58,6 +206,9 @@ impl Render for OverlayView {
             .enumerate()
             .skip(visible.start)
             .take(visible.len())
+            .map(|(index, candidate)| (index, candidate.clone()))
+            .collect::<Vec<_>>()
+            .into_iter()
             .map(|(index, candidate)| {
                 let label = display_candidate_label(&candidate.label, candidate.kind);
                 let description = candidate
@@ -79,7 +230,9 @@ impl Render for OverlayView {
                         0.0
                     }
                 });
+                let detail_candidate = candidate.clone();
                 div()
+                    .id(("candidate", index))
                     .flex()
                     .items_center()
                     .h(px(32.0))
@@ -88,6 +241,7 @@ impl Render for OverlayView {
                     .whitespace_nowrap()
                     .text_size(px(13.0))
                     .text_color(rgba(0xe7e9efff))
+                    .hover(|row| row.bg(rgba(0x293247ee)))
                     .when(index == selected, |row| row.bg(rgba(0x3d67b1cc)))
                     .child(
                         div()
@@ -134,13 +288,39 @@ impl Render for OverlayView {
                                 }),
                         )
                     })
+                    .on_hover(cx.listener(move |view, hovered: &bool, _window, cx| {
+                        if !*hovered {
+                            return;
+                        }
+                        let detail_window = view.detail_window;
+                        let model = view.model.clone();
+                        let placement = view.placement;
+                        let candidate = detail_candidate.clone();
+                        if let Err(error) = detail_window.update(cx, |detail, window, cx| {
+                            detail.candidate = candidate;
+                            let height = candidate_detail_height(&detail.candidate)
+                                .min(placement_height_limit(&model, placement));
+                            window.resize(size(px(DETAIL_WIDTH), px(height)));
+                            if let Err(error) =
+                                reposition_detail_window(window, &model, height, placement)
+                            {
+                                debug!(%error, "could not position completion detail window");
+                            }
+                            if let Err(error) = set_detail_window_visible(window, true) {
+                                debug!(%error, "could not show completion detail window");
+                            }
+                            cx.notify();
+                        }) {
+                            debug!(%error, "could not update completion detail window");
+                        }
+                    }))
             });
 
-        div()
-            .when(!self.visible, |root| root.opacity(0.0))
+        let list = div()
             .flex()
             .flex_col()
-            .size_full()
+            .w_full()
+            .h(px(list_height))
             .overflow_hidden()
             .rounded(px(9.0))
             .border_1()
@@ -161,7 +341,59 @@ impl Render for OverlayView {
                         .child(format!("→ {ghost}")),
                 )
             })
-            .children(candidates)
+            .children(candidates);
+
+        div()
+            .id("overlay-root")
+            .when(!self.visible, |root| root.opacity(0.0))
+            .flex()
+            .flex_col()
+            .when(self.placement == OverlayPlacement::Above, |root| {
+                root.justify_end()
+            })
+            .size_full()
+            .on_scroll_wheel(cx.listener(|view, event, _, cx| {
+                view.scroll_candidates(event, cx);
+            }))
+            .on_hover(cx.listener(|view, hovered: &bool, _window, cx| {
+                if *hovered {
+                    return;
+                }
+                if let Err(error) = view.detail_window.update(cx, |_, window, _| {
+                    if let Err(error) = set_detail_window_visible(window, false) {
+                        debug!(%error, "could not hide completion detail window");
+                    }
+                }) {
+                    debug!(%error, "could not update completion detail visibility");
+                }
+            }))
+            .child(list)
+    }
+}
+
+fn candidate_detail_height(candidate: &Candidate) -> f32 {
+    const DETAIL_COLUMNS: usize = 54;
+    const DETAIL_LINE_HEIGHT: f32 = 18.0;
+    let lines = [
+        candidate.label.as_str(),
+        candidate.description.as_deref().unwrap_or(""),
+    ]
+    .into_iter()
+    .map(|text| UnicodeWidthStr::width(text).div_ceil(DETAIL_COLUMNS).max(1))
+    .sum::<usize>()
+        + usize::from(candidate.insert_text != candidate.label);
+    (32.0 + lines as f32 * DETAIL_LINE_HEIGHT).clamp(96.0, 560.0)
+}
+
+fn empty_detail_candidate() -> Candidate {
+    Candidate {
+        label: String::new(),
+        insert_text: String::new(),
+        description: None,
+        kind: CandidateKind::Command,
+        score: 0.0,
+        replace_start: 0,
+        replace_end: 0,
     }
 }
 
@@ -172,7 +404,9 @@ fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     let socket = args.socket.unwrap_or_else(default_socket_path);
     let (sender, receiver) = mpsc::channel();
-    spawn_subscription(socket, sender);
+    let (interaction_sender, interaction_receiver) = mpsc::channel();
+    spawn_subscription(socket.clone(), sender);
+    spawn_interaction_worker(socket, interaction_receiver);
 
     let first = loop {
         match receiver.recv().context("overlay subscription stopped")? {
@@ -180,6 +414,7 @@ fn main() -> anyhow::Result<()> {
             _ => continue,
         }
     };
+    let first_placement = preferred_model_placement(&first);
     let receiver = Arc::new(Mutex::new(receiver));
 
     Application::new().run(move |cx: &mut App| {
@@ -193,6 +428,35 @@ fn main() -> anyhow::Result<()> {
             origin: anchor,
             size: size(px(OVERLAY_WIDTH), px(height)),
         };
+        let detail_bounds = Bounds {
+            origin: anchor,
+            size: size(px(DETAIL_WIDTH), px(96.0)),
+        };
+        let detail_window = cx
+            .open_window(
+                WindowOptions {
+                    window_bounds: Some(WindowBounds::Windowed(detail_bounds)),
+                    titlebar: None,
+                    focus: false,
+                    show: false,
+                    kind: WindowKind::PopUp,
+                    is_movable: false,
+                    is_resizable: false,
+                    is_minimizable: false,
+                    window_background: WindowBackgroundAppearance::Transparent,
+                    window_decorations: None,
+                    ..Default::default()
+                },
+                |window, cx| {
+                    if let Err(error) = set_detail_window_visible(window, false) {
+                        debug!(%error, "could not configure completion detail window");
+                    }
+                    cx.new(|_| CandidateDetailView {
+                        candidate: empty_detail_candidate(),
+                    })
+                },
+            )
+            .expect("open Wisp completion detail window");
         let receiver = Arc::clone(&receiver);
         cx.open_window(
             WindowOptions {
@@ -216,11 +480,18 @@ fn main() -> anyhow::Result<()> {
                     visible: terminal_active,
                     suppressed_until_new_request: None,
                     description_scroll_started: Instant::now(),
+                    scroll_accumulator: 0.0,
+                    placement: first_placement,
+                    detail_window,
+                    interaction_sender,
                 });
                 let initial_model = view.read(cx).model.clone();
-                if let Err(error) =
-                    reposition_window(window, &initial_model, overlay_height(&initial_model))
-                {
+                if let Err(error) = reposition_window(
+                    window,
+                    &initial_model,
+                    overlay_height(&initial_model),
+                    first_placement,
+                ) {
                     debug!(%error, "could not position initial overlay window");
                 }
                 if let Err(error) = set_overlay_window_visible(window, terminal_active) {
@@ -306,6 +577,7 @@ fn poll_messages(
                 if cx
                     .update(|window, app| {
                         if activity_changed {
+                            hide_detail_window(view.read(app).detail_window, app);
                             let current = view.read(app);
                             let suppression = if terminal_active {
                                 current.suppressed_until_new_request.clone()
@@ -344,9 +616,13 @@ fn poll_messages(
                                     if terminal_active && !suppressed {
                                         suppression = None;
                                     }
+                                    hide_detail_window(view.read(app).detail_window, app);
+                                    let placement = preferred_model_placement(&model);
                                     let height = overlay_height(&model);
                                     window.resize(size(px(OVERLAY_WIDTH), px(height)));
-                                    if let Err(error) = reposition_window(window, &model, height) {
+                                    if let Err(error) =
+                                        reposition_window(window, &model, height, placement)
+                                    {
                                         debug!(%error, "could not reposition overlay window");
                                     }
                                     if let Err(error) = set_overlay_window_visible(window, visible)
@@ -358,6 +634,7 @@ fn poll_messages(
                                         view.visible = visible;
                                         view.suppressed_until_new_request = suppression;
                                         view.description_scroll_started = Instant::now();
+                                        view.placement = placement;
                                         cx.notify();
                                     });
                                 }
@@ -367,6 +644,7 @@ fn poll_messages(
                                         &session_id,
                                     ) =>
                                 {
+                                    hide_detail_window(view.read(app).detail_window, app);
                                     if let Err(error) = set_overlay_window_visible(window, false) {
                                         debug!(%error, "could not hide overlay window");
                                     }
@@ -404,6 +682,14 @@ fn overlay_height(model: &RenderModel) -> f32 {
         } else {
             0.0
         }
+}
+
+fn maximum_overlay_height(model: &RenderModel) -> f32 {
+    model
+        .candidates
+        .iter()
+        .map(candidate_detail_height)
+        .fold(overlay_height(model), f32::max)
 }
 
 fn visible_candidate_range(candidate_count: usize, selected: usize) -> std::ops::Range<usize> {
@@ -555,18 +841,102 @@ fn overlay_origin(model: &RenderModel, _height: f32) -> gpui::Point<gpui::Pixels
     })
 }
 
+#[cfg(test)]
 fn preferred_overlay_top(anchor: CursorAnchor, height: f32, screen_height: f32) -> f32 {
     let below = anchor.position.y + CURSOR_GAP;
-    if below + height <= screen_height {
-        below
+    match preferred_overlay_placement(anchor, height, screen_height) {
+        OverlayPlacement::Below => below,
+        OverlayPlacement::Above => {
+            (anchor.position.y - anchor.line_height - CURSOR_GAP - height).max(0.0)
+        }
+    }
+}
+
+fn preferred_overlay_placement(
+    anchor: CursorAnchor,
+    required_height: f32,
+    screen_height: f32,
+) -> OverlayPlacement {
+    let below = anchor.position.y + CURSOR_GAP;
+    let below_available = (screen_height - below).max(0.0);
+    let above_available = (anchor.position.y - anchor.line_height - CURSOR_GAP).max(0.0);
+    if required_height <= below_available {
+        OverlayPlacement::Below
+    } else if required_height <= above_available {
+        OverlayPlacement::Above
+    } else if below_available >= above_available {
+        OverlayPlacement::Below
     } else {
-        (anchor.position.y - anchor.line_height - CURSOR_GAP - height).max(0.0)
+        OverlayPlacement::Above
+    }
+}
+
+fn overlay_top_for_placement(
+    anchor: CursorAnchor,
+    height: f32,
+    placement: OverlayPlacement,
+) -> f32 {
+    match placement {
+        OverlayPlacement::Below => anchor.position.y + CURSOR_GAP,
+        OverlayPlacement::Above => {
+            (anchor.position.y - anchor.line_height - CURSOR_GAP - height).max(0.0)
+        }
     }
 }
 
 #[cfg(target_os = "macos")]
 #[allow(unexpected_cfgs)]
-fn reposition_window(window: &Window, model: &RenderModel, height: f32) -> anyhow::Result<()> {
+fn preferred_model_placement(model: &RenderModel) -> OverlayPlacement {
+    use cocoa::{appkit::NSScreen, base::nil, foundation::NSRect};
+
+    let Some(anchor) = model.anchor else {
+        return OverlayPlacement::Below;
+    };
+    let screen = unsafe { NSScreen::mainScreen(nil) };
+    let screen_frame: NSRect = unsafe { NSScreen::frame(screen) };
+    preferred_overlay_placement(
+        anchor,
+        maximum_overlay_height(model),
+        screen_frame.size.height as f32,
+    )
+}
+
+#[cfg(not(target_os = "macos"))]
+fn preferred_model_placement(_model: &RenderModel) -> OverlayPlacement {
+    OverlayPlacement::Below
+}
+
+#[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
+fn placement_height_limit(model: &RenderModel, placement: OverlayPlacement) -> f32 {
+    use cocoa::{appkit::NSScreen, base::nil, foundation::NSRect};
+
+    let Some(anchor) = model.anchor else {
+        return f32::MAX;
+    };
+    let screen = unsafe { NSScreen::mainScreen(nil) };
+    let screen_frame: NSRect = unsafe { NSScreen::frame(screen) };
+    match placement {
+        OverlayPlacement::Below => {
+            (screen_frame.size.height as f32 - anchor.position.y - CURSOR_GAP).max(0.0)
+        }
+        OverlayPlacement::Above => (anchor.position.y - anchor.line_height - CURSOR_GAP).max(0.0),
+    }
+}
+
+#[cfg(not(target_os = "macos"))]
+fn placement_height_limit(_model: &RenderModel, _placement: OverlayPlacement) -> f32 {
+    f32::MAX
+}
+
+#[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
+fn reposition_window(
+    window: &Window,
+    model: &RenderModel,
+    height: f32,
+    placement: OverlayPlacement,
+) -> anyhow::Result<()> {
     use cocoa::{
         appkit::NSScreen,
         base::nil,
@@ -580,7 +950,7 @@ fn reposition_window(window: &Window, model: &RenderModel, height: f32) -> anyho
     let native_window = native_window(window)?;
     let screen = unsafe { NSScreen::mainScreen(nil) };
     let screen_frame: NSRect = unsafe { NSScreen::frame(screen) };
-    let top = preferred_overlay_top(anchor, height, screen_frame.size.height as f32);
+    let top = overlay_top_for_placement(anchor, height, placement);
     let origin_x = f64::from(anchor.position.x);
     let origin_y =
         screen_frame.origin.y + screen_frame.size.height - f64::from(top) - f64::from(height);
@@ -599,7 +969,76 @@ fn reposition_window(window: &Window, model: &RenderModel, height: f32) -> anyho
 
 #[cfg(target_os = "macos")]
 #[allow(unexpected_cfgs)]
+fn reposition_detail_window(
+    window: &Window,
+    model: &RenderModel,
+    height: f32,
+    placement: OverlayPlacement,
+) -> anyhow::Result<()> {
+    use cocoa::{
+        appkit::NSScreen,
+        base::nil,
+        foundation::{NSPoint, NSRect},
+    };
+    use objc::{msg_send, runtime::Object, sel, sel_impl};
+
+    let Some(anchor) = model.anchor else {
+        return Ok(());
+    };
+    let native_window = native_window(window)?;
+    let screen = unsafe { NSScreen::mainScreen(nil) };
+    let screen_frame: NSRect = unsafe { NSScreen::frame(screen) };
+    let right = anchor.position.x + OVERLAY_WIDTH + DETAIL_WINDOW_GAP;
+    let x = if right + DETAIL_WIDTH <= screen_frame.size.width as f32 {
+        right
+    } else {
+        (anchor.position.x - DETAIL_WINDOW_GAP - DETAIL_WIDTH).max(0.0)
+    };
+    let top = overlay_top_for_placement(anchor, height, placement);
+    let origin_y =
+        screen_frame.origin.y + screen_frame.size.height - f64::from(top) - f64::from(height);
+    dispatch::Queue::main().exec_async(move || {
+        let native_window = native_window as *mut Object;
+        let origin = NSPoint::new(f64::from(x), origin_y);
+        unsafe {
+            let _: () = msg_send![native_window, setFrameOrigin: origin];
+        }
+    });
+    Ok(())
+}
+
+#[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
 fn set_overlay_window_visible(window: &Window, visible: bool) -> anyhow::Result<()> {
+    use cocoa::base::nil;
+    use objc::{
+        msg_send,
+        runtime::{NO, Object, YES},
+        sel, sel_impl,
+    };
+
+    let native_window = native_window(window)?;
+    // AppKit visibility changes can re-enter GPUI, so keep them ordered on the
+    // next main-queue turn just like native window repositioning.
+    dispatch::Queue::main().exec_async(move || {
+        let native_window = native_window as *mut Object;
+        unsafe {
+            let _: () = msg_send![native_window, setIgnoresMouseEvents: NO];
+            let _: () = msg_send![native_window, setAcceptsMouseMovedEvents: YES];
+            let _: () = msg_send![native_window, setBecomesKeyOnlyIfNeeded: YES];
+            if visible {
+                let _: () = msg_send![native_window, orderFront: nil];
+            } else {
+                let _: () = msg_send![native_window, orderOut: nil];
+            }
+        }
+    });
+    Ok(())
+}
+
+#[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
+fn set_detail_window_visible(window: &Window, visible: bool) -> anyhow::Result<()> {
     use cocoa::base::nil;
     use objc::{
         msg_send,
@@ -608,8 +1047,6 @@ fn set_overlay_window_visible(window: &Window, visible: bool) -> anyhow::Result<
     };
 
     let native_window = native_window(window)?;
-    // AppKit visibility changes can re-enter GPUI, so keep them ordered on the
-    // next main-queue turn just like native window repositioning.
     dispatch::Queue::main().exec_async(move || {
         let native_window = native_window as *mut Object;
         unsafe {
@@ -681,12 +1118,32 @@ fn native_window(window: &Window) -> anyhow::Result<usize> {
 }
 
 #[cfg(not(target_os = "macos"))]
-fn reposition_window(_window: &Window, _model: &RenderModel, _height: f32) -> anyhow::Result<()> {
+fn reposition_window(
+    _window: &Window,
+    _model: &RenderModel,
+    _height: f32,
+    _placement: OverlayPlacement,
+) -> anyhow::Result<()> {
+    Ok(())
+}
+
+#[cfg(not(target_os = "macos"))]
+fn reposition_detail_window(
+    _window: &Window,
+    _model: &RenderModel,
+    _height: f32,
+    _placement: OverlayPlacement,
+) -> anyhow::Result<()> {
     Ok(())
 }
 
 #[cfg(not(target_os = "macos"))]
 fn set_overlay_window_visible(_window: &Window, _visible: bool) -> anyhow::Result<()> {
+    Ok(())
+}
+
+#[cfg(not(target_os = "macos"))]
+fn set_detail_window_visible(_window: &Window, _visible: bool) -> anyhow::Result<()> {
     Ok(())
 }
 
@@ -708,6 +1165,40 @@ fn spawn_subscription(socket: PathBuf, sender: mpsc::Sender<ServerMessage>) {
             }
         });
     });
+}
+
+fn spawn_interaction_worker(socket: PathBuf, receiver: mpsc::Receiver<OverlayAction>) {
+    thread::spawn(move || {
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .expect("build overlay interaction runtime");
+        while let Ok(action) = receiver.recv() {
+            let message = match action {
+                OverlayAction::Select { session_id, index } => {
+                    ClientMessage::SelectCandidate { session_id, index }
+                }
+            };
+            match runtime.block_on(overlay_request(&socket, message)) {
+                Ok(ServerMessage::Error { message }) => {
+                    debug!(%message, "overlay interaction was rejected");
+                }
+                Ok(_) => {}
+                Err(error) => debug!(%error, "overlay interaction failed"),
+            }
+        }
+    });
+}
+
+async fn overlay_request(socket: &Path, message: ClientMessage) -> anyhow::Result<ServerMessage> {
+    let stream = UnixStream::connect(socket)
+        .await
+        .with_context(|| format!("connect to daemon at {}", socket.display()))?;
+    let mut connection = framed(stream);
+    send_message(&mut connection, &message).await?;
+    receive_message(&mut connection)
+        .await?
+        .context("daemon closed overlay interaction without a response")
 }
 
 async fn subscribe_once(
@@ -808,6 +1299,32 @@ mod tests {
     }
 
     #[test]
+    fn mouse_scroll_moves_selection_without_wrapping() {
+        assert_eq!(candidate_index_after_scroll(0, 12, -1.0, 1), 1);
+        assert_eq!(candidate_index_after_scroll(7, 12, -1.0, 3), 10);
+        assert_eq!(candidate_index_after_scroll(11, 12, -1.0, 4), 11);
+        assert_eq!(candidate_index_after_scroll(4, 12, 1.0, 2), 2);
+        assert_eq!(candidate_index_after_scroll(0, 12, 1.0, 2), 0);
+    }
+
+    #[test]
+    fn long_candidate_details_expand_the_native_window() {
+        let short = Candidate {
+            label: "git".into(),
+            insert_text: "git".into(),
+            description: Some("version control".into()),
+            kind: CandidateKind::Command,
+            score: 1.0,
+            replace_start: 0,
+            replace_end: 3,
+        };
+        let mut long = short.clone();
+        long.description = Some("a detailed explanation ".repeat(100));
+        assert!(candidate_detail_height(&long) > candidate_detail_height(&short));
+        assert_eq!(candidate_detail_height(&long), 560.0);
+    }
+
+    #[test]
     fn long_path_labels_are_shortened_without_changing_other_candidates() {
         let path = "workspace/a-very-long-directory-name/another-directory/source-file.rs";
         let shortened = display_candidate_label(path, CandidateKind::File);
@@ -873,5 +1390,33 @@ mod tests {
 
         assert_eq!(preferred_overlay_top(anchor, 160.0, 1000.0), 488.0);
         assert_eq!(preferred_overlay_top(anchor, 160.0, 600.0), 292.0);
+    }
+
+    #[test]
+    fn locked_detail_placement_never_crosses_the_cursor_line() {
+        let anchor = CursorAnchor {
+            position: wisp_protocol::ScreenPoint { x: 320.0, y: 480.0 },
+            line_height: 20.0,
+            cell_width: 10.0,
+        };
+
+        let below_top = overlay_top_for_placement(anchor, 320.0, OverlayPlacement::Below);
+        assert!(below_top >= anchor.position.y + CURSOR_GAP);
+
+        let above_top = overlay_top_for_placement(anchor, 320.0, OverlayPlacement::Above);
+        assert!(above_top + 320.0 <= anchor.position.y - anchor.line_height - CURSOR_GAP);
+    }
+
+    #[test]
+    fn detail_height_is_used_before_choosing_a_side() {
+        let anchor = CursorAnchor {
+            position: wisp_protocol::ScreenPoint { x: 320.0, y: 500.0 },
+            line_height: 20.0,
+            cell_width: 10.0,
+        };
+        assert_eq!(
+            preferred_overlay_placement(anchor, 420.0, 700.0),
+            OverlayPlacement::Above
+        );
     }
 }
