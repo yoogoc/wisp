@@ -96,6 +96,10 @@ The included example targets a local OpenAI-compatible server:
 ```toml
 default_provider = "local"
 
+[completion]
+# 0 means unlimited.
+max_candidates = 0
+
 [providers.local]
 type = "openai-compatible"
 base_url = "http://127.0.0.1:11434/v1"
@@ -157,7 +161,9 @@ flowchart LR
 
 ## Completion specs
 
-Static command metadata lives in [`specs/`](specs) as data-only RON files. Wisp currently ships specs for **Git**, **Cargo**, and **Docker**. Dynamic generators—such as Git branches and running Docker containers—are registered in Rust, so a third-party spec cannot execute arbitrary shell commands.
+Static command metadata lives in [`specs/`](specs) as data-only RON, one file per command: the complete `@withfig/autocomplete` 2.692.3 snapshot, 1,484 modules, including recursive subcommands, aliases, options, arguments, static suggestions, path templates, versioned specs, and `loadSpec` references. A spec's id is its path below `specs/`, so `az/2.53.0/network.ron` is the spec `az/2.53.0/network`. `crates/wisp-core/build.rs` compresses every one of those files into a single container that the binary embeds, and the daemon inflates a document only when a command is first completed, so it never deserializes the roughly 240 MB data set at startup.
+
+Imported Fig callbacks and shell generators remain inert metadata unless Wisp has a reviewed Rust adapter. Built-in dynamic generators—such as Git branches and running Docker containers—are registered in Rust, so a completion spec cannot execute arbitrary shell commands. The original Fig MIT notice and import coverage report live in [`specs/`](specs).
 
 ## Positioning and calibration
 

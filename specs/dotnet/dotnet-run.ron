@@ -1,0 +1,223 @@
+(
+    version: 1,
+    command: "run",
+    description: Some("The dotnet run command provides a convenient option to run your application from the source code with one command. It\'s useful for fast iterative development from the command line. The command depends on the dotnet build command to build the code. Any requirements for the build, such as that the project must be restored first, apply to dotnet run as well"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "--",
+            ],
+            description: Some("Delimits arguments to dotnet run from arguments for the application being run. All arguments after this delimiter are passed to the application run"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-a",
+                "--arch",
+            ],
+            description: Some("Specifies the target architecture. This is a shorthand syntax for setting the Runtime Identifier (RID), where the provided value is combined with the default RID. For example, on a win-x64 machine, specifying --arch x86 sets the RID to win-x86. If you use this option, don\'t use the -r|--runtime option. Available since .NET 6 Preview 7"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "arch",
+                    source: Static([
+                        "x86",
+                        "x64",
+                        "arm",
+                        "arm64",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-c",
+                "--configuration",
+            ],
+            description: Some("Defines the build configuration. The default for most projects is Debug, but you can override the build configuration settings in your project"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "configuration",
+                    source: Static([
+                        "Debug",
+                        "Release",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-f",
+                "--framework",
+            ],
+            description: Some("Builds and runs the app using the specified framework. The framework must be specified in the project file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "framework",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--force",
+            ],
+            description: Some("Forces all dependencies to be resolved even if the last restore was successful. Specifying this flag is the same as deleting the project.assets.json file"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--interactive",
+            ],
+            description: Some("Allows the command to stop and wait for user input or action. For example, to complete authentication. Available since .NET Core 3.0 SDK"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--launch-profile",
+            ],
+            description: Some("The name of the launch profile (if any) to use when launching the application. Launch profiles are defined in the launchSettings.json file and are typically called Development, Staging, and Production"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Static([
+                        "Development",
+                        "Staging",
+                        "Production",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cat",
+                            "Properties/launchSettings.json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--no-build",
+            ],
+            description: Some("Doesn\'t build the project before running. It also implicit sets the --no-restore flag"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-dependencies",
+            ],
+            description: Some("When restoring a project with project-to-project (P2P) references, restores the root project and not the references"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-launch-profile",
+            ],
+            description: Some("Doesn\'t try to use launchSettings.json to configure the application"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-restore",
+            ],
+            description: Some("Doesn\'t execute an implicit restore when running the command"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--os",
+            ],
+            description: Some("Specifies the target operating system (OS). This is a shorthand syntax for setting the Runtime Identifier (RID), where the provided value is combined with the default RID. For example, on a win-x64 machine, specifying --os os sets the RID to os-x64. If you use this option, don\'t use the -r|--runtime option. Available since .NET 6 Preview 7"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "os",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--project",
+            ],
+            description: Some("Specifies the path of the project file to run (folder name or full path). If not specified, it defaults to the current directory. The -p abbreviation for --project is deprecated starting in .NET 6 Preview SDK"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "path",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-r",
+                "--runtime",
+            ],
+            description: Some("Specifies the target runtime to restore packages for. For a list of Runtime Identifiers (RIDs), see the RID catalog. -r short option available since .NET Core 3.0 SDK"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "runtime",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-v",
+                "--verbosity",
+            ],
+            description: Some("Sets the verbosity level of the command. Allowed values are q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]. The default is minimal. For more information, see LoggerVerbosity"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "verbosity",
+                    source: Static([
+                        "quiet",
+                        "minimal",
+                        "normal",
+                        "detailed",
+                        "diagnostic",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+    ],
+    arguments: [],
+)

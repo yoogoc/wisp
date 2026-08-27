@@ -1,0 +1,725 @@
+(
+    version: 1,
+    command: "cicada",
+    description: Some("Write CI/CD Pipelines in TypeScript"),
+    subcommands: [
+        (
+            name: "run",
+            aliases: [],
+            description: Some("Run a cicada pipeline"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-s",
+                        "--secret",
+                    ],
+                    description: Some("Name of the secret to use, these come from environment variables"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "secret",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--dotenv",
+                    ],
+                    description: Some("Load a custom .env file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "dotenv",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--secrets-json",
+                    ],
+                    description: Some("Load secrets from a json file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "secrets_json",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--cicada-dockerfile",
+                    ],
+                    description: Some("A custom dockerfile to load the cicada bin from"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "cicada_dockerfile",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--oci-backend",
+                    ],
+                    description: Some("The OCI backend to use"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "oci_backend",
+                            source: Static([
+                                "docker",
+                                "podman",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-dotenv",
+                    ],
+                    description: Some("Do not load .env file"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-cache",
+                    ],
+                    description: Some("Disable caching"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help (see more with \'--help\')"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "pipeline",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "step",
+            aliases: [],
+            description: Some("Run a step in a cicada workflow"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "workflow",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "step",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "init",
+            aliases: [],
+            description: Some("Initialize a cicada project, you can optionally specify a pipeline to create"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "pipeline",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "new",
+            aliases: [],
+            description: Some("Create a cicada pipeline"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "pipeline",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "update",
+            aliases: [],
+            description: Some("Update cicada"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "completions",
+            aliases: [],
+            description: Some("List all available completions"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "shell",
+                    source: Static([
+                        "bash",
+                        "elvish",
+                        "fish",
+                        "powershell",
+                        "zsh",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "fig-completion",
+            aliases: [],
+            description: Some("Create fig completions"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "open",
+            aliases: [],
+            description: Some("Open a pipeline in your editor"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "pipeline",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "doctor",
+            aliases: [],
+            description: Some("Check for common issues"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--oci-backend",
+                    ],
+                    description: Some("The OCI backend to use"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "oci_backend",
+                            source: Static([
+                                "docker",
+                                "podman",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "debug",
+            aliases: [],
+            description: Some("Debug commands"),
+            subcommands: [
+                (
+                    name: "daemon-info",
+                    aliases: [],
+                    description: None,
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--oci-backend",
+                            ],
+                            description: Some("The OCI backend to use"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "oci_backend",
+                                    source: Static([
+                                        "docker",
+                                        "podman",
+                                    ]),
+                                    optional: true,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-j",
+                                "--json",
+                            ],
+                            description: None,
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Print help"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "disk-usage",
+                    aliases: [
+                        "du",
+                    ],
+                    description: None,
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--oci-backend",
+                            ],
+                            description: Some("The OCI backend to use"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "oci_backend",
+                                    source: Static([
+                                        "docker",
+                                        "podman",
+                                    ]),
+                                    optional: true,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-j",
+                                "--json",
+                            ],
+                            description: None,
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Print help"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "workers",
+                    aliases: [],
+                    description: None,
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--oci-backend",
+                            ],
+                            description: Some("The OCI backend to use"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "oci_backend",
+                                    source: Static([
+                                        "docker",
+                                        "podman",
+                                    ]),
+                                    optional: true,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-j",
+                                "--json",
+                            ],
+                            description: None,
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Print help"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "help",
+                    aliases: [],
+                    description: Some("Print this message or the help of the given subcommand(s)"),
+                    subcommands: [
+                        (
+                            name: "daemon-info",
+                            aliases: [],
+                            description: None,
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "disk-usage",
+                            aliases: [],
+                            description: None,
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "workers",
+                            aliases: [],
+                            description: None,
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "help",
+                            aliases: [],
+                            description: Some("Print this message or the help of the given subcommand(s)"),
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                    ],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Print this message or the help of the given subcommand(s)"),
+            subcommands: [
+                (
+                    name: "run",
+                    aliases: [],
+                    description: Some("Run a cicada pipeline"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "step",
+                    aliases: [],
+                    description: Some("Run a step in a cicada workflow"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "init",
+                    aliases: [],
+                    description: Some("Initialize a cicada project, you can optionally specify a pipeline to create"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "new",
+                    aliases: [],
+                    description: Some("Create a cicada pipeline"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "update",
+                    aliases: [],
+                    description: Some("Update cicada"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "completions",
+                    aliases: [],
+                    description: Some("List all available completions"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "fig-completion",
+                    aliases: [],
+                    description: Some("Create fig completions"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "open",
+                    aliases: [],
+                    description: Some("Open a pipeline in your editor"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "doctor",
+                    aliases: [],
+                    description: Some("Check for common issues"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "debug",
+                    aliases: [],
+                    description: Some("Debug commands"),
+                    subcommands: [
+                        (
+                            name: "daemon-info",
+                            aliases: [],
+                            description: None,
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "disk-usage",
+                            aliases: [],
+                            description: None,
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "workers",
+                            aliases: [],
+                            description: None,
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                    ],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "help",
+                    aliases: [],
+                    description: Some("Print this message or the help of the given subcommand(s)"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Print help"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-V",
+                "--version",
+            ],
+            description: Some("Print version"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

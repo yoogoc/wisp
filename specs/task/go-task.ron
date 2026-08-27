@@ -1,0 +1,245 @@
+(
+    version: 1,
+    command: "go-task",
+    description: Some("A task runner / simpler Make alternative written in Go"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-a",
+                "--list-all",
+            ],
+            description: Some("Lists tasks with or without a description"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-c",
+                "--color",
+            ],
+            description: Some("Colored output. Enabled by default. Set flag to false or use NO_COLOR=1 to disable (default true)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "color",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-C",
+                "--concurrency",
+            ],
+            description: Some("Limit number tasks to run concurrently"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "number",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-d",
+                "--dir",
+            ],
+            description: Some("Sets directory of execution"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "path",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--dry",
+            ],
+            description: Some("Compiles and prints tasks in the order that they would be run, without executing them"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-f",
+                "--force",
+            ],
+            description: Some("Forces execution even when the task is up-to-date"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Shows Task usage"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-i",
+                "--init",
+            ],
+            description: Some("Creates a new Taskfile.yml in the current folder"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-l",
+                "--list",
+            ],
+            description: Some("Lists tasks with description of current Taskfile"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-o",
+                "--output",
+            ],
+            description: Some("Sets output style"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "output",
+                    source: Static([
+                        "interleaved",
+                        "group",
+                        "prefixed",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-p",
+                "--parallel",
+            ],
+            description: Some("Executes tasks provided on command line in parallel"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-s",
+                "--silent",
+            ],
+            description: Some("Disables echoing"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--status",
+            ],
+            description: Some("Exits with non-zero exit code if any of the given tasks is not up-to-date"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--summary",
+            ],
+            description: Some("Show summary about a task"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-t",
+                "--taskfile",
+            ],
+            description: Some("Choose which Taskfile to run"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "taskfile",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-v",
+                "--verbose",
+            ],
+            description: Some("Enables verbose mode"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+            ],
+            description: Some("Show Task version"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-w",
+                "--watch",
+            ],
+            description: Some("Enables watch of the given task"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--",
+            ],
+            description: Some("Pass variables to the task"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "variables",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+    ],
+    arguments: [
+        (
+            name: "value",
+            source: Unavailable,
+            optional: true,
+            variadic: true,
+            imported_generator: Some((
+                script: [
+                    "task",
+                    "-a",
+                ],
+                has_post_process: true,
+                has_custom: false,
+            )),
+        ),
+    ],
+)

@@ -1,0 +1,1308 @@
+(
+    version: 1,
+    command: "infracost",
+    description: Some("Cloud cost estimates for Terraform"),
+    subcommands: [
+        (
+            name: "breakdown",
+            aliases: [],
+            description: Some("Show full breakdown of costs"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--config-file",
+                    ],
+                    description: Some("Path to Infracost config file. Cannot be used with path, terraform* or usage-file flags"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "config-file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--fields",
+                    ],
+                    description: Some("Comma separated list of output fields: all,price,monthlyQuantity,unit,hourlyCost,monthlyCost. Supported by table and html output formats"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "fields",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--format",
+                    ],
+                    description: Some("Output format: json, table, html"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-cache",
+                    ],
+                    description: Some("Don\'t attempt to cache Terraform plans"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--out-file",
+                    ],
+                    description: Some("Save output to a file, helpful with format flag"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "out-file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--path",
+                        "-p",
+                    ],
+                    description: Some("Path to the Terraform directory or JSON/plan file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--show-skipped",
+                    ],
+                    description: Some("Show unsupported resources"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--sync-usage-file",
+                    ],
+                    description: Some("Sync usage-file with missing resources, needs usage-file too (experimental)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--terraform-parse-hcl",
+                    ],
+                    description: Some("Parse the HCL directly instead of generating a Terraform plan. This option does not need credentials and is faster (experimental)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--terraform-plan-flags",
+                    ],
+                    description: Some("Flags to pass to \'terraform plan\'. Applicable when path is a Terraform directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "terraform-plan-flags",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--terraform-use-state",
+                    ],
+                    description: Some("Use Terraform state instead of generating a plan. Applicable when path is a Terraform directory"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--terraform-var",
+                    ],
+                    description: Some("Set a value for one of the input variables, similar to Terraform\'s -var flag. Only supported with --terraform-parse-hcl (experimental)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "terraform-var",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--terraform-var-file",
+                    ],
+                    description: Some("Load variable files from the given file, similar to Terraform\'s -var-file flag. Only supported with --terraform-parse-hcl (experimental)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "terraform-var-file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--terraform-workspace",
+                    ],
+                    description: Some("Terraform workspace to use. Applicable when path is a Terraform directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "terraform-workspace",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--usage-file",
+                    ],
+                    description: Some("Path to Infracost usage file that specifies values for usage-based resources"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "usage-file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "comment",
+            aliases: [],
+            description: Some("Post an Infracost comment to GitHub, GitLab, Azure Repos or Bitbucket"),
+            subcommands: [
+                (
+                    name: "azure-repos",
+                    aliases: [],
+                    description: Some("Post an Infracost comment to Azure Repos"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--azure-access-token",
+                            ],
+                            description: Some("Azure DevOps access token"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "azure-access-token",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--behavior",
+                            ],
+                            description: Some("Behavior when posting comment, one of:   update (default)  Update latest comment   new               Create a new comment   delete-and-new    Delete previous matching comments and create a new comment"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "behavior",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--dry-run",
+                            ],
+                            description: Some("Generate comment without actually posting to Azure Repos"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--path",
+                                "-p",
+                            ],
+                            description: Some("Path to Infracost JSON files, glob patterns need quotes"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "path",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--policy-path",
+                            ],
+                            description: Some("Path to Infracost policy files, glob patterns need quotes (experimental)"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "policy-path",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--pull-request",
+                            ],
+                            description: Some("Pull request number to post comment on"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "pull-request",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--repo-url",
+                            ],
+                            description: Some("Repository URL, e.g. https://dev.azure.com/my-org/my-project/_git/my-repo"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "repo-url",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--tag",
+                            ],
+                            description: Some("Customize hidden markdown tag used to detect comments posted by Infracost"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "tag",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "bitbucket",
+                    aliases: [],
+                    description: Some("Post an Infracost comment to Bitbucket"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--behavior",
+                            ],
+                            description: Some("Behavior when posting comment, one of:   update (default)  Update latest comment   new               Create a new comment   delete-and-new    Delete previous matching comments and create a new comment"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "behavior",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--bitbucket-server-url",
+                            ],
+                            description: Some("Bitbucket Server URL"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "bitbucket-server-url",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--bitbucket-token",
+                            ],
+                            description: Some("Bitbucket access token. Use \'username:app-password\' for Bitbucket Cloud and HTTP access token for Bitbucket Server"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "bitbucket-token",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--commit",
+                            ],
+                            description: Some("Commit SHA to post comment on, mutually exclusive with pull-request. Not available when bitbucket-server-url is set"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "commit",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--dry-run",
+                            ],
+                            description: Some("Generate comment without actually posting to Bitbucket"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--path",
+                                "-p",
+                            ],
+                            description: Some("Path to Infracost JSON files, glob patterns need quotes"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "path",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--policy-path",
+                            ],
+                            description: Some("Path to Infracost policy files, glob patterns need quotes (experimental)"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "policy-path",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--pull-request",
+                            ],
+                            description: Some("Pull request number to post comment on"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "pull-request",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--repo",
+                            ],
+                            description: Some("Repository in format workspace/repo"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "repo",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--tag",
+                            ],
+                            description: Some("Customize special text used to detect comments posted by Infracost (placed at the bottom of a comment)"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "tag",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "github",
+                    aliases: [],
+                    description: Some("Post an Infracost comment to GitHub"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--behavior",
+                            ],
+                            description: Some("Behavior when posting comment, one of:   update (default)  Update latest comment   new               Create a new comment   hide-and-new      Hide previous matching comments and create a new comment   delete-and-new    Delete previous matching comments and create a new comment"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "behavior",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--commit",
+                            ],
+                            description: Some("Commit SHA to post comment on, mutually exclusive with pull-request"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "commit",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--dry-run",
+                            ],
+                            description: Some("Generate comment without actually posting to GitHub"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--github-api-url",
+                            ],
+                            description: Some("GitHub API URL"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "github-api-url",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--github-token",
+                            ],
+                            description: Some("GitHub token"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "github-token",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--path",
+                                "-p",
+                            ],
+                            description: Some("Path to Infracost JSON files, glob patterns need quotes"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "path",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--policy-path",
+                            ],
+                            description: Some("Path to Infracost policy files, glob patterns need quotes (experimental)"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "policy-path",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--pull-request",
+                            ],
+                            description: Some("Pull request number to post comment on, mutually exclusive with commit"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "pull-request",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--repo",
+                            ],
+                            description: Some("Repository in format owner/repo"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "repo",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--tag",
+                            ],
+                            description: Some("Customize hidden markdown tag used to detect comments posted by Infracost"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "tag",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "gitlab",
+                    aliases: [],
+                    description: Some("Post an Infracost comment to GitLab"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--behavior",
+                            ],
+                            description: Some("Behavior when posting comment, one of:   update (default)  Update latest comment   new               Create a new comment   delete-and-new    Delete previous matching comments and create a new comment"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "behavior",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--commit",
+                            ],
+                            description: Some("Commit SHA to post comment on, mutually exclusive with merge-request"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "commit",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--dry-run",
+                            ],
+                            description: Some("Generate comment without actually posting to GitLab"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--gitlab-server-url",
+                            ],
+                            description: Some("GitLab Server URL"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "gitlab-server-url",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--gitlab-token",
+                            ],
+                            description: Some("GitLab token"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "gitlab-token",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--merge-request",
+                            ],
+                            description: Some("Merge request number to post comment on, mutually exclusive with commit"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "merge-request",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--path",
+                                "-p",
+                            ],
+                            description: Some("Path to Infracost JSON files, glob patterns need quotes"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "path",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--policy-path",
+                            ],
+                            description: Some("Path to Infracost policy files, glob patterns need quotes (experimental)"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "policy-path",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--repo",
+                            ],
+                            description: Some("Repository in format owner/repo"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "repo",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--tag",
+                            ],
+                            description: Some("Customize hidden markdown tag used to detect comments posted by Infracost"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "tag",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "completion",
+            aliases: [],
+            description: Some("Generate shell completion script"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--shell",
+                    ],
+                    description: Some("Supported shell formats: bash, zsh, fish, powershell"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "shell",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "configure",
+            aliases: [],
+            description: Some("Display or change global configuration"),
+            subcommands: [
+                (
+                    name: "get",
+                    aliases: [],
+                    description: Some("Get global configuration"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "set",
+                    aliases: [],
+                    description: Some("Set global configuration"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "diff",
+            aliases: [],
+            description: Some("Show diff of monthly costs between current and planned state"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--config-file",
+                    ],
+                    description: Some("Path to Infracost config file. Cannot be used with path, terraform* or usage-file flags"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "config-file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-cache",
+                    ],
+                    description: Some("Don\'t attempt to cache Terraform plans"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--out-file",
+                    ],
+                    description: Some("Save output to a file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "out-file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--path",
+                        "-p",
+                    ],
+                    description: Some("Path to the Terraform directory or JSON/plan file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--show-skipped",
+                    ],
+                    description: Some("Show unsupported resources"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--sync-usage-file",
+                    ],
+                    description: Some("Sync usage-file with missing resources, needs usage-file too (experimental)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--terraform-plan-flags",
+                    ],
+                    description: Some("Flags to pass to \'terraform plan\'. Applicable when path is a Terraform directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "terraform-plan-flags",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--terraform-workspace",
+                    ],
+                    description: Some("Terraform workspace to use. Applicable when path is a Terraform directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "terraform-workspace",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--usage-file",
+                    ],
+                    description: Some("Path to Infracost usage file that specifies values for usage-based resources"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "usage-file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "output",
+            aliases: [],
+            description: Some("Combine and output Infracost JSON files in different formats"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--fields",
+                    ],
+                    description: Some("Comma separated list of output fields: all,price,monthlyQuantity,unit,hourlyCost,monthlyCost. Supported by table and html output formats"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "fields",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--format",
+                    ],
+                    description: Some("Output format"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "json",
+                                "diff",
+                                "table",
+                                "html",
+                                "github-comment",
+                                "gitlab-comment",
+                                "azure-repos-comment",
+                                "bitbucket-comment",
+                                "slack-message",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--out-file",
+                        "-o",
+                    ],
+                    description: Some("Save output to a file, helpful with format flag"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "out-file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--path",
+                        "-p",
+                    ],
+                    description: Some("Path to Infracost JSON files, glob patterns need quotes"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--show-skipped",
+                    ],
+                    description: Some("Show unsupported resources"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "register",
+            aliases: [],
+            description: Some("Register for a free Infracost API key"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Help about any command"),
+            subcommands: [
+                (
+                    name: "breakdown",
+                    aliases: [],
+                    description: Some("Show full breakdown of costs"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "comment",
+                    aliases: [],
+                    description: Some("Post an Infracost comment to GitHub, GitLab, Azure Repos or Bitbucket"),
+                    subcommands: [
+                        (
+                            name: "azure-repos",
+                            aliases: [],
+                            description: Some("Post an Infracost comment to Azure Repos"),
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "bitbucket",
+                            aliases: [],
+                            description: Some("Post an Infracost comment to Bitbucket"),
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "github",
+                            aliases: [],
+                            description: Some("Post an Infracost comment to GitHub"),
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "gitlab",
+                            aliases: [],
+                            description: Some("Post an Infracost comment to GitLab"),
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                    ],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "completion",
+                    aliases: [],
+                    description: Some("Generate shell completion script"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "configure",
+                    aliases: [],
+                    description: Some("Display or change global configuration"),
+                    subcommands: [
+                        (
+                            name: "get",
+                            aliases: [],
+                            description: Some("Get global configuration"),
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "set",
+                            aliases: [],
+                            description: Some("Set global configuration"),
+                            subcommands: [],
+                            options: [],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                    ],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "diff",
+                    aliases: [],
+                    description: Some("Show diff of monthly costs between current and planned state"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "output",
+                    aliases: [],
+                    description: Some("Combine and output Infracost JSON files in different formats"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "register",
+                    aliases: [],
+                    description: Some("Register for a free Infracost API key"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--log-level",
+            ],
+            description: Some("Log level"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "log-level",
+                    source: Static([
+                        "trace",
+                        "debug",
+                        "info",
+                        "warn",
+                        "error",
+                        "fatal",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--no-color",
+            ],
+            description: Some("Turn off colored output"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Display help"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

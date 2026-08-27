@@ -1,0 +1,45 @@
+(
+    version: 1,
+    command: "kubens",
+    description: Some("Switch between Kubernetes-namespaces"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Show help for kubens"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--current",
+                "-c",
+            ],
+            description: Some("Show current namespace"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "namespace",
+            source: Unavailable,
+            optional: true,
+            variadic: false,
+            imported_generator: Some((
+                script: [
+                    "bash",
+                    "-c",
+                    "kubens | grep -v $(kubens -c)",
+                    "kubens",
+                    "-c",
+                ],
+                has_post_process: true,
+                has_custom: false,
+            )),
+        ),
+    ],
+)

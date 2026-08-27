@@ -1,0 +1,339 @@
+(
+    version: 1,
+    command: "aws-vault",
+    description: Some("A vault for securely storing and accessing AWS credentials in development environments"),
+    subcommands: [
+        (
+            name: "add",
+            aliases: [],
+            description: Some("Add credentials to the secure keystore"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "profile",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "remove",
+            aliases: [],
+            description: Some("Remove credentials from the secure keystore"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--force",
+                    ],
+                    description: Some("Force-remove the profile without a prompt"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "profile",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "aws-vault",
+                            "list",
+                            "--profiles",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "list",
+            aliases: [],
+            description: Some("List profiles, along with their credentials and sessions"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--profiles",
+                    ],
+                    description: Some("Show only the profile names"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--sessions",
+                    ],
+                    description: Some("Show only the session names"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--credentials",
+                    ],
+                    description: Some("Show only the profiles with stored credential"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "rotate",
+            aliases: [],
+            description: Some("Rotate credentials"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-n",
+                        "--no-session",
+                    ],
+                    description: Some("Use master credentials, no session or role used"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "profile",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "aws-vault",
+                            "list",
+                            "--profiles",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "exec",
+            aliases: [],
+            description: Some("Execute a command with AWS credentials"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--duration",
+                    ],
+                    description: Some("Duration of the temporary or assume-role session. Defaults to 1h"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "DURATION",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-n",
+                        "--no-session",
+                    ],
+                    description: Some("Use master credentials, no session or role used"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--region",
+                    ],
+                    description: Some("The AWS region"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "REGION",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-t",
+                        "--mfa-token",
+                    ],
+                    description: Some("The MFA token to use"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "MFA-TOKEN",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "profile",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "aws-vault",
+                            "list",
+                            "--profiles",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "command",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "export",
+            aliases: [],
+            description: Some("Export AWS credentials"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "profile",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "aws-vault",
+                            "list",
+                            "--profiles",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "clear",
+            aliases: [],
+            description: Some("Clear temporary credentials from the secure keystore"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "profile",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "aws-vault",
+                            "list",
+                            "--profiles",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "login",
+            aliases: [],
+            description: Some("Generate a login link for the AWS Console"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "profile",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "aws-vault",
+                            "list",
+                            "--profiles",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Show help about the command"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "command",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--help",
+            ],
+            description: Some("Show context-sensitive help (also try --help-long and --help-man)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+            ],
+            description: Some("Show application version"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--debug",
+            ],
+            description: Some("Show debugging output"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

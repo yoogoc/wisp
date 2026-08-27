@@ -91,11 +91,12 @@ async fn main() -> anyhow::Result<()> {
     let socket = args.socket.unwrap_or_else(default_socket_path);
     let config = args.config.unwrap_or_else(default_config_path);
     let ai_config = AiConfig::load(&config)?;
+    let max_candidates = ai_config.completion.max_candidates;
     let providers = ProviderRegistry::from_config(ai_config)
         .map_err(|error| anyhow::anyhow!("initialize AI providers: {error}"))?;
     let (overlay, _) = broadcast::channel(64);
     let state = Arc::new(DaemonState {
-        engine: CompletionEngine::default(),
+        engine: CompletionEngine::default().with_max_candidates(max_candidates),
         providers: Arc::new(providers),
         requests: Mutex::new(RequestTracker::default()),
         sessions: Mutex::new(HashMap::new()),

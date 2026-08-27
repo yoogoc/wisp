@@ -1,0 +1,807 @@
+(
+    version: 1,
+    command: "vsce",
+    description: Some("The Visual Studio Code Extension Manager"),
+    subcommands: [
+        (
+            name: "ls",
+            aliases: [],
+            description: Some("Lists all the files that will be published"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--yarn",
+                    ],
+                    description: Some("Use yarn instead of npm (default inferred from presence of yarn.lock or .yarnrc)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-yarn",
+                    ],
+                    description: Some("Use npm instead of yarn (default inferred from lack of yarn.lock or .yarnrc)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--packagedDependencies",
+                    ],
+                    description: Some("Select packages that should be published only (includes dependencies)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "paths",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ignoreFile",
+                    ],
+                    description: Some("Indicate alternative .vscodeignore"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-dependencies",
+                    ],
+                    description: Some("Disable dependency detection via npm or yarn"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "package",
+            aliases: [],
+            description: Some("Packages an extension"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-o",
+                        "--out",
+                    ],
+                    description: Some("Output .vsix extension file to <path> location (defaults to <name>-<version>.vsix)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [],
+                                has_post_process: false,
+                                has_custom: true,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-t",
+                        "--target",
+                    ],
+                    description: Some("Target architecture"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "target",
+                            source: Static([
+                                "win32-x64",
+                                "win32-ia32",
+                                "win32-arm64",
+                                "linux-x64",
+                                "linux-arm64",
+                                "linux-armhf",
+                                "alpine-x64",
+                                "alpine-arm64",
+                                "darwin-x64",
+                                "darwin-arm64",
+                            ]),
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                        "--message",
+                    ],
+                    description: Some("Commit message used when calling `npm version`"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "commit message",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-git-tag-version",
+                    ],
+                    description: Some("Do not create a version commit and tag when calling `npm version`. Valid only when [version] is provided"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-update-package-json",
+                    ],
+                    description: Some("Do not update `package.json`. Valid only when [version] is provided"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--githubBranch",
+                    ],
+                    description: Some("The GitHub branch used to infer relative links in README.md. Can be overridden by --baseContentUrl and --baseImagesUrl"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "branch",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "git",
+                                    "--no-optional-locks",
+                                    "branch",
+                                    "-a",
+                                    "--no-color",
+                                    "--sort=-committerdate",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--gitlabBranch",
+                    ],
+                    description: Some("The GitLab branch used to infer relative links in README.md. Can be overridden by --baseContentUrl and --baseImagesUrl"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "branch",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "git",
+                                    "--no-optional-locks",
+                                    "branch",
+                                    "-a",
+                                    "--no-color",
+                                    "--sort=-committerdate",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-rewrite-relative-links",
+                    ],
+                    description: Some("Skip rewriting relative links"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--baseContentUrl",
+                    ],
+                    description: Some("Prepend all relative links in README.md with this url"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "url",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--baseImagesUrl",
+                    ],
+                    description: Some("Prepend all relative image links in README.md with this url"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "url",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--yarn",
+                    ],
+                    description: Some("Use yarn instead of npm (default inferred from presence of yarn.lock or .yarnrc)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-yarn",
+                    ],
+                    description: Some("Use npm instead of yarn (default inferred from lack of yarn.lock or .yarnrc)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ignoreFile",
+                    ],
+                    description: Some("Indicate alternative .vscodeignore"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-gitHubIssueLinking",
+                    ],
+                    description: Some("Disable automatic expansion of GitHub-style issue syntax into links"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-gitLabIssueLinking",
+                    ],
+                    description: Some("Disable automatic expansion of GitLab-style issue syntax into links"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-dependencies",
+                    ],
+                    description: Some("Disable dependency detection via npm or yarn"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--pre-release",
+                    ],
+                    description: Some("Mark this package as a pre-release"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "publish",
+            aliases: [],
+            description: Some("Publishes an extension"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-p",
+                        "--pat",
+                    ],
+                    description: Some("Personal Access Token (defaults to VSCE_PAT environment variable)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "token",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-t",
+                        "--target",
+                    ],
+                    description: Some("Target architecture"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "target",
+                            source: Static([
+                                "win32-x64",
+                                "win32-ia32",
+                                "win32-arm64",
+                                "linux-x64",
+                                "linux-arm64",
+                                "linux-armhf",
+                                "alpine-x64",
+                                "alpine-arm64",
+                                "darwin-x64",
+                                "darwin-arm64",
+                            ]),
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                        "--message",
+                    ],
+                    description: Some("Commit message used when calling `npm version`"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "commit message",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-git-tag-version",
+                    ],
+                    description: Some("Do not create a version commit and tag when calling `npm version`. Valid only when [version] is provided"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-update-package-json",
+                    ],
+                    description: Some("Do not update `package.json`. Valid only when [version] is provided"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-i",
+                        "--packagePath",
+                    ],
+                    description: Some("Publish the provided VSIX packages"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "paths",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: Some((
+                                script: [],
+                                has_post_process: false,
+                                has_custom: true,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--githubBranch",
+                    ],
+                    description: Some("The GitHub branch used to infer relative links in README.md. Can be overridden by --baseContentUrl and --baseImagesUrl"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "branch",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "git",
+                                    "--no-optional-locks",
+                                    "branch",
+                                    "-a",
+                                    "--no-color",
+                                    "--sort=-committerdate",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--gitlabBranch",
+                    ],
+                    description: Some("The GitLab branch used to infer relative links in README.md. Can be overridden by --baseContentUrl and --baseImagesUrl"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "branch",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "git",
+                                    "--no-optional-locks",
+                                    "branch",
+                                    "-a",
+                                    "--no-color",
+                                    "--sort=-committerdate",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--baseContentUrl",
+                    ],
+                    description: Some("Prepend all relative links in README.md with this url"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "url",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--baseImagesUrl",
+                    ],
+                    description: Some("Prepend all relative image links in README.md with this url"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "url",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--yarn",
+                    ],
+                    description: Some("Use yarn instead of npm (default inferred from presence of yarn.lock or .yarnrc)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-yarn",
+                    ],
+                    description: Some("Use npm instead of yarn (default inferred from lack of yarn.lock or .yarnrc)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--noVerify",
+                    ],
+                    description: None,
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ignoreFile",
+                    ],
+                    description: Some("Indicate alternative .vscodeignore"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-dependencies",
+                    ],
+                    description: Some("Disable dependency detection via npm or yarn"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--pre-release",
+                    ],
+                    description: Some("Mark this package as a pre-release"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "unpublish",
+            aliases: [],
+            description: Some("Unpublishes an extension. Example extension id: microsoft.csharp"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-p",
+                        "--pat",
+                    ],
+                    description: Some("Personal Access Token"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "token",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-f",
+                        "--force",
+                    ],
+                    description: Some("Forces Unpublished Extension"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "ls-publishers",
+            aliases: [],
+            description: Some("List all known publishers"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "delete-publisher",
+            aliases: [],
+            description: Some("Deletes a publisher"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "publisher",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "login",
+            aliases: [],
+            description: Some("Add a publisher to the known publishers list"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "publisher",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "logout",
+            aliases: [],
+            description: Some("Remove a publisher from the known publishers list"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "publisher",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "verify-pat",
+            aliases: [],
+            description: Some("Verify if the Personal Access Token has publish rights for the publisher"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-p",
+                        "--pat",
+                    ],
+                    description: Some("Personal Access Token (defaults to VSCE_PAT environment variable)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "token",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "publisher",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "show",
+            aliases: [],
+            description: Some("Show extension metadata"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--json",
+                    ],
+                    description: Some("Output data in json format (default: false)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "extensionid",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "search",
+            aliases: [],
+            description: Some("Search extension gallery"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--json",
+                    ],
+                    description: Some("Output data in json format (default: false)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "text",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Display help for command"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "command",
+                    source: Static([
+                        "ls",
+                        "package",
+                        "publish",
+                        "unpublish",
+                        "ls-publishers",
+                        "delete-publishers",
+                        "login",
+                        "logout",
+                        "verify-pat",
+                        "show",
+                        "search",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Display help for command"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-V",
+                "--version",
+            ],
+            description: Some("Output the version number"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

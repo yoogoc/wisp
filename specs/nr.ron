@@ -1,0 +1,34 @@
+(
+    version: 1,
+    command: "nr",
+    description: Some("Use the right package manager - run"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Output usage information"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "script",
+            source: Unavailable,
+            optional: false,
+            variadic: false,
+            imported_generator: Some((
+                script: [
+                    "bash",
+                    "-c",
+                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
+                ],
+                has_post_process: true,
+                has_custom: false,
+            )),
+        ),
+    ],
+)

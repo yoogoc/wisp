@@ -1,0 +1,4409 @@
+(
+    version: 1,
+    command: "cf",
+    description: Some("Cloudfoundry cli"),
+    subcommands: [
+        (
+            name: "app",
+            aliases: [
+                "a",
+            ],
+            description: Some("Display health and status for app"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--guid",
+                    ],
+                    description: Some("Retrieve and display the given app\'s guid.  All other health and status output for the app is suppressed"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "ssh",
+            aliases: [],
+            description: Some("Display health and status for app"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-v",
+                    ],
+                    description: Some("Verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "env",
+            aliases: [],
+            description: Some("Show all env variables for an app"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "orgs",
+            aliases: [],
+            description: Some("List all orgs"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "version",
+            aliases: [
+                "-v",
+                "--version",
+            ],
+            description: Some("Print the version of cf"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "login",
+            aliases: [],
+            description: Some("Log user in"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-a",
+                    ],
+                    description: Some("API endpoint (e.g. https://api.example.com)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "API endpoint",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-o",
+                    ],
+                    description: Some("Org"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Org",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "cf",
+                                    "orgs",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-s",
+                    ],
+                    description: Some("Space"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Space",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "cf",
+                                    "spaces",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                    ],
+                    description: Some("Password"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Password",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-u",
+                    ],
+                    description: Some("Username"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Username",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "logout",
+            aliases: [],
+            description: Some("Log user out"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "password",
+            aliases: [],
+            description: Some("Change user password"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "target",
+            aliases: [],
+            description: Some("Set or view the targeted org or space"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-o",
+                    ],
+                    description: Some("Org"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Org",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "cf",
+                                    "orgs",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-s",
+                    ],
+                    description: Some("Space"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Space",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "cf",
+                                    "spaces",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "api",
+            aliases: [],
+            description: Some("Set or view target api url"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--skip-ssl-validation",
+                    ],
+                    description: Some("Skip verification of the API endpoint. Not recommended!"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--unset",
+                    ],
+                    description: Some("Remove all api endpoint targeting"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "url",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "auth",
+            aliases: [],
+            description: Some("Auth user non-interactively"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "username",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "password",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "apps",
+            aliases: [],
+            description: Some("List all apps in the target space"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "push",
+            aliases: [],
+            description: Some("Push a new app or sync changes to an existing app"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-b",
+                    ],
+                    description: Some("Custom buildpack by name or git url"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Buildpack",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-c",
+                    ],
+                    description: Some("Startup command, set to null to reset to default start command"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Command",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                    ],
+                    description: Some("Domain"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Domain",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-o",
+                        "--docker-image",
+                    ],
+                    description: Some("Docker image"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Docker image",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Path to manifest"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Path to manifest",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-n",
+                        "--host-name",
+                    ],
+                    description: Some("Hostname"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Hostname",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-i",
+                    ],
+                    description: Some("Number of instances"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Number of instances",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-k",
+                    ],
+                    description: Some("Disk limit"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Disk limit",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                    ],
+                    description: Some("Memory limit"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Memory limit",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "scale",
+            aliases: [],
+            description: Some("Change or view the instance count, disk space limit, and memory limit for an app"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force restart of app without prompt"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-i",
+                    ],
+                    description: Some("Number of instances"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Number of instances",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-k",
+                    ],
+                    description: Some("Disk limit"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Disk limit",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                    ],
+                    description: Some("Memory limit"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Memory limit",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "delete",
+            aliases: [],
+            description: Some("Delete an app"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-r",
+                    ],
+                    description: Some("Also delete any mapped routes"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "rename",
+            aliases: [],
+            description: Some("Rename an app"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "new app name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "start",
+            aliases: [],
+            description: Some("Start an app"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "stop",
+            aliases: [],
+            description: Some("Stop an app"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "restart",
+            aliases: [],
+            description: Some("Stop all instances of the app, then start them again. This may cause downtime"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "restage",
+            aliases: [],
+            description: Some("Recreate the app\'s executable artifact using the latest pushed app files and the latest environment (variables, service bindings, buildpack, stack, etc.)"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "restart-app-instance",
+            aliases: [],
+            description: Some("Terminate the running application Instance at the given index and instantiate a new instance of the application with the same index"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "index",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "run-task",
+            aliases: [],
+            description: Some("Run a one-off task on an app"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-k",
+                    ],
+                    description: Some("Disk limit"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Disk limit",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                    ],
+                    description: Some("Memory limit"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Memory limit",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--name",
+                    ],
+                    description: Some("Name for task"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "Name for task",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "command",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "tasks",
+            aliases: [],
+            description: Some("List tasks of an app"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "terminate-task",
+            aliases: [],
+            description: Some("Terminate a running task of an app"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "task id",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "events",
+            aliases: [],
+            description: Some("Show recent app events"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "files",
+            aliases: [],
+            description: Some("Print out a list of files in a directory or the contents of a specific file of an app running on the DEA backend"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-i",
+                    ],
+                    description: Some("Instance"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "instance",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "path",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "logs",
+            aliases: [],
+            description: Some("Trail or show recent logs for an app"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--recent",
+                    ],
+                    description: Some("Dump recent logs instead of tailing"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "set-env",
+            aliases: [],
+            description: Some("Set an environment variable for an app"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "env var name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "env var value",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "unset-env",
+            aliases: [],
+            description: Some("Remove an environment variable"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "env var name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "stacks",
+            aliases: [],
+            description: Some("List all stacks (a stack is a pre-built file system, including an operating system, that can run apps)"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "copy-source",
+            aliases: [],
+            description: Some("Copies the source code of an application to another existing application (and restarts that application)"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-s",
+                    ],
+                    description: Some("Space that contains the target application"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "space",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "cf",
+                                    "spaces",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-o",
+                    ],
+                    description: Some("Org that contains the target application"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "org",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "cf",
+                                    "orgs",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-restart",
+                    ],
+                    description: Some("Override restart of the application in target environment after copy-source completes"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "source app",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "target app",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "create-app-manifest",
+            aliases: [],
+            description: Some("Create an app manifest for an app that has been pushed successfully"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-p",
+                    ],
+                    description: Some("Path for file creation"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "get-health-check",
+            aliases: [],
+            description: Some("Show the type of health check performed on an app"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "set-health-check",
+            aliases: [],
+            description: Some("Change type of health check performed on an app"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "type of health check",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "enable-ssh",
+            aliases: [],
+            description: Some("Enable ssh for the application"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "disable-ssh",
+            aliases: [],
+            description: Some("Disable ssh for the application"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "ssh-enabled",
+            aliases: [],
+            description: Some("Reports whether SSH is enabled on an application container instance"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "marketplace",
+            aliases: [],
+            description: Some("List available offerings in the marketplace"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-s",
+                    ],
+                    description: Some("Show plan details for a particular service offering"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "service",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "services",
+            aliases: [
+                "s",
+            ],
+            description: Some("List all service instances in the target space"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "create-service",
+            aliases: [],
+            description: Some("Create a service instance"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-c",
+                    ],
+                    description: Some("Valid JSON object containing service-specific configuration parameters, provided either in-line or in a file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "JSON object",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-t",
+                    ],
+                    description: Some("User provided tags"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "tags",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "service",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "plan",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "service instance",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "update-service",
+            aliases: [],
+            description: Some("Update a service instance"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-c",
+                    ],
+                    description: Some("Valid JSON object containing service-specific configuration parameters, provided either in-line or in a file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "JSON object",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                    ],
+                    description: Some("Change service plan for a service instance"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "new plan",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-t",
+                    ],
+                    description: Some("User provided tags"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "tags",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "service",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf services | cut -d \" \" -f1 ",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete-service",
+            aliases: [],
+            description: Some("Delete a service instance"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "service instance",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf services | cut -d \" \" -f1 ",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "rename-service",
+            aliases: [],
+            description: Some("Rename a service instance"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "service instance",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf services | cut -d \" \" -f1 ",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "new service instance",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "create-service-key",
+            aliases: [],
+            description: Some("Create key for a service instance"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-c",
+                    ],
+                    description: Some("Valid JSON object containing service-specific configuration parameters, provided either in-line or in a file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "JSON object",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "service instance",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf services | cut -d \" \" -f1 ",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "service key",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "service-keys",
+            aliases: [],
+            description: Some("List keys for a service instance"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "service instance",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf services | cut -d \" \" -f1 ",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "service-key",
+            aliases: [],
+            description: Some("Show service key info"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "service instance",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf services | cut -d \" \" -f1 ",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "service key",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete-service-key",
+            aliases: [],
+            description: Some("Delete a service key"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "service instance",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf services | cut -d \" \" -f1 ",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "service key",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "bind-service",
+            aliases: [],
+            description: Some("Bind a service instance to an app"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-c",
+                    ],
+                    description: Some("Valid JSON object containing service-specific configuration parameters, provided either in-line or in a file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "JSON object",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "service instance",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf services | cut -d \" \" -f1 ",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "unbind-service",
+            aliases: [],
+            description: Some("Unbind a service instance from an app"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "service instance",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf services | cut -d \" \" -f1 ",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "bind-route-service",
+            aliases: [],
+            description: Some("Bind a service instance to an HTTP route"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-c",
+                    ],
+                    description: Some("Valid JSON object containing service-specific configuration parameters, provided either in-line or in a file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "JSON object",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-n",
+                        "--hostname",
+                    ],
+                    description: Some("Hostname used in combination with DOMAIN to specify the route to bind"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "hostname",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--path",
+                    ],
+                    description: Some("Path used in combination with HOSTNAME and DOMAIN to specify the route to bind"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "domain",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "service instance",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf services | cut -d \" \" -f1 ",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "unbind-route-service",
+            aliases: [],
+            description: Some("Unbind a service instance from an HTTP route"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force unbinding without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-n",
+                        "--hostname",
+                    ],
+                    description: Some("Hostname used in combination with DOMAIN to specify the route to bind"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "hostname",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--path",
+                    ],
+                    description: Some("Path used in combination with HOSTNAME and DOMAIN to specify the route to bind"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "domain",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "service instance",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf services | cut -d \" \" -f1 ",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "create-user-provided-service",
+            aliases: [],
+            description: Some("Make a user-provided service instance available to CF apps"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-p",
+                    ],
+                    description: Some("Credentials, provided inline or in a file, to be exposed in the VCAP_SERVICES environment variable for bound applications"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "credentials",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-l",
+                    ],
+                    description: Some("URL to which logs for bound applications will be streamed"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sys log drain url",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-r",
+                    ],
+                    description: Some("URL to which requests for bound routes will be forwarded. Scheme for this URL must be https"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "serice url",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "service instance",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "update-user-provided-service",
+            aliases: [],
+            description: Some("Update user-provided service instance"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-p",
+                    ],
+                    description: Some("Credentials, provided inline or in a file, to be exposed in the VCAP_SERVICES environment variable for bound applications"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "credentials",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-l",
+                    ],
+                    description: Some("URL to which logs for bound applications will be streamed"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sys log drain url",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-r",
+                    ],
+                    description: Some("URL to which requests for bound routes will be forwarded. Scheme for this URL must be https"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "serice url",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "service instance",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "org",
+            aliases: [],
+            description: Some("Show org info"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--guid",
+                    ],
+                    description: Some("Retrieve and display the given org\'s guid.  All other output for the org is suppressed"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "org",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "orgs",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "create-org",
+            aliases: [],
+            description: Some("Create an org"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-p",
+                    ],
+                    description: Some("Quota to assign to the newly created org (excluding this option results in assignment of default quota)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "quota",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "org",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete-org",
+            aliases: [],
+            description: Some("Delete an org"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "org",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "orgs",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "rename-org",
+            aliases: [],
+            description: Some("Rename an org"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "org",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "orgs",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "new org",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "spaces",
+            aliases: [],
+            description: Some("List all spaces in an org"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "space",
+            aliases: [],
+            description: Some("Show space info"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--guid",
+                    ],
+                    description: Some("Retrieve and display the given org\'s guid.  All other output for the org is suppressed"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--security-group-rules",
+                    ],
+                    description: Some("Retrieve the rules for all the security groups associated with the space\'s guid.  All other output for the org is suppressed"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "create-space",
+            aliases: [],
+            description: Some("Create a space"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-o",
+                    ],
+                    description: Some("Org"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "org",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "cf",
+                                    "orgs",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                    ],
+                    description: Some("Quota to assign to the newly created space"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "quota",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "space",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete-space",
+            aliases: [],
+            description: Some("Delete a space"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-o",
+                    ],
+                    description: Some("Delete space within specified org"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "org",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "cf",
+                                    "orgs",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "rename-space",
+            aliases: [],
+            description: Some("Rename a space"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "new space",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "allow-space-ssh",
+            aliases: [],
+            description: Some("Allow SSH access for the space"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "disallow-space-ssh",
+            aliases: [],
+            description: Some("Disallow SSH access for the space"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "space-ssh-allowed",
+            aliases: [],
+            description: Some("Reports whether SSH is allowed in a space"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "domains",
+            aliases: [],
+            description: Some("List domains in the target org"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "create-domain",
+            aliases: [],
+            description: Some("Create a domain in an org for later use"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "org",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "orgs",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "domain",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete-domain",
+            aliases: [],
+            description: Some("Delete a domain"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "create-shared-domain",
+            aliases: [],
+            description: Some("Create a domain that can be used by all orgs (admin-only)"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--router-group",
+                    ],
+                    description: Some("Routes for this domain will be configured only on the specified router group"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "domain",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete-shared-domain",
+            aliases: [],
+            description: Some("Delete a shared domain"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "domain",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "router-groups",
+            aliases: [],
+            description: Some("List router groups"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "routes",
+            aliases: [],
+            description: Some("List all routes in the current space or the current organization"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--orglevel",
+                    ],
+                    description: Some("List all the routes for all spaces of current organization"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "create-route",
+            aliases: [],
+            description: Some("Create a url route in a space for later use"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--hostname",
+                        "-n",
+                    ],
+                    description: Some("Hostname for the HTTP route (required for shared domains)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "hostname",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--path",
+                    ],
+                    description: Some("Path for the HTTP route"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--port",
+                    ],
+                    description: Some("Port for the TCP route"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--random-port",
+                    ],
+                    description: Some("Create a random port for the TCP route"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "domain",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "check-route",
+            aliases: [],
+            description: Some("Perform a simple check to determine whether a route currently exists or not"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--path",
+                    ],
+                    description: Some("Path for the route"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "host",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "domain",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "map-route",
+            aliases: [],
+            description: Some("Add a url route to an app"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--hostname",
+                        "-n",
+                    ],
+                    description: Some("Hostname for the HTTP route (required for shared domains)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "hostname",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--path",
+                    ],
+                    description: Some("Path for the HTTP route"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--port",
+                    ],
+                    description: Some("Port for the TCP route"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--random-port",
+                    ],
+                    description: Some("Create a random port for the TCP route"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "domain",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "unmap-route",
+            aliases: [],
+            description: Some("Remove a url route from an app"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--hostname",
+                        "-n",
+                    ],
+                    description: Some("Hostname used to identify the HTTP route"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "hostname",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--path",
+                    ],
+                    description: Some("Path used to identify the HTTP route"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--port",
+                    ],
+                    description: Some("Port used to identify the TCP route"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "APP_NAME",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "cf apps | cut -d \" \" -f1",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "domain",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete-route",
+            aliases: [],
+            description: Some("Delete a route"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--hostname",
+                        "-n",
+                    ],
+                    description: Some("Hostname used to identify the HTTP route"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "hostname",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--path",
+                    ],
+                    description: Some("Path used to identify the HTTP route"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--port",
+                    ],
+                    description: Some("Port used to identify the TCP route"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "domain",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete-orphaned-routes",
+            aliases: [],
+            description: Some("Delete all orphaned routes (i.e. those that are not mapped to an app)"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "create-user",
+            aliases: [],
+            description: Some("Create a new user"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--origin",
+                    ],
+                    description: Some("Origin for mapping a user account to a user in an external identity provider"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "provider",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "username",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "password",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete-user",
+            aliases: [],
+            description: Some("Delete a user"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "username",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "org-users",
+            aliases: [],
+            description: Some("Show org users by role"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-a",
+                    ],
+                    description: Some("List all users in the org"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "org",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "orgs",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "set-org-role",
+            aliases: [],
+            description: Some("Assign an org role to a user"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "username",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "org",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "orgs",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "role",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "unset-org-role",
+            aliases: [],
+            description: Some("Remove an org role from a user"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "username",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "org",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "orgs",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "role",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "space-users",
+            aliases: [],
+            description: Some("Show space users by role"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "set-space-role",
+            aliases: [],
+            description: Some("Assign a space role to a user"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "username",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "org",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "orgs",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "role",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "unset-space-role",
+            aliases: [],
+            description: Some("Remove a space role from a user"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "username",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "org",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "orgs",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "role",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "quotas",
+            aliases: [],
+            description: Some("List available usage quotas"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "quota",
+            aliases: [],
+            description: Some("Show quota info"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "quota",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "set-quota",
+            aliases: [],
+            description: Some("Assign a quota to an org"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "org",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "orgs",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "quota",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "create-quota",
+            aliases: [],
+            description: Some("Define a new resource quota"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-a",
+                    ],
+                    description: Some("Total number of application instances"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number of application instances",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-i",
+                    ],
+                    description: Some("Maximum amount of memory an application instance can have"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "instance memory",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                    ],
+                    description: Some("Total amount of memory a space can have"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "total memory",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--reserved-route-ports",
+                    ],
+                    description: Some("Maximum number of routes that may be created with reserved ports (Default: 0)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "reserved route ports",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-s",
+                    ],
+                    description: Some("Total number of service instances"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "service instances",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-r",
+                    ],
+                    description: Some("Total number of routes"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "routes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--allow-paid-service-plans",
+                    ],
+                    description: Some("Can provision instances of paid service plans"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "quota",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete-quota",
+            aliases: [],
+            description: Some("Delete a quota"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "quota",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "update-quota",
+            aliases: [],
+            description: Some("Update an existing resource quota"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-a",
+                    ],
+                    description: Some("Total number of application instances"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number of application instances",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-i",
+                    ],
+                    description: Some("Maximum amount of memory an application instance can have"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "instance memory",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                    ],
+                    description: Some("Total amount of memory a space can have"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "total memory",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--reserved-route-ports",
+                    ],
+                    description: Some("Maximum number of routes that may be created with reserved ports (Default: 0)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "reserved route ports",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-s",
+                    ],
+                    description: Some("Total number of service instances"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "service instances",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-r",
+                    ],
+                    description: Some("Total number of routes"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "routes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-n",
+                    ],
+                    description: Some("New name"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--allow-paid-service-plans",
+                    ],
+                    description: Some("Can provision instances of paid service plans"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--disallow-paid-service-plans",
+                    ],
+                    description: Some("Cannot provision instances of paid service plans"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "quota",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "space-quotas",
+            aliases: [],
+            description: Some("List available space resource quotas"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "space-quota",
+            aliases: [],
+            description: Some("Show space quota info"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "space quota",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "create-space-quota",
+            aliases: [],
+            description: Some("Define a new space resource quota"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-a",
+                    ],
+                    description: Some("Total number of application instances"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number of application instances",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-i",
+                    ],
+                    description: Some("Maximum amount of memory an application instance can have"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "instance memory",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                    ],
+                    description: Some("Total amount of memory a space can have"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "total memory",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--reserved-route-ports",
+                    ],
+                    description: Some("Maximum number of routes that may be created with reserved ports (Default: 0)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "reserved route ports",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-s",
+                    ],
+                    description: Some("Total number of service instances"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "service instances",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-r",
+                    ],
+                    description: Some("Total number of routes"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "routes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--allow-paid-service-plans",
+                    ],
+                    description: Some("Can provision instances of paid service plans"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "quota",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "update-space-quota",
+            aliases: [],
+            description: Some("Update an existing space quota"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-a",
+                    ],
+                    description: Some("Total number of application instances"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number of application instances",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-i",
+                    ],
+                    description: Some("Maximum amount of memory an application instance can have"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "instance memory",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                    ],
+                    description: Some("Total amount of memory a space can have"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "total memory",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--reserved-route-ports",
+                    ],
+                    description: Some("Maximum number of routes that may be created with reserved ports (Default: 0)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "reserved route ports",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-s",
+                    ],
+                    description: Some("Total number of service instances"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "service instances",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-r",
+                    ],
+                    description: Some("Total number of routes"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "routes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-n",
+                    ],
+                    description: Some("New name"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--allow-paid-service-plans",
+                    ],
+                    description: Some("Can provision instances of paid service plans"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--disallow-paid-service-plans",
+                    ],
+                    description: Some("Cannot provision instances of paid service plans"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "space quota",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete-space-quota",
+            aliases: [],
+            description: Some("Delete a space quota definition and unassign the space quota from all spaces"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force deletion without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "space quota",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "set-space-quota",
+            aliases: [],
+            description: Some("Assign a space quota definition to a space"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "quota",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "unset-space-quota",
+            aliases: [],
+            description: Some("Unassign a quota from a space"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "space",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cf",
+                            "spaces",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "quota",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "curl",
+            aliases: [],
+            description: Some("Executes a request to the targeted API endpoint"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-H",
+                    ],
+                    description: Some("Custom headers to include in the request, flag can be specified multiple times"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "headers",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-X",
+                    ],
+                    description: Some("HTTP method (GET,POST,PUT,DELETE,etc)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "HTTP method",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                    ],
+                    description: Some("HTTP data to include in the request body, or \'@\' followed by a file name to read the data from"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "data",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--output",
+                    ],
+                    description: Some("Write curl body to FILE instead of stdout"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path to file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-i",
+                    ],
+                    description: Some("Include response headers in the output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "oauth-token",
+            aliases: [],
+            description: Some("Retrieve and display the OAuth token for the current session"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "ssh-code",
+            aliases: [],
+            description: Some("Get a one time password for ssh clients"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "add-plugin-repo",
+            aliases: [],
+            description: Some("Add a new plugin repository"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "repo name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "url",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "remove-plugin-repo",
+            aliases: [],
+            description: Some("Remove a plugin repository"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "repo name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "list-plugin-repos",
+            aliases: [],
+            description: Some("List all the added plugin repositories"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "repo-plugins",
+            aliases: [],
+            description: Some("List all available plugins in specified repository or in all added repositories"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-r",
+                    ],
+                    description: Some("Name of a registered repository"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "repo",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "plugins",
+            aliases: [],
+            description: Some("List all available plugin commands"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--checksum",
+                    ],
+                    description: Some("Compute and show the sha1 value of the plugin binary file"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "install-plugin",
+            aliases: [],
+            description: Some("Install CLI plugin"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-r",
+                    ],
+                    description: Some("Name of a registered repository where the specified plugin is located"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "repo name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "plugin name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force install of plugin without confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "url",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "uninstall-plugin",
+            aliases: [],
+            description: Some("Uninstall the plugin defined in command argument"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "plugin name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Show help for Cloud Foundry command line tool"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-v",
+            ],
+            description: Some("Print API request diagnostics to stdout"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

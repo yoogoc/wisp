@@ -1,0 +1,103 @@
+(
+    version: 1,
+    command: "envchain",
+    description: Some("Set environment variables with macOS keychain or D-Bus secret service"),
+    subcommands: [
+        (
+            name: "-s",
+            aliases: [
+                "--set",
+            ],
+            description: Some("Add keychain item of environment variable +ENV+ for namespace +NAMESPACE+"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-n",
+                        "--noecho",
+                    ],
+                    description: Some("Do not echo user input"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--require-passphrase",
+                    ],
+                    description: Some("Always ask for keychain passphrase"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-P",
+                        "--no-require-passphrase",
+                    ],
+                    description: Some("Do not ask for keychain passphrase"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "NAMESPACE",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "envchain",
+                            "--list",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "ENV",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "-l",
+            aliases: [
+                "--list",
+            ],
+            description: Some("List namespaces that have been created"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [],
+    arguments: [
+        (
+            name: "NAMESPACE",
+            source: Unavailable,
+            optional: false,
+            variadic: false,
+            imported_generator: Some((
+                script: [
+                    "envchain",
+                    "--list",
+                ],
+                has_post_process: true,
+                has_custom: false,
+            )),
+        ),
+        (
+            name: "CMD",
+            source: Files,
+            optional: false,
+            variadic: false,
+            imported_generator: None,
+        ),
+    ],
+)

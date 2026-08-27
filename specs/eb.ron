@@ -1,0 +1,608 @@
+(
+    version: 1,
+    command: "eb",
+    description: Some("AWS Elastic Beanstalk"),
+    subcommands: [
+        (
+            name: "init",
+            aliases: [],
+            description: Some("Initialize a new AWS Elastic Beanstalk application"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-i",
+                        "--interactive",
+                    ],
+                    description: Some("Forces EB CLI to prompt you to provide a value for every eb init command option"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-k",
+                        "--keyname",
+                    ],
+                    description: Some("The name of the AWS EC2 key pair"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "keyname",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--modules",
+                    ],
+                    description: Some("List of child directories to initialize"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--platform",
+                    ],
+                    description: Some("The platform version to use"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "plataform-version",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--tags",
+                    ],
+                    description: Some("List of tags to apply to the application"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "key=value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "deploy",
+            aliases: [],
+            description: Some("Deploys the application source bundle from the initialized project directory to the running application"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-l",
+                        "--label",
+                    ],
+                    description: Some("Specify a label to use for the version that the EB CLI creates"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "version-label",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--env-group-suffix",
+                    ],
+                    description: Some("Group name to append to the environment name"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "groupname",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                        "--message",
+                    ],
+                    description: Some("The description for the application version, enclosed in double quotation marks"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "version-description",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--modules",
+                    ],
+                    description: Some("List of components to update. Only for Compose Environments"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "component",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--platform",
+                    ],
+                    description: Some("Preprocess and validate the environment manifest and configuration files in the source bundle"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--source",
+                    ],
+                    description: Some("CodeCommit repository and branch"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "repository-name/repository-branch",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--staged",
+                    ],
+                    description: Some("Deploy files staged in the git index instead of the HEAD commit"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--timeout",
+                    ],
+                    description: Some("The number of minutes before the command times out"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "minutes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--version",
+                    ],
+                    description: Some("An existing application version to deploy"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "version-label",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "environment-name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "eb",
+                            "list",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "abort",
+            aliases: [],
+            description: Some("Abort the current running process"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "clone",
+            aliases: [],
+            description: Some("Clones an environment to a new environment so that both have identical environment settings"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-n",
+                        "--clone_name",
+                    ],
+                    description: Some("Desired name for the cloned environment"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "string",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-c",
+                        "--cname",
+                    ],
+                    description: Some("Desired CNAME prefix for the cloned environment"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "cname",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--envvars",
+                    ],
+                    description: Some("Environment properties in a comma-separated list with the format name=value"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--exact",
+                    ],
+                    description: Some("Prevents Elastic Beanstalk from updating the solution stack version for the new clone environment to the most recent version available"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--scale",
+                    ],
+                    description: Some("The number of instances to run in the clone environment when it is launched"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--tags",
+                    ],
+                    description: Some("Tags for the resources in your environment in a comma-separated list with the format name=value"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name=value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--timeout",
+                    ],
+                    description: Some("The number of minutes before the command times out"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "environment-name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "eb",
+                            "list",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "open",
+            aliases: [],
+            description: Some("Opens the public URL of your website in the default browser"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "environment-name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "eb",
+                            "list",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "list",
+            aliases: [],
+            description: Some("List environments"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-a",
+                        "--all",
+                    ],
+                    description: Some("List all environments from all applications"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--verbose",
+                    ],
+                    description: Some("Provides more detailed information about all environments, including instances"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "printenv",
+            aliases: [],
+            description: Some("Prints all the environment properties in the command window"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "environment-name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "eb",
+                            "list",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "ssh",
+            aliases: [],
+            description: Some("Connect to a Linux Amazon EC2 instance in your environment using Secure Shell"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-i",
+                        "--instance",
+                    ],
+                    description: Some("The ID of the instance to connect to"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-n",
+                        "--number",
+                    ],
+                    description: Some("The number of the instance to connect to by number"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-o",
+                        "--keep_open",
+                    ],
+                    description: Some("Leave port 22 open on the security group after the SSH session ends"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--command",
+                    ],
+                    description: Some("Execute a shell command on the specified instance instead of starting an SSH session"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--custom",
+                    ],
+                    description: Some("Specify an SSH command to use instead of \'ssh -i keyfile\'. Do not include the remote user and hostname"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--setup",
+                    ],
+                    description: Some("Change the key pair assigned to the environment\'s instances"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force",
+                    ],
+                    description: Some("Open port 22 to incoming traffic from 0.0.0.0/0 in the environment\'s security group, even if the security group is already configured for SSH"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--timeout",
+                    ],
+                    description: Some("Set number of minutes before the command times out"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "minutes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "environment-name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "eb",
+                            "list",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "use",
+            aliases: [],
+            description: Some("Sets the specified environment as the default environment"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-r",
+                        "--region",
+                    ],
+                    description: Some("Change the region in which you create environments"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "region",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--source",
+                    ],
+                    description: Some("CodeCommit repository and branch"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "codecommit/repository-name/repository-branch",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "environment-name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "eb",
+                            "list",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [],
+    arguments: [],
+)

@@ -1,0 +1,542 @@
+(
+    version: 1,
+    command: "n",
+    description: Some("Node version management"),
+    subcommands: [
+        (
+            name: "i",
+            aliases: [
+                "install",
+            ],
+            description: Some("Install a Node.js version"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "version",
+                    source: Static([
+                        "latest",
+                        "current",
+                        "lts",
+                        "auto",
+                        "engine",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "n",
+                            "lsr",
+                            "--all",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "rm",
+            aliases: [
+                "–",
+            ],
+            description: Some("Remove a Node.js version"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "version",
+                    source: Static([
+                        "latest",
+                        "current",
+                        "lts",
+                        "auto",
+                        "engine",
+                    ]),
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "n",
+                            "lsr",
+                            "--all",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "prune",
+            aliases: [],
+            description: Some("Remove all cached Node.js versions except the installed version"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "doctor",
+            aliases: [],
+            description: Some("Display diagnostics to help resolve problems"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "uninstall",
+            aliases: [],
+            description: Some("Remove the installed Node.js"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "ls",
+            aliases: [
+                "list",
+            ],
+            description: Some("Output downloaded versions"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "lsr",
+            aliases: [
+                "ls-remote",
+                "list-remote",
+            ],
+            description: Some("Output matching versions available for download"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--all",
+                    ],
+                    description: Some("Ls-remote displays all matches instead of last 20"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Static([
+                        "latest",
+                        "current",
+                        "lts",
+                        "auto",
+                        "engine",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "n",
+                            "lsr",
+                            "--all",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "which",
+            aliases: [
+                "bin",
+            ],
+            description: Some("Output path for downloaded node version"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "version",
+                    source: Static([
+                        "latest",
+                        "current",
+                        "lts",
+                        "auto",
+                        "engine",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "n",
+                            "lsr",
+                            "--all",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "run",
+            aliases: [
+                "use",
+                "as",
+            ],
+            description: Some("Execute downloaded Node.js version with args"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-e",
+                        "--eval=...",
+                    ],
+                    description: Some("Evaluate script"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--watch",
+                    ],
+                    description: Some("Watch input files"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--watch-path",
+                    ],
+                    description: Some("Specify a watch directory or file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--watch-preserve-output",
+                    ],
+                    description: Some("Disable the clearing of the console when watch mode restarts the process"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--env-file",
+                    ],
+                    description: Some("Specify a file containing environment variables"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--print",
+                    ],
+                    description: Some("Evaluate script and print result"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-c",
+                        "--check",
+                    ],
+                    description: Some("Syntax check script without executing"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Print Node.js version"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-i",
+                        "--interactive",
+                    ],
+                    description: Some("Always enter the REPL even if stdin does not appear to be a terminal"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print node command line options (currently set)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--inspect",
+                    ],
+                    description: Some("Activate inspector on host:port (default: 127.0.0.1:9229)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "[host:]port",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--preserve-symlinks",
+                    ],
+                    description: Some("Follows symlinks to directories when examining source code and templates for translation strings"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Static([
+                        "latest",
+                        "current",
+                        "lts",
+                        "auto",
+                        "engine",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "n",
+                            "lsr",
+                            "--all",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "node script",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "exec",
+            aliases: [],
+            description: Some("Execute command with modified PATH, so downloaded node version and npm first"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "version",
+                    source: Static([
+                        "latest",
+                        "current",
+                        "lts",
+                        "auto",
+                        "engine",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "n",
+                            "lsr",
+                            "--all",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "cmd",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "args",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "-V",
+                "--version",
+            ],
+            description: Some("Output version of n"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Display help information"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-p",
+                "--preserve",
+            ],
+            description: Some("Preserve npm and npx during install of Node.js"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-preserve",
+            ],
+            description: Some("Do not preserve npm and npx during install of Node.js"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-q",
+                "--quiet",
+            ],
+            description: Some("Disable curl output. Disable log messages processing \"auto\" and \"engine\" labels"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-d",
+                "--download",
+            ],
+            description: Some("Download only"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-a",
+                "--arch",
+            ],
+            description: Some("Override system architecture"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Architecture",
+                    source: Static([
+                        "x64",
+                        "x86_64",
+                        "arm64",
+                        "aarch64",
+                        "armv8l",
+                        "x86",
+                        "i386",
+                        "i686",
+                        "armv6l",
+                        "armv7l",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--insecure",
+            ],
+            description: Some("Turn off certificate checking for https requests (may be needed from behind a proxy server)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--use-xz",
+            ],
+            description: Some("Override automatic detection of xz support and enable use of xz compressed node downloads"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-use-xz",
+            ],
+            description: Some("Override automatic detection of xz support and disable use of xz compressed node downloads"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "version",
+            source: Static([
+                "latest",
+                "current",
+                "lts",
+                "auto",
+                "engine",
+            ]),
+            optional: true,
+            variadic: false,
+            imported_generator: Some((
+                script: [
+                    "n",
+                    "lsr",
+                    "--all",
+                ],
+                has_post_process: true,
+                has_custom: false,
+            )),
+        ),
+    ],
+)

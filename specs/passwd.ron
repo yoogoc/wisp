@@ -1,0 +1,70 @@
+(
+    version: 1,
+    command: "passwd",
+    description: Some("Modify a user\'s password"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-i",
+            ],
+            description: Some("Specify where the password update should be applied"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "infosystem",
+                    source: Static([
+                        "PAM",
+                        "opendirectory",
+                        "file",
+                        "nis",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-l",
+            ],
+            description: Some("Causes the password to be updated in the given location of the chosen directory system"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "location",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-u",
+            ],
+            description: Some("Specify the user name to use when authenticating to the directory node"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "authname",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "dscl . -list /Users | grep -E -v \'^_\'",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+    ],
+    arguments: [],
+)

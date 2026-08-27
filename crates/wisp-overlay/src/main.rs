@@ -23,6 +23,14 @@ use wisp_protocol::{
 
 const MAX_VISIBLE_CANDIDATES: usize = 8;
 const MAX_PATH_LABEL_WIDTH: usize = 40;
+const OVERLAY_WIDTH: f32 = 440.0;
+const ROW_CONTENT_WIDTH: f32 = OVERLAY_WIDTH - 20.0 - 24.0 - 8.0 - 12.0;
+const MIN_LABEL_WIDTH: f32 = 48.0;
+const MAX_LABEL_WIDTH: f32 = 220.0;
+const APPROX_TEXT_COLUMN_WIDTH: f32 = 7.0;
+const DESCRIPTION_SCROLL_PAUSE: Duration = Duration::from_millis(700);
+const DESCRIPTION_SCROLL_END_PAUSE: Duration = Duration::from_millis(500);
+const DESCRIPTION_SCROLL_SPEED: f32 = 34.0;
 const CURSOR_GAP: f32 = 8.0;
 
 #[derive(Debug, Parser)]
@@ -36,6 +44,7 @@ struct OverlayView {
     model: RenderModel,
     visible: bool,
     suppressed_until_new_request: Option<(String, u64)>,
+    description_scroll_started: Instant,
 }
 
 impl Render for OverlayView {
@@ -51,27 +60,73 @@ impl Render for OverlayView {
             .take(visible.len())
             .map(|(index, candidate)| {
                 let label = display_candidate_label(&candidate.label, candidate.kind);
+                let has_description = candidate.description.is_some();
+                let label_width = adaptive_label_width(&label);
+                let description_width = ROW_CONTENT_WIDTH - label_width;
+                let description_offset = candidate.description.as_deref().map_or(0.0, |text| {
+                    if index == selected {
+                        description_scroll_offset(
+                            text,
+                            description_width,
+                            self.description_scroll_started.elapsed(),
+                        )
+                    } else {
+                        0.0
+                    }
+                });
                 div()
                     .flex()
                     .items_center()
                     .h(px(32.0))
                     .px(px(10.0))
+                    .overflow_hidden()
+                    .whitespace_nowrap()
                     .text_size(px(13.0))
                     .text_color(rgba(0xe7e9efff))
                     .when(index == selected, |row| row.bg(rgba(0x3d67b1cc)))
                     .child(
                         div()
-                            .w(px(88.0))
+                            .flex()
+                            .items_center()
+                            .justify_center()
+                            .w(px(24.0))
+                            .mr(px(8.0))
+                            .flex_shrink_0()
+                            .text_size(px(15.0))
                             .text_color(rgba(0x8fa5cfff))
-                            .child(format!("{:?}", candidate.kind).to_lowercase()),
+                            .child(candidate_kind_icon(candidate.kind)),
                     )
-                    .child(div().flex_1().overflow_hidden().child(label))
+                    .child(
+                        div()
+                            .min_w(px(0.0))
+                            .truncate()
+                            .when(has_description, |text| {
+                                text.w(px(label_width)).flex_shrink_0()
+                            })
+                            .when(!has_description, |text| text.flex_1())
+                            .child(label),
+                    )
                     .when_some(candidate.description.clone(), |row, description| {
                         row.child(
                             div()
                                 .ml(px(12.0))
+                                .w(px(description_width))
+                                .flex_shrink_0()
+                                .overflow_hidden()
+                                .whitespace_nowrap()
                                 .text_color(rgba(0x8b91a1ff))
-                                .child(description),
+                                .when(description_offset > 0.0, |text| {
+                                    text.child(
+                                        div()
+                                            .relative()
+                                            .left(px(-description_offset))
+                                            .whitespace_nowrap()
+                                            .child(description.clone()),
+                                    )
+                                })
+                                .when(description_offset == 0.0, |text| {
+                                    text.truncate().child(description)
+                                }),
                         )
                     })
             });
@@ -94,6 +149,8 @@ impl Render for OverlayView {
                         .px(px(10.0))
                         .flex()
                         .items_center()
+                        .min_w(px(0.0))
+                        .truncate()
                         .text_size(px(12.0))
                         .text_color(rgba(0x9da4b5ff))
                         .child(format!("→ {ghost}")),
@@ -129,7 +186,7 @@ fn main() -> anyhow::Result<()> {
         let anchor = overlay_origin(&first, height);
         let bounds = Bounds {
             origin: anchor,
-            size: size(px(440.0), px(height)),
+            size: size(px(OVERLAY_WIDTH), px(height)),
         };
         let receiver = Arc::clone(&receiver);
         cx.open_window(
@@ -153,6 +210,7 @@ fn main() -> anyhow::Result<()> {
                     model: first,
                     visible: terminal_active,
                     suppressed_until_new_request: None,
+                    description_scroll_started: Instant::now(),
                 });
                 let initial_model = view.read(cx).model.clone();
                 if let Err(error) =
@@ -217,6 +275,10 @@ fn poll_messages(
         .spawn(cx, async move |cx| {
             let mut terminal_active = initial_terminal_active;
             let mut last_activity_check = Instant::now();
+            let mut animate_description = initial_terminal_active
+                && cx
+                    .update(|_, app| selected_description_overflows(&view.read(app).model))
+                    .unwrap_or(false);
             loop {
                 Timer::after(Duration::from_millis(16)).await;
                 let activity_changed =
@@ -233,7 +295,7 @@ fn poll_messages(
                     let receiver = receiver.lock().expect("overlay receiver mutex poisoned");
                     receiver.try_iter().collect::<Vec<_>>()
                 };
-                if messages.is_empty() && !activity_changed {
+                if messages.is_empty() && !activity_changed && !animate_description {
                     continue;
                 }
                 if cx
@@ -248,6 +310,8 @@ fn poll_messages(
                             let visible = terminal_active
                                 && model_has_content(&current.model)
                                 && !model_is_suppressed(&current.model, suppression.as_ref());
+                            animate_description =
+                                visible && selected_description_overflows(&current.model);
                             if let Err(error) = set_overlay_window_visible(window, visible) {
                                 debug!(%error, "could not follow Alacritty activation");
                             }
@@ -270,11 +334,13 @@ fn poll_messages(
                                         model_is_suppressed(&model, suppression.as_ref());
                                     let visible =
                                         terminal_active && model_has_content(&model) && !suppressed;
+                                    animate_description =
+                                        visible && selected_description_overflows(&model);
                                     if terminal_active && !suppressed {
                                         suppression = None;
                                     }
                                     let height = overlay_height(&model);
-                                    window.resize(size(px(440.0), px(height)));
+                                    window.resize(size(px(OVERLAY_WIDTH), px(height)));
                                     if let Err(error) = reposition_window(window, &model, height) {
                                         debug!(%error, "could not reposition overlay window");
                                     }
@@ -286,6 +352,7 @@ fn poll_messages(
                                         view.model = model;
                                         view.visible = visible;
                                         view.suppressed_until_new_request = suppression;
+                                        view.description_scroll_started = Instant::now();
                                         cx.notify();
                                     });
                                 }
@@ -302,9 +369,17 @@ fn poll_messages(
                                         view.visible = false;
                                         cx.notify();
                                     });
+                                    animate_description = false;
                                 }
                                 _ => {}
                             }
+                        }
+                        if animate_description {
+                            view.update(app, |view, cx| {
+                                if view.visible {
+                                    cx.notify();
+                                }
+                            });
                         }
                     })
                     .is_err()
@@ -342,6 +417,64 @@ fn display_candidate_label(label: &str, kind: CandidateKind) -> String {
     } else {
         label.to_owned()
     }
+}
+
+fn candidate_kind_icon(kind: CandidateKind) -> &'static str {
+    match kind {
+        CandidateKind::Command => "⌘",
+        CandidateKind::Subcommand => "›",
+        CandidateKind::Option => "⚙",
+        CandidateKind::File => "📄",
+        CandidateKind::Directory => "📁",
+        CandidateKind::Branch => "⑂",
+        CandidateKind::History => "↺",
+        CandidateKind::Ai => "✦",
+    }
+}
+
+fn approximate_text_width(value: &str) -> f32 {
+    UnicodeWidthStr::width(value) as f32 * APPROX_TEXT_COLUMN_WIDTH
+}
+
+fn adaptive_label_width(label: &str) -> f32 {
+    (approximate_text_width(label) + 8.0).clamp(MIN_LABEL_WIDTH, MAX_LABEL_WIDTH)
+}
+
+fn description_viewport_width(label: &str) -> f32 {
+    ROW_CONTENT_WIDTH - adaptive_label_width(label)
+}
+
+fn description_overflows(label: &str, description: &str) -> bool {
+    approximate_text_width(description) > description_viewport_width(label)
+}
+
+fn description_scroll_offset(description: &str, viewport_width: f32, elapsed: Duration) -> f32 {
+    let distance = (approximate_text_width(description) - viewport_width).max(0.0);
+    if distance == 0.0 || elapsed < DESCRIPTION_SCROLL_PAUSE {
+        return 0.0;
+    }
+    let travel = Duration::from_secs_f32(distance / DESCRIPTION_SCROLL_SPEED);
+    let cycle = DESCRIPTION_SCROLL_PAUSE + travel + DESCRIPTION_SCROLL_END_PAUSE;
+    let cycle_elapsed = elapsed.as_secs_f32() % cycle.as_secs_f32();
+    let moving_at = cycle_elapsed - DESCRIPTION_SCROLL_PAUSE.as_secs_f32();
+    if moving_at <= 0.0 {
+        0.0
+    } else {
+        (moving_at * DESCRIPTION_SCROLL_SPEED).min(distance)
+    }
+}
+
+fn selected_description_overflows(model: &RenderModel) -> bool {
+    model
+        .candidates
+        .get(model.selected)
+        .and_then(|candidate| {
+            candidate.description.as_deref().map(|description| {
+                let label = display_candidate_label(&candidate.label, candidate.kind);
+                description_overflows(&label, description)
+            })
+        })
+        .unwrap_or(false)
 }
 
 fn truncate_middle(value: &str, max_width: usize) -> String {
@@ -678,6 +811,38 @@ mod tests {
             display_candidate_label("目录/非常非常非常长的文件名称.rs", CandidateKind::File),
             "目录/非常非常非常长的文件名称.rs"
         );
+    }
+
+    #[test]
+    fn candidate_types_use_compact_icons() {
+        assert_eq!(candidate_kind_icon(CandidateKind::Command), "⌘");
+        assert_eq!(candidate_kind_icon(CandidateKind::Subcommand), "›");
+        assert_eq!(candidate_kind_icon(CandidateKind::Option), "⚙");
+        assert_eq!(candidate_kind_icon(CandidateKind::File), "📄");
+        assert_eq!(candidate_kind_icon(CandidateKind::Directory), "📁");
+        assert_eq!(candidate_kind_icon(CandidateKind::Branch), "⑂");
+        assert_eq!(candidate_kind_icon(CandidateKind::History), "↺");
+        assert_eq!(candidate_kind_icon(CandidateKind::Ai), "✦");
+    }
+
+    #[test]
+    fn short_commands_leave_more_room_for_descriptions() {
+        assert!(
+            description_viewport_width("git")
+                > description_viewport_width("an-extremely-long-command-name-that-needs-clipping")
+        );
+        assert!(description_viewport_width("git") > 300.0);
+    }
+
+    #[test]
+    fn selected_long_description_scrolls_after_a_pause() {
+        let description = "A very long completion description that cannot fit in its viewport";
+        let width = 120.0;
+        assert_eq!(
+            description_scroll_offset(description, width, Duration::ZERO),
+            0.0
+        );
+        assert!(description_scroll_offset(description, width, Duration::from_secs(2)) > 0.0);
     }
 
     #[test]

@@ -1,0 +1,2661 @@
+(
+    version: 1,
+    command: "lerna",
+    description: Some("A tool for managing JavaScript projects with multiple packages"),
+    subcommands: [
+        (
+            name: "init",
+            aliases: [],
+            description: Some("Create a new lerna repo or upgrade an existing repo to the current version of Lerna"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--concurrency",
+                    ],
+                    description: Some("How many threads to use when Lerna parallelizes the tasks (defaults to count of logical CPU cores)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--loglevel",
+                    ],
+                    description: Some("What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "loglevel",
+                            source: Static([
+                                "silent",
+                                "error",
+                                "warn",
+                                "success",
+                                "info",
+                                "verbose",
+                                "silly",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--max-buffer",
+                    ],
+                    description: Some("Set a max buffer length for each underlying process call"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "bytes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable progress bars. This is always the case in a CI environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-sort",
+                    ],
+                    description: Some("The --no-sort option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--reject-cycles",
+                    ],
+                    description: Some("Fail immediately if a cycle is found (in bootstrap, exec, publish or run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Show help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Show version number"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--npm-client",
+                    ],
+                    description: Some("The exececutable to run the script with"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "client",
+                            source: Static([
+                                "npm",
+                                "yarn",
+                                "pnpm",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-i",
+                        "--independent",
+                    ],
+                    description: Some("Use independent versioning mode"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--exact",
+                    ],
+                    description: Some("Set the exact version of lerna in the package.json file"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "bootstrap",
+            aliases: [],
+            description: Some("Bootstrap the packages in the current Lerna repo. Installing all their dependencies and linking any cross-dependencies"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--scope",
+                    ],
+                    description: Some("Include only packages with names matching the given glob"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "lerna",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ignore",
+                    ],
+                    description: Some("Exclude packages with names matching the given glob"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "lerna",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-private",
+                    ],
+                    description: Some("Exclude private packages. They are included by default"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--since",
+                    ],
+                    description: Some("Only include packages that have been changed since the specified ref. If no ref is passed, it defaults to the most-recent tag"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ref",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--exclude-dependents",
+                    ],
+                    description: Some("Exclude all transitive dependents when running a command with --since, overriding the default \'changed\' algorithm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-dependents",
+                    ],
+                    description: Some("Exclude all transitive dependents when running a command with --since, overriding the default \'changed\' algorithm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-dependencies",
+                    ],
+                    description: Some("Include all transitive dependencies when running a command regardless of --scope, --ignore, or --since"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-merged-tags",
+                    ],
+                    description: Some("Include tags from merged branches when running a command with --since. This is only useful if you do a lot of publishing from feature branches, which is not generally recommended"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--npm-client",
+                    ],
+                    description: Some("The exececutable to run the script with"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "client",
+                            source: Static([
+                                "npm",
+                                "yarn",
+                                "pnpm",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--hoist",
+                    ],
+                    description: Some("Install external dependencies matching glob at the repo root so they\'re available to all packages"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--nohoist",
+                    ],
+                    description: Some("Do not install external dependencies matching glob at the repo root. This can be used to opt out of hoisting for certain dependencies"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--strict",
+                    ],
+                    description: Some("When used in conjunction with hoist will throw an error and stop bootstrapping after emitting the version warnings. Has no effect if you aren\'t hoisting, or if there are no version warnings"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ignore-prepublish",
+                    ],
+                    description: Some("Skip prepublish lifecycle scripts run by default in bootstrapped packages"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ignore-scripts",
+                    ],
+                    description: Some("Skip any lifecycle scripts normally run (prepare, etc) in bootstrapped packages"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--registry",
+                    ],
+                    description: Some("Forwarded npm commands will use the specified registry for your package(s)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "url",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--use-workspaces",
+                    ],
+                    description: Some("Enables integration with Yarn Workspaces"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-ci",
+                    ],
+                    description: Some("Disable usage of `npm ci` in CI environments"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force-local",
+                    ],
+                    description: Some("When passed, this flag causes the bootstrap command to always symlink local dependencies regardless of matching version range"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "import",
+            aliases: [],
+            description: Some("Import the package in the local path <pathToRepo> into packages/<directory-name> with commit history"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--concurrency",
+                    ],
+                    description: Some("How many threads to use when Lerna parallelizes the tasks (defaults to count of logical CPU cores)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--loglevel",
+                    ],
+                    description: Some("What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "loglevel",
+                            source: Static([
+                                "silent",
+                                "error",
+                                "warn",
+                                "success",
+                                "info",
+                                "verbose",
+                                "silly",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--max-buffer",
+                    ],
+                    description: Some("Set a max buffer length for each underlying process call"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "bytes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable progress bars. This is always the case in a CI environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-sort",
+                    ],
+                    description: Some("The --no-sort option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--reject-cycles",
+                    ],
+                    description: Some("Fail immediately if a cycle is found (in bootstrap, exec, publish or run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Show help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Show version number"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--flatten",
+                    ],
+                    description: Some("Flatten the git history of the repository to import"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--dest",
+                    ],
+                    description: Some("Specify the destination directory by the directory listed in lerna.json"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--preserve-commit",
+                    ],
+                    description: Some("Preserve the original committer and commit date"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "pathToRepo",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "publish",
+            aliases: [],
+            description: Some("Create a new release of the packages that have been updated. Prompts for a new version and updates all the packages on git and npm"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--concurrency",
+                    ],
+                    description: Some("How many threads to use when Lerna parallelizes the tasks (defaults to count of logical CPU cores)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--loglevel",
+                    ],
+                    description: Some("What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "loglevel",
+                            source: Static([
+                                "silent",
+                                "error",
+                                "warn",
+                                "success",
+                                "info",
+                                "verbose",
+                                "silly",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--max-buffer",
+                    ],
+                    description: Some("Set a max buffer length for each underlying process call"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "bytes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable progress bars. This is always the case in a CI environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-sort",
+                    ],
+                    description: Some("The --no-sort option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--reject-cycles",
+                    ],
+                    description: Some("Fail immediately if a cycle is found (in bootstrap, exec, publish or run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Show help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Show version number"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--npm-tag",
+                    ],
+                    description: Some("Publish to npm with the given npm dist-tag (Defaults to latest)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "tagname",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--canary",
+                        "-c",
+                    ],
+                    description: Some("Create a canary release"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--skip-git",
+                    ],
+                    description: Some("Don\'t run any git commands"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force-publish",
+                    ],
+                    description: Some("Force publish for the specified packages (comma-separated)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "packages",
+                            source: Static([
+                                "*",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "lerna",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "ls",
+            aliases: [],
+            description: Some("List local packages"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--json",
+                    ],
+                    description: Some("Show information as a JSON array"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ndjson",
+                    ],
+                    description: Some("Show information as newline-delimited JSON"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-a",
+                        "-all",
+                    ],
+                    description: Some("Show all packages (including private)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-l",
+                        "--long",
+                    ],
+                    description: Some("Show extended information"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--parseable",
+                    ],
+                    description: Some("Show parseable output instead of columnified view"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--toposort",
+                    ],
+                    description: Some("Sort packages in topological order (dependencies before dependents) instead of lexical by directory"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--graph",
+                    ],
+                    description: Some("Show dependency graph as a JSON-formatted adjacency list"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "ll",
+            aliases: [],
+            description: Some("List local packages"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--json",
+                    ],
+                    description: Some("Show information as a JSON array"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ndjson",
+                    ],
+                    description: Some("Show information as newline-delimited JSON"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-a",
+                        "-all",
+                    ],
+                    description: Some("Show all packages (including private)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-l",
+                        "--long",
+                    ],
+                    description: Some("Show extended information"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--parseable",
+                    ],
+                    description: Some("Show parseable output instead of columnified view"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--toposort",
+                    ],
+                    description: Some("Sort packages in topological order (dependencies before dependents) instead of lexical by directory"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--graph",
+                    ],
+                    description: Some("Show dependency graph as a JSON-formatted adjacency list"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "la",
+            aliases: [],
+            description: Some("List local packages"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--json",
+                    ],
+                    description: Some("Show information as a JSON array"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ndjson",
+                    ],
+                    description: Some("Show information as newline-delimited JSON"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-a",
+                        "-all",
+                    ],
+                    description: Some("Show all packages (including private)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-l",
+                        "--long",
+                    ],
+                    description: Some("Show extended information"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--parseable",
+                    ],
+                    description: Some("Show parseable output instead of columnified view"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--toposort",
+                    ],
+                    description: Some("Sort packages in topological order (dependencies before dependents) instead of lexical by directory"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--graph",
+                    ],
+                    description: Some("Show dependency graph as a JSON-formatted adjacency list"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "list",
+            aliases: [],
+            description: Some("List local packages"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--json",
+                    ],
+                    description: Some("Show information as a JSON array"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ndjson",
+                    ],
+                    description: Some("Show information as newline-delimited JSON"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-a",
+                        "-all",
+                    ],
+                    description: Some("Show all packages (including private)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-l",
+                        "--long",
+                    ],
+                    description: Some("Show extended information"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--parseable",
+                    ],
+                    description: Some("Show parseable output instead of columnified view"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--toposort",
+                    ],
+                    description: Some("Sort packages in topological order (dependencies before dependents) instead of lexical by directory"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--graph",
+                    ],
+                    description: Some("Show dependency graph as a JSON-formatted adjacency list"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "changed",
+            aliases: [],
+            description: Some("Check which packages have changed since the last release"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--concurrency",
+                    ],
+                    description: Some("How many threads to use when Lerna parallelizes the tasks (defaults to count of logical CPU cores)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--loglevel",
+                    ],
+                    description: Some("What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "loglevel",
+                            source: Static([
+                                "silent",
+                                "error",
+                                "warn",
+                                "success",
+                                "info",
+                                "verbose",
+                                "silly",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--max-buffer",
+                    ],
+                    description: Some("Set a max buffer length for each underlying process call"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "bytes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable progress bars. This is always the case in a CI environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-sort",
+                    ],
+                    description: Some("The --no-sort option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--reject-cycles",
+                    ],
+                    description: Some("Fail immediately if a cycle is found (in bootstrap, exec, publish or run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Show help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Show version number"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "package",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "lerna",
+                            "ls",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "run",
+            aliases: [],
+            description: Some("Run an npm script in each package that contains that script"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--concurrency",
+                    ],
+                    description: Some("How many threads to use when Lerna parallelizes the tasks (defaults to count of logical CPU cores)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--loglevel",
+                    ],
+                    description: Some("What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "loglevel",
+                            source: Static([
+                                "silent",
+                                "error",
+                                "warn",
+                                "success",
+                                "info",
+                                "verbose",
+                                "silly",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--max-buffer",
+                    ],
+                    description: Some("Set a max buffer length for each underlying process call"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "bytes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable progress bars. This is always the case in a CI environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-sort",
+                    ],
+                    description: Some("The --no-sort option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--reject-cycles",
+                    ],
+                    description: Some("Fail immediately if a cycle is found (in bootstrap, exec, publish or run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Show help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Show version number"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--scope",
+                    ],
+                    description: Some("Include only packages with names matching the given glob"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "lerna",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ignore",
+                    ],
+                    description: Some("Exclude packages with names matching the given glob"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "lerna",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-private",
+                    ],
+                    description: Some("Exclude private packages. They are included by default"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--since",
+                    ],
+                    description: Some("Only include packages that have been changed since the specified ref. If no ref is passed, it defaults to the most-recent tag"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ref",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--exclude-dependents",
+                    ],
+                    description: Some("Exclude all transitive dependents when running a command with --since, overriding the default \'changed\' algorithm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-dependents",
+                    ],
+                    description: Some("Exclude all transitive dependents when running a command with --since, overriding the default \'changed\' algorithm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-dependencies",
+                    ],
+                    description: Some("Include all transitive dependencies when running a command regardless of --scope, --ignore, or --since"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-merged-tags",
+                    ],
+                    description: Some("Include tags from merged branches when running a command with --since. This is only useful if you do a lot of publishing from feature branches, which is not generally recommended"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--stream",
+                    ],
+                    description: Some("Stream output from child processes immediately, prefixed with the originating package name. This allows output from different packages to be interleaved"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--parallel",
+                    ],
+                    description: Some("Similar to --stream, but completely disregards concurrency and topological sorting, running a given command or script immediately in all matching packages with prefixed streaming output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-bail",
+                    ],
+                    description: Some("By default, lerna run will exit with an error if any script run returns a non-zero exit code. Pass --no-bail to disable this behavior, running the script in all packages that contain it regardless of exit code"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-prefix",
+                    ],
+                    description: Some("Disable package name prefixing when output is streaming (--stream or --parallel). This option can be useful when piping results to other processes, such as editor plugins"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--profile",
+                    ],
+                    description: Some("Profiles the script executions and produces a performance profile which can be analyzed using DevTools"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--profile-location",
+                    ],
+                    description: Some("You can provide a custom location for the performance profile output. The path provided will be resolved relative to the current working directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "location",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "script",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "lerna list -p | while read p; do\n \\cat $p/package.json && echo END\ndone",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "link",
+            aliases: [],
+            description: Some("Symlink together all Lerna packages that are dependencies of each other in the current Lerna repo"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--concurrency",
+                    ],
+                    description: Some("How many threads to use when Lerna parallelizes the tasks (defaults to count of logical CPU cores)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--loglevel",
+                    ],
+                    description: Some("What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "loglevel",
+                            source: Static([
+                                "silent",
+                                "error",
+                                "warn",
+                                "success",
+                                "info",
+                                "verbose",
+                                "silly",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--max-buffer",
+                    ],
+                    description: Some("Set a max buffer length for each underlying process call"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "bytes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable progress bars. This is always the case in a CI environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-sort",
+                    ],
+                    description: Some("The --no-sort option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--reject-cycles",
+                    ],
+                    description: Some("Fail immediately if a cycle is found (in bootstrap, exec, publish or run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Show help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Show version number"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force-local",
+                    ],
+                    description: Some("When passed, this flag causes the link command to always symlink local dependencies regardless of matching version range"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "info",
+            aliases: [],
+            description: Some("Prints local environment information that proves to be useful especially while submitting bug reports"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "version",
+            aliases: [],
+            description: Some("Bump version of packages changed since the last release"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--allow-branch",
+                    ],
+                    description: Some("An allowlist of globs that match git branches where lerna version is enabled"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "git",
+                                    "branch",
+                                    "--no-color",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--amend",
+                    ],
+                    description: Some("Perform all changes on the current commit, instead of adding a new one"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--changelog-preset",
+                    ],
+                    description: Some("Change the changelog preset type"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--conventional-commits",
+                    ],
+                    description: Some("Use the Conventional Commits Specification to determine the version bump and generate CHANGELOG.md files"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--conventional-graduate",
+                    ],
+                    description: Some("Graduate the specified packages (comma-separated) or all packages using *"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--conventional-prerelease",
+                    ],
+                    description: Some("Release with prerelease versions the specified packages (comma-separated) or all packages using *"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--create-release",
+                    ],
+                    description: Some("Create an official release based on the changes packages"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "type",
+                            source: Static([
+                                "github",
+                                "gitlab",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--exact",
+                    ],
+                    description: Some("Specify updated dependencies in updated packages exactly"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force-publish",
+                    ],
+                    description: Some("Force publish the specified packages (comma-separated) or all packages using *"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--git-remote",
+                    ],
+                    description: Some("Push the git changes to the specified remote instead of origin"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "remote",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "git",
+                                    "remote",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ignore-changes",
+                    ],
+                    description: Some("Ignore changes in files matched by glob(s) when detecting changed packages"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Directories,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ignore-scripts",
+                    ],
+                    description: Some("Disable running lifecycle scripts during lerna version"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-merged-tags",
+                    ],
+                    description: Some("Include tags from merged branches when detecting changed packages"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-m",
+                        "--message",
+                    ],
+                    description: Some("Use the provided message when committing the version updates for publication"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "msg",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-changelog",
+                    ],
+                    description: Some("When using conventional-commits, do not generate any CHANGELOG.md files"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-commit-hooks",
+                    ],
+                    description: Some("Disable running git commit hooks"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-git-tag-version",
+                    ],
+                    description: Some("Don\'t commit changes to package.json files and don\'t tag the release"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-granular-pathspec",
+                    ],
+                    description: None,
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-private",
+                    ],
+                    description: Some("Don\'t include private packages"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--preid",
+                    ],
+                    description: Some("Bump semver using the specified prerelease identifier"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "identifier",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--sign-git-commit",
+                    ],
+                    description: None,
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--sign-git-tag",
+                    ],
+                    description: None,
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force-git-tag",
+                    ],
+                    description: None,
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--tag-version-prefix",
+                    ],
+                    description: Some("Change the custom version prefix"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "prefix",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--yes",
+                    ],
+                    description: Some("Skip all confirmation prompts"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Static([
+                        "major",
+                        "minor",
+                        "patch",
+                        "premajor",
+                        "preminor",
+                        "prepatch",
+                        "prerelease",
+                    ]),
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "diff",
+            aliases: [],
+            description: Some("Diff all packages or a single package since the last release"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "package",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "lerna",
+                            "ls",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "exec",
+            aliases: [],
+            description: Some("Execute an arbitrary command in each package"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--concurrency",
+                    ],
+                    description: Some("How many threads to use when Lerna parallelizes the tasks (defaults to count of logical CPU cores)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--loglevel",
+                    ],
+                    description: Some("What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "loglevel",
+                            source: Static([
+                                "silent",
+                                "error",
+                                "warn",
+                                "success",
+                                "info",
+                                "verbose",
+                                "silly",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--max-buffer",
+                    ],
+                    description: Some("Set a max buffer length for each underlying process call"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "bytes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable progress bars. This is always the case in a CI environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-sort",
+                    ],
+                    description: Some("The --no-sort option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--reject-cycles",
+                    ],
+                    description: Some("Fail immediately if a cycle is found (in bootstrap, exec, publish or run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Show help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Show version number"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--scope",
+                    ],
+                    description: Some("Include only packages with names matching the given glob"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "lerna",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ignore",
+                    ],
+                    description: Some("Exclude packages with names matching the given glob"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "lerna",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-private",
+                    ],
+                    description: Some("Exclude private packages. They are included by default"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--since",
+                    ],
+                    description: Some("Only include packages that have been changed since the specified ref. If no ref is passed, it defaults to the most-recent tag"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ref",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--exclude-dependents",
+                    ],
+                    description: Some("Exclude all transitive dependents when running a command with --since, overriding the default \'changed\' algorithm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-dependents",
+                    ],
+                    description: Some("Exclude all transitive dependents when running a command with --since, overriding the default \'changed\' algorithm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-dependencies",
+                    ],
+                    description: Some("Include all transitive dependencies when running a command regardless of --scope, --ignore, or --since"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-merged-tags",
+                    ],
+                    description: Some("Include tags from merged branches when running a command with --since. This is only useful if you do a lot of publishing from feature branches, which is not generally recommended"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--stream",
+                    ],
+                    description: Some("Stream output from child processes immediately, prefixed with the originating package name. This allows output from different packages to be interleaved"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--parallel",
+                    ],
+                    description: Some("Similar to --stream, but completely disregards concurrency and topological sorting, running a given command or script immediately in all matching packages with prefixed streaming output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-bail",
+                    ],
+                    description: Some("By default, lerna run will exit with an error if any script run returns a non-zero exit code. Pass --no-bail to disable this behavior, running the script in all packages that contain it regardless of exit code"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-prefix",
+                    ],
+                    description: Some("Disable package name prefixing when output is streaming (--stream or --parallel). This option can be useful when piping results to other processes, such as editor plugins"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--profile",
+                    ],
+                    description: Some("Profiles the script executions and produces a performance profile which can be analyzed using DevTools"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--profile-location",
+                    ],
+                    description: Some("You can provide a custom location for the performance profile output. The path provided will be resolved relative to the current working directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "location",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "command",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "lerna list -p | while read p; do\n \\cat $p/package.json && echo END\ndone",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "add",
+            aliases: [],
+            description: Some("Add a dependency to matched packages"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--concurrency",
+                    ],
+                    description: Some("How many threads to use when Lerna parallelizes the tasks (defaults to count of logical CPU cores)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--loglevel",
+                    ],
+                    description: Some("What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "loglevel",
+                            source: Static([
+                                "silent",
+                                "error",
+                                "warn",
+                                "success",
+                                "info",
+                                "verbose",
+                                "silly",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--max-buffer",
+                    ],
+                    description: Some("Set a max buffer length for each underlying process call"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "bytes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable progress bars. This is always the case in a CI environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-sort",
+                    ],
+                    description: Some("The --no-sort option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--reject-cycles",
+                    ],
+                    description: Some("Fail immediately if a cycle is found (in bootstrap, exec, publish or run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Show help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Show version number"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--scope",
+                    ],
+                    description: Some("Include only packages with names matching the given glob"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "lerna",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ignore",
+                    ],
+                    description: Some("Exclude packages with names matching the given glob"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "lerna",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-private",
+                    ],
+                    description: Some("Exclude private packages. They are included by default"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--since",
+                    ],
+                    description: Some("Only include packages that have been changed since the specified ref. If no ref is passed, it defaults to the most-recent tag"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ref",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--exclude-dependents",
+                    ],
+                    description: Some("Exclude all transitive dependents when running a command with --since, overriding the default \'changed\' algorithm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-dependents",
+                    ],
+                    description: Some("Exclude all transitive dependents when running a command with --since, overriding the default \'changed\' algorithm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-dependencies",
+                    ],
+                    description: Some("Include all transitive dependencies when running a command regardless of --scope, --ignore, or --since"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-merged-tags",
+                    ],
+                    description: Some("Include tags from merged branches when running a command with --since. This is only useful if you do a lot of publishing from feature branches, which is not generally recommended"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--dev",
+                    ],
+                    description: Some("Add the new package to devDependencies instead of dependencies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--exact",
+                    ],
+                    description: Some("Add the new package with an exact version"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--peer",
+                    ],
+                    description: Some("Add the new package to peerDependencies instead of dependencies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--registry",
+                    ],
+                    description: Some("Use a custom registry to install the targeted package"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "registry",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-bootstrap",
+                    ],
+                    description: Some("Skip the chained lerna bootstrap"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "clean",
+            aliases: [],
+            description: Some("Remove the node_modules directory from all packages"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--concurrency",
+                    ],
+                    description: Some("How many threads to use when Lerna parallelizes the tasks (defaults to count of logical CPU cores)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--loglevel",
+                    ],
+                    description: Some("What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "loglevel",
+                            source: Static([
+                                "silent",
+                                "error",
+                                "warn",
+                                "success",
+                                "info",
+                                "verbose",
+                                "silly",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--max-buffer",
+                    ],
+                    description: Some("Set a max buffer length for each underlying process call"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "bytes",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable progress bars. This is always the case in a CI environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-sort",
+                    ],
+                    description: Some("The --no-sort option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--reject-cycles",
+                    ],
+                    description: Some("Fail immediately if a cycle is found (in bootstrap, exec, publish or run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Show help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Show version number"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--scope",
+                    ],
+                    description: Some("Include only packages with names matching the given glob"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "lerna",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ignore",
+                    ],
+                    description: Some("Exclude packages with names matching the given glob"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "glob",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "lerna",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-private",
+                    ],
+                    description: Some("Exclude private packages. They are included by default"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--since",
+                    ],
+                    description: Some("Only include packages that have been changed since the specified ref. If no ref is passed, it defaults to the most-recent tag"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ref",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--exclude-dependents",
+                    ],
+                    description: Some("Exclude all transitive dependents when running a command with --since, overriding the default \'changed\' algorithm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-dependents",
+                    ],
+                    description: Some("Exclude all transitive dependents when running a command with --since, overriding the default \'changed\' algorithm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-dependencies",
+                    ],
+                    description: Some("Include all transitive dependencies when running a command regardless of --scope, --ignore, or --since"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-merged-tags",
+                    ],
+                    description: Some("Include tags from merged branches when running a command with --since. This is only useful if you do a lot of publishing from feature branches, which is not generally recommended"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--yes",
+                    ],
+                    description: Some("Skip all confirmation prompts"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "create",
+            aliases: [],
+            description: Some("Create a new lerna-managed package"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--access",
+                    ],
+                    description: Some("Set the scope of the package"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "scope",
+                            source: Static([
+                                "public",
+                                "restricted",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--bin",
+                    ],
+                    description: Some("Package has an executable"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "executableName",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--description",
+                    ],
+                    description: Some("Package description"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--dependencies",
+                    ],
+                    description: Some("A list of package dependencies"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "dependencies",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--es-module",
+                    ],
+                    description: Some("Initialize a transpiled ES Module"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--homepage",
+                    ],
+                    description: Some("The package homepage, defaulting to a subpath of the root pkg.homepage"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--keywords",
+                    ],
+                    description: Some("A list of package keywords"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "keywords",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--license",
+                    ],
+                    description: Some("The desired package license (SPDX identifier)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--private",
+                    ],
+                    description: Some("Make the new package private, never published"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--registry",
+                    ],
+                    description: Some("Configure the package\'s publishConfig.registry"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--tag",
+                    ],
+                    description: Some("Configure the package\'s publishConfig.tag"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--yes",
+                    ],
+                    description: Some("Skip all prompts, accepting default values"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "loc",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [],
+    arguments: [],
+)

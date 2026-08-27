@@ -1,0 +1,583 @@
+(
+    version: 1,
+    command: "scc",
+    description: Some("Sloc, Cloc and Code. Count lines of code in a directory with complexity estimation"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "--avg-wage",
+            ],
+            description: Some("Average salary value used for COCOMO calculations"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "int",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--binary",
+            ],
+            description: Some("Disable binary file detection"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--by-file",
+            ],
+            description: Some("Display output for every file"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--ci",
+            ],
+            description: Some("Enable CI output settings where stdout is ASCII"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--cocomo-project-type",
+            ],
+            description: Some("Change the COCOMO model type (allows custom models, eg. \"name,1,1,1,1\")"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Static([
+                        "organic",
+                        "semi-detached",
+                        "embedded",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--count-as",
+            ],
+            description: Some("Count a file extension as a language (comma-separated key:value list, eg. jst:js,tpl:Markdown)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--debug",
+            ],
+            description: Some("Enable debug output"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--exclude-dir",
+            ],
+            description: Some("Directories to exclude"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "strings",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--file-gc-count",
+            ],
+            description: Some("Number of files to parse before turning the GC on"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "int",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-f",
+                "--format",
+            ],
+            description: Some("Set output format"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Static([
+                        "tabular",
+                        "wide",
+                        "json",
+                        "csv",
+                        "csv-stream",
+                        "cloc-yaml",
+                        "html",
+                        "html-table",
+                        "sql",
+                        "sql-insert",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--format-multi",
+            ],
+            description: Some("Multiple outputs with different formats (comma-separated key:value list, eg. tabular:stdout,csv:scc.csv)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--gen",
+            ],
+            description: Some("Identify generated files"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--generated-markers",
+            ],
+            description: Some("Identify generated files by the presence of a string (comma-separated list)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "strings",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Help for scc"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-i",
+                "--include-ext",
+            ],
+            description: Some("Limit to these file extensions (comma-separated list)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "strings",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--include-symlinks",
+            ],
+            description: Some("Count symbolic links"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-l",
+                "--languages",
+            ],
+            description: Some("Print supported languages and extensions"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--large-byte-count",
+            ],
+            description: Some("Number of bytes a file can contain before being omitted"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "int",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--large-line-count",
+            ],
+            description: Some("Number of lines a file can contain before being omitted"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "int",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--min",
+            ],
+            description: Some("Identify minified files"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-z",
+                "--min-gen",
+            ],
+            description: Some("Identify minified or generated files"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--min-gen-line-length",
+            ],
+            description: Some("Number of bytes per average line for file to be considered minified or generated"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "int",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--no-cocomo",
+            ],
+            description: Some("Skip COCOMO calculation"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-c",
+                "--no-complexity",
+            ],
+            description: Some("Skip code complexity calculation"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-d",
+                "--no-duplicates",
+            ],
+            description: Some("Remove duplicate files from stats and output"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-gen",
+            ],
+            description: Some("Ignore generated files in output (implies --gen)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-gitignore",
+            ],
+            description: Some("Disables .gitignore file logic"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-ignore",
+            ],
+            description: Some("Disables .ignore file logic"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-large",
+            ],
+            description: Some("Ignore files over certain byte and line size set by --max-line-count and --max-byte-count"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-min",
+            ],
+            description: Some("Ignore minified files in output (implies --min)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-min-gen",
+            ],
+            description: Some("Ignore minified or generated files in output (implies --min-gen)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-size",
+            ],
+            description: Some("Remove size calculation output"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-M",
+                "--not-match",
+            ],
+            description: Some("Ignore files and directories matching regular expression"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "regex",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-o",
+                "--output",
+            ],
+            description: Some("Output filename (defaults to stdout if not provided)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--remap-all",
+            ],
+            description: Some("Inspect every file and set its type by checking for a string (comma-separated key:value list, eg. \"-*- C++ -*-\":\"C Header\")"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--remap-unknown",
+            ],
+            description: Some("Inspect files of unknown type and set its type by checking for a string (comma-separated key:value list, eg. \"-*- C++ -*-\":\"C Header\")"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--size-unit",
+            ],
+            description: Some("Set the unit used for file size output"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Static([
+                        "si",
+                        "binary",
+                        "mixed",
+                        "xkcd-kb",
+                        "xkcd-kelly",
+                        "xkcd-imaginary",
+                        "xkcd-intel",
+                        "xkcd-drive",
+                        "xkcd-bakers",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-s",
+                "--sort",
+            ],
+            description: Some("Column to sort by"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Static([
+                        "files",
+                        "name",
+                        "lines",
+                        "blanks",
+                        "code",
+                        "comments",
+                        "complexity",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--sql-project",
+            ],
+            description: Some("Use supplied name as the project identifier for the current run. Only valid with the \'--format sql\' or \'--format sql-insert\' option"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-t",
+                "--trace",
+            ],
+            description: Some("Enable trace output (not recommended when processing multiple files)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-v",
+                "--verbose",
+            ],
+            description: Some("Verbose output"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+            ],
+            description: Some("Version for scc"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-w",
+                "--wide",
+            ],
+            description: Some("Wider output with additional statistics (implies --complexity)"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "files or directories",
+            source: Directories,
+            optional: true,
+            variadic: true,
+            imported_generator: None,
+        ),
+    ],
+)

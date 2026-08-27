@@ -1,0 +1,1352 @@
+(
+    version: 1,
+    command: "gource",
+    description: Some("Gource is an OpenGL-based 3D visualisation tool for source control repositories"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Help (\'-H\' for extended help)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--viewport",
+            ],
+            description: Some("Set the viewport size. If -f is also supplied, will attempt to set the video mode to this also. Add `!` to make the window non-resizable"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "size",
+                    source: Static([
+                        "3840x2160",
+                        "2560x1440",
+                        "1920x1080",
+                        "1280x720",
+                        "800x600",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-f",
+            ],
+            description: Some("Fullscreen"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--screen",
+            ],
+            description: Some("Set the number of the screen to display on"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "screen",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "system_profiler",
+                            "SPDisplaysDataType",
+                            "-json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--high-dpi",
+            ],
+            description: Some("Request a high DPI display when creating the window. On some platforms such as MacOS, the window resolution is specified in points instead of pixels. The --high-dpi flag may be required to access some higher resolutions. E.g. requesting a high DPI 800x600 window may produce a window that is 1600x1200 pixels"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--window-position",
+            ],
+            description: Some("Initial window position on your desktop which may be made up of multiple monitors. This will override the screen setting so don\'t specify both"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "position",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--frameless",
+            ],
+            description: Some("Frameless window"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--transparent",
+            ],
+            description: Some("Make the background transparent. Only really useful for screenshots"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--start-date",
+            ],
+            description: Some("Start with the first entry after the supplied date and optional time. If a time zone offset isn\'t specified the local time zone is used. Example accepted formats: \'YYYY-MM-DD\', \'YYYY-MM-DD hh:mm\', \'YYYY-MM-DD hh:mm:ss +tz\'"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "date",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--stop-date",
+            ],
+            description: Some("Stop at the last entry prior to the supplied date and optional time. Uses the same format as --start-date"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "date",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-p",
+                "--start-position",
+            ],
+            description: Some("Begin at some position in the log (between 0.0 and 1.0 or \'random\')"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "position",
+                    source: Static([
+                        "random",
+                        "0.0",
+                        "0.1",
+                        "0.2",
+                        "0.3",
+                        "0.4",
+                        "0.5",
+                        "0.6",
+                        "0.7",
+                        "0.8",
+                        "0.9",
+                        "1.0",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--stop-position",
+            ],
+            description: Some("Stop (exit) at some position in the log (does not work with STDIN)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "position",
+                    source: Static([
+                        "random",
+                        "0.0",
+                        "0.1",
+                        "0.2",
+                        "0.3",
+                        "0.4",
+                        "0.5",
+                        "0.6",
+                        "0.7",
+                        "0.8",
+                        "0.9",
+                        "1.0",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-t",
+                "--stop-at-time",
+            ],
+            description: Some("Stop (exit) after a specified number of seconds"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "seconds",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--stop-at-end",
+            ],
+            description: Some("Stop (exit) at the end of the log / stream"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--loop",
+            ],
+            description: Some("Loop back to the start of the log when the end is reached"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--loop-delay-seconds",
+            ],
+            description: Some("Seconds to delay before looping"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "seconds",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-a",
+                "--auto-skip-seconds",
+            ],
+            description: Some("Automatically skip to next entry if nothing happens for a specified number of seconds"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "seconds",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-s",
+                "--seconds-per-day",
+            ],
+            description: Some("Speed of simulation in seconds per day"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "seconds",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--realtime",
+            ],
+            description: Some("Realtime playback speed"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-time-travel",
+            ],
+            description: Some("Use the time of the last commit if the time of a commit is in the past"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-c",
+                "--time-scale",
+            ],
+            description: Some("Change simulation time scale"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-i",
+                "--file-idle-time",
+            ],
+            description: Some("Time in seconds files remain idle before they are removed or 0 for no limit"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--file-idle-time-at-end",
+            ],
+            description: Some("Time in seconds files remain idle at the end before they are removed"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "seconds",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-e",
+                "--elasticity",
+            ],
+            description: Some("Elasticity of nodes"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "elasticity",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-b",
+                "--background-colour",
+            ],
+            description: Some("Background colour in hex"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "colour",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--background-image",
+            ],
+            description: Some("Set a background image"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "image file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--title",
+            ],
+            description: Some("Set a title"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "title",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--font-file",
+            ],
+            description: Some("Specify the font. Should work with most font file formats supported by FreeType, such as TTF and OTF, among others"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "font file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--font-scale",
+            ],
+            description: Some("Scale the size of all fonts"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "scale",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--font-size",
+            ],
+            description: Some("Font size used by the date and title"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "size",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--file-font-size",
+            ],
+            description: Some("Font size of filenames"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "size",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--dir-font-size",
+            ],
+            description: Some("Font size of directory names"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "size",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--user-font-size",
+            ],
+            description: Some("Font size of user names"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "size",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--font-colour",
+            ],
+            description: Some("Font colour used by the date and title in hex"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "colour",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--key",
+            ],
+            description: Some("Show file extension key"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--logo",
+            ],
+            description: Some("Logo to display in the foreground"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "image file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--logo-offset",
+            ],
+            description: Some("Offset position of the logo"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "offset",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--date-format",
+            ],
+            description: Some("Specify display date string (strftime format)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "format",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--log-command",
+            ],
+            description: Some("Show the log command used by gource (git,svn,hg,bzr,cvs2cl)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "command",
+                    source: Static([
+                        "git",
+                        "svn",
+                        "hg",
+                        "bzr",
+                        "cvs2cl",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--log-format",
+            ],
+            description: Some("Specify format of the log being read (git,svn,hg,bzr,cvs2cl,custom). Required when reading from STDIN"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "format",
+                    source: Static([
+                        "git",
+                        "svn",
+                        "hg",
+                        "bzr",
+                        "cvs2cl",
+                        "custom",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--git-branch",
+            ],
+            description: Some("Get the git log of a branch other than the current one"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "branch",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--follow-user",
+            ],
+            description: Some("Have the camera automatically follow a particular user"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "username",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--highlight-dirs",
+            ],
+            description: Some("Highlight the names of all directories"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--highlight-user",
+            ],
+            description: Some("Highlight the names of a particular user"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "username",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--highlight-users",
+            ],
+            description: Some("Highlight the names of all users"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--highlight-colour",
+            ],
+            description: Some("Font colour for highlighted users in hex"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "colour",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--selection-colour",
+            ],
+            description: Some("Font colour for selected users and files"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "colour",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--filename-colour",
+            ],
+            description: Some("Font colour for filenames"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "colour",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--dir-colour",
+            ],
+            description: Some("Font colour for directories"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "color",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--dir-name-depth",
+            ],
+            description: Some("Draw names of directories down to a specific depth in the tree"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "depth",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--dir-name-position",
+            ],
+            description: Some("Position along edge of the directory name (between 0.1 and 1.0, default is 0.5)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "position",
+                    source: Static([
+                        "0.1",
+                        "0.2",
+                        "0.3",
+                        "0.4",
+                        "0.5",
+                        "0.6",
+                        "0.7",
+                        "0.8",
+                        "0.9",
+                        "1.0",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--filename-time",
+            ],
+            description: Some("Duration to keep filenames on screen (>= 2.0)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "time",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--file-extensions",
+            ],
+            description: Some("Show filename extensions only"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--file-extension-fallback",
+            ],
+            description: Some("Use filename as extension if the extension is missing or empty"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--file-filter",
+            ],
+            description: Some("Filter out file paths matching the specified regular expression"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "regex",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--file-show-filter",
+            ],
+            description: Some("Show only file paths matching the specified regular expression"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "regex",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--user-filter",
+            ],
+            description: Some("Filter usernames matching the specified regular expression"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "regex",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--user-show-filter",
+            ],
+            description: Some("Show only usernames matching the specified regular expression"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "regex",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--user-image-dir",
+            ],
+            description: Some("Directory containing .jpg or .png images of users (eg \'Full Name.png\') to use as avatars"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "directory",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--default-user-image",
+            ],
+            description: Some("Path of .jpg to use as the default user image"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "User image",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--fixed-user-size",
+            ],
+            description: Some("Forces the size of the user image to remain fixed throughout"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--colour-images",
+            ],
+            description: Some("Colourize user images"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--crop",
+            ],
+            description: Some("Crop view on an axis (vertical,horizontal)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "axis",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--padding",
+            ],
+            description: Some("Camera view padding"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "padding",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--multi-sampling",
+            ],
+            description: Some("Enable multi-sampling"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-vsync",
+            ],
+            description: Some("Disable vsync"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--bloom-multiplier",
+            ],
+            description: Some("Adjust the amount of bloom"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "multiplier",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--bloom-intensity",
+            ],
+            description: Some("Adjust the intensity of the bloom"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "intensity",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--max-files",
+            ],
+            description: Some("Set the maximum number of files or 0 for no limit. Excess files will be discarded"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "number",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--max-file-lag",
+            ],
+            description: Some("Max time files of a commit can take to appear. Use -1 for no limit"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "seconds",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--max-user-speed",
+            ],
+            description: Some("Max speed users can travel per second"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "units",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--user-friction",
+            ],
+            description: Some("Time users take to come to a halt"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "seconds",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--user-scale",
+            ],
+            description: Some("Change scale of user avatars"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "scale",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--camera-mode",
+            ],
+            description: Some("Camera mode (overview,track)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "mode",
+                    source: Static([
+                        "overview",
+                        "track",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--disable-auto-rotate",
+            ],
+            description: Some("Disable automatic camera rotation"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--disable-input",
+            ],
+            description: Some("Disable keyboard and mouse input"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--hide",
+            ],
+            description: Some("Hide one or more display elements from the list below: bloom - bloom effect date - current date dirnames - names of directories files - file icons filenames - names of files mouse - mouse cursor progress - progress bar widget root - root directory of the tree tree - animated tree structure users - user avatars usernames - names of users"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "element",
+                    source: Static([
+                        "bloom",
+                        "date",
+                        "dirnames",
+                        "files",
+                        "filenames",
+                        "mouse",
+                        "progress",
+                        "root",
+                        "tree",
+                        "users",
+                        "usernames",
+                    ]),
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--hash-seed",
+            ],
+            description: Some("Change the seed of hash function"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "seed",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--caption-file",
+            ],
+            description: Some("Caption file (see Caption Log Format)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--caption-size",
+            ],
+            description: Some("Caption size"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "size",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--caption-colour",
+            ],
+            description: Some("Caption colour in hex"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "colour",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--caption-duration",
+            ],
+            description: Some("Caption duration"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "seconds",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--caption-offset",
+            ],
+            description: Some("Caption horizontal offset (0 to centre captions)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "offset",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-o",
+                "--output-ppm-stream",
+            ],
+            description: Some("Output a PPM image stream to a file (\'-\' for STDOUT). This will automatically hide the progress bar initially and enable \'stop-at-end\' unless other behaviour is specified"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-r",
+                "--output-framerate",
+            ],
+            description: Some("Framerate of output (25,30,60). Used with --output-ppm-stream"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "fps",
+                    source: Static([
+                        "25",
+                        "30",
+                        "60",
+                        "120",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--output-custom-log",
+            ],
+            description: Some("Output a custom format log file (\'-\' for STDOUT)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--load-config",
+            ],
+            description: Some("Load a config file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "config file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--save-config",
+            ],
+            description: Some("Save a config file with the current options"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "config file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--path",
+            ],
+            description: Some("Either a supported version control directory, a pre-generated log file (see log commands or the custom log format), a Gource conf file or \'-\' to read STDIN"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+    ],
+    arguments: [],
+)

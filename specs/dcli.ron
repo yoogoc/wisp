@@ -1,0 +1,800 @@
+(
+    version: 1,
+    command: "dcli",
+    description: Some("Dashlane CLI"),
+    subcommands: [
+        (
+            name: "sync",
+            aliases: [
+                "s",
+            ],
+            description: Some("Manually synchronize the local vault with Dashlane"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "read",
+            aliases: [],
+            description: Some("Retrieve a secret from the local vault via its path"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "exec",
+            aliases: [],
+            description: Some("Execute a command with secrets injected into the environment variables (-- <command>)"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "command",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "inject",
+            aliases: [],
+            description: Some("Inject secrets into a templated string or file (uses stdin and stdout by default)"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-i",
+                        "--in",
+                    ],
+                    description: Some("Input file of a template to inject the credential into"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-o",
+                        "--out",
+                    ],
+                    description: Some("Output file to write the injected template to"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "password",
+            aliases: [
+                "p",
+            ],
+            description: Some("Retrieve a password from the local vault and copy it to the clipboard"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-o",
+                        "--output",
+                    ],
+                    description: Some("How to print the passwords. The JSON option outputs all the matching credentials"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "type",
+                            source: Static([
+                                "clipboard",
+                                "password",
+                                "json",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "filters",
+                    source: Files,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "otp",
+            aliases: [
+                "o",
+            ],
+            description: Some("Retrieve an OTP code from local vault and copy it to the clipboard"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--print",
+                    ],
+                    description: Some("Prints just the OTP code, instead of copying it to the clipboard"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "filters",
+                    source: Files,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "note",
+            aliases: [
+                "n",
+            ],
+            description: Some("Retrieve a secure note from the local vault and open it"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-o",
+                        "--output",
+                    ],
+                    description: Some("How to print the notes. The JSON option outputs all the matching notes"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "type",
+                            source: Static([
+                                "text",
+                                "json",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "filters",
+                    source: Files,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "accounts",
+            aliases: [
+                "a",
+            ],
+            description: Some("Manage your accounts connected to the CLI"),
+            subcommands: [
+                (
+                    name: "whoami",
+                    aliases: [],
+                    description: Some("Prints the login email of the account currently in use"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "help",
+                    aliases: [],
+                    description: Some("Display help for command"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "command",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "devices",
+            aliases: [
+                "d",
+            ],
+            description: Some("Operations on devices"),
+            subcommands: [
+                (
+                    name: "list",
+                    aliases: [],
+                    description: Some("Lists all registered devices that can access your account"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--json",
+                            ],
+                            description: Some("Output in JSON format"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "remove",
+                    aliases: [],
+                    description: Some("De-registers a list of devices. De-registering the CLI will implies doing a \"dcli logout\""),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--all",
+                            ],
+                            description: Some("Remove all devices including this one (dangerous)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--others",
+                            ],
+                            description: Some("Remove all other devices"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "device ids",
+                            source: Unavailable,
+                            optional: true,
+                            variadic: true,
+                            imported_generator: Some((
+                                script: [
+                                    "dcli",
+                                    "devices",
+                                    "list",
+                                    "--json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "register",
+                    aliases: [],
+                    description: Some("Registers a new device to be used in non-interactive mode"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--json",
+                            ],
+                            description: Some("Output in JSON format"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "device name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "help",
+                    aliases: [],
+                    description: Some("Display help for command"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "command",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "team",
+            aliases: [
+                "t",
+            ],
+            description: Some("Team related commands"),
+            subcommands: [
+                (
+                    name: "credentials",
+                    aliases: [
+                        "c",
+                    ],
+                    description: Some("Team credentials operations"),
+                    subcommands: [
+                        (
+                            name: "generate",
+                            aliases: [],
+                            description: Some("Generate new team credentials"),
+                            subcommands: [],
+                            options: [
+                                (
+                                    names: [
+                                        "--json",
+                                    ],
+                                    description: Some("Output in JSON format"),
+                                    takes_value: false,
+                                    arguments: [],
+                                ),
+                            ],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "list",
+                            aliases: [],
+                            description: Some("List all team credentials"),
+                            subcommands: [],
+                            options: [
+                                (
+                                    names: [
+                                        "--json",
+                                    ],
+                                    description: Some("Output in JSON format"),
+                                    takes_value: false,
+                                    arguments: [],
+                                ),
+                            ],
+                            arguments: [],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "revoke",
+                            aliases: [],
+                            description: Some("Revoke credentials by access key"),
+                            subcommands: [],
+                            options: [],
+                            arguments: [
+                                (
+                                    name: "accessKey",
+                                    source: Unavailable,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: Some((
+                                        script: [
+                                            "dcli",
+                                            "team",
+                                            "credentials",
+                                            "list",
+                                            "--json",
+                                        ],
+                                        has_post_process: true,
+                                        has_custom: false,
+                                    )),
+                                ),
+                            ],
+                            load_spec: None,
+                        ),
+                        (
+                            name: "help",
+                            aliases: [],
+                            description: Some("Display help for command"),
+                            subcommands: [],
+                            options: [],
+                            arguments: [
+                                (
+                                    name: "command",
+                                    source: Files,
+                                    optional: true,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                            load_spec: None,
+                        ),
+                    ],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "members",
+                    aliases: [
+                        "m",
+                    ],
+                    description: Some("List team members"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--csv",
+                            ],
+                            description: Some("Output in CSV format"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--human-readable",
+                            ],
+                            description: Some("Output dates in human readable format"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "page",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "limit",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "logs",
+                    aliases: [
+                        "l",
+                    ],
+                    description: Some("List audit logs"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--start",
+                            ],
+                            description: Some("Start timestamp in ms"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "start",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--end",
+                            ],
+                            description: Some("End timestamp in ms (use \"now\" to get the current timestamp)"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "end",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--type",
+                            ],
+                            description: Some("Log type"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "type",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--category",
+                            ],
+                            description: Some("Log category"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "category",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--csv",
+                            ],
+                            description: Some("Output in CSV format"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--human-readable",
+                            ],
+                            description: Some("Output dates in human readable format"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "report",
+                    aliases: [
+                        "r",
+                    ],
+                    description: Some("Get team report"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "days",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "help",
+                    aliases: [],
+                    description: Some("Display help for command"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "command",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "configure",
+            aliases: [
+                "c",
+            ],
+            description: Some("Configure the CLI"),
+            subcommands: [
+                (
+                    name: "disable-auto-sync",
+                    aliases: [],
+                    description: Some("Disable automatic synchronization which is done once per hour (default: false)"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "boolean",
+                            source: Static([
+                                "true",
+                                "false",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "save-master-password",
+                    aliases: [],
+                    description: Some("Should the encrypted master password be saved and the OS keychain be used (default: true)"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "boolean",
+                            source: Static([
+                                "true",
+                                "false",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "help",
+                    aliases: [],
+                    description: Some("Display help for command"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "command",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "backup",
+            aliases: [],
+            description: Some("Backup your local vault (will use the current directory by default)"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--directory",
+                    ],
+                    description: Some("Output directory of the backup (\".\" by default)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "directory",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--filename",
+                    ],
+                    description: Some("Filename of the backup (\"dashlane-backup-<unix_timestamp>.db by default\")"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "filename",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "logout",
+            aliases: [],
+            description: Some("Logout and clean your local database and OS keychain"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Display help for command"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "command",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Display help for command"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-V",
+                "--version",
+            ],
+            description: Some("Output the version number"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--debug",
+            ],
+            description: Some("Print debug messages"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

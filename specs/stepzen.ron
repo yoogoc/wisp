@@ -1,0 +1,171 @@
+(
+    version: 1,
+    command: "StepZen",
+    description: Some("The StepZen CLI is the primary way to build, deploy and test your schemas on StepZen"),
+    subcommands: [
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Display help for StepZen"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "command",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "login",
+            aliases: [],
+            description: Some("Login to StepZen"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "logout",
+            aliases: [],
+            description: Some("Logout of StepZen"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "start",
+            aliases: [],
+            description: Some("Deploy, watch and develop your API"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--dir",
+                    ],
+                    description: Some("The working directory for StepZen assets"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--endpoint",
+                    ],
+                    description: Some("The folder/endpoint to deploy to"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "endpoint",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "stepzen",
+                                    "list",
+                                    "schemas",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--port",
+                    ],
+                    description: Some("The port number to use for the GraphiQL explorer"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "import",
+            aliases: [],
+            description: Some("Import pre-configured schemas to Your API"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--dir",
+                    ],
+                    description: Some("The directory to which the schema will be imported"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "curl",
+                            "https://api.github.com/repos/steprz/stepzen-schemas/contents",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "list",
+            aliases: [],
+            description: Some("List the assets of a specified type that are linked to the StepZen account"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "type",
+                    source: Static([
+                        "schemas",
+                        "configurationsets",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [],
+    arguments: [],
+)

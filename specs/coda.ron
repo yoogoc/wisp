@@ -1,0 +1,381 @@
+(
+    version: 1,
+    command: "coda",
+    description: Some("Coda Local development CLI tool. It comes bundled with the Pack SDK and makes it easy to build and manage Packs from the CLI"),
+    subcommands: [
+        (
+            name: "init",
+            aliases: [],
+            description: Some("Initialize an empty project with the recommended settings and dependencies"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "execute",
+            aliases: [],
+            description: Some("Execute the formula and print the output to the terminal"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--dynamicUrl",
+                    ],
+                    description: Some("To run a sync for a dynamic sync table, use this parameter to specify which URL to sync from"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "url",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "path/to/pack.ts",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+                (
+                    name: "formula",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "grep -A5 --include=*.ts --exclude-dir=node_modules -r \'addFormula\\|addSyncTable\\|makeFormula\\|makeSyncTable\' . | grep -A3 -i formula | grep name: | grep -oE \"[\'\\\"]\\w*[\'\\\"]\"",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "params",
+                    source: Files,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "auth",
+            aliases: [],
+            description: Some("Set up authentication in your development environment so that you can execute Pack formulas with authentication applied to them"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "path/to/pack.ts",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "register",
+            aliases: [],
+            description: Some("Create a new API token or register an existing one to be used with future commands"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "apiToken",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "create",
+            aliases: [],
+            description: Some("Create a new Pack on Coda’s servers and get assigned a Pack ID. Run this command just once for each Pack you create"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--name",
+                    ],
+                    description: Some("Specify a name for the Pack. You can always set or update the name in the Pack management UI later"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--description",
+                    ],
+                    description: Some("Specify a description for the Pack. You can always set or update the description in the Pack management UI later"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "description",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "path/to/pack.ts",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "upload",
+            aliases: [],
+            description: Some("Use this command to upload a new version of your Pack based on your latest code"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "path/to/pack.ts",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "release",
+            aliases: [],
+            description: Some("Release a Pack version and make it live for your users"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "path/to/pack.ts",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+                (
+                    name: "version",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "clone",
+            aliases: [],
+            description: Some("Migrate the development of a Pack from the Pack Studio to a new local CLI Pack development"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "urlOrPackId",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "link",
+            aliases: [],
+            description: Some("Link the development of a Pack from the Pack studio to an existing local CLI Pack development"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "path/to/pack.ts",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+                (
+                    name: "urlOrPackId",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "whoami",
+            aliases: [],
+            description: Some("Looks up information about the API token that is registered in this environment"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "apiToken",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "build",
+            aliases: [],
+            description: Some("Generate a bundle for your Pack"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "path/to/pack.ts",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "validate",
+            aliases: [],
+            description: Some("Validate your Pack definition"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "path/to/pack.ts",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "setOption",
+            aliases: [],
+            description: Some("Set a persistent build option for the Pack. This will be used for all builds of the Pack"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "path/to/pack.ts",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+                (
+                    name: "option",
+                    source: Static([
+                        "timerStrategy",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "value",
+                    source: Static([
+                        "none",
+                        "error",
+                        "fake",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--version",
+            ],
+            description: Some("Show version number"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--help",
+            ],
+            description: Some("Show help"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

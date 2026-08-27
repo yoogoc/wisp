@@ -1,0 +1,488 @@
+(
+    version: 1,
+    command: "maigret",
+    description: Some("Maigret is an easy-to-use and powerful OSINT tool for collecting a dossier on a person by username only"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-a",
+                "--all-sites",
+            ],
+            description: Some("Use all sites for scan"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+            ],
+            description: Some("Display version information and dependencies"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--timeout",
+            ],
+            description: Some("Time in seconds to wait for response to requests (default {settings.timeout}s). A longer timeout will be more likely to get results from slow sites. On the other hand, this may cause a long delay to gather all results"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Timeout",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--retries",
+            ],
+            description: Some("Attempts to restart temporarily failed requests"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Retries",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-n",
+                "--max-connections",
+            ],
+            description: Some("Allowed number of concurrent connections (default {settings.max_connections})"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Connections",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--no-recursion",
+            ],
+            description: Some("Disable recursive search by additional data extracted from pages"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-extracting",
+            ],
+            description: Some("Disable parsing pages for additional data and other usernames"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--id-type",
+            ],
+            description: Some("Specify identifier(s) type (default: username)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Type",
+                    source: Static([
+                        "username",
+                        "yandex_public_id",
+                        "gaia_id",
+                        "vk_id",
+                        "ok_id",
+                        "wikimapia_uid",
+                        "steam_id",
+                        "uidme_uguid",
+                        "yelp_userid",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--db",
+            ],
+            description: Some("Load Maigret database from a JSON file or HTTP web resource"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "DB path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--cookies-jar-file",
+            ],
+            description: Some("File with cookies"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Cookie file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--ignore-ids",
+            ],
+            description: Some("Do not make search by the specified username or other ids"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Ignored ids",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-fo",
+                "--folderoutput",
+            ],
+            description: Some("If using multiple usernames, the output of the results will be saved to this folder"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Reports path",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-p",
+                "--proxy",
+            ],
+            description: Some("Make requests over a proxy. e.g. socks5://127.0.0.1:1080"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Proxy URL",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--tor-proxy",
+            ],
+            description: Some("Specify URL of your Tor gateway. Default is socks5://127.0.0.1:9050"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Tor Proxy URL",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--i2p-proxy",
+            ],
+            description: Some("Specify URL of your I2P gateway. Default is http://127.0.0.1:4444"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "I2P URL",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--with-domains",
+            ],
+            description: Some("Enable (experimental) feature of checking domains on usernames"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--tags",
+            ],
+            description: Some("Specify tags of sites (see `--stats`)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Tags",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--site",
+            ],
+            description: Some("Limit analysis to just the specified sites (multiple option)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Site name",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--use-disabled-sites",
+            ],
+            description: Some("Use disabled sites to search (may cause many false positives)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--parse",
+            ],
+            description: Some("Parse page by URL and extract username and IDs to use for search"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Parse URL",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--submit",
+            ],
+            description: Some("URL of existing profile in new site to submit"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Site URL",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--self-check",
+            ],
+            description: Some("Do self check for sites and database and disable non-working ones"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--stats",
+            ],
+            description: Some("Show database statistics (most frequent sites engines and tags)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--print-not-found",
+            ],
+            description: Some("Print sites where the username was not found"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--print-errors",
+            ],
+            description: Some("Print errors messages: connection, captcha, site country ban, etc"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-v",
+                "--verbose",
+            ],
+            description: Some("Display extra information and metrics"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-info",
+                "--vv",
+            ],
+            description: Some("Display extra/service information and metrics"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--debug",
+                "-vvv",
+                "-d",
+            ],
+            description: Some("Display extra/service/debug information and metrics, save responses in debug.log"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-color",
+            ],
+            description: Some("Don\'t color terminal output"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-progressbar",
+            ],
+            description: Some("Don\'t show progressbar"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-T",
+                "--txt",
+            ],
+            description: Some("Create a TXT report (one report per username)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-C",
+                "--csv",
+            ],
+            description: Some("Create a CSV report (one report per username)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-H",
+                "--html",
+            ],
+            description: Some("Create an HTML report (one report per username)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-X",
+                "--xmind",
+            ],
+            description: Some("Create a XMind 8 mindmap report (one report per username)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-P",
+                "--pdf",
+            ],
+            description: Some("Create a PDF report (one report per username)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-G",
+                "--graph",
+            ],
+            description: Some("Create a graph report (one report per username)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-J",
+                "--json",
+            ],
+            description: Some("Generate a JSON report of specific type: simple, ndjson (one report per username)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Type",
+                    source: Static([
+                        "simple",
+                        "ndjson",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--reports-sorting",
+            ],
+            description: Some("Method of results sorting in reports (default: in order of getting the result)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Type",
+                    source: Static([
+                        "default",
+                        "data",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+    ],
+    arguments: [
+        (
+            name: "user",
+            source: Files,
+            optional: false,
+            variadic: true,
+            imported_generator: None,
+        ),
+    ],
+)

@@ -13,6 +13,8 @@ fi
 typeset -g _WISP_LAST_STATE=""
 typeset -gi _WISP_REQUEST_ID="${_WISP_REQUEST_ID:-0}"
 typeset -gi _WISP_TTY_FD=-1
+typeset -g _WISP_CURSOR_OUTPUT=""
+typeset -gi _WISP_SUPPRESS_REDRAW=0
 typeset -g _WISP_RENDERED_BUFFER=""
 typeset -gi _WISP_RENDERED_CURSOR=0
 typeset -g _WISP_RENDERED_PROMPT="${(%)PROMPT}"
@@ -52,24 +54,80 @@ function _wisp_refresh_terminal_viewport() {
 }
 
 function _wisp_cursor_position() {
-  local response='' position='' row='' column=''
+  local byte='' report='' pending='' position='' row='' column=''
+  local -i state=0 bytes_read=0 found=0 wait_ticks=2
+  _WISP_CURSOR_OUTPUT=''
   (( _WISP_TTY_FD >= 0 )) || return 1
   [[ "$(_wisp_terminal_name)" == alacritty ]] || return 1
 
   # Alacritty implements the standard CSI 6n cursor-position report. ZLE is
-  # paused while this hook runs, so the reply cannot be handled as a keypress.
+  # paused while this hook runs. Read the complete response byte by byte:
+  # a single sysread can legally return only ESC and leave "[row;columnR" for
+  # ZLE, which would then insert the control sequence into the command line.
   print -nu "$_WISP_TTY_FD" -- $'\e[6n'
-  zselect -r "$_WISP_TTY_FD" -t 1 >/dev/null 2>&1 || return 1
-  sysread -i "$_WISP_TTY_FD" -s 64 response 2>/dev/null || return 1
+  while (( bytes_read < 64 )); do
+    # Once an ESC/CSI prefix has arrived, allow extra time for the rest of the
+    # same report so a delayed tail can never escape into ZLE.
+    (( state > 0 )) && wait_ticks=10 || wait_ticks=2
+    zselect -r "$_WISP_TTY_FD" -t "$wait_ticks" >/dev/null 2>&1 || break
+    byte=''
+    sysread -i "$_WISP_TTY_FD" -s 1 byte 2>/dev/null || break
+    (( bytes_read += 1 ))
+    case "$state" in
+      0)
+        if [[ "$byte" == $'\e' ]]; then
+          report="$byte"
+          state=1
+        else
+          pending+="$byte"
+        fi
+        ;;
+      1)
+        if [[ "$byte" == '[' ]]; then
+          report+="$byte"
+          state=2
+        else
+          pending+="$report$byte"
+          report=''
+          state=0
+        fi
+        ;;
+      2)
+        report+="$byte"
+        if [[ "$byte" == 'R' ]]; then
+          position="${report#$'\e['}"
+          position="${position%R}"
+          row="${position%%;*}"
+          column="${position#*;}"
+          if [[ "$row" == <-> && "$column" == <-> ]]; then
+            found=1
+            break
+          fi
+          pending+="$report"
+          report=''
+          state=0
+        elif [[ "$byte" != [0-9] && "$byte" != ';' ]]; then
+          # This was another escape sequence (for example an arrow key), not
+          # a cursor report. Preserve it and continue waiting for the DSR.
+          pending+="$report"
+          report=''
+          state=0
+        fi
+        ;;
+    esac
+  done
 
-  response="${response##*$'\e['}"
-  position="${response%%R*}"
+  # Fast typing can queue a real key before the terminal response. Put those
+  # bytes back so querying the cursor never eats user input. An incomplete
+  # DSR prefix in `report` is deliberately discarded instead of leaking into
+  # BUFFER as visible "[row;column" text.
+  [[ -n "$pending" ]] && zle -U "$pending"
+  (( found )) || return 1
   row="${position%%;*}"
   column="${position#*;}"
-  [[ "$row" == <-> && "$column" == <-> ]] || return 1
   # The report describes the frame currently painted by ZLE. Wisp combines
   # both coordinates with the old-to-new buffer layout delta.
-  print -r -- "--cursor-row $row --cursor-column $column"
+  _WISP_CURSOR_OUTPUT="--cursor-row $row --cursor-column $column"
 }
 
 function _wisp_line_pre_redraw() {
@@ -84,7 +142,20 @@ function _wisp_line_pre_redraw() {
   [[ "$state" == "$_WISP_LAST_STATE" ]] && return
   _WISP_LAST_STATE="$state"
   (( _WISP_REQUEST_ID += 1 ))
-  cursor_output="$(_wisp_cursor_position)" || cursor_output=''
+  if (( _WISP_SUPPRESS_REDRAW )); then
+    _WISP_SUPPRESS_REDRAW=0
+    command "${WISP_BIN:-wisp}" shell dismiss \
+      --session "$WISP_SESSION_ID" \
+      --request-id "$(( _WISP_REQUEST_ID - 1 ))" \
+      >/dev/null 2>&1 &!
+    _WISP_RENDERED_BUFFER="$BUFFER"
+    _WISP_RENDERED_CURSOR="$CURSOR"
+    _WISP_RENDERED_PROMPT="$current_prompt"
+    _WISP_RENDERED_COLUMNS="${COLUMNS:-80}"
+    return
+  fi
+  _wisp_cursor_position || _WISP_CURSOR_OUTPUT=''
+  cursor_output="$_WISP_CURSOR_OUTPUT"
   cursor_position=(${=cursor_output})
 
   command "${WISP_BIN:-wisp}" shell update \
@@ -151,6 +222,7 @@ function _wisp_next() {
     zle redisplay
   else
     zle down-line-or-history
+    _WISP_SUPPRESS_REDRAW=1
   fi
 }
 
@@ -159,6 +231,7 @@ function _wisp_previous() {
     zle redisplay
   else
     zle up-line-or-history
+    _WISP_SUPPRESS_REDRAW=1
   fi
 }
 

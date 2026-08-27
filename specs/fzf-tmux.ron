@@ -1,0 +1,729 @@
+(
+    version: 1,
+    command: "fzf-tmux",
+    description: Some("Opens a fuzzy finder in a tmux pane"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-x",
+                "--extended",
+            ],
+            description: Some("Enables extended-search mode"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "+x",
+                "--no-extended",
+            ],
+            description: Some("Disables extended-search mode"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-e",
+                "--exact",
+            ],
+            description: Some("Enables Exact-match"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--algo",
+            ],
+            description: Some("Fuzzy matching algorithm"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "type",
+                    source: Static([
+                        "v1",
+                        "v2",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-i",
+            ],
+            description: Some("Case-insensitive match (default: smart-case match)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "+i",
+            ],
+            description: Some("Case-sensitive match (default: smart-case match)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--literal",
+            ],
+            description: Some("Do not normalize latin script letters before matching"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-n",
+                "--nth",
+            ],
+            description: Some("Comma-separated list of field index expressions for limiting search scope"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "index expressions",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--with-nth",
+            ],
+            description: Some("Transform the presentation of each line using field index expressions"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "index expressions",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-d",
+                "--delimiter",
+            ],
+            description: Some("Field delimiter regex (default: AWK-style)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "STR",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "+s",
+                "--no-sort",
+            ],
+            description: Some("Do not sort the result"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--tac",
+            ],
+            description: Some("Reverse the order of the input"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--disabled",
+            ],
+            description: Some("Do not perform search"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--tiebreak",
+            ],
+            description: Some("Comma-separated list of sort criteria to apply when the scores are tied"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "criteria",
+                    source: Static([
+                        "length",
+                        "begin",
+                        "end",
+                        "index",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-m",
+                "--multi",
+            ],
+            description: Some("Enable multi-select with tab/shift-tab"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "MAX",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--no-mouse",
+            ],
+            description: Some("Disable mouse"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--bind",
+            ],
+            description: Some("Custom key bindings. Refer to the man page"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "keybinds",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--cycle",
+            ],
+            description: Some("Enable cyclic scroll"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--keep-right",
+            ],
+            description: Some("Keep the right end of the line visible on overflow"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-hscroll",
+            ],
+            description: Some("Disable horizontal scroll"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--hscroll-off",
+            ],
+            description: Some("Number of screen columns to keep to the right of the highlighted substring"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "columns",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--filepath-word",
+            ],
+            description: Some("Make word-wise movements respect path separators"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--jump-labels",
+            ],
+            description: Some("Label characters for jump and jump-accept"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "characters",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--height",
+            ],
+            description: Some("Display fzf window below the cursor with the given height instead of using fullscreen"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "height",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--min-height",
+            ],
+            description: Some("Minimum height when --height is given in percent"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "height",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--layout",
+            ],
+            description: Some("Choose layout"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "layout",
+                    source: Static([
+                        "default",
+                        "reverse",
+                        "reverse-list",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--border",
+            ],
+            description: Some("Draw border around the finder"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "style",
+                    source: Static([
+                        "rounded",
+                        "sharp",
+                        "horizontal",
+                        "vertical",
+                        "top",
+                        "bottom",
+                        "left",
+                        "right",
+                        "none",
+                    ]),
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--margin",
+            ],
+            description: Some("Screen margin (TRBL | TB,RL | T,RL,B | T,R,B,L)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "margin",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--padding",
+            ],
+            description: Some("Padding inside border (TRBL | TB,RL | T,RL,B | T,R,B,L)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "padding",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--info",
+            ],
+            description: Some("Finder info style"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "style",
+                    source: Static([
+                        "default",
+                        "inline",
+                        "hidden",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--prompt",
+            ],
+            description: Some("Input prompt"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--pointer",
+            ],
+            description: Some("Pointer to the current line"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--marker",
+            ],
+            description: Some("Multi-select marker"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--header",
+            ],
+            description: Some("String to print as header"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--header-lines",
+            ],
+            description: Some("The first N lines of the input are treated as header"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "number",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--ansi",
+            ],
+            description: Some("Enable processing of ANSI color codes"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--tabstop",
+            ],
+            description: Some("Number of spaces for a tab character"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "spaces",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--color",
+            ],
+            description: Some("Base scheme"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "color scheme",
+                    source: Static([
+                        "dark",
+                        "light",
+                        "16",
+                        "bw",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--no-bold",
+            ],
+            description: Some("Do not use bold text"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--history",
+            ],
+            description: Some("History file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--history-size",
+            ],
+            description: Some("Maximum number of history entries"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "number",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--preview",
+            ],
+            description: Some("Command to preview highlighted line ({})"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "command",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--preview-window",
+            ],
+            description: Some("Preview window layout"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "options",
+                    source: Static([
+                        "up",
+                        "down",
+                        "left",
+                        "right",
+                        "nowrap",
+                        "wrap",
+                        "nocycle",
+                        "cycle",
+                        "nofollow",
+                        "follow",
+                        "nohidden",
+                        "hidden",
+                        "default",
+                    ]),
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-q",
+                "--query",
+            ],
+            description: Some("Start the finder with the given query"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-1",
+                "--select-1",
+            ],
+            description: Some("Automatically select the only match"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-0",
+                "--exit-0",
+            ],
+            description: Some("Exit immediately when there\'s no match"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-f",
+                "--filter",
+            ],
+            description: Some("Filter mode. Do not start interactive finder"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "string",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--print-query",
+            ],
+            description: Some("Print query as the first line"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--expect",
+            ],
+            description: Some("Comma-separated list of keys to complete fzf"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "keys",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--read0",
+            ],
+            description: Some("Read input delimited by ASCII NUL characters"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--print0",
+            ],
+            description: Some("Print output delimited by ASCII NUL characters"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--sync",
+            ],
+            description: Some("Synchronous search for multi-staged filtering"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+            ],
+            description: Some("Display version information and exit"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

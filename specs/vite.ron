@@ -1,0 +1,519 @@
+(
+    version: 1,
+    command: "vite",
+    description: Some("Native ESM-powered web dev build tool"),
+    subcommands: [
+        (
+            name: "build",
+            aliases: [],
+            description: Some("Build for production"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--target",
+                    ],
+                    description: Some("Transpile target (must be a valid esbuild target)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "target",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--outDir",
+                    ],
+                    description: Some("Output directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "dir",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--assetsDir",
+                    ],
+                    description: Some("Directory under outDir to place assets in"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "dir",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--assetsInlineLimit",
+                    ],
+                    description: Some("Static asset base64 inline threshold in bytes"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ssr",
+                    ],
+                    description: Some("Build specified entry for server-side rendering"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "entry",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--sourcemap",
+                    ],
+                    description: Some("Output sourcemaps for build"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--minify",
+                    ],
+                    description: Some("Enable minification"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "minifier",
+                            source: Static([
+                                "terser",
+                                "esbuild",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--manifest",
+                    ],
+                    description: Some("Emit build manifest json"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ssrManifest",
+                    ],
+                    description: Some("Emit ssr manifest json"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--emptyOutDir",
+                    ],
+                    description: Some("Force empty outDir when it\'s outside of root"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-w",
+                        "--watch",
+                    ],
+                    description: Some("Rebuilds when modules have changed on disk"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "root",
+                    source: Directories,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "optimize",
+            aliases: [],
+            description: Some("Pre-bundle dependencies"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--force",
+                    ],
+                    description: Some("For the optimizer to re-bundle"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "root",
+                    source: Directories,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "preview",
+            aliases: [],
+            description: Some("Locally preview the production build"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--host",
+                    ],
+                    description: Some("Specify the hostname"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "host",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--port",
+                    ],
+                    description: Some("Specify the port"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--https",
+                    ],
+                    description: Some("Use TLS + HTTP/2"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--open",
+                    ],
+                    description: Some("Open browser on startup"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "browser",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--strictPort",
+                    ],
+                    description: Some("Exit if the port is already in use"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "root",
+                    source: Directories,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Show help message"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--host",
+            ],
+            description: Some("Specify the hostname"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "host",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--port",
+            ],
+            description: Some("Specify the port"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "port",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--https",
+            ],
+            description: Some("Use TLS + HTTP/2"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--open",
+            ],
+            description: Some("Open browser on startup"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "browser",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--cors",
+            ],
+            description: Some("Enable CORS"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--strictPort",
+            ],
+            description: Some("Exit if the port is already in use"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--force",
+            ],
+            description: Some("For the optimizer to re-bundle"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-c",
+                "--config",
+            ],
+            description: Some("Use the specified config file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--base",
+            ],
+            description: Some("Public base path"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-l",
+                "--logLevel",
+            ],
+            description: Some("Set the log level"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "level",
+                    source: Static([
+                        "info",
+                        "warn",
+                        "error",
+                        "silent",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--clearScreen",
+            ],
+            description: Some("Enable screen clearing when logging"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-d",
+                "--debug",
+            ],
+            description: Some("Show debug logs"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "feat",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-f",
+                "--filter",
+            ],
+            description: Some("Filter debug logs"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "filter",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-m",
+                "--mode",
+            ],
+            description: Some("Set env mode"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "mode",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "ls",
+                            "-l1A",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-v",
+                "--version",
+            ],
+            description: Some("Display version number"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "root",
+            source: Directories,
+            optional: true,
+            variadic: false,
+            imported_generator: None,
+        ),
+    ],
+)

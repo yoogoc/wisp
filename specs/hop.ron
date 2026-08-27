@@ -1,0 +1,392 @@
+(
+    version: 1,
+    command: "hop",
+    description: Some("Interact with Hop in your terminal"),
+    subcommands: [
+        (
+            name: "auth",
+            aliases: [],
+            description: Some("Authenticate with Hop"),
+            subcommands: [
+                (
+                    name: "help",
+                    aliases: [],
+                    description: Some("Prints this message or the help of the given subcommand(s)"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "login",
+                    aliases: [],
+                    description: Some("Login to Hop"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "logout",
+                    aliases: [],
+                    description: Some("Logout the current user"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "deploy",
+            aliases: [],
+            description: Some("Deploy a new container"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--type",
+                        "-t",
+                    ],
+                    description: Some("Type of the container, defaults to `ephemeral`"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "container type",
+                            source: Static([
+                                "ephemeral",
+                                "persistent",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--containers",
+                        "-i",
+                    ],
+                    description: Some("Number of containers to use, defaults to 1 if `scaling` is manual"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "container amount",
+                            source: Static([
+                                "1",
+                                "2",
+                                "4",
+                                "8",
+                                "10",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--cpu",
+                        "-c",
+                    ],
+                    description: Some("The number of CPUs to use, defaults to 1"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "cpu amount",
+                            source: Static([
+                                "1",
+                                "2",
+                                "4",
+                                "8",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--env",
+                        "-e",
+                    ],
+                    description: Some("Environment variables to set, in the form of KEY=VALUE"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "environment variable",
+                            source: Static([
+                                "port=",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--name",
+                        "-n",
+                    ],
+                    description: Some("Name of the deployment, defaults to the directory name"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "deployment name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--project",
+                        "-p",
+                    ],
+                    description: Some("Namespace or ID of the project to use"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "project",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ram",
+                        "-m",
+                    ],
+                    description: Some("Amount of RAM to use, defaults to 512MB"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ram amount",
+                            source: Static([
+                                "128MB",
+                                "256MB",
+                                "512MB",
+                                "1G",
+                                "2G",
+                                "4G",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--scaling",
+                        "-s",
+                    ],
+                    description: Some("Scaling strategy, defaults to `manual`"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "scaling strategy",
+                            source: Static([
+                                "manual",
+                                "autoscale",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "dir",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Prints this message or the help of the given subcommand(s)"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "command",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "ignite",
+            aliases: [],
+            description: Some("Interact with Ignite containers"),
+            subcommands: [
+                (
+                    name: "ls",
+                    aliases: [],
+                    description: Some("List all deployments"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--project",
+                                "-p",
+                            ],
+                            description: Some("Namespace or ID of the project to use"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "rm",
+                    aliases: [],
+                    description: Some("Delete a deployment"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--project",
+                                "-p",
+                            ],
+                            description: Some("Namespace or ID of the project to use"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "link",
+            aliases: [],
+            description: Some("Link an existing deployment to a hopfile"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "projects",
+            aliases: [],
+            description: Some("Interact with projects"),
+            subcommands: [
+                (
+                    name: "info",
+                    aliases: [],
+                    description: Some("Get information about a project"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "ls",
+                    aliases: [],
+                    description: Some("List all projects that you\'re authorized to"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "new",
+                    aliases: [],
+                    description: Some("Create a new project"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "rm",
+                    aliases: [],
+                    description: Some("Delete a project"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "switch",
+                    aliases: [],
+                    description: Some("Switch to a different project"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "whoami",
+            aliases: [],
+            description: Some("Get information about the current user"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Prints help information"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+                "-v",
+            ],
+            description: Some("Prints version information"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--project",
+                "-p",
+            ],
+            description: Some("Namespace or ID of the project to use"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

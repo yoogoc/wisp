@@ -1,0 +1,821 @@
+(
+    version: 1,
+    command: "tuist",
+    description: Some("Generate, build and test your Xcode projects. For more info please see https://docs.tuist.io/"),
+    subcommands: [
+        (
+            name: "build",
+            aliases: [],
+            description: Some("Build the project in the current directory"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--build-output-path",
+                    ],
+                    description: Some("Build the project to a custom directory, example usage: \'tuist build --build-output-path .build\':"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--device",
+                    ],
+                    description: Some("Build the project to a specific device, example usage: \'tuist build --device \"iPhone X\"\':"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--os",
+                    ],
+                    description: Some("Build the project to a specific OS, example usage: \'tuist build --os 14.0\':"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "scheme",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "cache",
+            aliases: [],
+            description: Some("A set of utilities related to the caching of targets. For more info see https://docs.tuist.io/building-at-scale/caching USAGE: tuist cache <subcommand>"),
+            subcommands: [
+                (
+                    name: "warm",
+                    aliases: [],
+                    description: Some("Warms the local and remote cache"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--path",
+                                "-p",
+                            ],
+                            description: Some("The path to the directory that contains the project whose targets will be cached"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--profile",
+                                "-P",
+                            ],
+                            description: Some("The name of the profile to be used when warming up the cache"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--xcframeworks",
+                                "-x",
+                            ],
+                            description: Some("When passed it caches the targets for simulator and device using xcframeworks"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--dependencies-only",
+                            ],
+                            description: Some("If passed, the command doesn\'t cache the targets passed in the `--targets` argument, but only their dependencies"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "print-hashes",
+                    aliases: [],
+                    description: Some("Print the hashes of the cacheable frameworks in the given project"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--path",
+                                "-p",
+                            ],
+                            description: Some("The path to the directory that contains the project whose targets will be cached"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--profile",
+                                "-P",
+                            ],
+                            description: Some("The name of the profile to be used when warming up the cache"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--xcframeworks",
+                                "-x",
+                            ],
+                            description: Some("When passed it caches the targets for simulator and device using xcframeworks"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "clean",
+            aliases: [],
+            description: Some("Clean all the data generated by Tuist. USAGE: tuist clean [<clean-categories> ...] [--path <path>]"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--path",
+                        "-p",
+                    ],
+                    description: Some("The path to the directory that contains the project that should be cleaned"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "plugins",
+                    ],
+                    description: Some("Clean only the plugins cache generated by Tuist, example usage: \'tuist clean plugins\':"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "builds",
+                    ],
+                    description: Some("Clean only the builds artifacts cache generated by Tuist, example usage: \'tuist clean builds\':"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "tests",
+                    ],
+                    description: Some("Clean only the tests cache generated by Tuist, example usage: \'tuist clean tests\':"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "generatedAutomationProjects",
+                    ],
+                    description: Some("Clean only the automation projects cache generated by Tuist, example usage: \'tuist clean generatedAutomationProjects\':"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "projectDescriptionHelpers",
+                    ],
+                    description: Some("Clean only the project description helpers cache generated by Tuist, example usage: \'tuist clean projectDescriptionHelpers\':"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "manifests",
+                    ],
+                    description: Some("Clean only the manifests cache generated by Tuist, example usage: \'tuist clean manifests\':"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "clean-categories",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "fetch",
+            aliases: [],
+            description: Some("Dependencies can be fetched by running the following command. They are stored in your project\'s `Tuist/Dependencies` directory. For more info see https://docs.tuist.io/commands/dependencies"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--path",
+                        "-p",
+                    ],
+                    description: Some("The path to the directory that contains the workspace or project whose dependencies will be fetched/updated. The default is the current directory"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--update",
+                    ],
+                    description: Some("Clean only the builds artifacts cache generated by Tuist, example usage: \'tuist fetch --update\':"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "edit",
+            aliases: [],
+            description: Some("Editing your projects is easy; position yourself in a directory where there\'s a project defined and run the edit command. It will open a temporary Xcode project with all the project manifests and the project description helpers, so you will be able to edit the whole project configuration. After making changes you can run the target from Xcode and it will call tuist generate for you. For more info see https://docs.tuist.io/commands/edit"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--permanent",
+                    ],
+                    description: Some("The project is deleted automatically once you are done with editing. If you wish to generate and keep the project in the current directory, you can run the command passing the --permanent argument. That will generate a Manifest.xcodeproj project that you can open manually"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "graph",
+            aliases: [],
+            description: Some("Generates a graph from the workspace or project in the current directory. For more info see https://docs.tuist.io/commands/graph USAGE: tuist graph [--skip-test-targets] [--skip-external-dependencies] [--format <format>] [--algorithm <algorithm>] [<targets> ...] [--path <path>] [--output-path <output-path>]"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--skip-test-targets",
+                        "-t",
+                    ],
+                    description: Some("Excludes test targets from the generated graph"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--skip-external-dependencies",
+                        "-d",
+                    ],
+                    description: Some("Excludes external dependencies from the generated graph"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--format",
+                        "-f",
+                    ],
+                    description: Some("If you prefer to have the dot or json representations of the graph and render it separately. Available formats: dot, png, json (default: png)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "dot",
+                                "png",
+                                "json",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--algorithm",
+                        "-a",
+                    ],
+                    description: Some("Available formats: dot, neato, twopi, circo, fdp, sfddp, patchwork (default: dot)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "dot",
+                                "neato",
+                                "twopi",
+                                "circo",
+                                "fdp",
+                                "sfddp",
+                                "patchwork",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--path",
+                        "-p",
+                    ],
+                    description: Some("The path to the directory that contains the definition of the project. Default is current directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "project dir",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--output-path",
+                        "-o",
+                    ],
+                    description: Some("The path to where the image will be exported. When not specified, it exports the image in the current directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "output path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-open",
+                        "-n",
+                    ],
+                    description: Some("If set, the generated graph is not opened automatically. Default is yes"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--platform",
+                        "-l",
+                    ],
+                    description: Some("If set, show only the targets for the given platform. Default is all platforms. Available platforms: ios, macos, tvos, watchos"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "platform",
+                            source: Static([
+                                "ios",
+                                "macos",
+                                "tvos",
+                                "watchos",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "targets",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "generate",
+            aliases: [],
+            description: Some("Generates an Xcode workspace to start working on the project. For more info see https://docs.tuist.io/commands/generate"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--path",
+                        "-p",
+                    ],
+                    description: Some("The path to the directory that contains the definition of the project. Default is current directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-open",
+                        "-n",
+                    ],
+                    description: Some("Don\'t open the project after generating it. Default is false"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--xcframeworks",
+                        "-x",
+                    ],
+                    description: Some("When passed it uses xcframeworks (simulator and device) from the cache instead of frameworks (only simulator). Default is false"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-cache",
+                    ],
+                    description: Some("Ignore cached targets, and use their sources instead.\tDefault is false"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--profile",
+                        "-P",
+                    ],
+                    description: Some("The name of the cache profile"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "cache profile",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "sources",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "migration",
+            aliases: [],
+            description: Some("To help developers with the process of adopting Tuist, Tuist provides a set of commands under tuist migration. For more info see https://docs.tuist.io/commands/migration"),
+            subcommands: [
+                (
+                    name: "settings-to-xcconfig",
+                    aliases: [],
+                    description: Some("It\'s recommended to make .xcconfig files the source of truth for build settings. For that, Tuist provides a tuist migration settings-to-xcconfig command that extracts the build settings from targets and projects"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--xcodeproj-path",
+                                "-p",
+                            ],
+                            description: Some("Required. Path to the Xcode project whose build settings will be extracted"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "path",
+                                    source: Directories,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--xcconfig-path",
+                                "-x",
+                            ],
+                            description: Some("Required. Path to the Xcode project whose build settings will be extracted"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "path",
+                                    source: Directories,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--target",
+                                "-t",
+                            ],
+                            description: Some("Optional. The name of the target whose build settings will be extracted. When not passed, it extracts the build settings of the project"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "target",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "check-empty-settings",
+                    aliases: [],
+                    description: Some("After making .xcconfig files the source of truth for build settings, it\'s important to ensure that build settings are no longer set to the project. To help with that, Tuist includes a command that fails if the build settings of a project or a target are not empty"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--xcodeproj-path",
+                                "-p",
+                            ],
+                            description: Some("Required. Path to the Xcode project whose build settings will be checked"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--target",
+                                "-t",
+                            ],
+                            description: Some("Optional. The name of the target whose build settings will be checked. When not passed, it checks the build settings of the project"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "list-targets",
+                    aliases: [],
+                    description: Some("When passed it uses xcframeworks (simulator and device) from the cache instead of frameworks (only simulator). Default is false"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--xcodeproj-path",
+                                "-p",
+                            ],
+                            description: Some("Required. Path to the Xcode project whose build settings will be checked"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "scaffold",
+            aliases: [],
+            description: Some("Generates new project based on a template. For more info see https://docs.tuist.io/commands/scaffold USAGE: tuist scaffold <template> [--json] [--path <path>] <subcommand>"),
+            subcommands: [
+                (
+                    name: "list",
+                    aliases: [],
+                    description: Some("Lists available scaffold templates"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "--path",
+                        "-p",
+                    ],
+                    description: Some("The path to the folder where the template will be generated (Default: Current directory)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--json",
+                    ],
+                    description: Some("The output in JSON format"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--name",
+                    ],
+                    description: Some("The name of the generate project"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--platform",
+                    ],
+                    description: Some("The platform used by the project"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "platform",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "template",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "test",
+            aliases: [],
+            description: Some("Tests a project. For more info see https://docs.tuist.io/commands/test USAGE: tuist test [<scheme>] [--clean] [--path <path>] [--device <device>] [--os <os>] [--configuration <configuration>] [--skip-ui-tests] [--result-bundle-path <result-bundle-path>] [--retry-count <retry-count>]"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--path",
+                        "-p",
+                    ],
+                    description: Some("The path to the directory that contains the project to be tested"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--clean",
+                        "-c",
+                    ],
+                    description: Some("When passed, it cleans the project before testing it"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--device",
+                        "-d",
+                    ],
+                    description: Some("Test on a specific device"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "device",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--os",
+                        "-o",
+                    ],
+                    description: Some("Test with a specific version of the OS"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "os",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--configuration",
+                        "-C",
+                    ],
+                    description: Some("The configuration to be used when testing the scheme"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--skip-ui-tests",
+                    ],
+                    description: Some("When passed, it skips testing UI Tests targets"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--result-bundle-path",
+                        "-T",
+                    ],
+                    description: Some("Path where test result bundle will be saved"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--retry-count",
+                    ],
+                    description: Some("Tests will retry <number> of times until success. Example: if 1 is specified, the test will be retried at most once, hence it will run up to 2 times. (default: 0)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "times",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "scheme",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Show help for tuist"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

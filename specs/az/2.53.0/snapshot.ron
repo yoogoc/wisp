@@ -1,0 +1,1285 @@
+(
+    version: 1,
+    command: "snapshot",
+    description: Some("Manage point-in-time copies of managed disks, native blobs, or other snapshots"),
+    subcommands: [
+        (
+            name: "create",
+            aliases: [],
+            description: Some("Create a snapshot"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--name",
+                        "-n",
+                    ],
+                    description: Some("The name of the snapshot"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--resource-group",
+                        "-g",
+                    ],
+                    description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "resource-group",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--accelerated-network",
+                    ],
+                    description: Some("Customers can set on Managed Disks or Snapshots to enable the accelerated networking if the OS disk image support"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "accelerated-network",
+                            source: Static([
+                                "false",
+                                "true",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--architecture",
+                    ],
+                    description: Some("CPU architecture"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "architecture",
+                            source: Static([
+                                "Arm64",
+                                "x64",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--copy-start",
+                    ],
+                    description: Some("Create snapshot by using a deep copy process, where the resource creation is considered complete only after all data has been copied from the source"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "copy-start",
+                            source: Static([
+                                "false",
+                                "true",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--disk-access",
+                    ],
+                    description: Some("Name or ID of the disk access resource for using private endpoints on disks"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "disk-access",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--disk-encryption-set",
+                    ],
+                    description: Some("Name or ID of disk encryption set that is used to encrypt the disk"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "disk-encryption-set",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--edge-zone",
+                    ],
+                    description: Some("The name of edge zone"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "edge-zone",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--encryption-type",
+                    ],
+                    description: Some("Encryption type. EncryptionAtRestWithPlatformKey: Disk is encrypted with XStore managed key at rest. It is the default encryption type. EncryptionAtRestWithCustomerKey: Disk is encrypted with Customer managed key at rest"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "encryption-type",
+                            source: Static([
+                                "EncryptionAtRestWithCustomerKey",
+                                "EncryptionAtRestWithPlatformAndCustomerKeys",
+                                "EncryptionAtRestWithPlatformKey",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--for-upload",
+                    ],
+                    description: Some("Create the snapshot for uploading blobs later on through storage commands. Run \"az snapshot grant-access --access-level Write\" to retrieve the snapshot\'s SAS token"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "for-upload",
+                            source: Static([
+                                "false",
+                                "true",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--hyper-v-generation",
+                    ],
+                    description: Some("The hypervisor generation of the Virtual Machine. Applicable to OS disks only"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "hyper-v-generation",
+                            source: Static([
+                                "V1",
+                                "V2",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--incremental",
+                    ],
+                    description: Some("Whether a snapshot is incremental. Incremental snapshots on the same disk occupy less space than full snapshots and can be diffed"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "incremental",
+                            source: Static([
+                                "false",
+                                "true",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--location",
+                        "-l",
+                    ],
+                    description: Some("Location. Values from: az account list-locations. You can configure the default location using az configure --defaults location=<location>. If location is not specified and no default location specified, location will be automatically set as same as the resource group"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "location",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--network-access-policy",
+                    ],
+                    description: Some("Policy for accessing the disk via network"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "network-access-policy",
+                            source: Static([
+                                "AllowAll",
+                                "AllowPrivate",
+                                "DenyAll",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-wait",
+                    ],
+                    description: Some("Do not wait for the long-running operation to finish"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--public-network-access",
+                    ],
+                    description: Some("Customers can set on Managed Disks or Snapshots to control the export policy on the disk"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "public-network-access",
+                            source: Static([
+                                "Disabled",
+                                "Enabled",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--size-gb",
+                        "-z",
+                    ],
+                    description: Some("Size in GB. Max size: 4095 GB (certain preview disks can be larger)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "size-gb",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--sku",
+                    ],
+                    description: Some(""),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sku",
+                            source: Static([
+                                "Premium_LRS",
+                                "Standard_LRS",
+                                "Standard_ZRS",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--source",
+                    ],
+                    description: Some("Source to create the disk/snapshot from, including unmanaged blob uri, managed disk id or name, or snapshot id or name"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "source",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--source-storage-account-id",
+                    ],
+                    description: Some("Used when source blob is in a different subscription"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "source-storage-account-id",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--tags",
+                    ],
+                    description: Some("Space-separated tags: key[=value] [key[=value] ...]. Use \"\" to clear existing tags"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "tags",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "delete",
+            aliases: [],
+            description: Some("Delete a snapshot"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--ids",
+                    ],
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ids",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--snapshot-name",
+                        "--name",
+                        "-n",
+                    ],
+                    description: Some("The name of the snapshot that is being created. The name can\'t be changed after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The max name length is 80 characters"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "snapshot-name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-wait",
+                    ],
+                    description: Some("Do not wait for the long-running operation to finish"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "no-wait",
+                            source: Static([
+                                "0",
+                                "1",
+                                "f",
+                                "false",
+                                "n",
+                                "no",
+                                "t",
+                                "true",
+                                "y",
+                                "yes",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--resource-group",
+                        "-g",
+                    ],
+                    description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "resource-group",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--subscription",
+                    ],
+                    description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "subscription",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "grant-access",
+            aliases: [],
+            description: Some("Grant read access to a snapshot"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--duration-in-seconds",
+                    ],
+                    description: Some("Time duration in seconds until the SAS access expires"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "duration-in-seconds",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--access-level",
+                    ],
+                    description: Some("Access level"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "access-level",
+                            source: Static([
+                                "Read",
+                                "Write",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ids",
+                    ],
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ids",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--name",
+                        "-n",
+                    ],
+                    description: Some("The name of the snapshot"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--resource-group",
+                        "-g",
+                    ],
+                    description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "resource-group",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--subscription",
+                    ],
+                    description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "subscription",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "list",
+            aliases: [],
+            description: Some("List snapshots under a resource group"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--max-items",
+                    ],
+                    description: Some("Total number of items to return in the command\'s output. If the total number of items available is more than the value specified, a token is provided in the command\'s output. To resume pagination, provide the token value in --next-token argument of a subsequent command"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "max-items",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--next-token",
+                    ],
+                    description: Some("Token to specify where to start paginating. This is the token value from a previously truncated response"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "next-token",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--resource-group",
+                        "-g",
+                    ],
+                    description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "resource-group",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "revoke-access",
+            aliases: [],
+            description: Some("Revoke access to a snapshot"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--ids",
+                    ],
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ids",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--snapshot-name",
+                        "--name",
+                        "-n",
+                    ],
+                    description: Some("The name of the snapshot"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "snapshot-name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-wait",
+                    ],
+                    description: Some("Do not wait for the long-running operation to finish"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "no-wait",
+                            source: Static([
+                                "0",
+                                "1",
+                                "f",
+                                "false",
+                                "n",
+                                "no",
+                                "t",
+                                "true",
+                                "y",
+                                "yes",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--resource-group",
+                        "-g",
+                    ],
+                    description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "resource-group",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--subscription",
+                    ],
+                    description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "subscription",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "show",
+            aliases: [],
+            description: Some("Get information about a snapshot"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--ids",
+                    ],
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ids",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--snapshot-name",
+                        "--name",
+                        "-n",
+                    ],
+                    description: Some("The name of the snapshot that is being created. The name can\'t be changed after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The max name length is 80 characters"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "snapshot-name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--resource-group",
+                        "-g",
+                    ],
+                    description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "resource-group",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--subscription",
+                    ],
+                    description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "subscription",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "update",
+            aliases: [],
+            description: Some("Update a snapshot"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--accelerated-network",
+                    ],
+                    description: Some("Customers can set on Managed Disks or Snapshots to enable the accelerated networking if the OS disk image support"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "accelerated-network",
+                            source: Static([
+                                "false",
+                                "true",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--add",
+                    ],
+                    description: Some("Add an object to a list of objects by specifying a path and key value pairs. Example: --add property.listProperty <key=value, string or JSON string>"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "add",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--architecture",
+                    ],
+                    description: Some("CPU architecture"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "architecture",
+                            source: Static([
+                                "Arm64",
+                                "x64",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--disk-access",
+                    ],
+                    description: Some("Name or ID of the disk access resource for using private endpoints on disks"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "disk-access",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--disk-encryption-set",
+                    ],
+                    description: Some("Name or ID of disk encryption set that is used to encrypt the disk"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "disk-encryption-set",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--encryption-type",
+                    ],
+                    description: Some("Encryption type. EncryptionAtRestWithPlatformKey: Disk is encrypted with XStore managed key at rest. It is the default encryption type. EncryptionAtRestWithCustomerKey: Disk is encrypted with Customer managed key at rest"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "encryption-type",
+                            source: Static([
+                                "EncryptionAtRestWithCustomerKey",
+                                "EncryptionAtRestWithPlatformAndCustomerKeys",
+                                "EncryptionAtRestWithPlatformKey",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--force-string",
+                    ],
+                    description: Some("When using \'set\' or \'add\', preserve string literals instead of attempting to convert to JSON"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ids",
+                    ],
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ids",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--name",
+                        "-n",
+                    ],
+                    description: Some("The name of the snapshot"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--network-access-policy",
+                    ],
+                    description: Some("Policy for accessing the disk via network"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "network-access-policy",
+                            source: Static([
+                                "AllowAll",
+                                "AllowPrivate",
+                                "DenyAll",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-wait",
+                    ],
+                    description: Some("Do not wait for the long-running operation to finish"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--public-network-access",
+                    ],
+                    description: Some("Customers can set on Managed Disks or Snapshots to control the export policy on the disk"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "public-network-access",
+                            source: Static([
+                                "Disabled",
+                                "Enabled",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--remove",
+                    ],
+                    description: Some("Remove a property or an element from a list. Example: --remove property.list OR --remove propertyToRemove"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "remove",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--resource-group",
+                        "-g",
+                    ],
+                    description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "resource-group",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--set",
+                    ],
+                    description: Some("Update an object by specifying a property path and value to set. Example: --set property1.property2="),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "set",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--sku",
+                    ],
+                    description: Some(""),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sku",
+                            source: Static([
+                                "Premium_LRS",
+                                "Standard_LRS",
+                                "Standard_ZRS",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--subscription",
+                    ],
+                    description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "subscription",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "wait",
+            aliases: [],
+            description: Some("Place the CLI in a waiting state until a condition is met"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--created",
+                    ],
+                    description: Some("Wait until created with \'provisioningState\' at \'Succeeded\'"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--custom",
+                    ],
+                    description: Some("Wait until the condition satisfies a custom JMESPath query. E.g. provisioningState!=\'InProgress\', instanceView.statuses[?code==\'PowerState/running\']"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "custom",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--deleted",
+                    ],
+                    description: Some("Wait until deleted"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--exists",
+                    ],
+                    description: Some("Wait until the resource exists"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ids",
+                    ],
+                    description: Some("One or more resource IDs (space-delimited). It should be a complete resource ID containing all information of \'Resource Id\' arguments. You should provide either --ids or other \'Resource Id\' arguments"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ids",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--interval",
+                    ],
+                    description: Some("Polling interval in seconds"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "interval",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--snapshot-name",
+                        "--name",
+                        "-n",
+                    ],
+                    description: Some("The name of the snapshot that is being created. The name can\'t be changed after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The max name length is 80 characters"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "snapshot-name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--resource-group",
+                        "-g",
+                    ],
+                    description: Some("Name of resource group. You can configure the default group using az configure --defaults group=<name>"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "resource-group",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--subscription",
+                    ],
+                    description: Some("Name or ID of subscription. You can configure the default subscription using az account set -s NAME_OR_ID"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "subscription",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--timeout",
+                    ],
+                    description: Some("Maximum wait in seconds"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "timeout",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--updated",
+                    ],
+                    description: Some("Wait until updated with provisioningState at \'Succeeded\'"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [],
+    arguments: [],
+)

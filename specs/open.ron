@@ -1,0 +1,276 @@
+(
+    version: 1,
+    command: "open",
+    description: Some("Open files, apps, or URLs using default application"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-a",
+            ],
+            description: Some("Specify the application to use for opening the file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Application",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "mdfind",
+                            "kMDItemContentTypeTree=com.apple.application-bundle",
+                            "-onlyin",
+                            "/",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-b",
+            ],
+            description: Some("Specify the bundle identifier of the app to use to open the file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Bundle Identifier",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "mdfind kMDItemContentTypeTree=com.apple.application-bundle -onlyin / | while read line; do echo $(mdls -name kMDItemCFBundleIdentifier -r \"$line\") $line; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-D",
+            ],
+            description: Some("Reveals the enclosing folder in finder"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-e",
+            ],
+            description: Some("Opens the file with /Applications/TextEdit"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-t",
+            ],
+            description: Some("Open the file with the default text editor"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-f",
+            ],
+            description: Some("Read input from standard input and open the results in the default text editor"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-F",
+                "--fresh",
+            ],
+            description: Some("Opens the application without restoring windows"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-W",
+                "--wait-apps",
+            ],
+            description: Some("Waits until the applications exit"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-R",
+                "--reveal",
+            ],
+            description: Some("Reveals the file(s) in the Finder instead of opening them"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-n",
+                "--new",
+            ],
+            description: Some("Open a new instance of the application(s) even if one is already running"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-j",
+                "--hide",
+            ],
+            description: Some("Launches the app hidden"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-g",
+                "--background",
+            ],
+            description: Some("Do not bring the application to the foreground"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-h",
+                "--header",
+            ],
+            description: Some("Searches header locations for a header whose name matches the given string and then opens it"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-s",
+            ],
+            description: Some("For -h, the SDK to use; if supplied, only SDKs whose names contain the argument value are searched"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "partial SDK name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-u",
+                "--url",
+            ],
+            description: Some("Open this URL, even if it matches exactly a filepath"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "URL",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-i",
+                "--stdin",
+            ],
+            description: Some("Launches the application with stdin connected to PATH; defaults to /dev/null"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "PATH",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-o",
+                "--stdout",
+            ],
+            description: Some("Launches the application with /dev/stdout connected to PATH"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "PATH",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--stderr",
+            ],
+            description: Some("Launches the application with /dev/stderr connected to PATH"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "PATH",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--env",
+            ],
+            description: Some("Add an enviroment variable to the launched process, where VAR is formatted AAA=foo"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "VAR",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--args",
+            ],
+            description: Some("All remaining arguments are passed to the opened application in the argv parameter to main().  These arguments are not opened or interpreted by the open tool"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Arguments",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+    ],
+    arguments: [
+        (
+            name: "value",
+            source: Directories,
+            optional: false,
+            variadic: true,
+            imported_generator: None,
+        ),
+    ],
+)

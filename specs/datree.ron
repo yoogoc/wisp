@@ -1,0 +1,431 @@
+(
+    version: 1,
+    command: "datree",
+    description: Some("Datree can be used on the command line to run policies against Kubernetes manifests YAML files or Helm charts"),
+    subcommands: [
+        (
+            name: "completion",
+            aliases: [],
+            description: Some("Generate completion script for bash,zsh,fish,powershell"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "config",
+            aliases: [],
+            description: Some("Internal configuration management for datree config file"),
+            subcommands: [
+                (
+                    name: "get",
+                    aliases: [],
+                    description: Some("Get configuration value"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Get value for specific key from datree config.yaml file. Defaults to $HOME/.datree/config.yaml"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "set",
+                    aliases: [],
+                    description: Some("Set configuration value"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Apply value for specific key in datree config.yaml file. Defaults to $HOME/.datree/config.yaml"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for config"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Help about any command"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "value",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "kustomize",
+            aliases: [],
+            description: Some("Generate kustomization files from manifests"),
+            subcommands: [
+                (
+                    name: "test",
+                    aliases: [],
+                    description: Some("Test kustomization files"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--help",
+                                "-h",
+                            ],
+                            description: Some("Help for \'test\'"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--ignore-missing-schemas",
+                            ],
+                            description: Some("Ignore missing schemas when executing schema validation step"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--no-record",
+                            ],
+                            description: Some("Do not send policy checks metadata to the backend"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--only-k8s-files",
+                            ],
+                            description: Some("Evaluate only valid yaml files with the properties \'apiVersion\' and \'kind\'. Ignore everything else"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-o",
+                                "--output",
+                            ],
+                            description: Some("Define output format (simple, yaml, json, xml, JUnit)"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "output",
+                                    source: Static([
+                                        "simple",
+                                        "yaml",
+                                        "json",
+                                        "xml",
+                                        "junit",
+                                    ]),
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-p",
+                                "--policy",
+                            ],
+                            description: Some("Policy name to run against"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "policy",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--policy-config",
+                            ],
+                            description: Some("Path for local policies configuration file"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--schema-location",
+                            ],
+                            description: Some("Override schemas location search path (can be specified multiple times)"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "stringArray",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-s",
+                                "--schema-version",
+                            ],
+                            description: Some("Set kubernetes version to validate against. Defaults to 1.19.0"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--verbose",
+                            ],
+                            description: Some("Display \'How to Fix\' link"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for kustomize"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "publish",
+            aliases: [],
+            description: Some("Publish policies configuration for given <fileName>. Input should be the path to the Policy-as-Code yaml configuration file. ## Note You need to first enable Policy-as-Code (PaC) on the settings page in the dashboard"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for publish"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "file path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "test",
+            aliases: [],
+            description: Some("Trigger a policy check, provide a Kubernetes configuration file path or a glob pattern"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--help",
+                        "-h",
+                    ],
+                    description: Some("Help for \'test\'"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ignore-missing-schemas",
+                    ],
+                    description: Some("Ignore missing schemas when executing schema validation step"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-record",
+                    ],
+                    description: Some("Do not send policy checks metadata to the backend"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--only-k8s-files",
+                    ],
+                    description: Some("Evaluate only valid yaml files with the properties \'apiVersion\' and \'kind\'. Ignore everything else"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-o",
+                        "--output",
+                    ],
+                    description: Some("Define output format (simple, yaml, json, xml, JUnit)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "output",
+                            source: Static([
+                                "simple",
+                                "yaml",
+                                "json",
+                                "xml",
+                                "junit",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--policy",
+                    ],
+                    description: Some("Policy name to run against"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "policy",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--policy-config",
+                    ],
+                    description: Some("Path for local policies configuration file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--schema-location",
+                    ],
+                    description: Some("Override schemas location search path (can be specified multiple times)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "stringArray",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-s",
+                        "--schema-version",
+                    ],
+                    description: Some("Set kubernetes version to validate against. Defaults to 1.19.0"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Display \'How to Fix\' link"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "file path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "version",
+            aliases: [],
+            description: Some("Print the version number"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Show help for datree"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

@@ -10,7 +10,10 @@ use tokio::{process::Command, time::timeout};
 use tracing::debug;
 use wisp_protocol::{BufferSnapshot, Candidate, CandidateKind};
 
-use crate::{CompletionContext, SpecStore, SuggestionSource, parse_completion_context};
+use crate::{
+    ArgumentSpec, CommandSpec, CompletionContext, OptionSpec, SpecStore, SubcommandSpec,
+    SuggestionSource, parse_completion_context,
+};
 
 #[derive(Debug, Clone)]
 pub struct CompletionEngine {
@@ -24,7 +27,7 @@ impl Default for CompletionEngine {
         Self {
             specs: SpecStore::builtins(),
             commands: discover_commands().into(),
-            max_candidates: 12,
+            max_candidates: 0,
         }
     }
 }
@@ -34,8 +37,14 @@ impl CompletionEngine {
         Self {
             specs,
             commands: discover_commands().into(),
-            max_candidates: 12,
+            max_candidates: 0,
         }
+    }
+
+    /// Set the number of candidates retained after ranking. Zero is unlimited.
+    pub fn with_max_candidates(mut self, max_candidates: usize) -> Self {
+        self.max_candidates = max_candidates;
+        self
     }
 
     pub async fn complete(&self, snapshot: &BufferSnapshot) -> Vec<Candidate> {
@@ -56,7 +65,9 @@ impl CompletionEngine {
                 .then_with(|| left.label.cmp(&right.label))
         });
         candidates.dedup_by(|left, right| left.insert_text == right.insert_text);
-        candidates.truncate(self.max_candidates);
+        if self.max_candidates > 0 {
+            candidates.truncate(self.max_candidates);
+        }
         candidates
     }
 
@@ -68,13 +79,12 @@ impl CompletionEngine {
             return complete_paths(context, cwd, false);
         };
 
+        let resolved = self.resolve_node(spec, &context.args);
+
         if context.current_token.starts_with('-') {
-            let options = context
-                .args
-                .first()
-                .and_then(|name| spec.subcommands.iter().find(|sub| &sub.name == name))
-                .map_or(spec.options.as_slice(), |sub| sub.options.as_slice());
-            return options
+            return resolved
+                .node
+                .options()
                 .iter()
                 .flat_map(|option| {
                     option.names.iter().filter_map(|name| {
@@ -90,55 +100,99 @@ impl CompletionEngine {
                 .collect();
         }
 
-        if context.args.is_empty() {
-            return spec
-                .subcommands
-                .iter()
-                .filter_map(|subcommand| {
-                    make_candidate(
-                        &subcommand.name,
-                        &subcommand.name,
-                        subcommand.description.clone(),
-                        CandidateKind::Subcommand,
-                        context,
-                    )
-                })
-                .chain(spec.options.iter().flat_map(|option| {
-                    option.names.iter().filter_map(|name| {
+        if let Some(argument) = resolved.pending_argument {
+            return self.complete_argument(argument, context, cwd).await;
+        }
+
+        let mut candidates: Vec<Candidate> = resolved
+            .node
+            .subcommands()
+            .iter()
+            .flat_map(|subcommand| {
+                std::iter::once(&subcommand.name)
+                    .chain(subcommand.aliases.iter())
+                    .filter_map(|name| {
                         make_candidate(
                             name,
                             name,
-                            option.description.clone(),
-                            CandidateKind::Option,
+                            subcommand.description.clone(),
+                            CandidateKind::Subcommand,
                             context,
                         )
                     })
-                }))
-                .collect();
+            })
+            .chain(resolved.node.options().iter().flat_map(|option| {
+                option.names.iter().filter_map(|name| {
+                    make_candidate(
+                        name,
+                        name,
+                        option.description.clone(),
+                        CandidateKind::Option,
+                        context,
+                    )
+                })
+            }))
+            .collect();
+
+        if let Some(argument) = argument_at(resolved.node.arguments(), resolved.positional_index) {
+            candidates.extend(self.complete_argument(argument, context, cwd).await);
+        } else if candidates.is_empty() {
+            candidates.extend(complete_paths(context, cwd, false));
+        }
+        candidates
+    }
+
+    fn resolve_node<'a>(&'a self, spec: &'a CommandSpec, args: &'a [String]) -> ResolvedNode<'a> {
+        let mut node = NodeRef::Root(spec);
+        let mut positional_index = 0;
+        let mut pending_argument = None;
+
+        for token in args {
+            if pending_argument.take().is_some() {
+                continue;
+            }
+
+            if token.starts_with('-') {
+                if let Some(option) = find_option(node.options(), token) {
+                    pending_argument = option.arguments.first();
+                    if pending_argument.is_none() && option.takes_value {
+                        // A legacy takes-value option consumes one token without suggestions.
+                        pending_argument = Some(&UNAVAILABLE_ARGUMENT);
+                    }
+                }
+                continue;
+            }
+
+            if let Some(subcommand) = node
+                .subcommands()
+                .iter()
+                .find(|subcommand| subcommand.matches(token))
+            {
+                node = NodeRef::Subcommand(subcommand);
+                positional_index = 0;
+                if let Some(load_spec) = &subcommand.load_spec
+                    && let Some(loaded) = self.specs.get_by_id(load_spec)
+                {
+                    node = NodeRef::Root(loaded);
+                }
+                continue;
+            }
+            positional_index += 1;
         }
 
-        let Some(subcommand) = spec
-            .subcommands
-            .iter()
-            .find(|subcommand| subcommand.name == context.args[0])
-        else {
-            return complete_paths(context, cwd, false);
-        };
+        ResolvedNode {
+            node,
+            positional_index,
+            pending_argument,
+        }
+    }
 
-        let positional_index = context
-            .args
-            .iter()
-            .skip(1)
-            .filter(|arg| !arg.starts_with('-'))
-            .count();
-        let Some(argument) = subcommand
-            .arguments
-            .get(positional_index)
-            .or_else(|| subcommand.arguments.last())
-        else {
-            return complete_paths(context, cwd, false);
-        };
-
+    async fn complete_argument(
+        &self,
+        argument: &ArgumentSpec,
+        context: &CompletionContext,
+        cwd: &Path,
+    ) -> Vec<Candidate> {
         match &argument.source {
             SuggestionSource::Files => complete_paths(context, cwd, false),
             SuggestionSource::Directories => complete_paths(context, cwd, true),
@@ -157,6 +211,7 @@ impl CompletionEngine {
             SuggestionSource::Generator(generator) => {
                 self.run_generator(generator, context, cwd).await
             }
+            SuggestionSource::Unavailable => Vec::new(),
         }
     }
 
@@ -204,6 +259,62 @@ impl CompletionEngine {
             .filter_map(|line| make_candidate(line, line, None, kind, context))
             .collect()
     }
+}
+
+static UNAVAILABLE_ARGUMENT: ArgumentSpec = ArgumentSpec {
+    name: String::new(),
+    source: SuggestionSource::Unavailable,
+    optional: false,
+    variadic: false,
+    imported_generator: None,
+};
+
+#[derive(Clone, Copy)]
+enum NodeRef<'a> {
+    Root(&'a CommandSpec),
+    Subcommand(&'a SubcommandSpec),
+}
+
+impl<'a> NodeRef<'a> {
+    fn subcommands(self) -> &'a [SubcommandSpec] {
+        match self {
+            Self::Root(spec) => &spec.subcommands,
+            Self::Subcommand(spec) => &spec.subcommands,
+        }
+    }
+
+    fn options(self) -> &'a [OptionSpec] {
+        match self {
+            Self::Root(spec) => &spec.options,
+            Self::Subcommand(spec) => &spec.options,
+        }
+    }
+
+    fn arguments(self) -> &'a [ArgumentSpec] {
+        match self {
+            Self::Root(spec) => &spec.arguments,
+            Self::Subcommand(spec) => &spec.arguments,
+        }
+    }
+}
+
+struct ResolvedNode<'a> {
+    node: NodeRef<'a>,
+    positional_index: usize,
+    pending_argument: Option<&'a ArgumentSpec>,
+}
+
+fn find_option<'a>(options: &'a [OptionSpec], token: &str) -> Option<&'a OptionSpec> {
+    let name = token.split_once('=').map_or(token, |(name, _)| name);
+    options
+        .iter()
+        .find(|option| option.names.iter().any(|candidate| candidate == name))
+}
+
+fn argument_at(arguments: &[ArgumentSpec], index: usize) -> Option<&ArgumentSpec> {
+    arguments
+        .get(index)
+        .or_else(|| arguments.last().filter(|argument| argument.variadic))
 }
 
 fn is_command_position(context: &CompletionContext) -> bool {
@@ -435,5 +546,38 @@ mod tests {
             .complete(&snapshot("cat src/"))
             .await;
         assert!(values.iter().any(|value| value.label == "src/lib.rs"));
+    }
+
+    #[tokio::test]
+    async fn completes_deep_fig_subcommands() {
+        let values = CompletionEngine::default()
+            .complete(&snapshot("docker compose up --d"))
+            .await;
+        assert!(values.iter().any(|value| value.label == "--detach"));
+    }
+
+    #[tokio::test]
+    async fn completes_fig_static_argument_suggestions() {
+        let values = CompletionEngine::default()
+            .complete(&snapshot("git commit --cleanup "))
+            .await;
+        assert!(values.iter().any(|value| value.label == "strip"));
+    }
+
+    #[tokio::test]
+    async fn keeps_more_than_one_overlay_page_of_candidates() {
+        let values = CompletionEngine::default()
+            .complete(&snapshot("git "))
+            .await;
+        assert!(values.len() > 12);
+    }
+
+    #[tokio::test]
+    async fn configured_candidate_limit_is_applied() {
+        let values = CompletionEngine::default()
+            .with_max_candidates(5)
+            .complete(&snapshot("git "))
+            .await;
+        assert_eq!(values.len(), 5);
     }
 }

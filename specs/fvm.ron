@@ -1,0 +1,342 @@
+(
+    version: 1,
+    command: "fvm",
+    description: Some("Flutter Version Management: A cli to manage Flutter SDK versions"),
+    subcommands: [
+        (
+            name: "config",
+            aliases: [],
+            description: Some("Set configuration for FVM"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print this usage information"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-c",
+                        "--cache-path",
+                    ],
+                    description: Some("Set the path which FVM will cache the version. Priority over FVM_HOME"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-s",
+                        "--skip-setup",
+                        "--no-skip-setup",
+                    ],
+                    description: Some("Skip setup after a version install"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-g",
+                        "--git-cache",
+                        "--no-git-cache",
+                    ],
+                    description: Some("ADVANCED: Will cache a local version of Flutter repo for faster version install"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "dart",
+            aliases: [],
+            description: Some("Proxies Dart commands"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "doctor",
+            aliases: [],
+            description: Some("Shows information about environment, and project configuration"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "flavor",
+            aliases: [],
+            description: Some("Switches between different project flavors"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "flavor-name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "flutter",
+            aliases: [],
+            description: Some("Proxies Flutter commands"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: Some("flutter"),
+        ),
+        (
+            name: "global",
+            aliases: [],
+            description: Some("Sets Flutter SDK version as global"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "version",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "install",
+            aliases: [],
+            description: Some("Installs Flutter SDK version"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print this usage information"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-s",
+                        "--skip-setup",
+                    ],
+                    description: Some("Skips Flutter setup after install"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Static([
+                        "stable",
+                        "beta",
+                        "dev",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "fvm",
+                            "releases",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "list",
+            aliases: [],
+            description: Some("Lists installed Flutter SDK versions"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print this usage information"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "releases",
+            aliases: [],
+            description: Some("View all Flutter SDK releases available for install"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print this usage information"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "remove",
+            aliases: [],
+            description: Some("Removes Flutter SDK version"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print this usage information"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force",
+                    ],
+                    description: Some("Skips version global check"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "spawn",
+            aliases: [],
+            description: Some("Spawn a Flutter SDK version command"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "version",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "use",
+            aliases: [],
+            description: Some("Sets a Flutter SDK version to be used in a project"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print this usage information"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-f",
+                        "--force",
+                    ],
+                    description: Some("Skips command guards that does Flutter project checks"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--pin",
+                    ],
+                    description: Some("If version provided is a channel. Will pin the latest release of the channel"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--flavor",
+                    ],
+                    description: Some("Sets version for a project flavor"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Print this usage information"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--verbose",
+            ],
+            description: Some("Print verbose output"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+            ],
+            description: Some("Current FVM version"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

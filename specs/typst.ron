@@ -1,0 +1,655 @@
+(
+    version: 1,
+    command: "typst",
+    description: Some("The Typst compiler"),
+    subcommands: [
+        (
+            name: "compile",
+            aliases: [
+                "c",
+            ],
+            description: Some("Compiles an input file into a supported output format"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--root",
+                    ],
+                    description: Some("Configures the project root (for absolute paths)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "root",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--font-path",
+                    ],
+                    description: Some("Adds additional directories to search for fonts"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "font_paths",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--diagnostic-format",
+                    ],
+                    description: Some("The format to emit diagnostics in"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "diagnostic_format",
+                            source: Static([
+                                "human",
+                                "short",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("The format of the output file, inferred from the extension by default"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "pdf",
+                                "png",
+                                "svg",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--open",
+                    ],
+                    description: Some("Opens the output file using the default viewer after compilation"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "open",
+                            source: Files,
+                            optional: true,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ppi",
+                    ],
+                    description: Some("The PPI (pixels per inch) to use for PNG export"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ppi",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--flamegraph",
+                    ],
+                    description: Some("Produces a flamegraph of the compilation process"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "flamegraph",
+                            source: Files,
+                            optional: true,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "input",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+                (
+                    name: "output",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "watch",
+            aliases: [
+                "w",
+            ],
+            description: Some("Watches an input file and recompiles on changes"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--root",
+                    ],
+                    description: Some("Configures the project root (for absolute paths)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "root",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--font-path",
+                    ],
+                    description: Some("Adds additional directories to search for fonts"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "font_paths",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--diagnostic-format",
+                    ],
+                    description: Some("The format to emit diagnostics in"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "diagnostic_format",
+                            source: Static([
+                                "human",
+                                "short",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("The format of the output file, inferred from the extension by default"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "pdf",
+                                "png",
+                                "svg",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--open",
+                    ],
+                    description: Some("Opens the output file using the default viewer after compilation"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "open",
+                            source: Files,
+                            optional: true,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--ppi",
+                    ],
+                    description: Some("The PPI (pixels per inch) to use for PNG export"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ppi",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--flamegraph",
+                    ],
+                    description: Some("Produces a flamegraph of the compilation process"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "flamegraph",
+                            source: Files,
+                            optional: true,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "input",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+                (
+                    name: "output",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "query",
+            aliases: [],
+            description: Some("Processes an input file to extract provided metadata"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--root",
+                    ],
+                    description: Some("Configures the project root (for absolute paths)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "root",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--font-path",
+                    ],
+                    description: Some("Adds additional directories to search for fonts"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "font_paths",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--diagnostic-format",
+                    ],
+                    description: Some("The format to emit diagnostics in"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "diagnostic_format",
+                            source: Static([
+                                "human",
+                                "short",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--field",
+                    ],
+                    description: Some("Extracts just one field from all retrieved elements"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "field",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--format",
+                    ],
+                    description: Some("The format to serialize in"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "json",
+                                "yaml",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--one",
+                    ],
+                    description: Some("Expects and retrieves exactly one element"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "input",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+                (
+                    name: "selector",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "fonts",
+            aliases: [],
+            description: Some("Lists all discovered fonts in system and custom font paths"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--font-path",
+                    ],
+                    description: Some("Adds additional directories to search for fonts"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "font_paths",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--variants",
+                    ],
+                    description: Some("Also lists style variants of each font family"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "update",
+            aliases: [],
+            description: Some("Self update the Typst CLI (disabled)"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--force",
+                    ],
+                    description: Some("Forces a downgrade to an older version (required for downgrading)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--revert",
+                    ],
+                    description: Some("Reverts to the version from before the last update (only possible if `typst update` has previously ran)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Print help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Print this message or the help of the given subcommand(s)"),
+            subcommands: [
+                (
+                    name: "compile",
+                    aliases: [],
+                    description: Some("Compiles an input file into a supported output format"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "watch",
+                    aliases: [],
+                    description: Some("Watches an input file and recompiles on changes"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "query",
+                    aliases: [],
+                    description: Some("Processes an input file to extract provided metadata"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "fonts",
+                    aliases: [],
+                    description: Some("Lists all discovered fonts in system and custom font paths"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "update",
+                    aliases: [],
+                    description: Some("Self update the Typst CLI (disabled)"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "help",
+                    aliases: [],
+                    description: Some("Print this message or the help of the given subcommand(s)"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--cert",
+            ],
+            description: Some("Path to a custom CA certificate to use when making network requests"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "cert",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-v",
+                "--verbosity",
+            ],
+            description: Some("Sets the level of logging verbosity: -v = warning & error, -vv = info, -vvv = debug, -vvvv = trace"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Print help"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-V",
+                "--version",
+            ],
+            description: Some("Print version"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

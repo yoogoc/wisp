@@ -1,0 +1,667 @@
+(
+    version: 1,
+    command: "trunk",
+    description: Some("An all-in-one tool for scalably checking, formatting, and monitoring code"),
+    subcommands: [
+        (
+            name: "init",
+            aliases: [],
+            description: Some("Setup trunk in this repo"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--lock",
+                    ],
+                    description: Some("Add sha256s to trunk.yaml for additional verification"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--check-sample",
+                    ],
+                    description: Some("Run `trunk check sample` without prompting"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--nocheck-sample",
+                    ],
+                    description: Some("Do not run `trunk check sample` post-init"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force",
+                    ],
+                    description: Some("Overwrite existing trunk.yaml"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "check",
+            aliases: [],
+            description: Some("Universal code checker"),
+            subcommands: [
+                (
+                    name: "upgrade",
+                    aliases: [],
+                    description: Some("Upgrade all linters to latest versions"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "linters",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "download",
+                    aliases: [],
+                    description: Some("Download all files needed for trunk to work offline"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "tools",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "enable",
+                    aliases: [],
+                    description: Some("Enable linters"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "linters",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "disable",
+                    aliases: [],
+                    description: Some("Disable linters"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "linters",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-y",
+                        "--fix",
+                    ],
+                    description: Some("Automatically apply all fixes without prompting"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-a",
+                        "--all",
+                    ],
+                    description: Some("Run on all files instead of only changed files"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-n",
+                        "--no-fix",
+                    ],
+                    description: Some("Don\'t automatically apply fixes"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-existing-autofixes",
+                    ],
+                    description: Some("Show autofixes for existing issues"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force",
+                    ],
+                    description: Some("Run on all files, even if ignored"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--diff",
+                    ],
+                    description: Some("Diff printing mode"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "mode",
+                            source: Static([
+                                "none",
+                                "compact",
+                                "full",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--filter",
+                    ],
+                    description: Some("Filter the set of executed linters and/or the returned codes; use a leading \'-\' to exclude a linter or code"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "linter or code",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--exclude",
+                    ],
+                    description: Some("Shorthand for an inverse --filter"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "linter or code",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-j",
+                        "--jobs",
+                    ],
+                    description: Some("Number of concurrent jobs (does not affect background linting)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--sample",
+                    ],
+                    description: Some("Run each linter on N files (implies --no-fix and --all if no paths are given)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "N",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "paths",
+                            source: Files,
+                            optional: true,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--upstream",
+                    ],
+                    description: Some("Upstream branch used to compute changed files (autodetected by default)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "branch",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "paths",
+                    source: Files,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "fmt",
+            aliases: [],
+            description: Some("Universal code formatter"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-a",
+                        "--all",
+                    ],
+                    description: Some("Run on all files instead of only changed files"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-n",
+                        "--no-fix",
+                    ],
+                    description: Some("Don\'t automatically apply fixes"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-existing-autofixes",
+                    ],
+                    description: Some("Show autofixes for existing issues"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force",
+                    ],
+                    description: Some("Run on all files, even if ignored"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--diff",
+                    ],
+                    description: Some("Diff printing mode"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "mode",
+                            source: Static([
+                                "none",
+                                "compact",
+                                "full",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--filter",
+                    ],
+                    description: Some("Filter the set of executed linters and/or the returned codes; use a leading \'-\' to exclude a linter or code"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "linter or code",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--exclude",
+                    ],
+                    description: Some("Shorthand for an inverse --filter"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "linter or code",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-j",
+                        "--jobs",
+                    ],
+                    description: Some("Number of concurrent jobs (does not affect background linting)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--sample",
+                    ],
+                    description: Some("Run each linter on N files (implies --no-fix and --all if no paths are given)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "N",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "paths",
+                            source: Files,
+                            optional: true,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--upstream",
+                    ],
+                    description: Some("Upstream branch used to compute changed files (autodetected by default)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "branch",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "paths",
+                    source: Files,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "upgrade",
+            aliases: [],
+            description: Some("Upgrade trunk to the latest release"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "git-hooks",
+            aliases: [],
+            description: Some("Git hooks"),
+            subcommands: [
+                (
+                    name: "install",
+                    aliases: [],
+                    description: Some("Install trunk git hooks"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "cache",
+            aliases: [],
+            description: Some("Cache management"),
+            subcommands: [
+                (
+                    name: "clean",
+                    aliases: [],
+                    description: Some("Clean the cache"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--all",
+                            ],
+                            description: Some("Delete all files (including results cache)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-n",
+                                "--dry-run",
+                            ],
+                            description: Some("Print all directories that would be cleaned out without running deletion"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "print-config",
+            aliases: [],
+            description: Some("Print the resolved trunk config"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "daemon",
+            aliases: [],
+            description: Some("Daemon management"),
+            subcommands: [
+                (
+                    name: "launch",
+                    aliases: [],
+                    description: Some("Start the trunk daemon if its not already running"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "shutdown",
+                    aliases: [],
+                    description: Some("Shutdown the trunk daemon if it is running"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "status",
+                    aliases: [],
+                    description: Some("Report daemon status"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Usage information"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+            ],
+            description: Some("The version"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-m",
+                "--monitor",
+            ],
+            description: Some("Enable the trunk daemon to monitor file changes in your repo"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--ci",
+            ],
+            description: Some("Run in continuous integration mode"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-o",
+                "--output",
+            ],
+            description: Some("Output format"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "format",
+                    source: Static([
+                        "text",
+                        "json",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--no-progress",
+            ],
+            description: Some("Don\'t show progress updates"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--ci-progress",
+            ],
+            description: Some("Show updates every 30 seconds without clearing terminal screen (implicit with --ci)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--action_timeout",
+            ],
+            description: Some("How long actions (downloads, lint runs, etc.) have to time out, with units (s, ms, etc)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "timeout",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-v",
+                "--verbose",
+            ],
+            description: Some("Output details about what\'s happening under the hood"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

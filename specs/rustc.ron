@@ -1,0 +1,508 @@
+(
+    version: 1,
+    command: "rustc",
+    description: Some("CLI for rustc"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Prints out help info"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--cfg",
+            ],
+            description: Some("Configures compilation settings"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Spec",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-L",
+            ],
+            description: Some("Adds a directory to the library search path"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "kind",
+                    source: Static([
+                        "dependency",
+                        "crate",
+                        "native",
+                        "framework",
+                        "all",
+                    ]),
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "path",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--l",
+            ],
+            description: Some("Links the generated crate to a native library"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "kind",
+                    source: Static([
+                        "dylib",
+                        "static",
+                        "framework",
+                    ]),
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "Name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--crate-type",
+            ],
+            description: Some("Specify types of crates for the compiler to emit"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "type",
+                    source: Static([
+                        "bin",
+                        "lib",
+                        "rlib",
+                        "dylib",
+                        "cdylib",
+                        "staticlib",
+                        "proc-macro",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--crate-name",
+            ],
+            description: Some("Specify the name of the crate being built"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--edition",
+            ],
+            description: Some("Specify the edition to use"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "edition",
+                    source: Static([
+                        "2015",
+                        "2018",
+                        "2021",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--emit",
+            ],
+            description: Some("Specify the types of output files to generate"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "type",
+                    source: Static([
+                        "asm",
+                        "llvm-bc",
+                        "llvm-ir",
+                        "obj",
+                        "metadata",
+                        "link",
+                        "dep-info",
+                        "mir",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--print",
+            ],
+            description: Some("Prints compiler info"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "type",
+                    source: Static([
+                        "crate-name",
+                        "file-names",
+                        "sysroot",
+                        "target-libdir",
+                        "cfg",
+                        "target-list",
+                        "target-cpus",
+                        "target-features",
+                        "relocation-models",
+                        "code-models",
+                        "tls-models",
+                        "target-spec-json",
+                        "native-static-libs",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-g",
+            ],
+            description: Some("Synonym for -C debuginfo=2"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-O",
+            ],
+            description: Some("Synonym for -C opt-level=2"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-o",
+            ],
+            description: Some("Specify the filename to write output"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "filename",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--out-dir",
+            ],
+            description: Some("Specify directory to write output"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "dir",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--explain",
+            ],
+            description: Some("Provides a detailed explanation of an error message"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Error Code",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--test",
+            ],
+            description: Some("Builds a test harness"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--target",
+            ],
+            description: Some("Selects a target triple to build"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Target",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-W",
+                "--warn",
+            ],
+            description: Some("Sets lint warnings"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "OPT",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-A",
+                "--allow",
+            ],
+            description: Some("Set lint allowed"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "OPT",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-D",
+                "--deny",
+            ],
+            description: Some("Set lint denied"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "OPT",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-F",
+                "--forbid",
+            ],
+            description: Some("Set lint forbid"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Opt",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--cap-lints",
+            ],
+            description: Some("Set the most restrictive lint level"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Level",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-C",
+                "--codegen",
+            ],
+            description: Some("Set a codegen option"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "option",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-Z",
+            ],
+            description: Some("Set unstable options"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "option",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-V",
+                "--version",
+            ],
+            description: Some("Prints version"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-v",
+                "--verbose",
+            ],
+            description: Some("Use verbose output"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--extern",
+            ],
+            description: Some("Specify where an external library is located"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "Path",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--sysroot",
+            ],
+            description: Some("Overrides the system root"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "directory",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--error-format",
+            ],
+            description: Some("Controls how errors are produced"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "format",
+                    source: Static([
+                        "human",
+                        "json",
+                        "short",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--color",
+            ],
+            description: Some("Configures coloring of output"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "color",
+                    source: Static([
+                        "auto",
+                        "always",
+                        "never",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+    ],
+    arguments: [
+        (
+            name: "filepath",
+            source: Files,
+            optional: false,
+            variadic: false,
+            imported_generator: None,
+        ),
+    ],
+)

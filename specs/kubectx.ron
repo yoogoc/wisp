@@ -1,0 +1,76 @@
+(
+    version: 1,
+    command: "kubectx",
+    description: Some("Switch between Kubernetes-contexts"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Show help for kubectx"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--current",
+                "-c",
+            ],
+            description: Some("Show current context"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--unset",
+                "-u",
+            ],
+            description: Some("Unset the current context"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-d",
+            ],
+            description: Some("Delete context"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "context",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "kubectx",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+    ],
+    arguments: [
+        (
+            name: "context",
+            source: Unavailable,
+            optional: true,
+            variadic: false,
+            imported_generator: Some((
+                script: [
+                    "bash",
+                    "-c",
+                    "kubectx | grep -v $(kubectx -c)",
+                    "kubectx",
+                    "-c",
+                ],
+                has_post_process: true,
+                has_custom: false,
+            )),
+        ),
+    ],
+)

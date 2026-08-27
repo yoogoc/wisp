@@ -1,0 +1,667 @@
+(
+    version: 1,
+    command: "rubocop",
+    description: Some("A Ruby static code analyzer and formatter, based on the community Ruby style guide"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-l",
+                "--lint",
+            ],
+            description: Some("Run only lint cops"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-x",
+                "--fix-layout",
+            ],
+            description: Some("Run only layout cops, with autocorrect on"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--safe",
+            ],
+            description: Some("Run only safe cops"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--except",
+            ],
+            description: Some("Exclude the given cop(s)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "COP",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "rubocop",
+                            "--show-cops",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--only",
+            ],
+            description: Some("Run only the given cop(s)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "COP",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "rubocop",
+                            "--show-cops",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--only-guide-cops",
+            ],
+            description: Some("Run only cops for rules that link to a style guide"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-F",
+                "--fail-fast",
+            ],
+            description: Some("Inspect files in order of modification time and stop after the first file containing offenses"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--disable-pending-cops",
+            ],
+            description: Some("Run without pending cops"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--enable-pending-cops",
+            ],
+            description: Some("Run with pending cops"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--ignore-disable-comments",
+            ],
+            description: Some("Run cops even when they are disabled locally by a `rubocop:disable` directive"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--force-exclusion",
+            ],
+            description: Some("Any files excluded by `Exclude` in configuration files will be excluded, even if given explicitly as arguments"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--only-recognized-file-types",
+            ],
+            description: Some("Inspect files given on the command line only if they are listed in `AllCops/Include` parameters of user configuration or default configuration"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--ignore-parent-exclusion",
+            ],
+            description: Some("Prevent from inheriting `AllCops/Exclude` from parent folders"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--ignore-unrecognized-cops",
+            ],
+            description: Some("Ignore unrecognized cops or departments in the config"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--force-default-config",
+            ],
+            description: Some("Use default configuration even if configuration files are present in the directory tree"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--stdin",
+                "-s",
+            ],
+            description: Some("Pipe source from STDIN, using FILE in offense reports. This is useful for editor integration"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "FILE",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-P",
+                "--parallel",
+            ],
+            description: Some("Use available CPUs to execute inspection in parallel default true"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-parallel",
+            ],
+            description: Some("Disable parallel inspection (default: false)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--fail-level",
+            ],
+            description: Some("Minimum severity for exit with error code"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "SEVERITY",
+                    source: Static([
+                        "A",
+                        "I",
+                        "R",
+                        "C",
+                        "W",
+                        "E",
+                        "F",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-C",
+                "--cache",
+            ],
+            description: Some("Use result caching (FLAG=true) or don\'t (FLAG=false), default determined by configuration parameter AllCops: UseCache"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "FLAG",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--cache-root",
+            ],
+            description: Some("Set the cache root directory. Takes precedence over the configuration parameter AllCops: CacheRootDirectory and the $RUBOCOP_CACHE_ROOT environment variable"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "DIR",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--no-server",
+            ],
+            description: Some("Do not use server even if it\'s available"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--server",
+            ],
+            description: Some("If a server process has not been started yet, start the server process and execute inspection with server.  Default is true.  You can specify the server host and port with the $RUBOCOP_SERVER_HOST and the $RUBOCOP_SERVER_PORT environment variables"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--restart-server",
+            ],
+            description: Some("Restart server process"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--start-server",
+            ],
+            description: Some("Start server process"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--stop-server",
+            ],
+            description: Some("Stop server process"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--server-status",
+            ],
+            description: Some("Show server status"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-f",
+                "--format",
+            ],
+            description: Some("Choose an output formatter. This option can be specified multiple times to enable multiple formatters at the same time"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "FORMATTER",
+                    source: Static([
+                        "a",
+                        "c",
+                        "e",
+                        "fi",
+                        "fu",
+                        "g",
+                        "h",
+                        "j",
+                        "ju",
+                        "m",
+                        "o",
+                        "pa",
+                        "p",
+                        "q",
+                        "s",
+                        "t",
+                        "w",
+                        "[custom]",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-D",
+                "--display-cop-names",
+            ],
+            description: Some("Display cop names in offense messages.  Default is true"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-display-cop-names",
+            ],
+            description: Some("Disable displaying cop names in offense messages. Default false"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-E",
+                "--extra-details",
+            ],
+            description: Some("Display extra details in offense messages"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-S",
+                "--display-style-guide",
+            ],
+            description: Some("Display style guide URLs in offense messages"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-o",
+                "--out",
+            ],
+            description: Some("Write output to a file instead of STDOUT.  This option applies to the previously specified --format, or the default format if no format is specified"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "FILE",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--stderr",
+            ],
+            description: Some("Write all output to stderr except for the autocorrected source. This is especially useful when combined with --autocorrect and --stdin"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--display-time",
+            ],
+            description: Some("Display elapsed time in seconds"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--display-only-failed",
+            ],
+            description: Some("Only output offense messages. Omit passing cops. Only valid for --format junit"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--display-only-fail-level-offenses",
+            ],
+            description: Some("Only output offense messages at the specified --fail-level or above"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--display-only-correctable",
+            ],
+            description: Some("Only output correctable offense messages"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--display-only-safe-correctable",
+            ],
+            description: Some("Only output safe-correctable offense messages when combined with --display-only-correctable"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-a",
+                "--autocorrect",
+            ],
+            description: Some("Autocorrect offenses (only when it\'s safe)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-A",
+                "--autocorrect-all",
+            ],
+            description: Some("Autocorrect offenses (safe and unsafe)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--disable-uncorrectable",
+            ],
+            description: Some("Annotates any offenses that do not support autocorrect with `rubocop:todo` comments"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--auto-gen-config",
+            ],
+            description: Some("Generate a configuration file acting as a TODO list"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--regenerate-todo",
+            ],
+            description: Some("Regenerate the TODO configuration file using the last configuration. If there is no existing TODO file, acts like --auto-gen-config"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--exclude-limit",
+            ],
+            description: Some("Set the limit for how many files to explicitly exclude.  If there are more files than the limit, the cop will be disabled instead. Default is 15"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "COUNT",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--offense-counts",
+            ],
+            description: Some("Include offense counts in configuration file generated by --auto-gen-config.  Default is true"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--auto-gen-only-exclude",
+            ],
+            description: Some("Generate only Exclude parameters and not Max when running --auto-gen-config, except if the number of files with offenses is bigger than exclude-limit. Default is false"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--auto-gen-timestamp",
+            ],
+            description: Some("Include the date and time when the --auto-gen-config was run in the file it generates. Default is true"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-L",
+                "--list-target-files",
+            ],
+            description: Some("List all files RuboCop will inspect"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--show-cops",
+            ],
+            description: Some("Shows the given cops, or all cops by default, and their configurations for the current directory"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "COP",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "rubocop",
+                            "--show-cops",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--show-docs-url",
+            ],
+            description: Some("Display url to documentation for the given cops, or base url by default"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "COP",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "rubocop",
+                            "--show-cops",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--init",
+            ],
+            description: Some("Generate a .rubocop.yml file in the current directory"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-c",
+                "--config",
+            ],
+            description: Some("Specify configuration file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-d",
+                "--debug",
+            ],
+            description: Some("Display debug info"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-r",
+                "--require",
+            ],
+            description: Some("Require Ruby file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--no-color",
+            ],
+            description: Some("Disable color output"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--color",
+            ],
+            description: Some("Force color output"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-v",
+                "--version",
+            ],
+            description: Some("Display version"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-V",
+                "--verbose-version",
+            ],
+            description: Some("Display verbose version"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "file",
+            source: Files,
+            optional: false,
+            variadic: true,
+            imported_generator: None,
+        ),
+    ],
+)

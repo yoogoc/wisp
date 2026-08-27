@@ -1,0 +1,988 @@
+(
+    version: 1,
+    command: "multipass",
+    description: Some("Create, control and connect to Ubuntu instances"),
+    subcommands: [
+        (
+            name: "alias",
+            aliases: [],
+            description: Some("Create an alias"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "options",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "definition",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "name",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "aliases",
+            aliases: [],
+            description: Some("List available aliases"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--format",
+                    ],
+                    description: Some("Output list in the requested format. Valid formats are: table (default), json, csv and yaml"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "table",
+                                "json",
+                                "csv",
+                                "yaml",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "delete",
+            aliases: [],
+            description: Some("Delete instances"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--all",
+                    ],
+                    description: Some("Delete all instances"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--purge",
+                    ],
+                    description: Some("Purge instances immediately"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "multipass",
+                            "list",
+                            "--format=json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "exec",
+            aliases: [],
+            description: Some("Run a command on an instance"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "multipass",
+                            "list",
+                            "--format=json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "command",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "find",
+            aliases: [],
+            description: Some("Display available images to create instances from"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--format",
+                    ],
+                    description: Some("Output list in the requested format. Valid formats are: table (default), json, csv and yaml"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "table",
+                                "json",
+                                "csv",
+                                "yaml",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--show-unsupported",
+                    ],
+                    description: Some("Show unsupported cloud images as well"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "string",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "get",
+            aliases: [],
+            description: Some("Get a configuration setting"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--raw",
+                    ],
+                    description: Some("Output in raw format. For now, this affects only the representation of empty values (i.e. \"\" instead of \"<empty>\")"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "key",
+                    source: Static([
+                        "client.gui.autostart",
+                        "client.gui.hotkey",
+                        "client.primary-name",
+                        "local.bridged-network",
+                        "local.driver",
+                        "local.privileged-mounts",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Display help about a command"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "command",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "info",
+            aliases: [],
+            description: Some("Display information about instances"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--format",
+                    ],
+                    description: Some("Output list in the requested format. Valid formats are: table (default), json, csv and yaml"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "table",
+                                "json",
+                                "csv",
+                                "yaml",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--all",
+                    ],
+                    description: Some("Display info for all instances"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "multipass",
+                            "list",
+                            "--format=json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "launch",
+            aliases: [],
+            description: Some("Create and start an Ubuntu instance"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--timeout",
+                    ],
+                    description: Some("Maximum time, in seconds, to wait for the command to complete. Note that some background operations may continue beyond that. By default, instance startup and initialization is limited to 5 minutes each"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "timeout",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-c",
+                        "--cpus",
+                    ],
+                    description: Some("Number of CPUs to allocate. Minimum: 1, default: 1"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "cpus",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--disk",
+                    ],
+                    description: Some("Disk space to allocate. Positive integers, in bytes, or with K, M, G suffix Minimum: 512M, default: 5G."),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "disk",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                        "--mem",
+                    ],
+                    description: Some("Amount of memory to allocate. Positive integers, in bytes, or with K, M, G suffix Minimum: 128M, default: 1G."),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "mem",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-n",
+                        "--name",
+                    ],
+                    description: Some("Name for the instance. If it is \'primary\' (the configured primary instance name), the user\'s home directory is mounted inside the newly launched instance, in \'Home\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--cloud-init",
+                    ],
+                    description: Some("Path to a user-data cloud-init configuration, or \'-\' forstdin"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--network",
+                    ],
+                    description: Some("Add a network interface to the instance, where <spec> is in the \"key=value,key=value\" format"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "spec",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--bridged",
+                    ],
+                    description: Some("Adds one `--network bridged` network"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "image",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "multipass",
+                            "find",
+                            "--format=json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "list",
+            aliases: [],
+            description: Some("List all available instances"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--format",
+                    ],
+                    description: Some("Output list in the requested format. Valid formats are: table (default), json, csv and yaml"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "table",
+                                "json",
+                                "csv",
+                                "yaml",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "mount",
+            aliases: [],
+            description: Some("Mount a local directory in the instance"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-g",
+                        "--gid-map",
+                    ],
+                    description: Some("A mapping of group IDs for use in the mount. File and folder ownership will be mapped from <host> to <instance> inside the instance. Can be used multiple times"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "host:instance",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-u",
+                        "--uid-map",
+                    ],
+                    description: Some("A mapping of user IDs for use in the mount. File and folder ownership will be mapped from <host> to <instance> inside the instance. Can be used multiple times"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "host:instance",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "source",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "target",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "networks",
+            aliases: [],
+            description: Some("List all available networks interfaces"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--format",
+                    ],
+                    description: Some("Output list in the requested format. Valid formats are: table (default), json, csv and yaml"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "table",
+                                "json",
+                                "csv",
+                                "yaml",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "purge",
+            aliases: [],
+            description: Some("Purge all deleted instances permanently"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "recover",
+            aliases: [],
+            description: Some("Recover deleted instances"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--all",
+                    ],
+                    description: Some("Recover all deleted instances"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "multipass",
+                            "list",
+                            "--format=json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "restart",
+            aliases: [],
+            description: Some("Restart instances"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--timeout",
+                    ],
+                    description: Some("Maximum time, in seconds, to wait for the command to complete. Note that some background operations may continue beyond that. By default, instance startup and initialization is limited to 5 minutes each"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "timeout",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--all",
+                    ],
+                    description: Some("Restart all instances"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "multipass",
+                            "list",
+                            "--format=json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "set",
+            aliases: [],
+            description: Some("Set a configuration setting"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "key=value",
+                    source: Static([
+                        "client.gui.autostart=",
+                        "client.gui.hotkey=",
+                        "client.primary-name=",
+                        "local.bridged-network=",
+                        "local.driver=",
+                        "local.privileged-mounts=",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "shell",
+            aliases: [],
+            description: Some("Open a shell on a running instance"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--timeout",
+                    ],
+                    description: Some("Maximum time, in seconds, to wait for the command to complete. Note that some background operations may continue beyond that. By default, instance startup and initialization is limited to 5 minutes each"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "timeout",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "multipass",
+                            "list",
+                            "--format=json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "start",
+            aliases: [],
+            description: Some("Start instances"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--timeout",
+                    ],
+                    description: Some("Maximum time, in seconds, to wait for the command to complete. Note that some background operations may continue beyond that. By default, instance startup and initialization is limited to 5 minutes each"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "timeout",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--all",
+                    ],
+                    description: Some("Start all instances"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "multipass",
+                            "list",
+                            "--format=json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "stop",
+            aliases: [],
+            description: Some("Stop running instances"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--all",
+                    ],
+                    description: Some("Stop all instances"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-t",
+                        "--time",
+                    ],
+                    description: Some("Time from now, in minutes, to delay shutdown of the instance"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "time",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-c",
+                        "--cancel",
+                    ],
+                    description: Some("Cancel a pending delayed shutdown"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "multipass",
+                            "list",
+                            "--format=json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "suspend",
+            aliases: [],
+            description: Some("Suspend running instances"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--all",
+                    ],
+                    description: Some("Suspend all instances"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "multipass",
+                            "list",
+                            "--format=json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "transfer",
+            aliases: [],
+            description: Some("Transfer files between the host and instances"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "source",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+                (
+                    name: "destination",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "umount",
+            aliases: [],
+            description: Some("Unmount a directory from an instance"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "mount",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "unalias",
+            aliases: [],
+            description: Some("Remove an alias"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "version",
+            aliases: [],
+            description: Some("Show version details"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--format",
+                    ],
+                    description: Some("Output list in the requested format. Valid formats are: table (default), json, csv and yaml"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "table",
+                                "json",
+                                "csv",
+                                "yaml",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Displays help on commandline options"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--help-all",
+            ],
+            description: Some("Displays help including Qt specific options"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-v",
+                "--verbose",
+            ],
+            description: Some("Increase logging verbosity. Repeat the \'v\' in the short option for more detail. Maximum verbosity is obtained with 4 (or more) v\'s, i.e. -vvvv"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

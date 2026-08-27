@@ -1,0 +1,824 @@
+(
+    version: 1,
+    command: "pipx",
+    description: Some("Install and Run Python Applications in Isolated Environments"),
+    subcommands: [
+        (
+            name: "install",
+            aliases: [],
+            description: Some("Install a package"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--include-deps",
+                    ],
+                    description: Some("Include apps of dependent packages"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force",
+                    ],
+                    description: Some("Modify existing virtual environment and files in PIPX_BIN_DIR"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--suffix",
+                    ],
+                    description: Some("Optional suffix for virtual environment and executable names"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "SUFFIX",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--python",
+                    ],
+                    description: Some("The Python executable used to create the Virtual Environment and run the associated app/apps. Must be v3.6+"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "PYTHON",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--system-site-packages",
+                    ],
+                    description: Some("Give the virtual environment access to the system site-packages dir"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--index-url",
+                        "-i",
+                    ],
+                    description: Some("Base URL of Python Package Index"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "INDEX_URL",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--editable",
+                        "-e",
+                    ],
+                    description: Some("Install a project in editable mode"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--pip-args",
+                    ],
+                    description: Some("Arbitrary pip arguments to pass directly to pip install/upgrade commands"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "PIP_ARGS",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Show verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "package_spec",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "inject",
+            aliases: [],
+            description: Some("Installs packages to an existing pipx-managed virtual environment"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--include-apps",
+                    ],
+                    description: Some("Add apps from the injected packages onto your PATH"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--include-deps",
+                    ],
+                    description: Some("Include apps of dependent packages"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--system-site-packages",
+                    ],
+                    description: Some("Give the virtual environment access to the system site-packages dir"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--index-url",
+                        "-i",
+                    ],
+                    description: Some("Base URL of Python Package Index"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "INDEX_URL",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--editable",
+                        "-e",
+                    ],
+                    description: Some("Install a project in editable mode"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--pip-args",
+                    ],
+                    description: Some("Arbitrary pip arguments to pass directly to pip install/upgrade commands"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "PIP_ARGS",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--force",
+                        "-f",
+                    ],
+                    description: Some("Modify existing virtual environment and files in PIPX_BIN_DIR"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Show verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "package",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "pipx",
+                            "list",
+                            "--short",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+                (
+                    name: "dependencies",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "upgrade",
+            aliases: [],
+            description: Some("Upgrade a package in a pipx-managed Virtual Environment by running \'pip install --upgrade PACKAGE\'"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--include-injected",
+                    ],
+                    description: Some("Also upgrade packages injected into the main app\'s environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force",
+                        "-f",
+                    ],
+                    description: Some("Modify existing virtual environment and files in PIPX_BIN_DIR"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--system-site-packages",
+                    ],
+                    description: Some("Give the virtual environment access to the system site-packages dir"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--index-url",
+                        "-i",
+                    ],
+                    description: Some("Base URL of Python Package Index"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "INDEX_URL",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--editable",
+                        "-e",
+                    ],
+                    description: Some("Install a project in editable mode"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--pip-args",
+                    ],
+                    description: Some("Arbitrary pip arguments to pass directly to pip install/upgrade commands"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "PIP_ARGS",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Show verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "package",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "pipx",
+                            "list",
+                            "--short",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "upgrade-all",
+            aliases: [],
+            description: Some("Upgrades all packages within their virtual environments by running \'pip install --upgrade PACKAGE\'"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--include-injected",
+                    ],
+                    description: Some("Also upgrade packages injected into the main app\'s environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--skip",
+                    ],
+                    description: Some("Skip these packages"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "packages to skip",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--force",
+                        "-f",
+                    ],
+                    description: Some("Modify existing virtual environment and files in PIPX_BIN_DIR"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Show verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "uninstall",
+            aliases: [],
+            description: Some("Uninstalls a pipx-managed Virtual Environment by deleting it and any files that point to its apps"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Show verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "package",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "pipx",
+                            "list",
+                            "--short",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "uninstall-all",
+            aliases: [],
+            description: Some("Uninstall all pipx-managed packages"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Show verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "reinstall",
+            aliases: [],
+            description: Some("Reinstalls a package"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--python",
+                    ],
+                    description: Some("The Python executable used to recreate the Virtual Environment and run the associated app/apps. Must be v3.6+"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "PYTHON",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Show verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "package",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "pipx",
+                            "list",
+                            "--short",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "reinstall-all",
+            aliases: [],
+            description: Some("Reinstalls all packages"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--python",
+                    ],
+                    description: Some("The Python executable used to recreate the Virtual Environment and run the associated app/apps. Must be v3.6+"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "PYTHON",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--skip",
+                    ],
+                    description: Some("Skip these packages"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "packages to skip",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Show verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "list",
+            aliases: [],
+            description: Some("List packages and apps installed with pipx"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--include-injected",
+                    ],
+                    description: Some("Show packages injected into the main app\'s environment"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--json",
+                    ],
+                    description: Some("Output rich data in json format"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--short",
+                    ],
+                    description: Some("List packages only"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Show verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "run",
+            aliases: [],
+            description: Some("Download the latest version of a package to a temporary virtual environment, then run an app from it"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--no-cache",
+                    ],
+                    description: Some("Do not re-use cached virtual environment if it exists"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--pypackages",
+                    ],
+                    description: Some("Require app to be run from local __pypackages__ directory"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--spec",
+                    ],
+                    description: Some("The package name or specific installation source passed to pip"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "SPEC",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--python",
+                    ],
+                    description: Some("The Python version to run package\'s CLI app with"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "PYTHON",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--system-site-packages",
+                    ],
+                    description: Some("Give the virtual environment access to the system site-packages dir"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--index-url",
+                        "-i",
+                    ],
+                    description: Some("Base URL of Python Package Index"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "INDEX_URL",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--editable",
+                        "-e",
+                    ],
+                    description: Some("Install a project in editable mode"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--pip-args",
+                    ],
+                    description: Some("Arbitrary pip arguments to pass directly to pip install/upgrade commands"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "PIP_ARGS",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Show verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "app",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "runpip",
+            aliases: [],
+            description: Some("Run pip in an existing pipx-managed Virtual Environment"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Show verbose output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "package",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "pipargs",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "ensurepath",
+            aliases: [],
+            description: Some("Ensure directory where pipx stores apps is in your PATH environment variable"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--force",
+                        "-f",
+                    ],
+                    description: Some("Add text to your shell\'s config file even if it looks like your PATH already contains paths to pipx and pipx-install apps"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "environment",
+            aliases: [],
+            description: Some("Print a list of variables used in pipx.constants"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--value",
+                    ],
+                    description: Some("Print the value of the variable"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "VARIABLE",
+                            source: Static([
+                                "PIPX_HOME",
+                                "PIPX_BIN_DIR",
+                                "PIPX_SHARED_LIBS",
+                                "PIPX_LOCAL_VENVS",
+                                "PIPX_LOG_DIR",
+                                "PIPX_TRASH_DIR",
+                                "PIPX_VENV_CACHEDIR",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "completions",
+            aliases: [],
+            description: Some("Print instructions on enabling shell completions for pipx"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Show help for pipx"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

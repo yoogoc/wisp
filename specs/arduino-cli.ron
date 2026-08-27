@@ -1,0 +1,3095 @@
+(
+    version: 1,
+    command: "arduino-cli",
+    description: Some("Arduino Command Line Interface"),
+    subcommands: [
+        (
+            name: "board",
+            aliases: [],
+            description: Some("Arduino board commands"),
+            subcommands: [
+                (
+                    name: "attach",
+                    aliases: [],
+                    description: Some("Sets the default values for port and FQBN. If no port or FQBN are specified, the current default port and FQBN are displayed"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--board-options",
+                            ],
+                            description: Some("List of board options separated by commas. Or can be used multiple times for multiple options"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--discovery-timeout",
+                            ],
+                            description: Some("Max time to wait for port discovery, example: \'30s, 1m (default 1s)\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "duration",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-b",
+                                "--fqbn",
+                            ],
+                            description: Some("Fully Qualified Board Name, example: \'arduino:avr:uno\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "FQBN",
+                                    source: Unavailable,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: Some((
+                                        script: [
+                                            "arduino-cli",
+                                            "board",
+                                            "list",
+                                            "--format",
+                                            "json",
+                                        ],
+                                        has_post_process: true,
+                                        has_custom: false,
+                                    )),
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for attach"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-p",
+                                "--port",
+                            ],
+                            description: Some("Upload port address, example: \'COM3 or /dev/ttyACM2\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "port",
+                                    source: Unavailable,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: Some((
+                                        script: [
+                                            "arduino-cli",
+                                            "board",
+                                            "list",
+                                            "--format",
+                                            "json",
+                                        ],
+                                        has_post_process: true,
+                                        has_custom: false,
+                                    )),
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-l",
+                                "--protocol",
+                            ],
+                            description: Some("Upload port protocol, example: \'serial\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "protocol",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "details",
+                    aliases: [],
+                    description: Some("Show information about a board, in particular if the board has options to be specified in the FQBN\'"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--board-options",
+                            ],
+                            description: Some("List of board options separated by commas. Or can be used multiple times for multiple options"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-b",
+                                "--fqbn",
+                            ],
+                            description: Some("Fully Qualified Board Name, example: \'arduino:avr:uno\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "FQBN",
+                                    source: Unavailable,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: Some((
+                                        script: [
+                                            "arduino-cli",
+                                            "board",
+                                            "list",
+                                            "--format",
+                                            "json",
+                                        ],
+                                        has_post_process: true,
+                                        has_custom: false,
+                                    )),
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-f",
+                                "--full",
+                            ],
+                            description: Some("Show full board details"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for details"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--list-programmers",
+                            ],
+                            description: Some("Show list of available programmers"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--show-properties",
+                            ],
+                            description: Some("Show build properties. The properties are expanded, use \"--show-properties=unexpanded\" if you want them exactly as they are defined. (default \"disabled\")"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "list",
+                    aliases: [],
+                    description: Some("Detects and displays a list of boards connected to the current computer"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--board-options",
+                            ],
+                            description: Some("List of board options separated by commas. Or can be used multiple times for multiple options"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--discovery-timeout",
+                            ],
+                            description: Some("Max time to wait for port discovery, example: \'30s, 1m (default 1s)\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "duration",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-b",
+                                "--fqbn",
+                            ],
+                            description: Some("Fully Qualified Board Name, example: \'arduino:avr:uno\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "FQBN",
+                                    source: Unavailable,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: Some((
+                                        script: [
+                                            "arduino-cli",
+                                            "board",
+                                            "list",
+                                            "--format",
+                                            "json",
+                                        ],
+                                        has_post_process: true,
+                                        has_custom: false,
+                                    )),
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for list"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-w",
+                                "--watch",
+                            ],
+                            description: Some("Command keeps running and prints list of connected boards whenever there is a change"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "listall",
+                    aliases: [],
+                    description: Some("List all boards that have the support platform installed, You can search for a specific board if you specify the board name"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for listall"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-a",
+                                "--show-hidden",
+                            ],
+                            description: Some("Show also boards marked as \'hidden\' in the platform"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "search",
+                    aliases: [],
+                    description: Some("Search for a board in the Boards Manager using the specified keywords"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for search"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-a",
+                                "--show-hidden",
+                            ],
+                            description: Some("Show also boards marked as \'hidden\' in the platform"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for board"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "attach, list...",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "burn-bootloader",
+            aliases: [],
+            description: Some("Upload the bootloader on the board using an external programmer"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--board-options",
+                    ],
+                    description: Some("List of board options separated by commas. Or can be used multiple times for multiple options"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--discovery-timeout",
+                    ],
+                    description: Some("Max time to wait for port discovery, example: \'30s, 1m (default 1s)\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "duration",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-b",
+                        "--fqbn",
+                    ],
+                    description: Some("Fully Qualified Board Name, example: \'arduino:avr:uno\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "FQBN",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "arduino-cli",
+                                    "board",
+                                    "list",
+                                    "--format",
+                                    "json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for burn-bootloader"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--port",
+                    ],
+                    description: Some("Upload port address, example: \'COM3 or /dev/ttyACM2\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "arduino-cli",
+                                    "board",
+                                    "list",
+                                    "--format",
+                                    "json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-P",
+                        "--programmer",
+                    ],
+                    description: Some("Programmer to use, example: \'atmel_ice\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-l",
+                        "--protocol",
+                    ],
+                    description: Some("Upload port protocol, example: \'serial\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--verbose",
+                    ],
+                    description: Some("Turns on verbose mode"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-t",
+                        "--verify",
+                    ],
+                    description: Some("Verify uploaded binary after upload"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "cache",
+            aliases: [],
+            description: Some("Arduino cache commands"),
+            subcommands: [
+                (
+                    name: "clean",
+                    aliases: [],
+                    description: Some("Delete contents of the directories.downloads folder, where archive files are staged during installation of libraries and boards platforms"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for clean"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for cache"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "clean",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "compile",
+            aliases: [],
+            description: Some("Compiles Arduino sketches"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--board-options",
+                    ],
+                    description: Some("List of board options separated by commas. Or can be used multiple times for multiple option"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--build-cache-path",
+                    ],
+                    description: Some("Builds of \'core.a\' are saved into this path to be cached and reused"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--build-path",
+                    ],
+                    description: Some("Path where to save compiled files. If omitted, a directory will be created in the default temporary path of your OS"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "filepath",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--build-property",
+                    ],
+                    description: Some("Override a build property with a custom value. Can be used multiple times for multiple properties"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--clean",
+                    ],
+                    description: Some("Optional, cleanup the build folder and do not use any cached build"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--discovery-timeout",
+                    ],
+                    description: Some("Max time to wait for port discovery, example: \'30s, 1m (default 1s)\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "duration",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--dump-profile",
+                    ],
+                    description: Some("Create and print a profile configuration from the build"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--encrypt-key",
+                    ],
+                    description: Some("The name of the custom encryption key to use to encrypt a binary during the compile process. Used only by the platforms that support it"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "e",
+                        "--export-binaries",
+                    ],
+                    description: Some("If set built binaries will be exported to the sketch folder"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-b",
+                        "--fqbn",
+                    ],
+                    description: Some("Fully Qualified Board Name, example: \'arduino:avr:uno\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "FQBN",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "arduino-cli",
+                                    "board",
+                                    "list",
+                                    "--format",
+                                    "json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for compile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--keys-keychain",
+                    ],
+                    description: Some("The path of the dir to search for the custom keys to sign and encrypt a binary. Used only by the platforms that support it"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "filepath",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--libraries",
+                    ],
+                    description: Some("Path to a collection of libraries. Can be used multiple times or entries can be comma separated"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "filepath",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--library",
+                    ],
+                    description: Some("Path to a single library’s root folder. Can be used multiple times or entries can be comma separated"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "filepath",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--only-compilation-database",
+                    ],
+                    description: Some("Just produce the compilation database, without actually compiling. All build commands are skipped except pre* hooks"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--optimize-for-debug",
+                    ],
+                    description: Some("Optional, optimize compile output for debugging, rather than for release"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--output-dir",
+                    ],
+                    description: Some("Save build artifacts in this directory"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "directory",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--port",
+                    ],
+                    description: Some("Upload port address, example: \'COM3 or /dev/ttyACM2\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "arduino-cli",
+                                    "board",
+                                    "list",
+                                    "--format",
+                                    "json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--preprocess",
+                    ],
+                    description: Some("Print preprocessed code to stdout instead of compiling"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-m",
+                        "--profile",
+                    ],
+                    description: Some("Sketch profile to use"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-P",
+                        "--programmer",
+                    ],
+                    description: Some("Programmer to use, example: \'atmel_ice\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-l",
+                        "--protocol",
+                    ],
+                    description: Some("Upload port protocol, example: \'serial\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--quiet",
+                    ],
+                    description: Some("Optional, suppresses almost every output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--show-properties",
+                    ],
+                    description: Some("Show build properties. The properties are expanded, use \"--show-properties=unexpanded\" if you want them exactly as they are defined. (default \"disabled\")"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--sign-key",
+                    ],
+                    description: Some("The name of the custom signing key to use to sign a binary during the compile process. Used only by the platforms that support it"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-u",
+                        "--upload",
+                    ],
+                    description: Some("Upload the binary after the compilation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--verbose",
+                    ],
+                    description: Some("Optional, turns on verbose mode"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-t",
+                        "--verify",
+                    ],
+                    description: Some("Verify uploaded binary after the upload"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--warnings",
+                    ],
+                    description: Some("Optional, can be: none, default, more, all. Used to tell gcc which warning level to use (-W flag). (default \"none\")"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Static([
+                                "none",
+                                "default",
+                                "more",
+                                "all",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "completion",
+            aliases: [],
+            description: Some("Generates completion scripts for various shells"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for completion"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-description",
+                    ],
+                    description: Some("Disable completion description for shells that support it"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "config",
+            aliases: [],
+            description: Some("Arduino configuration commands"),
+            subcommands: [
+                (
+                    name: "add",
+                    aliases: [],
+                    description: Some("Adds one or more values to a setting"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for add"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "delete",
+                    aliases: [],
+                    description: Some("Deletes a settings key and all its sub keys"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for delete"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "dump",
+                    aliases: [],
+                    description: Some("Prints the current configuration"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for dump"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "init",
+                    aliases: [],
+                    description: Some("Creates or updates the configuration file in the data directory or custom directory with the current configuration settings"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--dest-dir",
+                            ],
+                            description: Some("Sets where to save the configuration file"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "directory",
+                                    source: Directories,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--dest-file",
+                            ],
+                            description: Some("Sets where to save the configuration file"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "file",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for init"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--overwrite",
+                            ],
+                            description: Some("Overwrite existing config file"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "remove",
+                    aliases: [],
+                    description: Some("Removes one or more values from a setting"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for remove"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "set",
+                    aliases: [],
+                    description: Some("Sets a setting value"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for set"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for config"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "init, dump...",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "core",
+            aliases: [],
+            description: Some("Arduino core operations"),
+            subcommands: [
+                (
+                    name: "download",
+                    aliases: [],
+                    description: Some("Downloads one or more cores and corresponding tool dependencies"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for download"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "install",
+                    aliases: [],
+                    description: Some("Installs one or more cores and corresponding tool dependencies"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for install"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--no-overwrite",
+                            ],
+                            description: Some("Do not overwrite already installed platforms"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--run-post-install",
+                            ],
+                            description: Some("Force run of post-install scripts (if the CLI is not running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--run-pre-uninstall",
+                            ],
+                            description: Some("Force run of pre-uninstall scripts (if the CLI is not running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--skip-post-install",
+                            ],
+                            description: Some("Force skip of post-install scripts (if the CLI is running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--skip-pre-uninstall",
+                            ],
+                            description: Some("Force skip of pre-uninstall scripts (if the CLI is running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "list",
+                    aliases: [],
+                    description: Some("Show the list of installed platforms"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "all",
+                            ],
+                            description: Some("If set return all installable and installed cores, including manually installed"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for list"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--updatable",
+                            ],
+                            description: Some("List updatable platforms"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "search",
+                    aliases: [],
+                    description: Some("Search for a core in Boards Manager using the specified keywords"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "all",
+                            ],
+                            description: Some("Show all available core versions"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for search"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "uninstall",
+                    aliases: [],
+                    description: Some("Uninstalls one or more cores and corresponding tool dependencies if no longer used"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for uninstall"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--run-post-install",
+                            ],
+                            description: Some("Force run of post-install scripts (if the CLI is not running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--run-pre-uninstall",
+                            ],
+                            description: Some("Force run of pre-uninstall scripts (if the CLI is not running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--skip-post-install",
+                            ],
+                            description: Some("Force skip of post-install scripts (if the CLI is running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--skip-pre-uninstall",
+                            ],
+                            description: Some("Force skip of pre-uninstall scripts (if the CLI is running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "update-index",
+                    aliases: [],
+                    description: Some("Updates the index of cores to the latest version"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for update-index"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "upgrade",
+                    aliases: [],
+                    description: Some("Upgrades one or all installed platforms to the latest version"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for upgrade"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--run-post-install",
+                            ],
+                            description: Some("Force run of post-install scripts (if the CLI is not running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--run-pre-uninstall",
+                            ],
+                            description: Some("Force run of pre-uninstall scripts (if the CLI is not running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--skip-post-install",
+                            ],
+                            description: Some("Force skip of post-install scripts (if the CLI is running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--skip-pre-uninstall",
+                            ],
+                            description: Some("Force skip of pre-uninstall scripts (if the CLI is running interactively)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for core"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "install, list...",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "daemon",
+            aliases: [],
+            description: Some("Run as a daemon on port: 50051, the initialization of cores and libraries is done only once"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--daemonize",
+                    ],
+                    description: Some("Do not terminate daemon process if the parent process dies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--debug",
+                    ],
+                    description: Some("Enable debug logging of gRPC calls"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--debug-file",
+                    ],
+                    description: Some("Append debug logging to the specified file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--debug-filter",
+                    ],
+                    description: Some("Display only the provided gRPC calls"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for daemon"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--port",
+                    ],
+                    description: Some("The TCP port the daemon will listen to"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "arduino-cli",
+                                    "board",
+                                    "list",
+                                    "--format",
+                                    "json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "debug",
+            aliases: [],
+            description: Some("Debug Arduino sketches. (this command opens an interactive gdb session)"),
+            subcommands: [
+                (
+                    name: "check",
+                    aliases: [],
+                    description: Some("Check if the given board/programmer combination supports debugging"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--board-options",
+                            ],
+                            description: Some("List of board options separated by commas. Or can be used multiple times for multiple options"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--discovery-timeout",
+                            ],
+                            description: Some("Max time to wait for port discovery, example: \'30s, 1m (default 1s)\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "duration",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-b",
+                                "--fqbn",
+                            ],
+                            description: Some("Fully Qualified Board Name, example: \'arduino:avr:uno\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "FQBN",
+                                    source: Unavailable,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: Some((
+                                        script: [
+                                            "arduino-cli",
+                                            "board",
+                                            "list",
+                                            "--format",
+                                            "json",
+                                        ],
+                                        has_post_process: true,
+                                        has_custom: false,
+                                    )),
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for check"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--interpreter",
+                            ],
+                            description: Some("Debug interpreter, example: console, mi, mi1, mi2, mi3 (default \"console\")"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Static([
+                                        "console",
+                                        "mi",
+                                        "mi1",
+                                        "mi2",
+                                        "mi3",
+                                    ]),
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-p",
+                                "--port",
+                            ],
+                            description: Some("Upload port address, example: \'COM3 or /dev/ttyACM2\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "port",
+                                    source: Unavailable,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: Some((
+                                        script: [
+                                            "arduino-cli",
+                                            "board",
+                                            "list",
+                                            "--format",
+                                            "json",
+                                        ],
+                                        has_post_process: true,
+                                        has_custom: false,
+                                    )),
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-P",
+                                "--programmer",
+                            ],
+                            description: Some("Programmer to use, example: \'atmel_ice\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-l",
+                                "--protocol",
+                            ],
+                            description: Some("Upload port protocol, example: \'serial\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "--board-options",
+                    ],
+                    description: Some("List of board options separated by commas. Or can be used multiple times for multiple options"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--discovery-timeout",
+                    ],
+                    description: Some("Max time to wait for port discovery, example: \'30s, 1m (default 1s)\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "duration",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-b",
+                        "--fqbn",
+                    ],
+                    description: Some("Fully Qualified Board Name, example: \'arduino:avr:uno\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "FQBN",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "arduino-cli",
+                                    "board",
+                                    "list",
+                                    "--format",
+                                    "json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for debug"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-I",
+                        "--info",
+                    ],
+                    description: Some("Show metadata about the debug session instead of starting the debugger"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--input-dir",
+                    ],
+                    description: Some("Directory containing binaries for debug"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "directory",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--interpreter",
+                    ],
+                    description: Some("Debug interpreter, example: console, mi, mi1, mi2, mi3 (default \"console\")"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Static([
+                                "console",
+                                "mi",
+                                "mi1",
+                                "mi2",
+                                "mi3",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--port",
+                    ],
+                    description: Some("Upload port address, example: \'COM3 or /dev/ttyACM2\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "arduino-cli",
+                                    "board",
+                                    "list",
+                                    "--format",
+                                    "json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-P",
+                        "--programmer",
+                    ],
+                    description: Some("Programmer to use, example: \'atmel_ice\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-l",
+                        "--protocol",
+                    ],
+                    description: Some("Upload port protocol, example: \'serial\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "check",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Help provides help for any command in the application"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for help"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "lib",
+            aliases: [],
+            description: Some("Arduino commands about libraries"),
+            subcommands: [
+                (
+                    name: "deps",
+                    aliases: [],
+                    description: Some("Check dependencies status for the specified library"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for deps"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "download",
+                    aliases: [],
+                    description: Some("Downloads one or more libraries without installing them"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for download"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "examples",
+                    aliases: [],
+                    description: Some("Shows the list of the examples for libraries. A name may be given as argument to search a specific library"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--board-options",
+                            ],
+                            description: Some("List of board options separated by commas. Or can be used multiple times for multiple options"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-b",
+                                "--fqbn",
+                            ],
+                            description: Some("Fully Qualified Board Name, example: \'arduino:avr:uno\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "FQBN",
+                                    source: Unavailable,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: Some((
+                                        script: [
+                                            "arduino-cli",
+                                            "board",
+                                            "list",
+                                            "--format",
+                                            "json",
+                                        ],
+                                        has_post_process: true,
+                                        has_custom: false,
+                                    )),
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for examples"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "install",
+                    aliases: [],
+                    description: Some("Installs one or more specified libraries into the system"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--git-url",
+                            ],
+                            description: Some("Enter git url for libraries hosted on repositories"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for install"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--install-in-builtin-dir",
+                            ],
+                            description: Some("Install libraries in the IDE-Builtin directory"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--no-deps",
+                            ],
+                            description: Some("Do not install dependencies"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--no-overwrite",
+                            ],
+                            description: Some("Do not overwrite already installed libraries"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--zip-path",
+                            ],
+                            description: Some("Enter a path to zip file"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "list",
+                    aliases: [],
+                    description: Some("Shows a list of installed libraries. If the LIBNAME parameter is specified the listing is limited to that specific library. By default the libraries provided as built-in by platforms/core are not listed, they can be listed by adding the --all flag"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--all",
+                            ],
+                            description: Some("Include built-in libraries (from platforms and IDE) in listing"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--board-options",
+                            ],
+                            description: Some("List of board options separated by commas. Or can be used multiple times for multiple options"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-b",
+                                "--fqbn",
+                            ],
+                            description: Some("Fully Qualified Board Name, example: \'arduino:avr:uno\'"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "FQBN",
+                                    source: Unavailable,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: Some((
+                                        script: [
+                                            "arduino-cli",
+                                            "board",
+                                            "list",
+                                            "--format",
+                                            "json",
+                                        ],
+                                        has_post_process: true,
+                                        has_custom: false,
+                                    )),
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for list"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--updatable",
+                            ],
+                            description: Some("List updatable libraries"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "search",
+                    aliases: [],
+                    description: Some("Search for one or more libraries data (case insensitive search)"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--h",
+                                "--help",
+                            ],
+                            description: Some("Help for search"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--names",
+                            ],
+                            description: Some("Show library names only"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--omit-releases-details",
+                            ],
+                            description: Some("Omit library details far all versions except the latest (produce a more compact JSON output)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "uninstall",
+                    aliases: [],
+                    description: Some("Uninstalls one or more libraries"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--h",
+                                "--help",
+                            ],
+                            description: Some("Help for uninstall"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "update-index",
+                    aliases: [],
+                    description: Some("Updates the libraries index to the latest version"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--h",
+                                "--help",
+                            ],
+                            description: Some("Help for update-index"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "upgrade",
+                    aliases: [],
+                    description: Some("Upgrades installed libraries. This command upgrades an installed library to the latest available version. Multiple libraries can be passed separated by a space. If no arguments are provided, the command will upgrade all the installed libraries where an update is available"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--h",
+                                "--help",
+                            ],
+                            description: Some("Help for upgrade"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for lib"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "deps, update-index...",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "monitor",
+            aliases: [],
+            description: Some("Open a communication port with a board"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--board-options",
+                    ],
+                    description: Some("List of board options separated by commas. Or can be used multiple times for multiple options"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-c",
+                        "--config",
+                    ],
+                    description: Some("Configure communication port settings. The format is <ID>=<value>[,<ID>=<value>]"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--describe",
+                    ],
+                    description: Some("Show all the settings of the communication port"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--discovery-timeout",
+                    ],
+                    description: Some("Max time to wait for port discovery, example: \'30s, 1m (default 1s)\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "duration",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-b",
+                        "--fqbn",
+                    ],
+                    description: Some("Fully Qualified Board Name, example: \'arduino:avr:uno\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "FQBN",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "arduino-cli",
+                                    "board",
+                                    "list",
+                                    "--format",
+                                    "json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for monitor"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--port",
+                    ],
+                    description: Some("Upload port address, example: \'COM3 or /dev/ttyACM2\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "arduino-cli",
+                                    "board",
+                                    "list",
+                                    "--format",
+                                    "json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-l",
+                        "--protocol",
+                    ],
+                    description: Some("Upload port protocol, example: \'serial\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-q",
+                        "--quiet",
+                    ],
+                    description: Some("Run in silent mode, show only monitor input and output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--raw",
+                    ],
+                    description: Some("Set terminal in raw mode (unbuffered)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--timestamp",
+                    ],
+                    description: Some("Timestamp each incoming line"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "outdated",
+            aliases: [],
+            description: Some("This commands shows a list of installed cores and/or libraries that can be upgraded. If nothing needs to be updated the output is empty"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for outdated"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "sketch",
+            aliases: [],
+            description: Some("Arduino CLI sketch commands"),
+            subcommands: [
+                (
+                    name: "archive",
+                    aliases: [],
+                    description: Some("Creates a zip file containing all sketch files"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for archive"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--include-build-dir",
+                            ],
+                            description: Some("Includes build in directory in the archive"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-f",
+                                "--overwrite",
+                            ],
+                            description: Some("Overwrites an already existing archive"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "new",
+                    aliases: [],
+                    description: Some("Create a new Sketch"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                                "--help",
+                            ],
+                            description: Some("Help for archive"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-f",
+                                "--overwrite",
+                            ],
+                            description: Some("Overwrites an already existing .ino sketch"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for sketch"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "archive, new",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "update",
+            aliases: [],
+            description: Some("Updates the index of cores and libraries to the latest versions"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for update"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--show-outdated",
+                    ],
+                    description: Some("Show outdated cores and libraries after index update"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "upgrade",
+            aliases: [],
+            description: Some("Upgrades installed cores and libraries to latest version"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for update"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--run-post-install",
+                    ],
+                    description: Some("Force run of post-install scripts (if the CLI is not running interactively)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--run-pre-uninstall",
+                    ],
+                    description: Some("Force run of pre-uninstall scripts (if the CLI is not running interactively)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--skip-post-install",
+                    ],
+                    description: Some("Force skip of post-install scripts (if the CLI is running interactively)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--skip-pre-uninstall",
+                    ],
+                    description: Some("Force skip of pre-uninstall scripts (if the CLI is running interactively)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "upload",
+            aliases: [],
+            description: Some("Upload Arduino sketches. This does NOT compile the sketch prior to upload"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--board-options",
+                    ],
+                    description: Some("List of board options separated by commas. Or can be used multiple times for multiple options"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--discovery-timeout",
+                    ],
+                    description: Some("Max time to wait for port discovery, example: \'30s, 1m (default 1s)\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "duration",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-b",
+                        "--fqbn",
+                    ],
+                    description: Some("Fully Qualified Board Name, example: \'arduino:avr:uno\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "FQBN",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "arduino-cli",
+                                    "board",
+                                    "list",
+                                    "--format",
+                                    "json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for upload"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--input-dir",
+                    ],
+                    description: Some("Directory containing binaries to upload"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "directory",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-i",
+                        "--input-file",
+                    ],
+                    description: Some("Binary file to upload"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "file",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--port",
+                    ],
+                    description: Some("Binary file to upload, example: \'COM3 or /dev/ttyACM2\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "port",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "arduino-cli",
+                                    "board",
+                                    "list",
+                                    "--format",
+                                    "json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-m",
+                        "--profile",
+                    ],
+                    description: Some("Sketch profile to use"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-P",
+                        "--programmer",
+                    ],
+                    description: Some("Programmer to use, example: \'atmel_ice\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-l",
+                        "--protocol",
+                    ],
+                    description: Some("Upload port protocol, example: \'serial\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-F",
+                        "--upload-field",
+                    ],
+                    description: Some("Set a value for a field required to upload, \'key=value\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--verbose",
+                    ],
+                    description: Some("Optional, turns on verbose mode"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-t",
+                        "--verify",
+                    ],
+                    description: Some("Verify uploaded binary after the upload"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "version",
+            aliases: [],
+            description: Some("Shows the version number of Arduino CLI which is installed on your system"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Help for version"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--additional-urls",
+            ],
+            description: Some("Comma-separated list of additional URLs for the Boards Manager"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--config-file",
+            ],
+            description: Some("The custom config file (if not specified the default will be used)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--format",
+            ],
+            description: Some("The output format for the logs, can be: text, json, jsonmini, yaml (default \'text\')"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "data_format",
+                    source: Static([
+                        "text",
+                        "json",
+                        "jsonmini",
+                        "yaml",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Help for arduino-cli"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--log",
+            ],
+            description: Some("Print the logs on the standard output"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--log-file",
+            ],
+            description: Some("Path to the file where logs will be written"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "filepath",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--log-format",
+            ],
+            description: Some("The output format for the logs, can be: text, json"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "format",
+                    source: Static([
+                        "text",
+                        "json",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--log-level",
+            ],
+            description: Some("Messages with this level and above will be logged. Valid levels are: trace, debug, info, warn, error, fatal, panic"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "level",
+                    source: Static([
+                        "trace",
+                        "debug",
+                        "info",
+                        "warn",
+                        "error",
+                        "fatal",
+                        "panic",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--no-color",
+            ],
+            description: Some("Disable colored output"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

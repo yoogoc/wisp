@@ -1,0 +1,753 @@
+(
+    version: 1,
+    command: "julia",
+    description: Some("The Julia Programming Language"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-v",
+                "--version",
+            ],
+            description: Some("Display version information"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Print help message for julia (--help-hidden for more)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--help-hidden",
+            ],
+            description: Some("Uncommon options not shown by `-h`"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--project",
+            ],
+            description: Some("Set given directory as the home project/environment"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "project folder",
+                    source: Static([
+                        "@.",
+                    ]),
+                    optional: true,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-J",
+                "--sysimage",
+            ],
+            description: Some("Start up with the given system image file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "system image",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-H",
+                "--home",
+            ],
+            description: Some("Set location of `julia` executable"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--startup-file",
+            ],
+            description: Some("Load `~/.julia/config/startup.jl`"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--handle-signals",
+            ],
+            description: Some("Enable or disable Julia\'s default signal handlers"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--sysimage-native-code",
+            ],
+            description: Some("Use native code from system image if available"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--compiled-modules",
+            ],
+            description: Some("Enable or disable incremental precompilation of modules"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-e",
+                "--eval",
+            ],
+            description: Some("Evaluate given expr"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "expr",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-E",
+                "--print",
+            ],
+            description: Some("Evaluate given expr and display the result"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "expr",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-L",
+                "--load",
+            ],
+            description: Some("Load given file immediately on all processors"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "julia script",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-t",
+                "--threads",
+            ],
+            description: Some("Enable N threads; \"auto\" sets N to the number of local CPU threads"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "auto",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-p",
+                "--procs",
+            ],
+            description: Some("Integer value N launches N additional local worker processes \"auto\" launches as many workers as the number of local CPU threads"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "auto",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--machine-file",
+            ],
+            description: Some("Run processes on hosts listed in given file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-i",
+            ],
+            description: Some("Interactive mode; REPL runs and isinteractive() is true"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-q",
+                "--quiet",
+            ],
+            description: Some("Quiet startup: no banner, suppress REPL warnings"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--banner",
+            ],
+            description: Some("Enable or disable startup banner"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                        "auto",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--color",
+            ],
+            description: Some("Enable or disable color text"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                        "auto",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--history-file",
+            ],
+            description: Some("Load or save history"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--depwarn",
+            ],
+            description: Some("Enable or disable syntax and method deprecation warnings (\"error\" turns warnings into errors)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                        "error",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--warn-overwrite",
+            ],
+            description: Some("Enable or disable method overwrite warnings"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--warn-scope",
+            ],
+            description: Some("Enable or disable warning for ambiguous top-level scope"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-C",
+                "--cpu-target",
+            ],
+            description: Some("Limit usage of CPU features up to <target>; set to \"help\" to see the available options"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-O",
+                "--optimize",
+            ],
+            description: Some("Set the optimization level (default level is 2 if unspecified or 3 if used without a level)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "level",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-g",
+            ],
+            description: Some("Enable / Set the level of debug info generation"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "level",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--inline",
+            ],
+            description: Some("Control whether inlining is permitted, including overriding @inline declarations"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--check-bounds",
+            ],
+            description: Some("Emit bounds checks always, never, or respect @inbounds declarations"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                        "auto",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--polly",
+            ],
+            description: Some("Enable or disable the polyhedral optimizer Polly (overrides @polly declaration)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--math-mode",
+            ],
+            description: Some("Disallow or enable unsafe floating point optimizations (overrides @fastmath declaration)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "ieee",
+                        "fast",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--code-coverage",
+            ],
+            description: Some("Count executions of source lines (omitting setting is equivalent to \"user\")"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "none",
+                        "user",
+                        "all",
+                    ]),
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--track-allocation",
+            ],
+            description: Some("Count bytes allocated by each source line (omitting setting is equivalent to \"user\")"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "none",
+                        "user",
+                        "all",
+                    ]),
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--bug-report",
+            ],
+            description: Some("Launch a bug report session. It can be used to start a REPL, run a script, or evaluate  expressions. It first tries to use BugReporting.jl installed in current environment and fallbacks to the latest compatible BugReporting.jl if not. For more information, see --bug-report=help"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "KIND",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--compile",
+            ],
+            description: Some("Enable or disable JIT compiler, or request exhaustive or minimal compilation"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                        "all",
+                        "min",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--output-o",
+            ],
+            description: Some("Generate an object file (including system image data)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--output-ji",
+            ],
+            description: Some("Generate a system image data file (.ji)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--output-unopt-bc",
+            ],
+            description: Some("Generate unoptimized LLVM bitcode (.bc)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--output-jit-bc",
+            ],
+            description: Some("Dump all IR generated by the frontend (not including system image)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--output-bc",
+            ],
+            description: Some("Generate LLVM bitcode (.bc)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--output-asm",
+            ],
+            description: Some("Generate an assembly file (.s)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--output-incremental",
+            ],
+            description: Some("Generate an incremental output file (rather than complete)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "yes",
+                        "no",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--image-codegen",
+            ],
+            description: Some("Force generate code in imaging mode"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "julia script",
+            source: Unavailable,
+            optional: true,
+            variadic: false,
+            imported_generator: Some((
+                script: [],
+                has_post_process: false,
+                has_custom: true,
+            )),
+        ),
+    ],
+)

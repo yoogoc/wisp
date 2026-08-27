@@ -1,0 +1,215 @@
+(
+    version: 1,
+    command: "tokei",
+    description: Some("Count your code, quickly"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-f",
+                "--files",
+            ],
+            description: Some("Will print out statistics on individual files"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Prints help information"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--hidden",
+            ],
+            description: Some("Count hidden files"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-l",
+                "--languages",
+            ],
+            description: Some("Prints out supported languages and their extensions"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-ignore",
+            ],
+            description: Some("Don\'t respect ignore files (.gitignore, .ignore, etc.)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-ignore-dot",
+            ],
+            description: Some("Don\'t respect .ignore and .tokeignore files, including those in parent directories"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-ignore-parent",
+            ],
+            description: Some("Don\'t respect ignore files (.gitignore, .ignore, etc.) in parent directories"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-ignore-vcs",
+            ],
+            description: Some("Don\'t respect VCS ignore files (.gitignore, .hgignore, etc.), including those in parent directories"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-V",
+                "--version",
+            ],
+            description: Some("Prints version information"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-v",
+                "--verbose",
+            ],
+            description: Some("Set log output level:"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-c",
+                "--columns",
+            ],
+            description: Some("Sets a strict column width of the output, only available for terminal output"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "columns",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-e",
+                "--exclude",
+            ],
+            description: Some("Ignore all files & directories matching the pattern"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "exclude",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-i",
+                "--input",
+            ],
+            description: Some("Gives statistics from a previous tokei run. Can be given a file path, or \"stdin\" to read from stdin"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "input",
+                    source: Static([
+                        "stdin",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-o",
+                "--output",
+            ],
+            description: Some("Outputs Tokei in a specific format"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "output",
+                    source: Static([
+                        "cbor",
+                        "json",
+                        "yaml",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-s",
+                "--sort",
+            ],
+            description: Some("Sort languages based on column"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "sort",
+                    source: Static([
+                        "files",
+                        "lines",
+                        "blanks",
+                        "code",
+                        "comments",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-t",
+                "--type",
+            ],
+            description: Some("Filters output by language type, seperated by a comma. i.e. -t=Rust,Markdown"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "type",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "tokei",
+                            "--languages",
+                        ],
+                        has_post_process: false,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+    ],
+    arguments: [],
+)

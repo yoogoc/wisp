@@ -1,0 +1,1407 @@
+(
+    version: 1,
+    command: "zapier-platform-cli",
+    description: Some("The Zapier CLI is a developer-focused way to create and maintain Zapier integrations. See more at https://github.com/zapier/zapier-platform"),
+    subcommands: [
+        (
+            name: "analytics",
+            aliases: [],
+            description: Some("Show the status of the analytics that are collected. Also used to change what is collected"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-m",
+                        "--mode",
+                    ],
+                    description: Some("Choose how much information to share. Anonymous mode drops the OS type and Zapier user id, but keeps command info. Identifying information is used only for debugging purposes"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "mode",
+                            source: Static([
+                                "enabled",
+                                "anonymous",
+                                "disabled",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "build",
+            aliases: [],
+            description: Some("Build a pushable zip from the current directory"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--disable-dependency-detection",
+                    ],
+                    description: Some("Disable \"smart\" file inclusion. By default, Zapier only includes files that are required by `index.js`. If you (or your dependencies) require files dynamically (such as with `require(someVar)`), then you may see \"Cannot find module\" errors. Disabling this may make your `build.zip` too large. If that\'s the case, try using the `includeInBuild` option in your `.zapierapprc`. See the docs about `includeInBuild` for more info"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "convert",
+            aliases: [],
+            description: Some("Convert a Legacy Web Builder app or Visual Builder integration to a CLI integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Convert a specific version. Required when converting a Visual Builder integration"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "version",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "integrationId",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "path",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "delete:integration",
+            aliases: [
+                "delete:app",
+            ],
+            description: Some("Delete your integration (including all versions)"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "delete:version",
+            aliases: [],
+            description: Some("Delete a specific version of your integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "deprecate",
+            aliases: [],
+            description: Some("Mark a non-production version of your integration as deprecated, with removal by a certain date"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "date",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "describe",
+            aliases: [],
+            description: Some("Describe the current integraiton"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("Change the way structured data is presented. If \"json\" or \"raw\", you can pipe the output of the command into other tools, such as jq"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "plain",
+                                "json",
+                                "raw",
+                                "row",
+                                "table",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "env:get",
+            aliases: [],
+            description: Some("Get environment variables for a version"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("Change the way structured data is presented. If \"json\" or \"raw\", you can pipe the output of the command into other tools, such as jq"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "plain",
+                                "json",
+                                "raw",
+                                "row",
+                                "table",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "env:set",
+            aliases: [],
+            description: Some("Set environment variables for a version"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "key-value pairs...",
+                    source: Files,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "env:unset",
+            aliases: [],
+            description: Some("Unset environment variables for a version"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "keys...",
+                    source: Files,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "history",
+            aliases: [],
+            description: Some("Get the history of your integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("Change the way structured data is presented. If \"json\" or \"raw\", you can pipe the output of the command into other tools, such as jq"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "plain",
+                                "json",
+                                "raw",
+                                "row",
+                                "table",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "init",
+            aliases: [],
+            description: Some("Initialize a new Zapier integration with a project template"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-t",
+                        "--template",
+                    ],
+                    description: Some("The template to start your integration with"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "template",
+                            source: Static([
+                                "basic-auth",
+                                "callback",
+                                "custom-auth",
+                                "digest-auth",
+                                "dynamic-dropdown",
+                                "files",
+                                "minimal",
+                                "oauth1-trello",
+                                "oauth2",
+                                "search-or-create",
+                                "session-auth",
+                                "typescript",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "path",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "integrations",
+            aliases: [
+                "apps",
+            ],
+            description: Some("List integrations you have admin access to"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("Change the way structured data is presented. If \"json\" or \"raw\", you can pipe the output of the command into other tools, such as jq"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "plain",
+                                "json",
+                                "raw",
+                                "row",
+                                "table",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "link",
+            aliases: [],
+            description: Some("Link the current directory with an existing integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "login",
+            aliases: [],
+            description: Some("Configure your `~/.zapierrc` with a deploy key"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-s",
+                        "--sso",
+                    ],
+                    description: Some("Use this flag if you log into Zapier a Single Sign-On (SSO) button and don\'t have a Zapier password"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "logout",
+            aliases: [],
+            description: Some("Deactivate your active deploy key and reset `~/.zapierrc`"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "logs",
+            aliases: [],
+            description: Some("Print recent logs"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Filter logs to the specified version"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "version",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-s",
+                        "--status",
+                    ],
+                    description: Some("Filter logs to only see errors or successes"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "status",
+                            source: Static([
+                                "any",
+                                "success",
+                                "error",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-t",
+                        "--type",
+                    ],
+                    description: Some("See logs of the specified type"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "type",
+                            source: Static([
+                                "console",
+                                "bundle",
+                                "http",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--detailed",
+                    ],
+                    description: Some("See extra info, like request/response body and headers"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-u",
+                        "--user",
+                    ],
+                    description: Some("Only show logs for this user. Defaults to your account"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "user",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--limit",
+                    ],
+                    description: Some("Cap the number of logs returned. Max is 50 (also the default)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "limit",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("Change the way structured data is presented. If \"json\" or \"raw\", you can pipe the output of the command into other tools, such as jq"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "plain",
+                                "json",
+                                "raw",
+                                "row",
+                                "table",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "migrate",
+            aliases: [],
+            description: Some("Migrate users from one version of your integration to another"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--user",
+                    ],
+                    description: Some("Migrate only this user"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "user",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "fromVersion",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "toVersion",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "percent",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "promote",
+            aliases: [],
+            description: Some("Promote a specific version to public access"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "version",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "push",
+            aliases: [],
+            description: Some("Build and upload the current integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--disable-dependency-detection",
+                    ],
+                    description: Some("Disable \"smart\" file inclusion. By default, Zapier only includes files that are required by `index.js`. If you (or your dependencies) require files dynamically (such as with `require(someVar)`), then you may see \"Cannot find module\" errors. Disabling this may make your `build.zip` too large. If that\'s the case, try using the `includeInBuild` option in your `.zapierapprc`. See the docs about `includeInBuild` for more info"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "register",
+            aliases: [],
+            description: Some("Register a new integration in your account"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "title",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "scaffold",
+            aliases: [],
+            description: Some("Add a starting trigger, create, search, or resource to your integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--dest",
+                    ],
+                    description: Some("Specify the new file\'s directory. Use this flag when you want to create a different folder structure such as `src/triggers` instead of the default `triggers`. Defaults to `[triggers|searches|creates]/{noun}`"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "dest",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--test-dest",
+                    ],
+                    description: Some("Specify the new test file\'s directory. Use this flag when you want to create a different folder structure such as `src/triggers` instead of the default `triggers`. Defaults to `test/[triggers|searches|creates]/{noun}`"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "test-dest",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-e",
+                        "--entry",
+                    ],
+                    description: Some("Supply the path to your integration\'s root (`index.js`). Only needed if your `index.js` is in a subfolder, like `src`"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "entry",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-f",
+                        "--force",
+                    ],
+                    description: Some("Should we overwrite an existing trigger/search/create file?"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-help",
+                    ],
+                    description: Some("When scaffolding, should we skip adding helpful intro comments? Useful if this isn\'t your first rodeo"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "actionType",
+                    source: Static([
+                        "trigger",
+                        "search",
+                        "create",
+                        "resource",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "noun",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "team:add",
+            aliases: [
+                "team:invite",
+            ],
+            description: Some("Add a team member to your integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "email",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "role",
+                    source: Static([
+                        "admin",
+                        "subscriber",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "message",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "team:get",
+            aliases: [
+                "team:list",
+            ],
+            description: Some("Get team members involved with your integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("Change the way structured data is presented. If \"json\" or \"raw\", you can pipe the output of the command into other tools, such as jq"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "plain",
+                                "json",
+                                "raw",
+                                "row",
+                                "table",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "team:remove",
+            aliases: [
+                "team:delete",
+            ],
+            description: Some("Remove a team member from all versions of your integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "test",
+            aliases: [],
+            description: Some("Test your integration via the \"test\" script in your \"package.json\""),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--skip-validate",
+                    ],
+                    description: Some("Forgo running `zapier validate` before tests are run. This will speed up tests if you\'re modifying functionality of an existing integration rather than adding new actions"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--yarn",
+                    ],
+                    description: Some("Use `yarn` instead of `npm`. This happens automatically if there\'s a `yarn.lock` file, but you can manually force `yarn` if you run tests from a sub-directory"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "upload",
+            aliases: [],
+            description: Some("Upload the latest build of your integration to Zapier"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "users:add",
+            aliases: [
+                "users:invite",
+            ],
+            description: Some("Add a user to some or all versions of your integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--force",
+                    ],
+                    description: Some("Skip confirmation. Useful for running programmatically"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "email",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "version",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "users:get",
+            aliases: [
+                "users:list",
+            ],
+            description: Some("Get a list of users who have been invited to your integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("Change the way structured data is presented. If \"json\" or \"raw\", you can pipe the output of the command into other tools, such as jq"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "plain",
+                                "json",
+                                "raw",
+                                "row",
+                                "table",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "users:links",
+            aliases: [],
+            description: Some("Get a list of links that are used to invite users to your integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("Change the way structured data is presented. If \"json\" or \"raw\", you can pipe the output of the command into other tools, such as jq"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "plain",
+                                "json",
+                                "raw",
+                                "row",
+                                "table",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "users:remove",
+            aliases: [
+                "users:delete",
+            ],
+            description: Some("Remove a user from all versions of your integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--force",
+                    ],
+                    description: Some("Skips confirmation. Useful for running programmatically"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "email",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "validate",
+            aliases: [],
+            description: Some("Validate your integration"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--without-style",
+                    ],
+                    description: Some("Forgo pinging the Zapier server to run further checks"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("Change the way structured data is presented. If \"json\" or \"raw\", you can pipe the output of the command into other tools, such as jq"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "plain",
+                                "json",
+                                "raw",
+                                "row",
+                                "table",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "versions",
+            aliases: [],
+            description: Some("List the versions of your integration available for use in the Zapier editor"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--format",
+                    ],
+                    description: Some("Change the way structured data is presented. If \"json\" or \"raw\", you can pipe the output of the command into other tools, such as jq"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "format",
+                            source: Static([
+                                "plain",
+                                "json",
+                                "raw",
+                                "row",
+                                "table",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--debug",
+                    ],
+                    description: Some("Show extra debugging output"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Display help for <%= config.bin %>"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--all",
+                    ],
+                    description: Some("See all commands in CLI"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "command",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [],
+    arguments: [],
+)

@@ -1,0 +1,450 @@
+(
+    version: 1,
+    command: "pass",
+    description: Some("Pass - stores, retrieves, generates, and synchronizes passwords securely"),
+    subcommands: [
+        (
+            name: "init",
+            aliases: [],
+            description: Some("Initialize new password storage and use gpg-id for encryption"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--path",
+                        "-p",
+                    ],
+                    description: Some("A specific gpg-id or set of gpg-ids is assigned for that specific sub folder of the password store"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sub-folder",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "gpg-id",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "insert",
+            aliases: [],
+            description: Some("Insert a new password into the password store called pass-name"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--echo",
+                        "-e",
+                    ],
+                    description: Some("Disable keyboard echo when the password is entered and confirm the password by asking for it twice"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--multi-line",
+                        "-m",
+                    ],
+                    description: Some("Lines will be read until EOF or Ctrl+D is reached. Otherwise, only a single line from standard in is read"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force",
+                        "-f",
+                    ],
+                    description: Some("Don\'t prompt before overwriting an existing password"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "pass-name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "git",
+            aliases: [],
+            description: Some("Password store git functions"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: Some("git"),
+        ),
+        (
+            name: "version",
+            aliases: [],
+            description: Some("Show version information"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Show usage message"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "cp",
+            aliases: [],
+            description: Some("Copies the password or directory named old-path to new-path"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--force",
+                        "-f",
+                    ],
+                    description: Some("Do not interactively prompt before moving"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "old-path",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+                (
+                    name: "new-path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "mv",
+            aliases: [],
+            description: Some("Renames the password or directory named old-path to new-path"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--force",
+                        "-f",
+                    ],
+                    description: Some("Do not interactively prompt before moving"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "old-path",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+                (
+                    name: "new-path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "rm",
+            aliases: [],
+            description: Some("Remove the password named pass-name from the password store"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--recursive",
+                        "-r",
+                    ],
+                    description: Some("Delete pass-name recursively if it is a directory"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force",
+                        "-f",
+                    ],
+                    description: Some("Do not interactively prompt before removal"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "pass-name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "generate",
+            aliases: [],
+            description: Some("Generate a new password of length pass-length and insert into pass-name"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--no-symbols",
+                        "-n",
+                    ],
+                    description: Some("Do not use any non-alphanumeric characters in the generated password"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--clip",
+                        "-c",
+                    ],
+                    description: Some("Do not print the password but instead copy it to the clipboard"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--in-place",
+                        "-i",
+                    ],
+                    description: Some("Do not interactively prompt, and only replace the first line of the password file with the new generated password, keeping the remainder of the file intact"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--force",
+                        "-f",
+                    ],
+                    description: Some("Overwrite the existing password"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "pass-name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "pass-length",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "ls",
+            aliases: [
+                "list",
+            ],
+            description: Some("List names of passwords inside the tree at subfolder by using the tree"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "password sub-directory",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "find",
+            aliases: [],
+            description: Some("List names of passwords inside the tree that match pass-names"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "pass-name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "show",
+            aliases: [],
+            description: Some("Decrypt and print a password"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--clip",
+                        "-c",
+                    ],
+                    description: Some("Copy the password to the clipboard"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--qrcode",
+                        "-q",
+                    ],
+                    description: Some("Display a QRcode of the password"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "pass-name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "edit",
+            aliases: [],
+            description: Some("Insert a new password or edit an existing password using the default text editor specified by the environment"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "pass-name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "grep",
+            aliases: [],
+            description: Some("Searches inside each decrypted password file for search-string. Grep options can be used"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "pass-name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: Some("grep"),
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--clip",
+                "-c",
+            ],
+            description: Some("Copy the password to the clipboard"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--qrcode",
+                "-q",
+            ],
+            description: Some("Display a QRcode of the password"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--help",
+            ],
+            description: Some("Show help for pass"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "pass-name",
+            source: Unavailable,
+            optional: false,
+            variadic: false,
+            imported_generator: Some((
+                script: [],
+                has_post_process: false,
+                has_custom: true,
+            )),
+        ),
+    ],
+)

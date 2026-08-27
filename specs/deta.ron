@@ -1,0 +1,768 @@
+(
+    version: 1,
+    command: "deta",
+    description: Some("Deta CLI for managing Deta Micros"),
+    subcommands: [
+        (
+            name: "login",
+            aliases: [],
+            description: Some("Trigger the login process for the Deta CLI"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for login"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "version",
+            aliases: [],
+            description: Some("Print the Deta version"),
+            subcommands: [
+                (
+                    name: "upgrade",
+                    aliases: [],
+                    description: Some("Upgrade Deta CLI version"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                            ],
+                            description: Some("Show help for upgrade"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-v",
+                            ],
+                            description: Some("Upgrade CLI to specific version"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "Version number",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for version"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "projects",
+            aliases: [],
+            description: Some("List Deta projects"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for projects"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "new",
+            aliases: [],
+            description: Some("Create a new Deta Micro"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for new"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-n",
+                    ],
+                    description: Some("Create a micro with Node (node14.x) runtime"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                    ],
+                    description: Some("Create a micro with Python (python 3.9) runtime"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--name",
+                    ],
+                    description: Some("Set the name of the new micro"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--project",
+                    ],
+                    description: Some("Set the project under which the micro is created"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "project",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--runtime",
+                    ],
+                    description: Some("Create a micro with a specified runtime"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "runtime",
+                            source: Static([
+                                "node12",
+                                "node14",
+                                "python3.7",
+                                "python3.9",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "path",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "deploy",
+            aliases: [],
+            description: Some("Deploy new code to a Deta Micro"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for deploy"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "path",
+                    source: Directories,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "details",
+            aliases: [],
+            description: Some("Get detailed information about a specific Deta micro"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for details"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "path",
+                    source: Directories,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "watch",
+            aliases: [],
+            description: Some("Auto-deploy locally saved changes in real time to your Deta micro"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for watch"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "path",
+                    source: Directories,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "auth",
+            aliases: [],
+            description: Some("Change auth settings for a Deta Micro"),
+            subcommands: [
+                (
+                    name: "disable",
+                    aliases: [],
+                    description: Some("Disable HTTP Auth for a Deta Micro"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                            ],
+                            description: Some("Show help for auth disable"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "enable",
+                    aliases: [],
+                    description: Some("Enable HTTP Auth for a Deta Micro"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                            ],
+                            description: Some("Show help for auth enable"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "create-api-key",
+                    aliases: [],
+                    description: Some("Create an API key for a Deta Micro"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                            ],
+                            description: Some("Show help for auth create-api-key"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-d",
+                            ],
+                            description: Some("Set the api-key description"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "description",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-n",
+                            ],
+                            description: Some("Set the api-key name"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "name",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-o",
+                            ],
+                            description: Some("Set the api-key output file"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "outfile",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "delete-api-key",
+                    aliases: [],
+                    description: Some("Delete an API key for a Deta Micro"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                            ],
+                            description: Some("Show help for auth delete-api-key"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-n",
+                            ],
+                            description: Some("Set the api-key name"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "name",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for auth"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "pull",
+            aliases: [],
+            description: Some("Pull the latest deployed code of a Deta Micro to your local machine"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for pull"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-f",
+                    ],
+                    description: Some("Force the overwrite of existing files"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "clone",
+            aliases: [],
+            description: Some("Clone a Deta Micro"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for clone"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-n",
+                    ],
+                    description: Some("The name of the micro to be cloned"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                    ],
+                    description: Some("The name of the project with the micro to be cloned"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "project",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "path",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "update",
+            aliases: [],
+            description: Some("Update a Deta Micro\'s name or environment variables"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for pull"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-n",
+                    ],
+                    description: Some("The new name of the micro"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-r",
+                    ],
+                    description: Some("The new runtime of the micro"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "runtime",
+                            source: Static([
+                                "node12",
+                                "node14",
+                                "python3.7",
+                                "python3.9",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-e",
+                    ],
+                    description: Some("The new env file of the micro"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "env",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "visor",
+            aliases: [],
+            description: Some("Change the Visor settings for a Deta Micro"),
+            subcommands: [
+                (
+                    name: "open",
+                    aliases: [],
+                    description: Some("Open Micro\'s visor page in the browser"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                            ],
+                            description: Some("Show help for visor open"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "enable",
+                    aliases: [],
+                    description: Some("Enable Visor for a Deta Micro"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                            ],
+                            description: Some("Show help for visor enable"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "disable",
+                    aliases: [],
+                    description: Some("Disable Visor for a Deta Micro"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                            ],
+                            description: Some("Show help for visor disable"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for visor"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "run",
+            aliases: [],
+            description: Some("Run a Deta Micro from the CLI"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for run"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-l",
+                    ],
+                    description: Some("Show the micro logs"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "action",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "cron",
+            aliases: [],
+            description: Some("Change cron settings for a Deta Micro"),
+            subcommands: [
+                (
+                    name: "set",
+                    aliases: [],
+                    description: Some("Set Deta Micro to run on a schedule"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                            ],
+                            description: Some("Show help for cron set"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "expression",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "remove",
+                    aliases: [],
+                    description: Some("Remove a schedule from a Deta Micro"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "-h",
+                            ],
+                            description: Some("Show help for cron remove"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "expression",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [
+                (
+                    names: [
+                        "-h",
+                    ],
+                    description: Some("Show help for cron"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "-h",
+            ],
+            description: Some("Show help for deta"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

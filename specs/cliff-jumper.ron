@@ -1,0 +1,210 @@
+(
+    version: 1,
+    command: "cliff-jumper",
+    description: Some("A small CLI tool to create a semantic release and git-cliff powered Changelog"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Display help for command"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--name",
+                "-n",
+            ],
+            description: Some("The package name to release"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--package-path",
+                "-p",
+            ],
+            description: Some("The path to the current package. For non-monorepos this is just \".\""),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "path",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--dry-run",
+            ],
+            description: Some("Whether the package should be bumped or not. When this is set no actions will be taken and only the release strategy will be logged"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--first-release",
+            ],
+            description: Some("Whether this is the first release (skips bumping the version)\'"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--mono-repo",
+            ],
+            description: Some("Whether the package to be bumped resides in a mono repo,\nwhich enables Lerna-like scanning for what kind of version bump should be applied\nDefaults to \"true\" when \"org\" is set, false otherwise"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-mono-repo",
+            ],
+            description: Some("Whether the package to be bumped resides in a mono repo,\nwhich enables Lerna-like scanning for what kind of version bump should be applied\nDefaults to \"true\" when \"org\" is set, false otherwise"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--org",
+                "-o",
+            ],
+            description: Some("The NPM org scope that should be used. This should be WITHOUT \"@\" sign or trailing \"/\""),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "organisation",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--preid",
+            ],
+            description: Some("The \"prerelease identifier\" to use as a prefix for the \"prerelease\" part of a semver"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "id",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--commit-message-template",
+                "-c",
+            ],
+            description: Some("A custom commit message template to use.\nDefaults to \"chore({{name}}): release {{full-name}}@{{new-version}}\"\nYou can use \"{{new-version}}\" in your template which will be dynamically replaced with whatever the new version is that will be published.\nYou can use \"{{name}}\" in your template, this will be replaced with the name provided through \"-n\", \"--name\" or the same value set in your config file.\nYou can use \"{{full-name}}\" in your template, this will be replaced \"{{name}}\" (when \"org\" is not provided), or \"@{{org}}/{{name}}\" (when \"org\" is provided)."),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "template",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--tag-template",
+            ],
+            description: Some("A custom tag template to use.\nWhen \"org\" is provided this will default to \"@{{org}}/{{name}}@{{new-version}}\", for example \"@favware/cliff-jumper@1.0.0\"\nWhen \"org\" is not provided this will default to \"v{{new-version}}\", for example \"v1.0.0\"\nYou can use \"{{new-version}}\" in your template which will be dynamically replaced with whatever the new version is that will be published.\nYou can use \"{{org}}\" in your template, this will be replaced with the org provided through \"-o\", \"--org\" or the same value set in your config file.\nYou can use \"{{name}}\" in your template, this will be replaced with the name provided through \"-n\", \"--name\" or the same value set in your config file.\nYou can use \"{{full-name}}\" in your template, this will be replaced \"{{name}}\" (when \"org\" is not provided), or \"@{{org}}/{{name}}\" (when \"org\" is provided)."),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "template",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--install",
+                "-i",
+            ],
+            description: Some("Whether to run npm install (or your package manager\'s equivalent) after bumping the version but before committing and creating a git tag. This is useful when you have a mono repo where bumping one package would then cause the lockfile to be out of date"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--skip-changelog",
+            ],
+            description: Some("Whether to skip updating your CHANGELOG.md\ndefault \"true\" when CI=true, \"false\" otherwise"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-skip-changelog",
+            ],
+            description: Some("Whether to skip updating your CHANGELOG.md\ndefault \"true\" when CI=true, \"false\" otherwise"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--skip-tag",
+                "-t",
+            ],
+            description: Some("Whether to skip creating a git tag\ndefault \"true\" when CI=true, \"false\" otherwise"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-skip-tag",
+            ],
+            description: Some("Whether to skip creating a git tag\ndefault \"true\" when CI=true, \"false\" otherwise"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--verbose",
+                "-v",
+            ],
+            description: Some("Whether to print verbose information"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+                "-V",
+            ],
+            description: Some("Output the version number"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

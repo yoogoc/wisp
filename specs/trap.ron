@@ -1,0 +1,50 @@
+(
+    version: 1,
+    command: "trap",
+    description: Some("Automatically execute commands after receiving signals by processes or the operating system"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "--print",
+                "-p",
+            ],
+            description: Some("Prints all defined signal handlers"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Displays help about using this command"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "function name",
+            source: Files,
+            optional: true,
+            variadic: false,
+            imported_generator: None,
+        ),
+        (
+            name: "reason",
+            source: Unavailable,
+            optional: false,
+            variadic: false,
+            imported_generator: Some((
+                script: [
+                    "command",
+                    "kill",
+                    "-l",
+                ],
+                has_post_process: true,
+                has_custom: false,
+            )),
+        ),
+    ],
+)

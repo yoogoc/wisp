@@ -53,9 +53,18 @@ pub trait AiProvider: Send + Sync {
 
 #[derive(Debug, Clone, Default, Deserialize)]
 pub struct AiConfig {
+    #[serde(default)]
+    pub completion: CompletionConfig,
     pub default_provider: Option<String>,
     #[serde(default)]
     pub providers: HashMap<String, ProviderConfig>,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+pub struct CompletionConfig {
+    /// Zero keeps every matching candidate.
+    #[serde(default)]
+    pub max_candidates: usize,
 }
 
 impl AiConfig {
@@ -403,6 +412,7 @@ mod tests {
     #[test]
     fn rejects_missing_default_provider() {
         let config = AiConfig {
+            completion: CompletionConfig::default(),
             default_provider: Some("missing".into()),
             providers: HashMap::new(),
         };
@@ -419,6 +429,7 @@ mod tests {
     fn example_configuration_is_valid() {
         let config: AiConfig =
             toml::from_str(include_str!("../../../config.example.toml")).unwrap();
+        assert_eq!(config.completion.max_candidates, 0);
         assert!(ProviderRegistry::from_config(config).is_ok());
     }
 
@@ -439,6 +450,7 @@ mod tests {
             },
         );
         let registry = ProviderRegistry::from_config(AiConfig {
+            completion: CompletionConfig::default(),
             default_provider: Some("custom".into()),
             providers,
         })

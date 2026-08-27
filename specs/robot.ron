@@ -1,0 +1,1071 @@
+(
+    version: 1,
+    command: "robot",
+    description: Some("CLI for running Robot Framework automation tests"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-h",
+                "-?",
+                "--help",
+            ],
+            description: Some("Print usage instructions"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--rpa",
+            ],
+            description: Some("Turn on the generic automation mode. Mainly affects terminology so that \"test\" is replaced with \"task\" in logs and reports"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-F",
+                "--extension",
+            ],
+            description: Some("Parse only files with this extension when executing a directory"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "extension",
+                    source: Static([
+                        "txt",
+                        "robot:txt",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-N",
+                "--name",
+            ],
+            description: Some("Set a name of the top level suite"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-D",
+                "--doc",
+            ],
+            description: Some("Set a documentation of the top level suite"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-M",
+                "--metadata",
+            ],
+            description: Some("Set metadata of the top level suite"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name:value",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-G",
+                "--settag",
+            ],
+            description: Some("Sets given tag to all executed tests"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "tag",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-t",
+                "--test",
+            ],
+            description: Some("Select tests by name or by long name containing also parent suite name like `Parent.Test`"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "for i in $(find -E . -regex \".*.robot\" -type f); do cat -s $i ; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--task",
+            ],
+            description: Some("Alias to --test. Especially applicable with --rpa"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "for i in $(find -E . -regex \".*.robot\" -type f); do cat -s $i ; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-s",
+                "--suite",
+            ],
+            description: Some("Select suites by name"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "name",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-i",
+                "--include",
+            ],
+            description: Some("Select test cases by tag"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "tag",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "for i in $(find -E . -regex \".*.robot\" -type f); do cat -s $i ; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-e",
+                "--exclude",
+            ],
+            description: Some("Select test cases not to run by tag"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "tag",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "for i in $(find -E . -regex \".*.robot\" -type f); do cat -s $i ; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-R",
+                "--rerunfailed",
+            ],
+            description: Some("Select failed tests from an earlier output file to be re-executed"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "output file",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-S",
+                "--rerunfailedsuites",
+            ],
+            description: Some("Select failed suites from an earlier output file to be re-executed"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "output file",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--runemptysuite",
+            ],
+            description: Some("Executes suite even if it contains no tests"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--skip",
+            ],
+            description: Some("Tests having given tag will be skipped"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "tag",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "for i in $(find -E . -regex \".*.robot\" -type f); do cat -s $i ; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--skiponfailure",
+            ],
+            description: Some("Tests having given tag will be skipped if they fail"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "tag",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "for i in $(find -E . -regex \".*.robot\" -type f); do cat -s $i ; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-v",
+                "--variable",
+            ],
+            description: Some("Set variables in the test data"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "variable",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-V",
+                "--variablefile",
+            ],
+            description: Some("Python or YAML file file to read variables from"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-d",
+                "--outputdir",
+            ],
+            description: Some("Where to create output files. The default is the directory where tests are run from"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "directory",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-o",
+                "--output",
+            ],
+            description: Some("XML output file relative to --outputdir unless given as an absolute path. Default: output.xml"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Static([
+                        "output.xml",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-l",
+                "--log",
+            ],
+            description: Some("HTML log file. Can be disabled by giving a special value `NONE`. Default: log.html"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Static([
+                        "log.html",
+                        "NONE",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-r",
+                "--report",
+            ],
+            description: Some("HTML report file. Can be disabled with `NONE` similarly as --log. Default: report.html"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Static([
+                        "report.html",
+                        "NONE",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-x",
+                "--xunit",
+            ],
+            description: Some("XUnit compatible result file. Not created unless this option is specified"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Static([
+                        "xunit.xml",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-b",
+                "--debugfile",
+            ],
+            description: Some("Debug file written during execution. Not created unless this option is specified"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "file",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-T",
+                "--timestampoutputs",
+            ],
+            description: Some("Adds timestamp in a format `YYYYMMDD-hhmmss` to all generated output files between their basename and extension"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--splitlog",
+            ],
+            description: Some("Split the log file into smaller pieces that open in browsers transparently"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--logtitle",
+            ],
+            description: Some("Title for the generated log file. The default title is `<SuiteName> Log.`"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "title",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--reporttitle",
+            ],
+            description: Some("Title for the generated report file. The default title is `<SuiteName> Report`"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "title",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--reportbackground",
+            ],
+            description: Some("Background colors to use in the report file. Given in format `passed:failed:skipped` where the `:skipped` part can be omitted"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "colors",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--maxerrorlines",
+            ],
+            description: Some("Maximum number of error message lines to show in report when tests fail. Default is 40, minimum is 10 and `NONE` can be used to show the full message"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "lines",
+                    source: Static([
+                        "40",
+                        "10",
+                        "NONE",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--maxassignlength",
+            ],
+            description: Some("Maximum number of characters to show in log when variables are assigned. Zero or negative values can be used to avoid showing assigned values at all. Default is 200"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "characters",
+                    source: Static([
+                        "200",
+                        "0",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-L",
+                "--loglevel",
+            ],
+            description: Some("Threshold level for logging"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "level",
+                    source: Static([
+                        "TRACE",
+                        "DEBUG",
+                        "INFO",
+                        "WARN",
+                        "NONE",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--suitestatlevel",
+            ],
+            description: Some("How many levels to show in `Statistics by Suite` in log and report"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "level",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--tagstatinclude",
+            ],
+            description: Some("Include only matching tags in `Statistics by Tag` in log and report"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "tag",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "for i in $(find -E . -regex \".*.robot\" -type f); do cat -s $i ; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--tagstatexclude",
+            ],
+            description: Some("Exclude matching tags from `Statistics by Tag`"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "tag",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "for i in $(find -E . -regex \".*.robot\" -type f); do cat -s $i ; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--tagstatcombine",
+            ],
+            description: Some("Create combined statistics based on tags. These statistics are added into `Statistics by Tag`"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "tags:name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "for i in $(find -E . -regex \".*.robot\" -type f); do cat -s $i ; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--tagdoc",
+            ],
+            description: Some("Add documentation to tags matching the given pattern"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "pattern:doc",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "for i in $(find -E . -regex \".*.robot\" -type f); do cat -s $i ; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--tagstatlink",
+            ],
+            description: Some("Add external links into `Statistics by Tag`. Pattern can use `*`, `?` and `[]` as wildcards"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "pattern:link:title",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "for i in $(find -E . -regex \".*.robot\" -type f); do cat -s $i ; done",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--expandkeywords",
+            ],
+            description: Some("Matching keywords will be automatically expanded in the log file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "pattern",
+                    source: Static([
+                        "name:<pattern>",
+                        "tag:<pattern>",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--removekeywords",
+            ],
+            description: Some("Remove keyword data from the generated log file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "pattern",
+                    source: Static([
+                        "all",
+                        "passed",
+                        "for",
+                        "while",
+                        "wuks",
+                        "name:<pattern>",
+                        "tag:<pattern>",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--flattenkeywords",
+            ],
+            description: Some("Flattens matching keywords in the generated log file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "pattern",
+                    source: Static([
+                        "for",
+                        "while",
+                        "iteration",
+                        "name:<pattern>",
+                        "tag:<pattern>",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--listener",
+            ],
+            description: Some("A class for monitoring test execution. Gets notifications e.g. when tests start and end"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "class",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--nostatusrc",
+            ],
+            description: Some("Sets the return code to zero regardless of failures in test cases. Error codes are returned normally"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--dryrun",
+            ],
+            description: Some("Sets the return code to zero regardless of failures in test cases. Error codes are returned normally"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-X",
+                "--exitonfailure",
+            ],
+            description: Some("Stops test execution if any test fails"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--exitonerror",
+            ],
+            description: Some("Stops test execution if any error occurs when parsing test data, importing libraries, and so on"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--skipteardownonexit",
+            ],
+            description: Some("Causes teardowns to be skipped if test execution is stopped prematurely"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--randomize",
+            ],
+            description: Some("Randomizes the test execution order"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "type",
+                    source: Static([
+                        "all",
+                        "suites",
+                        "tests",
+                        "none",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--prerunmodifier",
+            ],
+            description: Some("Class to programmatically modify the suite structure before execution"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "class",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--prerebotmodifier",
+            ],
+            description: Some("Class to programmatically modify the result model before creating reports and logs"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "class",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--console",
+            ],
+            description: Some("How to report execution on the console"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "type",
+                    source: Static([
+                        "verbose",
+                        "dotted",
+                        "quiet",
+                        "none",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-.",
+                "--dotted",
+            ],
+            description: Some("Shortcut for `--console dotted`"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--quiet",
+            ],
+            description: Some("Shortcut for `--console quiet`"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-W",
+                "--consolewidth",
+            ],
+            description: Some("Width of the console output. Default is 78"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "chars",
+                    source: Static([
+                        "78",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-C",
+                "--consolecolors",
+            ],
+            description: Some("Use colors on console output or not"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "option",
+                    source: Static([
+                        "auto",
+                        "on",
+                        "ansi",
+                        "off",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-K",
+                "--consolemarkers",
+            ],
+            description: Some("Show markers on the console when top level keywords in a test case end"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "option",
+                    source: Static([
+                        "auto",
+                        "on",
+                        "off",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-P",
+                "--pythonpath",
+            ],
+            description: Some("Additional locations (directories, ZIPs) where to search libraries and other extensions when they are imported"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "path",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-A",
+                "--argumentfile",
+            ],
+            description: Some("Text file to read more arguments from. Use special path `STDIN` to read contents from the standard input stream"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--version",
+            ],
+            description: Some("Print version information"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "robot script",
+            source: Unavailable,
+            optional: false,
+            variadic: true,
+            imported_generator: Some((
+                script: [],
+                has_post_process: false,
+                has_custom: true,
+            )),
+        ),
+    ],
+)

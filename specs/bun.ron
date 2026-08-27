@@ -1,0 +1,2855 @@
+(
+    version: 1,
+    command: "bun",
+    description: Some("A fast bundler, transpiler, JavaScript Runtime and package manager for web software"),
+    subcommands: [
+        (
+            name: "c",
+            aliases: [
+                "create",
+            ],
+            description: Some("Start a new project from a template"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--force",
+                    ],
+                    description: Some("Overwrite existing files"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-install",
+                    ],
+                    description: Some("Don\'t install node_modules"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-git",
+                    ],
+                    description: Some("Don\'t create a git repository"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Too many logs"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-package-json",
+                    ],
+                    description: Some("Disable package.json transforms"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--open",
+                    ],
+                    description: Some("On finish, start bun and open in browser"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "template",
+                    source: Static([
+                        "react",
+                        "next",
+                        "hono",
+                        "discord-interactions",
+                        "blank",
+                        "bun-bakery",
+                        "react-native-app",
+                        "completion-spec",
+                        "next-app",
+                        "t3-app",
+                        "discord-bot",
+                        "video",
+                        "remix",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "command",
+                            "ls",
+                            "-1",
+                            ".bun-create",
+                        ],
+                        has_post_process: true,
+                        has_custom: true,
+                    )),
+                ),
+                (
+                    name: "name",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "run",
+            aliases: [],
+            description: Some("Run a package.json script or executable"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "script",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
+                        ],
+                        has_post_process: true,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "i",
+            aliases: [
+                "install",
+            ],
+            description: Some("Install dependencies for a package.json"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-c",
+                        "--config",
+                    ],
+                    description: Some("Load config (bunfig.toml)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-y",
+                        "--yarn",
+                    ],
+                    description: Some("Write a yarn.lock file (yarn v1)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--production",
+                    ],
+                    description: Some("Don\'t install devDependencies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-save",
+                    ],
+                    description: Some("Don\'t save a lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--save",
+                    ],
+                    description: Some("Save to package.json"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--dry-run",
+                    ],
+                    description: Some("Don\'t install anything"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--frozen-lockfile",
+                    ],
+                    description: Some("Disallow changes to lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-f",
+                        "--force",
+                    ],
+                    description: Some("Always request the latest versions from the registry & reinstall all dependencies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--cache-dir",
+                    ],
+                    description: Some("Store & load cached data from a specific directory path"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-cache",
+                    ],
+                    description: Some("Ignore manifest cache entirely"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--silent",
+                    ],
+                    description: Some("Don\'t log anything"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Excessively verbose logging"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-g",
+                        "--global",
+                    ],
+                    description: Some("Install globally"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--cwd",
+                    ],
+                    description: Some("Set a specific cwd"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--backend",
+                    ],
+                    description: Some("Platform-specific optimizations for installing dependencies. For macOS, \'clonefile\' (default), \'copyfile\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "syscall",
+                            source: Static([
+                                "clonefile",
+                                "copyfile",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--link-native-bins",
+                    ],
+                    description: Some("Link \'bin\' from a matching platform-specific \'optionalDependencies\' instead. Default: esbuild, turbo"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "str",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--help",
+                    ],
+                    description: Some("Print the help menu"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable the progress bar"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-summary",
+                    ],
+                    description: Some("Don\'t print a summary"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-verify",
+                    ],
+                    description: Some("Skip verifying integrity of newly downloaded packages"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ignore-scripts",
+                    ],
+                    description: Some("Skip lifecycle scripts in the project\'s package.json (dependency scripts are never run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--dev",
+                        "-D",
+                        "--development",
+                    ],
+                    description: Some("Install as devDependency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--exact",
+                    ],
+                    description: Some("Install exact version"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--optional",
+                    ],
+                    description: Some("Install as optionalDependency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "a",
+            aliases: [
+                "add",
+            ],
+            description: Some("Add a dependency to package.json"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-c",
+                        "--config",
+                    ],
+                    description: Some("Load config (bunfig.toml)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-y",
+                        "--yarn",
+                    ],
+                    description: Some("Write a yarn.lock file (yarn v1)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--production",
+                    ],
+                    description: Some("Don\'t install devDependencies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-save",
+                    ],
+                    description: Some("Don\'t save a lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--save",
+                    ],
+                    description: Some("Save to package.json"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--dry-run",
+                    ],
+                    description: Some("Don\'t install anything"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--frozen-lockfile",
+                    ],
+                    description: Some("Disallow changes to lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-f",
+                        "--force",
+                    ],
+                    description: Some("Always request the latest versions from the registry & reinstall all dependencies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--cache-dir",
+                    ],
+                    description: Some("Store & load cached data from a specific directory path"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-cache",
+                    ],
+                    description: Some("Ignore manifest cache entirely"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--silent",
+                    ],
+                    description: Some("Don\'t log anything"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Excessively verbose logging"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-g",
+                        "--global",
+                    ],
+                    description: Some("Install globally"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--cwd",
+                    ],
+                    description: Some("Set a specific cwd"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--backend",
+                    ],
+                    description: Some("Platform-specific optimizations for installing dependencies. For macOS, \'clonefile\' (default), \'copyfile\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "syscall",
+                            source: Static([
+                                "clonefile",
+                                "copyfile",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--link-native-bins",
+                    ],
+                    description: Some("Link \'bin\' from a matching platform-specific \'optionalDependencies\' instead. Default: esbuild, turbo"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "str",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--help",
+                    ],
+                    description: Some("Print the help menu"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable the progress bar"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-summary",
+                    ],
+                    description: Some("Don\'t print a summary"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-verify",
+                    ],
+                    description: Some("Skip verifying integrity of newly downloaded packages"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ignore-scripts",
+                    ],
+                    description: Some("Skip lifecycle scripts in the project\'s package.json (dependency scripts are never run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--dev",
+                        "-D",
+                        "--development",
+                    ],
+                    description: Some("Install as devDependency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--exact",
+                    ],
+                    description: Some("Install exact version"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--optional",
+                    ],
+                    description: Some("Install as optionalDependency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "package",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "rm",
+            aliases: [
+                "remove",
+            ],
+            description: Some("Remove a dependency from package.json"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-c",
+                        "--config",
+                    ],
+                    description: Some("Load config (bunfig.toml)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-y",
+                        "--yarn",
+                    ],
+                    description: Some("Write a yarn.lock file (yarn v1)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--production",
+                    ],
+                    description: Some("Don\'t install devDependencies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-save",
+                    ],
+                    description: Some("Don\'t save a lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--save",
+                    ],
+                    description: Some("Save to package.json"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--dry-run",
+                    ],
+                    description: Some("Don\'t install anything"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--frozen-lockfile",
+                    ],
+                    description: Some("Disallow changes to lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-f",
+                        "--force",
+                    ],
+                    description: Some("Always request the latest versions from the registry & reinstall all dependencies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--cache-dir",
+                    ],
+                    description: Some("Store & load cached data from a specific directory path"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-cache",
+                    ],
+                    description: Some("Ignore manifest cache entirely"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--silent",
+                    ],
+                    description: Some("Don\'t log anything"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Excessively verbose logging"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-g",
+                        "--global",
+                    ],
+                    description: Some("Install globally"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--cwd",
+                    ],
+                    description: Some("Set a specific cwd"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--backend",
+                    ],
+                    description: Some("Platform-specific optimizations for installing dependencies. For macOS, \'clonefile\' (default), \'copyfile\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "syscall",
+                            source: Static([
+                                "clonefile",
+                                "copyfile",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--link-native-bins",
+                    ],
+                    description: Some("Link \'bin\' from a matching platform-specific \'optionalDependencies\' instead. Default: esbuild, turbo"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "str",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--help",
+                    ],
+                    description: Some("Print the help menu"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable the progress bar"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-summary",
+                    ],
+                    description: Some("Don\'t print a summary"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-verify",
+                    ],
+                    description: Some("Skip verifying integrity of newly downloaded packages"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ignore-scripts",
+                    ],
+                    description: Some("Skip lifecycle scripts in the project\'s package.json (dependency scripts are never run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--dev",
+                        "-D",
+                        "--development",
+                    ],
+                    description: Some("Install as devDependency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--exact",
+                    ],
+                    description: Some("Install exact version"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--optional",
+                    ],
+                    description: Some("Install as optionalDependency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "package",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "build",
+            aliases: [
+                "bun",
+            ],
+            description: Some("Bundle files using Bun\'s native bundler"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Display this help and exit"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-b",
+                        "--bun",
+                    ],
+                    description: Some("Force a script or package to use Bun\'s runtime instead of Node.js (via symlinking node)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--cwd",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-c",
+                        "--config",
+                    ],
+                    description: Some("Load config (bunfig.toml)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--extension-order",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "order",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--jsx-factory",
+                    ],
+                    description: Some("Changes the function called when compiling JSX elements using the classic JSX runtime"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Static([
+                                "React.createElement",
+                                "h",
+                                "preact.h",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--jsx-fragment",
+                    ],
+                    description: Some("Changes the function called when compiling JSX fragments"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "string",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--jsx-import-source",
+                    ],
+                    description: Some("Declares the module specifier to be used for importing the jsx and jsxs factory functions. Default: \"react\""),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "module",
+                            source: Static([
+                                "react",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--jsx-runtime",
+                    ],
+                    description: Some("\"automatic\" (default) or \"classic\""),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Static([
+                                "automatic",
+                                "classic",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-r",
+                        "--preload",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--main-fields",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-summary",
+                    ],
+                    description: Some("Don\'t print a summary (when generating .bun)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Print version and exit"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--revision",
+                    ],
+                    description: Some("Print version with revision and exit"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--tsconfig-override",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "overrides",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--define",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "k=v",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-e",
+                        "--external",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-l",
+                        "--loader",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: Some((
+                                script: [],
+                                has_post_process: false,
+                                has_custom: true,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-u",
+                        "--origin",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--port",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--smol",
+                    ],
+                    description: Some("Use less memory, but run garbage collection more often"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--minify",
+                    ],
+                    description: Some("Minify (experimental)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--minify-syntax",
+                    ],
+                    description: Some("Minify syntax and inline data (experimental)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--minify-whitespace",
+                    ],
+                    description: Some("Minify whitespace (experimental)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--minify-identifiers",
+                    ],
+                    description: Some("Minify identifiers"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-macros",
+                    ],
+                    description: Some("Disable macros from being executed in the bundler, transpiler and runtime"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--target",
+                    ],
+                    description: Some("Target environment"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [],
+                                has_post_process: false,
+                                has_custom: true,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--inspect",
+                    ],
+                    description: Some("Activate Bun\'s debugger for a file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "[host:]port",
+                            source: Static([
+                                "3000",
+                                "8080",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--inspect-wait",
+                    ],
+                    description: Some("Activate Bun\'s Debugger, wait for a connection before executing"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "[host:]port",
+                            source: Static([
+                                "3000",
+                                "8080",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--inspect-brk",
+                    ],
+                    description: Some("Activate Bun\'s Debugger, set breakpoint on first line of code and wait"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "[host:]port",
+                            source: Static([
+                                "3000",
+                                "8080",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--if-present",
+                    ],
+                    description: Some("Exit if the entrypoint does not exist"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--hot",
+                    ],
+                    description: Some("Enable auto reload in the Bun runtime, test runner, or bundler"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--watch",
+                    ],
+                    description: Some("Automatically restart the process on file change"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-install",
+                    ],
+                    description: Some("Disable auto install in the Bun runtime"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-i",
+                    ],
+                    description: Some("Automatically install dependencies and use global cache in Bun\'s runtime, equivalent to --install=fallback"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--install",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "arg",
+                            source: Static([
+                                "auto",
+                                "force",
+                                "fallback",
+                                "disable",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--prefer-offline",
+                    ],
+                    description: Some("Skip staleness checks for packages in the Bun runtime and resolve from disk"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--prefer-latest",
+                    ],
+                    description: Some("Use the latest matching versions of packages in the Bun runtime, always checking npm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--silent",
+                    ],
+                    description: Some("Don\'t repeat the command for bun run"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "compile",
+                    ],
+                    description: Some("Generate a standalone Bun executable containing your bundled code"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--format",
+                    ],
+                    description: Some("Specifies the module format to build to. Only esm is supported currently"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Static([
+                                "esm",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--outdir",
+                    ],
+                    description: Some("Default to \"dist\" if multiple files"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--outfile",
+                    ],
+                    description: Some("Write to a file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--root",
+                    ],
+                    description: Some("Root directory used for multiple entry points"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--splitting",
+                    ],
+                    description: Some("Enable code splitting"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--public-path",
+                    ],
+                    description: Some("A prefix to be appended to any import paths in bundled code"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--sourcemap",
+                    ],
+                    description: Some("Build with sourcemaps - \'inline\', \'external\', or \'none\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Static([
+                                "inline",
+                                "external",
+                                "none",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--entry-naming",
+                    ],
+                    description: Some("Customize entry point filenames. Defaults to \"[dir]/[name].[ext]\""),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--chunk-naming",
+                    ],
+                    description: Some("Customize chunk filenames. Defaults to \"[name]-[hash].[ext]\""),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--asset-naming",
+                    ],
+                    description: Some("Customize asset filenames. Defaults to \"[name]-[hash].[ext]\""),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--server-components",
+                    ],
+                    description: Some("Enable React Server Components (experimental)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-bundle",
+                    ],
+                    description: Some("Transpile file only, do not bundle"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--dump-environment-variables",
+                    ],
+                    description: Some("Dump environment variables from .env and process as JSON and quit. Useful for debugging"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--dump-limits",
+                    ],
+                    description: Some("Dump system limits. Useful for debugging"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "entrypoints",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "update",
+            aliases: [],
+            description: Some("Update outdated dependencies"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-c",
+                        "--config",
+                    ],
+                    description: Some("Load config (bunfig.toml)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-y",
+                        "--yarn",
+                    ],
+                    description: Some("Write a yarn.lock file (yarn v1)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--production",
+                    ],
+                    description: Some("Don\'t install devDependencies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-save",
+                    ],
+                    description: Some("Don\'t save a lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--save",
+                    ],
+                    description: Some("Save to package.json"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--dry-run",
+                    ],
+                    description: Some("Don\'t install anything"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--frozen-lockfile",
+                    ],
+                    description: Some("Disallow changes to lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-f",
+                        "--force",
+                    ],
+                    description: Some("Always request the latest versions from the registry & reinstall all dependencies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--cache-dir",
+                    ],
+                    description: Some("Store & load cached data from a specific directory path"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-cache",
+                    ],
+                    description: Some("Ignore manifest cache entirely"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--silent",
+                    ],
+                    description: Some("Don\'t log anything"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--verbose",
+                    ],
+                    description: Some("Excessively verbose logging"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-g",
+                        "--global",
+                    ],
+                    description: Some("Install globally"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--cwd",
+                    ],
+                    description: Some("Set a specific cwd"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--backend",
+                    ],
+                    description: Some("Platform-specific optimizations for installing dependencies. For macOS, \'clonefile\' (default), \'copyfile\'"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "syscall",
+                            source: Static([
+                                "clonefile",
+                                "copyfile",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--link-native-bins",
+                    ],
+                    description: Some("Link \'bin\' from a matching platform-specific \'optionalDependencies\' instead. Default: esbuild, turbo"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "str",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--help",
+                    ],
+                    description: Some("Print the help menu"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-progress",
+                    ],
+                    description: Some("Disable the progress bar"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-summary",
+                    ],
+                    description: Some("Don\'t print a summary"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-verify",
+                    ],
+                    description: Some("Skip verifying integrity of newly downloaded packages"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--ignore-scripts",
+                    ],
+                    description: Some("Skip lifecycle scripts in the project\'s package.json (dependency scripts are never run)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--dev",
+                        "-D",
+                        "--development",
+                    ],
+                    description: Some("Install as devDependency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--exact",
+                    ],
+                    description: Some("Install exact version"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--optional",
+                    ],
+                    description: Some("Install as optionalDependency"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "package",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [],
+                        has_post_process: false,
+                        has_custom: true,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "link",
+            aliases: [],
+            description: Some("Run without an argument to register this package to the global package registry. Uses the name field from package.json"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--save",
+                    ],
+                    description: Some("Save to package.json"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "package",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "command",
+                            "sh",
+                            "-c",
+                            "find $BUN_INSTALL/install/global/node_modules -type l -o -type d -maxdepth 2 | awk -F \'node_modules/\' \'{print $2}\'",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "unlink",
+            aliases: [],
+            description: Some("Unlink this package from the global package registry"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "upgrade",
+            aliases: [],
+            description: Some("Get the latest version of bun"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--canary",
+                    ],
+                    description: Some("Install the latest canary release"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "test",
+            aliases: [],
+            description: Some("Run unit tests with Bun"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-h",
+                        "--help",
+                    ],
+                    description: Some("Display this help and exit"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-b",
+                        "--bun",
+                    ],
+                    description: Some("Force a script or package to use Bun\'s runtime instead of Node.js (via symlinking node)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--cwd",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-c",
+                        "--config",
+                    ],
+                    description: Some("Load config (bunfig.toml)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "path",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--extension-order",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "order",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--jsx-factory",
+                    ],
+                    description: Some("Changes the function called when compiling JSX elements using the classic JSX runtime"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Static([
+                                "React.createElement",
+                                "h",
+                                "preact.h",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--jsx-fragment",
+                    ],
+                    description: Some("Changes the function called when compiling JSX fragments"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "string",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--jsx-import-source",
+                    ],
+                    description: Some("Declares the module specifier to be used for importing the jsx and jsxs factory functions. Default: \"react\""),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "module",
+                            source: Static([
+                                "react",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--jsx-runtime",
+                    ],
+                    description: Some("\"automatic\" (default) or \"classic\""),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Static([
+                                "automatic",
+                                "classic",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-r",
+                        "--preload",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--main-fields",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-summary",
+                    ],
+                    description: Some("Don\'t print a summary (when generating .bun)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Print version and exit"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--revision",
+                    ],
+                    description: Some("Print version with revision and exit"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--tsconfig-override",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "overrides",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-d",
+                        "--define",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "k=v",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-e",
+                        "--external",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-l",
+                        "--loader",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: Some((
+                                script: [],
+                                has_post_process: false,
+                                has_custom: true,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-u",
+                        "--origin",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--port",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "args",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--smol",
+                    ],
+                    description: Some("Use less memory, but run garbage collection more often"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--minify",
+                    ],
+                    description: Some("Minify (experimental)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--minify-syntax",
+                    ],
+                    description: Some("Minify syntax and inline data (experimental)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--minify-whitespace",
+                    ],
+                    description: Some("Minify whitespace (experimental)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--minify-identifiers",
+                    ],
+                    description: Some("Minify identifiers"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-macros",
+                    ],
+                    description: Some("Disable macros from being executed in the bundler, transpiler and runtime"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--target",
+                    ],
+                    description: Some("Target environment"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [],
+                                has_post_process: false,
+                                has_custom: true,
+                            )),
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--inspect",
+                    ],
+                    description: Some("Activate Bun\'s debugger for a file"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "[host:]port",
+                            source: Static([
+                                "3000",
+                                "8080",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--inspect-wait",
+                    ],
+                    description: Some("Activate Bun\'s Debugger, wait for a connection before executing"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "[host:]port",
+                            source: Static([
+                                "3000",
+                                "8080",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--inspect-brk",
+                    ],
+                    description: Some("Activate Bun\'s Debugger, set breakpoint on first line of code and wait"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "[host:]port",
+                            source: Static([
+                                "3000",
+                                "8080",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--if-present",
+                    ],
+                    description: Some("Exit if the entrypoint does not exist"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--hot",
+                    ],
+                    description: Some("Enable auto reload in the Bun runtime, test runner, or bundler"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--watch",
+                    ],
+                    description: Some("Automatically restart the process on file change"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-install",
+                    ],
+                    description: Some("Disable auto install in the Bun runtime"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-i",
+                    ],
+                    description: Some("Automatically install dependencies and use global cache in Bun\'s runtime, equivalent to --install=fallback"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--install",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "arg",
+                            source: Static([
+                                "auto",
+                                "force",
+                                "fallback",
+                                "disable",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--prefer-offline",
+                    ],
+                    description: Some("Skip staleness checks for packages in the Bun runtime and resolve from disk"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--prefer-latest",
+                    ],
+                    description: Some("Use the latest matching versions of packages in the Bun runtime, always checking npm"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--silent",
+                    ],
+                    description: Some("Don\'t repeat the command for bun run"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--timeout",
+                    ],
+                    description: Some("Set the per-test timeout in milliseconds, default is 5000"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--update-snapshots",
+                    ],
+                    description: Some("Update snapshot files"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--rerun-each",
+                    ],
+                    description: Some("Re-run each test file <NUMBER> times, helps catch certain bugs"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--only",
+                    ],
+                    description: Some("Only run tests that are marked with \"test.only()\""),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--todo",
+                    ],
+                    description: Some("Include tests that are marked with \"test.todo()\""),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--coverage",
+                    ],
+                    description: Some("Generate a coverage profile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--bail",
+                    ],
+                    description: Some("Exit the test suite after <NUMBER> failures. If you do not specify a number, it defaults to 1"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-t",
+                        "--test-name-pattern",
+                    ],
+                    description: Some("Run only tests with a name that matches the given regex"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "pattern",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--dump-environment-variables",
+                    ],
+                    description: Some("Dump environment variables from .env and process as JSON and quit. Useful for debugging"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--dump-limits",
+                    ],
+                    description: Some("Dump system limits. Useful for debugging"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "files",
+                    source: Unavailable,
+                    optional: true,
+                    variadic: true,
+                    imported_generator: Some((
+                        script: [
+                            "command",
+                            "sh",
+                            "-c",
+                            "find $(npm prefix) | grep -E \".*.(test|_test|spec|_spec).(ts|tsx|js|jsx)$\" | grep -vE \".*/node_modules/.*\" | sed \"s|$(npm prefix)/||\"",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "pm",
+            aliases: [],
+            description: Some("Set of utilities for working with Bun\'s package manager"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "bin",
+                    ],
+                    description: Some("Print the path to bin folder"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "cache",
+                    ],
+                    description: Some("Print the path to the cache folder"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "hash",
+                    ],
+                    description: Some("Generate & print the hash of the current lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "hash-print",
+                    ],
+                    description: Some("Print the hash stored in the current lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "hash-string",
+                    ],
+                    description: Some("Print the string used to hash the lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "ls",
+                    ],
+                    description: Some("List the dependency tree according to the current lockfile"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "completions",
+            aliases: [],
+            description: Some("Install shell completions"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "discord",
+            aliases: [],
+            description: Some("Open bun\'s Discord server"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Print the help menu"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "x",
+            aliases: [],
+            description: Some("Run an npx command"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: Some("bunx"),
+        ),
+        (
+            name: "repl",
+            aliases: [],
+            description: Some("Run a REPL (read eval print loop) with the Bun runtime.(experimental)"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "init",
+            aliases: [],
+            description: Some("Initialize a new bun project"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-y",
+                        "--yes",
+                    ],
+                    description: Some("Answer yes to all prompts"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--inspect",
+            ],
+            description: Some("Activate Bun\'s debugger for a file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "[host:]port",
+                    source: Static([
+                        "3000",
+                        "8080",
+                    ]),
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--inspect-wait",
+            ],
+            description: Some("Activate Bun\'s Debugger, wait for a connection before executing"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "[host:]port",
+                    source: Static([
+                        "3000",
+                        "8080",
+                    ]),
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--inspect-brk",
+            ],
+            description: Some("Activate Bun\'s Debugger, set breakpoint on first line of code and wait"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "[host:]port",
+                    source: Static([
+                        "3000",
+                        "8080",
+                    ]),
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--hot",
+            ],
+            description: Some("Enable auto reload in the Bun runtime, test runner, or bundler"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--watch",
+            ],
+            description: Some("Automatically restart the process on file change"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "file",
+            source: Unavailable,
+            optional: false,
+            variadic: false,
+            imported_generator: Some((
+                script: [
+                    "bash",
+                    "-c",
+                    "until [[ -f package.json ]] || [[ $PWD = \'/\' ]]; do cd ..; done; cat package.json",
+                ],
+                has_post_process: true,
+                has_custom: true,
+            )),
+        ),
+        (
+            name: "args",
+            source: Files,
+            optional: false,
+            variadic: false,
+            imported_generator: None,
+        ),
+    ],
+)

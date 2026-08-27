@@ -1,0 +1,962 @@
+(
+    version: 1,
+    command: "cordova",
+    description: Some("Manage your Cordova application"),
+    subcommands: [
+        (
+            name: "create",
+            aliases: [],
+            description: Some("Create a project"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--verbose",
+                    ],
+                    description: Some("Pipe out more verbose output to your shell. You can also subscribe to log and warn events if you are consuming cordova-cli as a node module by calling cordova.on(\'log\', function() {}) or cordova.on(\'warn\', function() {})"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Print out the version of your cordova-cli install"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-update-notifier",
+                    ],
+                    description: Some("Will disable updates check"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--nohooks",
+                    ],
+                    description: Some("Suppress executing hooks (taking RegExp hook patterns as parameters)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-telemetry",
+                    ],
+                    description: Some("Disable telemetry collection for the current command"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--template",
+                    ],
+                    description: Some("Use a custom template located locally, in NPM, or GitHub"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "path",
+                    source: Directories,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "id",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "name",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "help",
+            aliases: [],
+            description: Some("Get help for a command"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "command",
+                    source: Static([
+                        "create",
+                        "help",
+                        "telemetry",
+                        "config",
+                        "info",
+                        "requirements",
+                        "platform",
+                        "plugin",
+                        "prepare",
+                        "compile",
+                        "build",
+                        "clean",
+                        "run",
+                        "serve",
+                    ]),
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "telemetry",
+            aliases: [],
+            description: Some("Turn telemetry collection on or off"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "on",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "off",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "config",
+            aliases: [],
+            description: Some("Set, get, delete, edit, and list global cordova options"),
+            subcommands: [
+                (
+                    name: "ls",
+                    aliases: [],
+                    description: Some("Lists contents of config file"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "edit",
+                    aliases: [],
+                    description: Some("Opens the config file in an editor"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "set",
+                    aliases: [],
+                    description: Some("Sets the config key to the value. If value is omitted, then it sets it to \"true\""),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "key",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "value",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "get",
+                    aliases: [],
+                    description: Some("Echo the config value to stdout"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "key",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "delete",
+                    aliases: [],
+                    description: Some("Deletes the key from all configuration files"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "key",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "info",
+            aliases: [],
+            description: Some("Generate project information"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "requirements",
+            aliases: [],
+            description: Some("Checks and print out all the installation requirements for platforms specified"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "platform",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cat",
+                            "package.json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "platform",
+            aliases: [
+                "platforms",
+            ],
+            description: Some("Manage project platforms"),
+            subcommands: [
+                (
+                    name: "add",
+                    aliases: [],
+                    description: Some("Add specified platforms"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--nosave",
+                            ],
+                            description: Some("Do not save"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--link",
+                            ],
+                            description: Some("When platform-spec is a local path, link the platform library directly instead of making a copy of it"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "path",
+                                    source: Directories,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "platform",
+                            source: Static([
+                                "android",
+                                "ios",
+                                "windows",
+                                "browser",
+                                "electron",
+                            ]),
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "remove",
+                    aliases: [
+                        "rm",
+                    ],
+                    description: Some("Remove specified platforms"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--nosave",
+                            ],
+                            description: Some("Do not delete specified platforms from"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "platform",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: Some((
+                                script: [
+                                    "cat",
+                                    "package.json",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "update",
+                    aliases: [],
+                    description: Some("Update specified platforms"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--save",
+                            ],
+                            description: Some("Updates the version specified in **config.xml**"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "list",
+                    aliases: [
+                        "ls",
+                    ],
+                    description: Some("List all installed and available platforms"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "plugin",
+            aliases: [
+                "plugins",
+            ],
+            description: Some("Manage project plugins"),
+            subcommands: [
+                (
+                    name: "add",
+                    aliases: [],
+                    description: Some("Add specified plugins"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--searchpath",
+                            ],
+                            description: Some("When looking up plugins by ID, look in this directory and each of its subdirectories before hitting the registry. Multiple search paths can be specified. Use \':\' as a separator in *nix based systems and \';\' for Windows"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "directory",
+                                    source: Directories,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--noregistry",
+                            ],
+                            description: Some("Don\'t search the registry for plugins"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--link",
+                            ],
+                            description: Some("When installing from a local path, creates a symbolic link instead of copying files. The extent to which files are linked varies by platform. Useful for plugin development"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--nosave",
+                            ],
+                            description: Some("Do NOT save the <plugin-spec> as part of the plugin element into config.xml or package.json"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--force",
+                            ],
+                            description: Some("Forces copying source files from the plugin even if the same file already exists in the target directory"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "plugin",
+                            source: Directories,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "remove",
+                    aliases: [],
+                    description: Some("Remove plugins with the given IDs/name"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--nosave",
+                            ],
+                            description: Some("Do NOT remove the specified plugin from config.xml or package.json"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "plugin",
+                            source: Unavailable,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: Some((
+                                script: [
+                                    "cordova",
+                                    "plugin",
+                                    "list",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "list",
+                    aliases: [],
+                    description: Some("List currently installed plugins"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "prepare",
+            aliases: [],
+            description: Some("Copy files into platform(s) for building"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "platform",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cat",
+                            "package.json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "compile",
+            aliases: [],
+            description: Some("Compile project for platform(s)"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--verbose",
+                    ],
+                    description: Some("Pipe out more verbose output to your shell. You can also subscribe to log and warn events if you are consuming cordova-cli as a node module by calling cordova.on(\'log\', function() {}) or cordova.on(\'warn\', function() {})"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Print out the version of your cordova-cli install"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-update-notifier",
+                    ],
+                    description: Some("Will disable updates check"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--nohooks",
+                    ],
+                    description: Some("Suppress executing hooks (taking RegExp hook patterns as parameters)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-telemetry",
+                    ],
+                    description: Some("Disable telemetry collection for the current command"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--debug",
+                    ],
+                    description: Some("Perform a debug build. This typically translates to debug mode for the underlying platform being built"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--release",
+                    ],
+                    description: Some("Perform a release build. This typically translates to release mode for the underlying platform being built"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--device",
+                    ],
+                    description: Some("Build it for a device"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--emulator",
+                    ],
+                    description: Some("Build it for an emulator. In particular, the platform architecture might be different for a device vs. emulator"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--buildConfig",
+                    ],
+                    description: Some("Use the specified build configuration file. build.json file is used to specify parameters to customize the app build process especially related to signing the package"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "platform",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cat",
+                            "package.json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "build",
+            aliases: [],
+            description: Some("Build project for platform(s) (prepare + compile)"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-d",
+                        "--verbose",
+                    ],
+                    description: Some("Pipe out more verbose output to your shell. You can also subscribe to log and warn events if you are consuming cordova-cli as a node module by calling cordova.on(\'log\', function() {}) or cordova.on(\'warn\', function() {})"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-v",
+                        "--version",
+                    ],
+                    description: Some("Print out the version of your cordova-cli install"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-update-notifier",
+                    ],
+                    description: Some("Will disable updates check"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--nohooks",
+                    ],
+                    description: Some("Suppress executing hooks (taking RegExp hook patterns as parameters)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--no-telemetry",
+                    ],
+                    description: Some("Disable telemetry collection for the current command"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--debug",
+                    ],
+                    description: Some("Perform a debug build. This typically translates to debug mode for the underlying platform being built"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--release",
+                    ],
+                    description: Some("Perform a release build. This typically translates to release mode for the underlying platform being built"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--device",
+                    ],
+                    description: Some("Build it for a device"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--emulator",
+                    ],
+                    description: Some("Build it for an emulator. In particular, the platform architecture might be different for a device vs. emulator"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--buildConfig",
+                    ],
+                    description: Some("Use the specified build configuration file. build.json file is used to specify parameters to customize the app build process especially related to signing the package"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "value",
+                            source: Directories,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "platform",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cat",
+                            "package.json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "clean",
+            aliases: [],
+            description: Some("Cleanup project from build artifacts"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "platform",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cat",
+                            "package.json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "run",
+            aliases: [],
+            description: Some("Run project (including prepare && compile)"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--list",
+                    ],
+                    description: Some("Lists available targets. Displays both device and emulator deployment targets unless specified"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--debug",
+                    ],
+                    description: Some("Deploy a debug build. This is the default behavior unless --release is specified"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--release",
+                    ],
+                    description: Some("Deploy a release build"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--noprepare",
+                    ],
+                    description: Some("Skip preparing (available in Cordova v6.2 or later)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--nobuild",
+                    ],
+                    description: Some("Skip building"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--device",
+                    ],
+                    description: Some("Deploy to a device"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--emulator",
+                    ],
+                    description: Some("Deploy to an emulator"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--target",
+                    ],
+                    description: Some("Deploy to a specific target emulator/device. Use --list to display target options"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "target",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--buildConfig",
+                    ],
+                    description: Some("Use the specified build configuration file. build.json file is used to specify parameters to customize the app build process especially related to signing the package"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "configFile",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "platform",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cat",
+                            "package.json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "serve",
+            aliases: [],
+            description: Some("Run project with a local webserver (including prepare)"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "port",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "-d",
+                "--verbose",
+            ],
+            description: Some("Pipe out more verbose output to your shell. You can also subscribe to log and warn events if you are consuming cordova-cli as a node module by calling cordova.on(\'log\', function() {}) or cordova.on(\'warn\', function() {})"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-v",
+                "--version",
+            ],
+            description: Some("Print out the version of your cordova-cli install"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-update-notifier",
+            ],
+            description: Some("Will disable updates check"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--nohooks",
+            ],
+            description: Some("Suppress executing hooks (taking RegExp hook patterns as parameters)"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-telemetry",
+            ],
+            description: Some("Disable telemetry collection for the current command"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

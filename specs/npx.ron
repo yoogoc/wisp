@@ -1,0 +1,266 @@
+(
+    version: 1,
+    command: "npx",
+    description: Some("Execute binaries from npm packages"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "--package",
+                "-p",
+            ],
+            description: Some("Package to be installed"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "package",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--cache",
+            ],
+            description: Some("Location of the npm cache"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--always-spawn",
+            ],
+            description: Some("Always spawn a child process to execute the command"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-y",
+            ],
+            description: Some("Execute npx command without prompting for confirmation"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--no-install",
+            ],
+            description: Some("Skip installation if a package is missing"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--userconfig",
+            ],
+            description: Some("Path to user npmrc"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "path",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--call",
+                "-c",
+            ],
+            description: Some("Execute string as if inside `npm run-script`"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "script",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--shell",
+                "-s",
+            ],
+            description: Some("Shell to execute the command with, if any"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "shell",
+                    source: Static([
+                        "bash",
+                        "fish",
+                        "zsh",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--shell-auto-fallback",
+            ],
+            description: Some("Generate shell code to use npx as the \"command not found\" fallback"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "shell-fallback",
+                    source: Static([
+                        "bash",
+                        "fish",
+                        "zsh",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--ignore-existing",
+            ],
+            description: Some("Ignores existing binaries in $PATH, or in the localproject. This forces npx to do a temporary install and use the latest version"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--quiet",
+                "-q",
+            ],
+            description: Some("Suppress output from npx itself. Subcommands will not be affected"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--npm",
+            ],
+            description: Some("Npm binary to use for internal operations"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "path to binary",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--node-arg",
+                "-n",
+            ],
+            description: Some("Extra node argument when calling a node binary"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--version",
+                "-v",
+            ],
+            description: Some("Show version number"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Show help"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [
+        (
+            name: "command",
+            source: Static([
+                "autocannon",
+                "vite",
+                "babel",
+                "create-react-native-app",
+                "react-native",
+                "tailwindcss",
+                "next",
+                "nuxi",
+                "gltfjsx",
+                "prisma",
+                "eslint",
+                "prettier",
+                "tsc",
+                "typeorm",
+                "@withfig/autocomplete-tools",
+                "create-completion-spec",
+                "@fig/publish-spec-to-team",
+                "fig-teams@latest",
+                "create-next-app",
+                "create-t3-app",
+                "create-discord-bot",
+                "create-video",
+                "remotion",
+                "create-remix",
+                "remix",
+                "playwright",
+                "ignite-cli",
+                "vsce",
+                "degit",
+                "@preset/cli",
+                "mikro-orm",
+                "pod-install",
+                "capacitor",
+                "cap",
+                "@magnolia/cli",
+                "stencil",
+                "swagger-typescript-api",
+                "sta",
+                "@wordpress/create-block",
+                "astro",
+                "ampx",
+            ]),
+            optional: true,
+            variadic: false,
+            imported_generator: Some((
+                script: [
+                    "bash",
+                    "-c",
+                    "until [[ -d node_modules/ ]] || [[ $PWD = \'/\' ]]; do cd ..; done; ls -1 node_modules/.bin/",
+                ],
+                has_post_process: true,
+                has_custom: false,
+            )),
+        ),
+    ],
+)

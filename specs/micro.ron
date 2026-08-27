@@ -1,0 +1,1223 @@
+(
+    version: 1,
+    command: "micro",
+    description: Some("A modern and intuitive terminal-based text editor"),
+    subcommands: [
+        (
+            name: "--plugin",
+            aliases: [],
+            description: Some("Manage plugins"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "remove",
+                    ],
+                    description: Some("Remove plugin(s)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "plugin",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "update",
+                    ],
+                    description: Some("Update plugin(s) (if no argument is given, updates all plugins)"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "plugin",
+                            source: Files,
+                            optional: false,
+                            variadic: true,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "search",
+                    ],
+                    description: Some("Search for a plugin"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "plugin",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "list",
+                    ],
+                    description: Some("List installed plugins"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "available",
+                    ],
+                    description: Some("List available plugins"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--clean",
+            ],
+            description: Some("Cleans the configuration directory"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--config-dir",
+            ],
+            description: Some("Specify a custom location for the configuration directory"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "dir",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--options",
+            ],
+            description: Some("Show all option help"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--debug",
+            ],
+            description: Some("Enable debug mode"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+            ],
+            description: Some("Show the version number and information"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--autoindent",
+            ],
+            description: Some("When creating a new line, use the same indentation as the previous line"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--autosave",
+            ],
+            description: Some("Automatically save the buffer every <n> seconds. If set to 0, no autosaving is performed"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "n",
+                    source: Static([
+                        "0",
+                        "60",
+                        "120",
+                        "300",
+                        "600",
+                        "1800",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--autosu",
+            ],
+            description: Some("Automatically attempt to use super user privileges to save without asking"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--backup",
+            ],
+            description: Some("Automatically keep backups of all open buffers"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--backupdir",
+            ],
+            description: Some("The directory to place backups in"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "dir",
+                    source: Static([
+                        "~/.config/micro.backups",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--basename",
+            ],
+            description: Some("In the infobar and tabbar, show only the basename of the file being edited rather than the full path"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--clipboard",
+            ],
+            description: Some("Apecifies how the system clipboard should be accessed"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "type",
+                    source: Static([
+                        "external",
+                        "terminal",
+                        "internal",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--colorcolumn",
+            ],
+            description: Some("Display a color at the specified column if not set to 0"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Static([
+                        "0",
+                        "1",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--colorscheme",
+            ],
+            description: Some("Loads the colorscheme stored in $(configDir)/colorschemes/<scheme>.micro"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "scheme",
+                    source: Static([
+                        "default",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--cursorline",
+            ],
+            description: Some("Highlight the line that the cursor is on in a different color"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--diffgutter",
+            ],
+            description: Some("Display diff indicators before lines"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--divchars",
+            ],
+            description: Some("Specifies the divider characters used for the dividing line between vertical/horizontal splits (the first character is for vertical dividers, and the second is for horizontal dividers)"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "chars",
+                    source: Static([
+                        "|-",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--divreverse",
+            ],
+            description: Some("Reverse colors specified by the colorscheme"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--encoding",
+            ],
+            description: Some("The encoding to open and save files with"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "encoding",
+                    source: Static([
+                        "utf-8",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--eofnewline",
+            ],
+            description: Some("Automatically add a newline to the end of the file if one does not exist"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--fastdirty",
+            ],
+            description: Some("Use \'fast dirty\' algorithm to determine if a buffer is modified or not"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--fileformat",
+            ],
+            description: Some("Type of line endings to be used for the file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "format",
+                    source: Static([
+                        "unix",
+                        "dos",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--filetype",
+            ],
+            description: Some("File type for the current buffer"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "type",
+                    source: Static([
+                        "unknown",
+                        "off",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--ignorecase",
+            ],
+            description: Some("Perform case-insensitive searches"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--incsearch",
+            ],
+            description: Some("Enable incremental search in \"Find\" prompt"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--indentchar",
+            ],
+            description: Some("Sets the indentation character"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "character",
+                    source: Static([
+                        " ",
+                        "\\t",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--infobar",
+            ],
+            description: Some("Enables the line at the bottom of the editor where messages are printed"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--keepautoindent",
+            ],
+            description: Some("Remove trailing whitespace from a line with no insertions when moving to the next line"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--keymenu",
+            ],
+            description: Some("Display the nano-style key menu at the bottom of the screen"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--matchbrace",
+            ],
+            description: Some("Underline matching braces for \'()\', \'{}\', \'[]\' when the cursor is on a brace character"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--mkparents",
+            ],
+            description: Some("Allow parent directories to be created automatically when opening a file on a path that doesn\'t exist"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--mouse",
+            ],
+            description: Some("Enable mouse support"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--paste",
+            ],
+            description: Some("Treat characters sent from the terminal in a single chunk as a paste event rather than a series of manual key presses"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--parsecursor",
+            ],
+            description: Some("Parse filenames such as file.txt:10:5 as requesting to open file.txt with the cursor at line 10 and column 5"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--permbackup",
+            ],
+            description: Some("Cause backups to be permanently saved"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--pluginchannels",
+            ],
+            description: Some("List of URLs pointing to plugin channels for downloading and installing plugins"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "url",
+                    source: Static([
+                        "https://raw.githubusercontent.com/micro-editor/plugin-channel/master/channel.json",
+                    ]),
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--pluginrepos",
+            ],
+            description: Some("A list of links to plugin repositories"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "link",
+                    source: Files,
+                    optional: false,
+                    variadic: true,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--readonly",
+            ],
+            description: Some("Disallow edits to the buffer"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--relativeruler",
+            ],
+            description: Some("Make line numbers display relatively"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--rmtrailingws",
+            ],
+            description: Some("Automatically trim trailing whitespaces at ends of lines"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--ruler",
+            ],
+            description: Some("Display line numbers"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--savecursor",
+            ],
+            description: Some("Remember where the cursor was last time the file was opened and put it there when re-opened"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--savehistory",
+            ],
+            description: Some("Remember command history between closing and re-opening micro"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--saveundo",
+            ],
+            description: Some("Remember undo state between closing and re-opening a file"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--scrollbar",
+            ],
+            description: Some("Display a scroll bar"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--scrollmargin",
+            ],
+            description: Some("Margin at which the view starts scrolling when the cursor approaches the edge of the view"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "margin",
+                    source: Static([
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "5",
+                        "10",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--scrollspeed",
+            ],
+            description: Some("Number of lines to scroll for one scroll event"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "number",
+                    source: Static([
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--smartpaste",
+            ],
+            description: Some("Add leading whitespace when pasting multiple lines"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--softwrap",
+            ],
+            description: Some("Wrap lines that are too long to fit on the screen"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--splitbottom",
+            ],
+            description: Some("When a horizontal split is created, create it below the current split"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--splitright",
+            ],
+            description: Some("When a vertical split is created, create it to the right of the current split"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--statusformatl",
+            ],
+            description: Some("Format string definition for the left-justified part of the statusline"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "format",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--statusformatr",
+            ],
+            description: Some("Format string definition for the right-justified part of the statusline"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "format",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--statusline",
+            ],
+            description: Some("Display the status line at the bottom of the screen"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--sucmd",
+            ],
+            description: Some("The super user command"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "command",
+                    source: Static([
+                        "sudo",
+                        "doas",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--syntax",
+            ],
+            description: Some("Enables syntax highlighting"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--tabmovement",
+            ],
+            description: Some("Navigate spaces at the beginning of lines as if they are tabs"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--tabsize",
+            ],
+            description: Some("The size in spaces that a tab character should be displayed with"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "size",
+                    source: Static([
+                        "2",
+                        "4",
+                        "8",
+                        "16",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--tabstospaces",
+            ],
+            description: Some("Use spaces instead of tabs"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--useprimary",
+            ],
+            description: Some("Use the primary clipboard to copy selections in the background"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--wordwrap",
+            ],
+            description: Some("Wrap long lines by words"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--xterm",
+            ],
+            description: Some("Assume that the terminal conforms to xterm-256color regardless of what the $TERM variable actually contains"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "bool",
+                    source: Static([
+                        "true",
+                        "false",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+    ],
+    arguments: [
+        (
+            name: "file",
+            source: Files,
+            optional: true,
+            variadic: false,
+            imported_generator: None,
+        ),
+    ],
+)

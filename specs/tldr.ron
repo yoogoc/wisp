@@ -1,0 +1,169 @@
+(
+    version: 1,
+    command: "tldr",
+    description: Some("A simpler man page than the existing man page"),
+    subcommands: [],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Display help for command"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-s",
+                "--search",
+            ],
+            description: Some("Search all pages for the query"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "query",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--linux",
+            ],
+            description: Some("Show command page for Linux"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "command ls -Al ~/.tldrc/tldr/pages/linux/ 2>/dev/null",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--osx",
+            ],
+            description: Some("Show command page for OSX"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "command ls -l ~/.tldrc/tldr/pages/osx/ 2>/dev/null",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "--sunos",
+            ],
+            description: Some("Show command page for SunOS"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "value",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "bash",
+                            "-c",
+                            "command ls -l ~/.tldrc/tldr/pages/sunos/ 2>/dev/null",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+        ),
+        (
+            names: [
+                "-l",
+                "--list",
+            ],
+            description: Some("Show all pages for current platform"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-u",
+                "--update",
+            ],
+            description: Some("Download the latest pages and generate search index"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-c",
+                "--clear-cache",
+            ],
+            description: Some("Delete the entire local cache"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--platform",
+                "-p",
+            ],
+            description: Some("Select platform"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "platform",
+                    source: Static([
+                        "linux",
+                        "osx",
+                        "sunos",
+                        "windows",
+                        "common",
+                    ]),
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+    ],
+    arguments: [
+        (
+            name: "value",
+            source: Unavailable,
+            optional: false,
+            variadic: false,
+            imported_generator: Some((
+                script: [],
+                has_post_process: false,
+                has_custom: true,
+            )),
+        ),
+    ],
+)

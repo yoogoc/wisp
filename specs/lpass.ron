@@ -1,0 +1,1441 @@
+(
+    version: 1,
+    command: "lpass",
+    description: Some("Command line interface for LastPass"),
+    subcommands: [
+        (
+            name: "login",
+            aliases: [],
+            description: Some("Log in to LastPass"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--trust",
+                    ],
+                    description: Some("Subsequent logins will not require multifactor authentication"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--plaintext-key",
+                    ],
+                    description: Some("Save decryption key to the hard disk in plaintext"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "--force",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "USERNAME",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "logout",
+            aliases: [],
+            description: Some("Log out of LastPass"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--force",
+                    ],
+                    description: Some("Skip user confirmation"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "ls",
+            aliases: [],
+            description: Some("List names in groups in a tree structure"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--long",
+                        "-l",
+                    ],
+                    description: Some("Show the last modification time"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-m",
+                    ],
+                    description: Some("Show the last modified time"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-u",
+                    ],
+                    description: Some("Show the last used time"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "GROUP",
+                    source: Files,
+                    optional: true,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "passwd",
+            aliases: [],
+            description: Some("Change LastPass password and reencrypt all entries"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "show",
+            aliases: [],
+            description: Some("Show password or selected field"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--sync",
+                    ],
+                    description: Some("When the current operation syncs to server"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sync",
+                            source: Static([
+                                "auto",
+                                "now",
+                                "no",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--clip",
+                        "-c",
+                    ],
+                    description: Some("Copy to the clipboard"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--quiet",
+                        "-q",
+                    ],
+                    description: Some("Display no output and only sets return code"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--expand-multi",
+                        "-x",
+                    ],
+                    description: Some("Show information from all matching sites"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--json",
+                        "-j",
+                    ],
+                    description: Some("Generate json output instead of human-readable text"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--all",
+                    ],
+                    description: Some("Show all fields"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--username",
+                    ],
+                    description: Some("Show only the username"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--password",
+                    ],
+                    description: Some("Show only the password"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--url",
+                    ],
+                    description: Some("Show only the URL"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--notes",
+                    ],
+                    description: Some("Show only the notes"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--field",
+                    ],
+                    description: Some("Show only the field"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "FIELD",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--id",
+                    ],
+                    description: Some("Show only the ID"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--name",
+                    ],
+                    description: Some("Show only the name"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--attach",
+                    ],
+                    description: Some("Show only the attachment"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "ATTACHID",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--basic-regexp",
+                        "-G",
+                    ],
+                    description: Some("Show sites matching case-insensitive regular expression"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--fixed-strings",
+                        "-F",
+                    ],
+                    description: Some("Show sites matching this exact substring"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "UNIQENAME|UNIQUEID",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "mv",
+            aliases: [],
+            description: Some("Move LastPass entry to a different group"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "UNIQUENAME|UNIQUEID",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "GROUP",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "add",
+            aliases: [],
+            description: Some("Add a new entry"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--sync",
+                    ],
+                    description: Some("When the current operation syncs to server"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sync",
+                            source: Static([
+                                "auto",
+                                "now",
+                                "no",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--non-interactive",
+                    ],
+                    description: Some("Accept data until EOF or, unless the notes field is being edited, the first new line"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--username",
+                    ],
+                    description: Some("Add only the username"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--password",
+                    ],
+                    description: Some("Add only the password"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--url",
+                    ],
+                    description: Some("Add only the URL"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--notes",
+                    ],
+                    description: Some("Add only the notes"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--field",
+                    ],
+                    description: Some("Add only the field"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "FIELD",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--note-type",
+                    ],
+                    description: Some("Add only the note"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "NOTETYPE",
+                            source: Static([
+                                "amex",
+                                "bank",
+                                "credit",
+                                "database",
+                                "drivers_license",
+                                "email",
+                                "health_insurance",
+                                "im",
+                                "mastercard",
+                                "membership",
+                                "passport",
+                                "server",
+                                "software_license",
+                                "ssh_key",
+                                "ssn",
+                                "visa",
+                                "wifi",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "NAME|UNIQUEID",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "edit",
+            aliases: [],
+            description: Some("Edit existing entry"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--sync",
+                    ],
+                    description: Some("When the current operation syncs to server"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sync",
+                            source: Static([
+                                "auto",
+                                "now",
+                                "no",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--non-interactive",
+                    ],
+                    description: Some("Accept data until EOF or, unless the notes field is being edited, the first new line"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--name",
+                        "--username",
+                    ],
+                    description: Some("Edit only the name (or username)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--password",
+                    ],
+                    description: Some("Edit only the password"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--url",
+                    ],
+                    description: Some("Edit only the URL"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--notes",
+                    ],
+                    description: Some("Edit only the notes"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--field",
+                    ],
+                    description: Some("Edit only the field"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "FIELD",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "NAME|UNIQUEID",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "generate",
+            aliases: [],
+            description: Some("Create randomly generated password"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--sync",
+                    ],
+                    description: Some("When the current operation syncs to server"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sync",
+                            source: Static([
+                                "auto",
+                                "now",
+                                "no",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--clip",
+                        "-c",
+                    ],
+                    description: Some("Copy the text to the clipboard"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--username",
+                    ],
+                    description: Some("Generate password for this username"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "USERNAME",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--url",
+                    ],
+                    description: Some("Generate password for this URL"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "URL",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--no-symbols",
+                    ],
+                    description: Some("Generate password without symbols"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "NAME|UNIQUEID",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+                (
+                    name: "LENGTH",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "duplicate",
+            aliases: [],
+            description: Some("Duplicate existing entry"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--sync",
+                    ],
+                    description: Some("When the current operation syncs to server"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sync",
+                            source: Static([
+                                "auto",
+                                "now",
+                                "no",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "UNIQUENAME|UNIQUEID",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "rm",
+            aliases: [],
+            description: Some("Removes existing entry"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--sync",
+                    ],
+                    description: Some("When the current operation syncs to server"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sync",
+                            source: Static([
+                                "auto",
+                                "now",
+                                "no",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "UNIQUENAME|UNIQUEID",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "status",
+            aliases: [],
+            description: Some("Show the LastPass login status"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--quiet",
+                        "-q",
+                    ],
+                    description: Some("Display no output and only sets return code"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "sync",
+            aliases: [],
+            description: Some("Sync the local cache against the LastPass server"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--background",
+                        "-b",
+                    ],
+                    description: Some("Syncronization occurs in a daemonized process"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "import",
+            aliases: [],
+            description: Some("Import account information from an unencrypted CSV"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--sync",
+                    ],
+                    description: Some("When the current operation syncs to server"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sync",
+                            source: Static([
+                                "auto",
+                                "now",
+                                "no",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--keep-dupes",
+                    ],
+                    description: Some("Keeps any duplicate entries"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "FILENAME",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "export",
+            aliases: [],
+            description: Some("Export account information to an unencrypted CSV"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--sync",
+                    ],
+                    description: Some("When the current operation syncs to server"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "sync",
+                            source: Static([
+                                "auto",
+                                "now",
+                                "no",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--color",
+                    ],
+                    description: Some("Control colored output to the terminal"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "color",
+                            source: Static([
+                                "auto",
+                                "never",
+                                "always",
+                            ]),
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "--fields",
+                    ],
+                    description: Some("Comma-separated subset of: id, url, username, password, extra, name, fav, id, grouping, group, fullname, last_touch, last_modified_gmt, attachpresent"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "FIELDLIST",
+                            source: Static([
+                                "id,url,username,password,extra,name,fav,id,grouping,group,fullname,last_touch,last_modified_gmt,attachpresent",
+                            ]),
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "FILENAME",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "share",
+            aliases: [],
+            description: Some("LastPass Sharing Center functionality"),
+            subcommands: [
+                (
+                    name: "userls",
+                    aliases: [],
+                    description: Some("List the LastPass users which have access to the Shared Folders"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "useradd",
+                    aliases: [],
+                    description: Some("Add user to Shared Folders"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--read-only",
+                            ],
+                            description: Some("Control read or write access"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "true",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                                (
+                                    name: "false",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--hidden",
+                            ],
+                            description: Some("Share user view permission"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "true",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                                (
+                                    name: "false",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--admin",
+                            ],
+                            description: Some("Share user administer permission"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "true",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                                (
+                                    name: "false",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "SHARE",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "USERNAME",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "usermod",
+                    aliases: [],
+                    description: Some("Modify user on Shared Folders"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--read-only",
+                            ],
+                            description: Some("Control read or write access"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "true",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                                (
+                                    name: "false",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--hidden",
+                            ],
+                            description: Some("Share user view permission"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "true",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                                (
+                                    name: "false",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--admin",
+                            ],
+                            description: Some("Share user administer permission"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "true",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                                (
+                                    name: "false",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "SHARE",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "USERNAME",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "userdel",
+                    aliases: [],
+                    description: Some("Remove user from Shared Folders"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "SHARE",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "USERNAME",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "create",
+                    aliases: [],
+                    description: Some("Create new LastPass Shared Folder"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "SHARE",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "rm",
+                    aliases: [],
+                    description: Some("LastPass Shared Folder to remove"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "SHARE",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "limit",
+                    aliases: [],
+                    description: Some("Manipulate LastPass Shared Folder access"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--deny",
+                                "--allow",
+                            ],
+                            description: Some("Deny or allow access"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--add",
+                                "--rm",
+                                "--clear",
+                            ],
+                            description: Some("Add, remove, or clear acces"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "SHARE",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "USERNAME",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "sites",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [
+                (
+                    name: "SHARE",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Display the help for lpass"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+            ],
+            description: Some("Display the version of lpass"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)

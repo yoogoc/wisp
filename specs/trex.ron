@@ -1,0 +1,286 @@
+(
+    version: 1,
+    command: "trex",
+    description: Some("Advanced package management for deno, based on import_map.json"),
+    subcommands: [
+        (
+            name: "i",
+            aliases: [
+                "install",
+            ],
+            description: Some("Install a package"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-m",
+                        "--map",
+                    ],
+                    description: Some("Install package from deno.land"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "package name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-n",
+                        "--nest",
+                    ],
+                    description: Some("Install package from nest.land"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "package name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+                (
+                    names: [
+                        "-p",
+                        "--pkg",
+                    ],
+                    description: Some("Install package from some repository"),
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "repository",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "Package Name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "delete",
+            aliases: [],
+            description: Some("Delete a package"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "package name",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cat",
+                            "import_map.json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "upgrade",
+            aliases: [],
+            description: Some("Upgrade trex"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--canary",
+                    ],
+                    description: Some("Install from dev branch"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "tree",
+            aliases: [],
+            description: Some("View dependency tree"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "run",
+            aliases: [],
+            description: Some("Run a script alias in a file run.json"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-w",
+                        "--watch",
+                    ],
+                    description: Some("Use reboot script alias protocol (rsap)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-wv",
+                    ],
+                    description: Some("Verbose output in --watch mode (rsap)"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "script alias",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cat",
+                            "run.json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "purge",
+            aliases: [],
+            description: Some("Remove a package or url from cache"),
+            subcommands: [],
+            options: [],
+            arguments: [
+                (
+                    name: "package | url",
+                    source: Unavailable,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: Some((
+                        script: [
+                            "cat",
+                            "import_map.json",
+                        ],
+                        has_post_process: true,
+                        has_custom: false,
+                    )),
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "ls",
+            aliases: [],
+            description: Some("Shows the list of installed packages"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "exec",
+            aliases: [],
+            description: Some("Execute a cli tool with out install then"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "--perms",
+                    ],
+                    description: Some("Specify cli permisions"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [
+                (
+                    name: "cli tool",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+            load_spec: None,
+        ),
+        (
+            name: "check",
+            aliases: [],
+            description: Some("Check deno.land [std/x] dependencies updates"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-f",
+                        "--fix",
+                    ],
+                    description: Some("Update outdated dependencies"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "-h",
+                "--help",
+            ],
+            description: Some("Print help info"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-v",
+                "--version",
+            ],
+            description: Some("Print version"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "-c",
+                "--custom",
+            ],
+            description: Some("Install custom package"),
+            takes_value: true,
+            arguments: [
+                (
+                    name: "custom package",
+                    source: Files,
+                    optional: false,
+                    variadic: false,
+                    imported_generator: None,
+                ),
+            ],
+        ),
+    ],
+    arguments: [],
+)

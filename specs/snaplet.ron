@@ -1,0 +1,1149 @@
+(
+    version: 1,
+    command: "snaplet",
+    description: Some("Create and share PostgreSQL snapshots with schema, data transformation, and preview databases for collaborative development (see: https://docs.snaplet.dev)"),
+    subcommands: [
+        (
+            name: "auth",
+            aliases: [],
+            description: Some("Manage auth state"),
+            subcommands: [
+                (
+                    name: "login",
+                    aliases: [
+                        "setup",
+                    ],
+                    description: Some("Login with an access token"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "access-token",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "config",
+            aliases: [],
+            description: Some("Manage configuration"),
+            subcommands: [
+                (
+                    name: "generate",
+                    aliases: [],
+                    description: Some("Generate transform files"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--dry-run",
+                            ],
+                            description: None,
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--type",
+                                "-t",
+                            ],
+                            description: None,
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Static([
+                                        "typedefs",
+                                        "transform",
+                                        "keys",
+                                        "seed",
+                                    ]),
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "list",
+                    aliases: [
+                        "ls",
+                    ],
+                    description: Some("List config variables"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "pull",
+                    aliases: [],
+                    description: Some("Pull cloud project config to local"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--type",
+                                "-t",
+                            ],
+                            description: None,
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Static([
+                                        "typedefs",
+                                        "transform",
+                                        "keys",
+                                        "seed",
+                                    ]),
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "push",
+                    aliases: [],
+                    description: Some("Push local project config to cloud"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--type",
+                                "-t",
+                            ],
+                            description: None,
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Static([
+                                        "typedefs",
+                                        "transform",
+                                        "keys",
+                                        "seed",
+                                    ]),
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "setup",
+                    aliases: [],
+                    description: Some("Setup local project configuration"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--generate",
+                            ],
+                            description: None,
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--no-generate",
+                            ],
+                            description: None,
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--yes",
+                            ],
+                            description: Some("Automatically accept any prompt, useful for scripts"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "targetDatabaseUrl",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "database",
+            aliases: [
+                "db",
+            ],
+            description: Some("Manage preview database"),
+            subcommands: [
+                (
+                    name: "cache",
+                    aliases: [
+                        "ca",
+                    ],
+                    description: Some("Cache a snapshot into the preview database server"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--tags",
+                            ],
+                            description: Some("Filter snapshots by tags"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "tags-list",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--latest",
+                            ],
+                            description: Some("Select the latest snapshot captured to cache in the preview database server"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--clear",
+                            ],
+                            description: Some("Remove the snapshot from the preview database server cache"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "snapshot",
+                            source: Unavailable,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "snaplet",
+                                    "snapshot",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "create",
+                    aliases: [
+                        "c",
+                    ],
+                    description: Some("Create a preview database from a snapshot"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--tags",
+                            ],
+                            description: Some("Filter snapshots by tags"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "tags-list",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--latest",
+                            ],
+                            description: Some("Restore the latest snapshot"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--git",
+                            ],
+                            description: Some("Infer the database name from the current git branch"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--no-snapshot",
+                            ],
+                            description: Some("Create an empty database not based on a snapshot"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--force",
+                            ],
+                            description: Some("Force the database creation, it will drop and recreate the existing database if present"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "database-name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                        (
+                            name: "snapshot",
+                            source: Unavailable,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "snaplet",
+                                    "snapshot",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "drop",
+                    aliases: [
+                        "delete",
+                        "d",
+                    ],
+                    description: Some("Drop a preview database"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--git",
+                            ],
+                            description: Some("Infer the database name from the current git branch"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "database-name",
+                            source: Unavailable,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "snaplet",
+                                    "database",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "url",
+                    aliases: [
+                        "u",
+                    ],
+                    description: Some("Show a preview database url"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--git",
+                            ],
+                            description: Some("Infer the database name from the current git branch"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "database-name",
+                            source: Unavailable,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "snaplet",
+                                    "database",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "destroy",
+                    aliases: [
+                        "ds",
+                    ],
+                    description: Some("Destroy the database server"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--yes",
+                            ],
+                            description: Some("Automatically accept any prompt, useful for scripts"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "setup",
+                    aliases: [
+                        "s",
+                    ],
+                    description: Some("Create a preview database server"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--region",
+                            ],
+                            description: Some("Fly.io region where the preview database server should be created"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Static([
+                                        "ams",
+                                        "cdg",
+                                        "den",
+                                        "dfw",
+                                        "ewr",
+                                        "fra",
+                                        "gru",
+                                        "hkg",
+                                        "iad",
+                                        "jnb",
+                                        "lax",
+                                        "lhr",
+                                        "maa",
+                                        "mad",
+                                        "mia",
+                                        "nrt",
+                                        "ord",
+                                        "otp",
+                                        "scl",
+                                        "sea",
+                                        "sin",
+                                        "sjc",
+                                        "syd",
+                                        "waw",
+                                        "yul",
+                                        "yyz",
+                                    ]),
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "list",
+                    aliases: [
+                        "ls",
+                    ],
+                    description: Some("List preview databases"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "discord",
+            aliases: [
+                "chat",
+            ],
+            description: Some("Open the Snaplet Discord chat window in your browser"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "documentation",
+            aliases: [
+                "docs",
+            ],
+            description: Some("Opens the Snaplet Documentation in your browser"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "project",
+            aliases: [],
+            description: Some("Manage project configuration"),
+            subcommands: [
+                (
+                    name: "create",
+                    aliases: [],
+                    description: Some("Create a new project"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--team",
+                                "-t",
+                            ],
+                            description: None,
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "team-name",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "invite",
+                    aliases: [],
+                    description: Some("Create an invite URL for this project"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "setup",
+                    aliases: [],
+                    description: Some("Set up a project"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "project-id",
+                            source: Files,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "proxy",
+            aliases: [
+                "dev",
+            ],
+            description: Some("Start a database proxy"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "seed",
+            aliases: [
+                "gen",
+                "generate",
+            ],
+            description: Some("Populates an empty database with generated data"),
+            subcommands: [],
+            options: [
+                (
+                    names: [
+                        "-i",
+                        "--interactive",
+                    ],
+                    description: Some("Show interactive prompts to customise seeding"),
+                    takes_value: false,
+                    arguments: [],
+                ),
+                (
+                    names: [
+                        "-n",
+                        "--entriesPerTable",
+                    ],
+                    description: None,
+                    takes_value: true,
+                    arguments: [
+                        (
+                            name: "number",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                ),
+            ],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "snapshot",
+            aliases: [
+                "ss",
+            ],
+            description: Some("Manage snapshots"),
+            subcommands: [
+                (
+                    name: "capture",
+                    aliases: [
+                        "c",
+                    ],
+                    description: Some("Capture a new snapshot"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--env",
+                                "--environment",
+                            ],
+                            description: Some("Environment to use when capturing the snapshot"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "environment-name",
+                                    source: Static([
+                                        "cloud",
+                                        "local",
+                                    ]),
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-m",
+                                "--message",
+                            ],
+                            description: Some("Attach a message to the snapshot"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "message",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--subset-path",
+                                "--subset",
+                            ],
+                            description: Some("Path to a subset config file"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "path",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--tags",
+                            ],
+                            description: Some("Attach tags to the snapshot"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "tags-list",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-t",
+                                "--transform-mode",
+                            ],
+                            description: Some("Transformation mode to apply to the snapshot"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "transformation-mode",
+                                    source: Static([
+                                        "strict",
+                                        "unsafe",
+                                        "auto",
+                                    ]),
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "destination-path",
+                            source: Directories,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "create",
+                    aliases: [],
+                    description: Some("Create a snapshot in cloud"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--json",
+                            ],
+                            description: None,
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "list",
+                    aliases: [
+                        "ls",
+                    ],
+                    description: Some("List all snapshots"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--tags",
+                            ],
+                            description: Some("Filter snapshots by tags"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "tags-list",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                    ],
+                    arguments: [],
+                    load_spec: None,
+                ),
+                (
+                    name: "restore",
+                    aliases: [
+                        "r",
+                    ],
+                    description: Some("Restore a snapshot"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "data",
+                                "--no-data",
+                            ],
+                            description: Some("Restore data on the database (skip with --no-data)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "schema",
+                                "--no-schema",
+                            ],
+                            description: Some("Restore schema on the database (skip with --no-schema)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "reset",
+                                "--no-reset",
+                            ],
+                            description: Some("Drop destination database before restoring schemas (skip with --no-reset)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--tags",
+                            ],
+                            description: Some("Filter snapshots by tags"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "tags-list",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--latest",
+                            ],
+                            description: Some("Restore the latest snapshot"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "-y",
+                                "--yes",
+                            ],
+                            description: Some("Performs a restore without a confirmation message"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--schema-only",
+                            ],
+                            description: Some("Skip data, only restore schema"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--data-only",
+                            ],
+                            description: Some("Restore data only (keep the current schema and indexes)"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "snapshot-name",
+                            source: Unavailable,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "snaplet",
+                                    "snapshot",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "share",
+                    aliases: [
+                        "upload",
+                    ],
+                    description: Some("Share a snapshot"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--no-encrypt",
+                            ],
+                            description: Some("Disable encryption"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                        (
+                            names: [
+                                "--tags",
+                            ],
+                            description: Some("Filter snapshots by tags"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "tags-list",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--latest",
+                            ],
+                            description: Some("Share the latest snapshot"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "snapshot-name",
+                            source: Unavailable,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: Some((
+                                script: [
+                                    "snaplet",
+                                    "snapshot",
+                                    "ls",
+                                ],
+                                has_post_process: true,
+                                has_custom: false,
+                            )),
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+                (
+                    name: "sample",
+                    aliases: [
+                        "s",
+                    ],
+                    description: Some("Create a sample of a database"),
+                    subcommands: [],
+                    options: [
+                        (
+                            names: [
+                                "--env",
+                                "--environment",
+                            ],
+                            description: Some("Environment to use when slicing the snapshot"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "environment-name",
+                                    source: Static([
+                                        "cloud",
+                                        "local",
+                                    ]),
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "--sample-config-path",
+                                "--subset-path",
+                            ],
+                            description: Some("Path to a sample config file"),
+                            takes_value: true,
+                            arguments: [
+                                (
+                                    name: "value",
+                                    source: Files,
+                                    optional: false,
+                                    variadic: false,
+                                    imported_generator: None,
+                                ),
+                            ],
+                        ),
+                        (
+                            names: [
+                                "-f",
+                                "--force",
+                            ],
+                            description: Some("Force overwrite existing sample file"),
+                            takes_value: false,
+                            arguments: [],
+                        ),
+                    ],
+                    arguments: [
+                        (
+                            name: "destination-path",
+                            source: Directories,
+                            optional: true,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "subset",
+            aliases: [
+                "subsetting",
+            ],
+            description: Some("Manage subsetting"),
+            subcommands: [
+                (
+                    name: "setup",
+                    aliases: [
+                        "configure",
+                        "config",
+                    ],
+                    description: Some("Configure subsetting"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "team",
+            aliases: [],
+            description: Some("Manage team configuration"),
+            subcommands: [
+                (
+                    name: "create",
+                    aliases: [],
+                    description: Some("Create a new team"),
+                    subcommands: [],
+                    options: [],
+                    arguments: [
+                        (
+                            name: "team-name",
+                            source: Files,
+                            optional: false,
+                            variadic: false,
+                            imported_generator: None,
+                        ),
+                    ],
+                    load_spec: None,
+                ),
+            ],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "upgrade",
+            aliases: [],
+            description: Some("Upgrade this binary"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+        (
+            name: "completion",
+            aliases: [],
+            description: Some("Generate completion script"),
+            subcommands: [],
+            options: [],
+            arguments: [],
+            load_spec: None,
+        ),
+    ],
+    options: [
+        (
+            names: [
+                "--help",
+                "-h",
+            ],
+            description: Some("Show help for snaplet"),
+            takes_value: false,
+            arguments: [],
+        ),
+        (
+            names: [
+                "--version",
+                "-v",
+            ],
+            description: Some("Show version number"),
+            takes_value: false,
+            arguments: [],
+        ),
+    ],
+    arguments: [],
+)
