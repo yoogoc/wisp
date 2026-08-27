@@ -52,6 +52,8 @@ enum OverlayAction {
 struct Args {
     #[arg(long, env = "WISP_SOCKET")]
     socket: Option<PathBuf>,
+    #[arg(long)]
+    config: Option<PathBuf>,
 }
 
 struct OverlayView {
@@ -397,29 +399,40 @@ fn empty_detail_candidate() -> Candidate {
     }
 }
 
+fn empty_render_model() -> RenderModel {
+    RenderModel {
+        request_id: 0,
+        session_id: String::new(),
+        anchor: None,
+        candidates: Vec::new(),
+        selected: 0,
+        ghost_text: None,
+    }
+}
+
 fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt()
         .with_env_filter(EnvFilter::try_from_default_env().unwrap_or_else(|_| "wisp=info".into()))
         .init();
     let args = Args::parse();
     let socket = args.socket.unwrap_or_else(default_socket_path);
+    let config = args.config.unwrap_or_else(wisp_daemon::default_config_path);
     let (sender, receiver) = mpsc::channel();
     let (interaction_sender, interaction_receiver) = mpsc::channel();
+    spawn_daemon(socket.clone(), config);
     spawn_subscription(socket.clone(), sender);
     spawn_interaction_worker(socket, interaction_receiver);
 
-    let first = loop {
-        match receiver.recv().context("overlay subscription stopped")? {
-            ServerMessage::Render { model } if model_has_content(&model) => break model,
-            _ => continue,
-        }
-    };
+    let first = empty_render_model();
     let first_placement = preferred_model_placement(&first);
     let receiver = Arc::new(Mutex::new(receiver));
 
     Application::new().run(move |cx: &mut App| {
         if let Err(error) = configure_overlay_application() {
             debug!(%error, "could not configure overlay application policy");
+        }
+        if let Err(error) = install_status_item() {
+            debug!(%error, "could not install Wisp status item");
         }
         let terminal_active = alacritty_is_frontmost();
         let height = overlay_height(&first);
@@ -506,6 +519,19 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
+fn spawn_daemon(socket: PathBuf, config: PathBuf) {
+    thread::spawn(move || {
+        let runtime = tokio::runtime::Builder::new_multi_thread()
+            .enable_all()
+            .build()
+            .expect("build Wisp daemon runtime");
+        let shutdown = tokio_util::sync::CancellationToken::new();
+        if let Err(error) = runtime.block_on(wisp_daemon::run(socket, config, shutdown)) {
+            debug!(%error, "Wisp daemon stopped");
+        }
+    });
+}
+
 #[cfg(target_os = "macos")]
 #[allow(unexpected_cfgs)]
 fn configure_overlay_application() -> anyhow::Result<()> {
@@ -532,6 +558,64 @@ fn configure_overlay_application() -> anyhow::Result<()> {
             let _: () = msg_send![application, deactivate];
         }
     }
+    Ok(())
+}
+
+#[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
+fn install_status_item() -> anyhow::Result<()> {
+    use cocoa::{
+        appkit::NSApp,
+        base::{NO, nil},
+        foundation::NSString,
+    };
+    use objc::{class, msg_send, runtime::Object, sel, sel_impl};
+
+    unsafe {
+        let application = NSApp();
+        let status_bar: *mut Object = msg_send![class!(NSStatusBar), systemStatusBar];
+        if status_bar.is_null() {
+            return Err(anyhow::anyhow!("AppKit status bar is unavailable"));
+        }
+        let status_item: *mut Object = msg_send![status_bar, statusItemWithLength: -1.0_f64];
+        if status_item.is_null() {
+            return Err(anyhow::anyhow!("could not create AppKit status item"));
+        }
+        let button: *mut Object = msg_send![status_item, button];
+        let title = NSString::alloc(nil).init_str("✦");
+        let tooltip = NSString::alloc(nil).init_str("Wisp Autocomplete");
+        let _: () = msg_send![button, setTitle: title];
+        let _: () = msg_send![button, setToolTip: tooltip];
+
+        let menu: *mut Object = msg_send![class!(NSMenu), alloc];
+        let menu: *mut Object = msg_send![menu, init];
+        let running_title = NSString::alloc(nil).init_str("Wisp 正在运行");
+        let empty = NSString::alloc(nil).init_str("");
+        let running_item: *mut Object = msg_send![class!(NSMenuItem), alloc];
+        let running_item: *mut Object =
+            msg_send![running_item, initWithTitle: running_title action: nil keyEquivalent: empty];
+        let _: () = msg_send![running_item, setEnabled: NO];
+        let _: () = msg_send![menu, addItem: running_item];
+        let separator: *mut Object = msg_send![class!(NSMenuItem), separatorItem];
+        let _: () = msg_send![menu, addItem: separator];
+
+        let quit_title = NSString::alloc(nil).init_str("退出 Wisp");
+        let quit_key = NSString::alloc(nil).init_str("q");
+        let quit_item: *mut Object = msg_send![class!(NSMenuItem), alloc];
+        let quit_item: *mut Object = msg_send![quit_item,
+            initWithTitle: quit_title
+            action: sel!(terminate:)
+            keyEquivalent: quit_key
+        ];
+        let _: () = msg_send![quit_item, setTarget: application];
+        let _: () = msg_send![menu, addItem: quit_item];
+        let _: () = msg_send![status_item, setMenu: menu];
+    }
+    Ok(())
+}
+
+#[cfg(not(target_os = "macos"))]
+fn install_status_item() -> anyhow::Result<()> {
     Ok(())
 }
 

@@ -186,7 +186,7 @@ async fn main() -> anyhow::Result<()> {
 
 async fn start(socket: &PathBuf) -> anyhow::Result<()> {
     if request(socket, ClientMessage::Ping).await.is_err() {
-        spawn_sibling("wispd", socket)?;
+        spawn_sibling("wisp-app", socket)?;
         let mut connected = false;
         for _ in 0..20 {
             tokio::time::sleep(Duration::from_millis(50)).await;
@@ -196,10 +196,9 @@ async fn start(socket: &PathBuf) -> anyhow::Result<()> {
             }
         }
         if !connected {
-            bail!("wispd did not become ready at {}", socket.display());
+            bail!("wisp-app did not become ready at {}", socket.display());
         }
     }
-    spawn_sibling("wisp-overlay", socket)?;
     println!("Wisp is running. Add eval \"$(wisp init zsh)\" to .zshrc.");
     Ok(())
 }

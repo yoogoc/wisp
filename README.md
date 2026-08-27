@@ -53,13 +53,13 @@ cargo build --release --workspace
 eval "$(./target/release/wisp init zsh)"
 ```
 
-The `wisp`, `wispd`, and `wisp-overlay` binaries must remain next to one another. To enable Wisp in future shells, put `target/release` on your `PATH` and add this to `~/.zshrc`:
+The `wisp` and `wisp-app` binaries must remain next to one another. To enable Wisp in future shells, put `target/release` on your `PATH` and add this to `~/.zshrc`:
 
 ```zsh
 eval "$(wisp init zsh)"
 ```
 
-Run `wisp start` after login to launch the daemon and overlay. On first use, macOS may ask for **Accessibility** permission because Wisp uses System Events to read the active Alacritty window frame.
+Run `wisp start` after login to launch the Wisp menu-bar app. It hosts the daemon and GPUI overlay in one process and stays out of the Dock. On first use, macOS may ask for **Accessibility** permission because Wisp uses System Events to read the active Alacritty window frame.
 
 ## Key bindings
 
@@ -140,7 +140,7 @@ Leading spaces in `suffix` are significant.
 ```mermaid
 flowchart LR
     Z[Zsh integration] -->|buffer snapshot| C[wisp CLI]
-    C -->|length-delimited JSON| D[wispd daemon]
+    C -->|length-delimited JSON| D[wisp-app background service]
     D --> E[Completion engine]
     D -. optional .-> A[AI provider]
     E --> S[RON specs + dynamic generators]
@@ -152,10 +152,10 @@ flowchart LR
 | Crate | Responsibility |
 | --- | --- |
 | `wisp-cli` | User commands, shell integration, diagnostics, and IPC client |
-| `wisp-daemon` | Session state, completion orchestration, cancellation, and overlay updates |
+| `wisp-daemon` | Reusable session service, completion orchestration, cancellation, and overlay updates |
 | `wisp-core` | Parser, fuzzy ranking, completion engine, and RON specs |
 | `wisp-ai` | OpenAI-compatible and external-process providers |
-| `wisp-overlay` | Native GPUI candidate popup and ghost-text rendering |
+| `wisp-app` | Menu-bar lifecycle plus native GPUI candidate popup and ghost-text rendering |
 | `wisp-platform` | Alacritty cursor-to-screen coordinate mapping |
 | `wisp-protocol` | Shared messages and length-delimited JSON transport |
 
@@ -163,7 +163,7 @@ flowchart LR
 
 Static command metadata lives in [`specs/`](specs) as data-only RON, one file per command: the complete `@withfig/autocomplete` 2.692.3 snapshot, 1,484 modules, including recursive subcommands, aliases, options, arguments, static suggestions, path templates, versioned specs, and `loadSpec` references. A spec's id is its path below `specs/`, so `az/2.53.0/network.ron` is the spec `az/2.53.0/network`. `crates/wisp-core/build.rs` compresses every one of those files into a single container that the binary embeds, and the daemon inflates a document only when a command is first completed, so it never deserializes the roughly 240 MB data set at startup.
 
-Imported Fig callbacks and shell generators remain inert metadata unless Wisp has a reviewed Rust adapter. Built-in dynamic generators—such as Git branches and running Docker containers—are registered in Rust, so a completion spec cannot execute arbitrary shell commands. The original Fig MIT notice and import coverage report live in [`specs/`](specs).
+Imported static Fig generator argv is stored as RON IR and executed directly without an implicit shell. Its output parser is also declarative (`Lines` or mapped JSON). JavaScript `postProcess` and `custom` callbacks remain inert unless they are replaced by a reviewed Rust/RON adapter. Built-in dynamic generators—such as Git branches and running Docker containers—remain registered in Rust. The original Fig MIT notice and import coverage report live in [`specs/`](specs).
 
 ## Positioning and calibration
 
@@ -199,14 +199,11 @@ wisp demo "git che"
 
 ## Development
 
-Run each component independently:
+Run the menu-bar app and shell integration:
 
 ```bash
-# Terminal 1
-RUST_LOG=wisp=debug cargo run -p wisp-daemon --bin wispd
-
-# Terminal 2
-cargo run -p wisp-overlay --bin wisp-overlay
+# Menu-bar app (daemon + overlay)
+RUST_LOG=wisp=debug cargo run -p wisp-app --bin wisp-app
 
 # Current Zsh session
 eval "$(cargo run -q -p wisp-cli --bin wisp -- init zsh)"
