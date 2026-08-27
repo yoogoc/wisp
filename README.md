@@ -227,6 +227,10 @@ cargo clippy --workspace --all-targets -- -D warnings
 - Broader completion-spec coverage
 - Packaging and a first-class installer
 
+## Acknowledgements
+
+Special thanks to [**Fig**](https://github.com/withfig/autocomplete) and its contributors. Fig's pioneering work on IDE-style terminal autocomplete and its open completion-spec ecosystem helped show how approachable and productive the command line can be, and provided important inspiration for Wisp's user experience.
+
 ## License
 
 Licensed under either **MIT** or [**Apache-2.0**](LICENSE-APACHE), at your option.
