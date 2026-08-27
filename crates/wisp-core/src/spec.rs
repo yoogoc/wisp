@@ -81,9 +81,29 @@ pub struct ImportedGenerator {
     #[serde(default)]
     pub script: Vec<String>,
     #[serde(default)]
+    pub output: ImportedGeneratorOutput,
+    #[serde(default)]
     pub has_post_process: bool,
     #[serde(default)]
     pub has_custom: bool,
+}
+
+/// A serializable replacement for the output-parsing part of a Fig generator.
+///
+/// Fig specs can run arbitrary JavaScript in `postProcess`. Wisp deliberately
+/// keeps that code out of the runtime and expresses supported transformations
+/// as data in RON instead.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub enum ImportedGeneratorOutput {
+    /// One candidate per non-empty stdout line.
+    #[default]
+    Lines,
+    /// A JSON array (or one JSON object per line) containing candidate objects.
+    Json {
+        name_field: String,
+        #[serde(default)]
+        description_field: Option<String>,
+    },
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -230,5 +250,39 @@ mod tests {
         assert!(store.len() >= 1_484);
         assert!(store.get("az").is_some());
         assert!(store.get_by_id("az/2.53.0").is_some());
+    }
+
+    #[test]
+    fn imported_generator_output_defaults_to_lines_for_existing_specs() {
+        let generator: ImportedGenerator = ron::from_str(
+            r#"(
+                script: ["example", "list"],
+                has_post_process: false,
+                has_custom: false,
+            )"#,
+        )
+        .unwrap();
+
+        assert!(matches!(generator.output, ImportedGeneratorOutput::Lines));
+    }
+
+    #[test]
+    fn real_fig_pkgutil_generator_is_preserved_as_ron_ir() {
+        let store = SpecStore::builtins();
+        let spec = store.get("pkgutil").expect("pkgutil spec must be embedded");
+        let files = spec
+            .subcommands
+            .iter()
+            .find(|subcommand| subcommand.name == "--files")
+            .expect("pkgutil --files must be present");
+        let generator = files.arguments[0]
+            .imported_generator
+            .as_ref()
+            .expect("pkgutil package-id generator must be preserved");
+
+        assert_eq!(generator.script, ["pkgutil", "--pkgs"]);
+        assert!(!generator.has_post_process);
+        assert!(!generator.has_custom);
+        assert!(matches!(generator.output, ImportedGeneratorOutput::Lines));
     }
 }

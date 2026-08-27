@@ -11,8 +11,8 @@ use tracing::debug;
 use wisp_protocol::{BufferSnapshot, Candidate, CandidateKind};
 
 use crate::{
-    ArgumentSpec, CommandSpec, CompletionContext, OptionSpec, SpecStore, SubcommandSpec,
-    SuggestionSource, parse_completion_context,
+    ArgumentSpec, CommandSpec, CompletionContext, ImportedGenerator, ImportedGeneratorOutput,
+    OptionSpec, SpecStore, SubcommandSpec, SuggestionSource, parse_completion_context,
 };
 
 #[derive(Debug, Clone)]
@@ -209,6 +209,14 @@ impl CompletionEngine {
         context: &CompletionContext,
         cwd: &Path,
     ) -> Vec<Candidate> {
+        if let Some(generator) = argument
+            .imported_generator
+            .as_ref()
+            .filter(|generator| generator.is_executable())
+        {
+            return self.run_imported_generator(generator, context, cwd).await;
+        }
+
         match &argument.source {
             SuggestionSource::Files => complete_paths(context, cwd, false),
             SuggestionSource::Directories => complete_paths(context, cwd, true),
@@ -229,6 +237,35 @@ impl CompletionEngine {
             }
             SuggestionSource::Unavailable => Vec::new(),
         }
+    }
+
+    async fn run_imported_generator(
+        &self,
+        generator: &ImportedGenerator,
+        context: &CompletionContext,
+        cwd: &Path,
+    ) -> Vec<Candidate> {
+        let Some((program, args)) = generator.script.split_first() else {
+            return Vec::new();
+        };
+        if !command_is_available(program, cwd) {
+            return Vec::new();
+        }
+
+        let output = timeout(
+            Duration::from_millis(150),
+            Command::new(program).args(args).current_dir(cwd).output(),
+        )
+        .await;
+        let Ok(Ok(output)) = output else {
+            debug!(program, "imported completion generator timed out or failed");
+            return Vec::new();
+        };
+        if !output.status.success() || output.stdout.len() > 256 * 1024 {
+            return Vec::new();
+        }
+
+        parse_imported_generator_output(&output.stdout, &generator.output, context)
     }
 
     async fn run_generator(
@@ -275,6 +312,52 @@ impl CompletionEngine {
             .filter_map(|line| make_candidate(line, line, None, kind, context))
             .collect()
     }
+}
+
+impl ImportedGenerator {
+    fn is_executable(&self) -> bool {
+        !self.script.is_empty() && !self.has_post_process && !self.has_custom
+    }
+}
+
+fn parse_imported_generator_output(
+    stdout: &[u8],
+    output: &ImportedGeneratorOutput,
+    context: &CompletionContext,
+) -> Vec<Candidate> {
+    match output {
+        ImportedGeneratorOutput::Lines => String::from_utf8_lossy(stdout)
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty())
+            .filter_map(|line| make_candidate(line, line, None, CandidateKind::Subcommand, context))
+            .collect(),
+        ImportedGeneratorOutput::Json {
+            name_field,
+            description_field,
+        } => parse_generator_json(stdout)
+            .into_iter()
+            .filter_map(|value| {
+                let name = value.get(name_field)?.as_str()?;
+                let description = description_field
+                    .as_ref()
+                    .and_then(|field| value.get(field))
+                    .and_then(serde_json::Value::as_str)
+                    .map(str::to_owned);
+                make_candidate(name, name, description, CandidateKind::Subcommand, context)
+            })
+            .collect(),
+    }
+}
+
+fn parse_generator_json(stdout: &[u8]) -> Vec<serde_json::Value> {
+    if let Ok(values) = serde_json::from_slice::<Vec<serde_json::Value>>(stdout) {
+        return values;
+    }
+    String::from_utf8_lossy(stdout)
+        .lines()
+        .filter_map(|line| serde_json::from_str(line).ok())
+        .collect()
 }
 
 static UNAVAILABLE_ARGUMENT: ArgumentSpec = ArgumentSpec {
@@ -732,6 +815,66 @@ mod tests {
             .complete(&snapshot("git commit --cleanup "))
             .await;
         assert!(values.iter().any(|value| value.label == "strip"));
+    }
+
+    #[tokio::test]
+    async fn runs_ron_static_script_generators_without_a_shell_wrapper() {
+        let context = parse_completion_context("printf ", "printf ".chars().count());
+        let generator = ImportedGenerator {
+            script: vec![
+                "/bin/sh".into(),
+                "-c".into(),
+                "printf 'alpha\\nbeta\\n'".into(),
+            ],
+            output: ImportedGeneratorOutput::Lines,
+            has_post_process: false,
+            has_custom: false,
+        };
+
+        let values = CompletionEngine::default()
+            .run_imported_generator(&generator, &context, Path::new(env!("CARGO_MANIFEST_DIR")))
+            .await;
+
+        assert_eq!(
+            values
+                .iter()
+                .map(|candidate| candidate.label.as_str())
+                .collect::<Vec<_>>(),
+            ["alpha", "beta"]
+        );
+    }
+
+    #[test]
+    fn parses_declarative_json_generator_output() {
+        let context = parse_completion_context("example al", "example al".chars().count());
+        let output = br#"[
+            {"name":"alpha","detail":"first item"},
+            {"name":"beta","detail":"second item"}
+        ]"#;
+        let values = parse_imported_generator_output(
+            output,
+            &ImportedGeneratorOutput::Json {
+                name_field: "name".into(),
+                description_field: Some("detail".into()),
+            },
+            &context,
+        );
+
+        assert_eq!(values.len(), 1);
+        assert_eq!(values[0].label, "alpha");
+        assert_eq!(values[0].description.as_deref(), Some("first item"));
+    }
+
+    #[test]
+    fn javascript_callback_generators_remain_disabled() {
+        let generator = ImportedGenerator {
+            script: vec!["example".into()],
+            output: ImportedGeneratorOutput::Lines,
+            has_post_process: true,
+            has_custom: false,
+        };
+
+        assert!(!generator.is_executable());
     }
 
     #[tokio::test]
