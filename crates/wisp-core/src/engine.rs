@@ -799,7 +799,9 @@ fn complete_paths_with_home(
     } else {
         cwd.join(token_path)
     };
-    let (search_directory, display_parent, prefix) = if token == "~" {
+    let (search_directory, display_parent, prefix) = if token.is_empty() {
+        (cwd.to_path_buf(), PathBuf::new(), "")
+    } else if token == "~" {
         (resolved_token, PathBuf::from("~"), "")
     } else if token.ends_with('/') {
         (resolved_token, token_path.to_path_buf(), "")
@@ -1004,6 +1006,8 @@ mod tests {
         }));
 
         let values = CompletionEngine::default().complete(&snapshot("cd ")).await;
+        assert!(labels(&values).contains(&"src/"));
+        assert!(!labels(&values).contains(&"wisp-core/"));
         assert!(!labels(&values).contains(&"-"));
         assert!(!labels(&values).contains(&"~"));
     }
