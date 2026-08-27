@@ -53,7 +53,7 @@ impl CompletionEngine {
         }
         let context = parse_completion_context(&snapshot.buffer, snapshot.cursor);
         let mut candidates = if is_command_position(&context) {
-            complete_commands(&context, &self.commands)
+            complete_commands(&context, &self.commands, &snapshot.cwd)
         } else {
             self.complete_arguments(&context, &snapshot.cwd).await
         };
@@ -73,8 +73,24 @@ impl CompletionEngine {
 
     async fn complete_arguments(&self, context: &CompletionContext, cwd: &Path) -> Vec<Candidate> {
         let Some(command) = context.command.as_deref() else {
-            return complete_commands(context, &self.commands);
+            return complete_commands(context, &self.commands, cwd);
         };
+        if !command_is_available(command, cwd) {
+            return Vec::new();
+        }
+        if command == "cd" {
+            let mut candidates = complete_paths(context, cwd, true);
+            candidates.extend(["-", "~"].into_iter().filter_map(|value| {
+                make_candidate(
+                    value,
+                    value,
+                    Some("directory".into()),
+                    CandidateKind::Directory,
+                    context,
+                )
+            }));
+            return candidates;
+        }
         let Some(spec) = self.specs.get(command) else {
             return complete_paths(context, cwd, false);
         };
@@ -330,7 +346,11 @@ fn discover_commands() -> Vec<String> {
         return Vec::new();
     };
     let mut seen = HashSet::new();
-    let mut commands = Vec::new();
+    let mut commands = ZSH_BUILTINS
+        .iter()
+        .map(|command| (*command).to_owned())
+        .collect::<Vec<_>>();
+    seen.extend(commands.iter().cloned());
     for directory in std::env::split_paths(&path) {
         let Ok(entries) = std::fs::read_dir(directory) else {
             continue;
@@ -352,9 +372,14 @@ fn discover_commands() -> Vec<String> {
     commands
 }
 
-fn complete_commands(context: &CompletionContext, commands: &[String]) -> Vec<Candidate> {
+fn complete_commands(
+    context: &CompletionContext,
+    commands: &[String],
+    cwd: &Path,
+) -> Vec<Candidate> {
     commands
         .iter()
+        .filter(|name| command_is_available(name, cwd))
         .filter_map(|name| {
             make_candidate(
                 name,
@@ -365,6 +390,31 @@ fn complete_commands(context: &CompletionContext, commands: &[String]) -> Vec<Ca
             )
         })
         .collect()
+}
+
+const ZSH_BUILTINS: &[&str] = &[
+    "alias", "bg", "builtin", "cd", "command", "dirs", "disown", "echo", "eval", "exec", "export",
+    "false", "fc", "fg", "getopts", "hash", "history", "jobs", "popd", "print", "printf", "pushd",
+    "pwd", "read", "set", "setopt", "source", "test", "true", "typeset", "ulimit", "umask",
+    "unalias", "unset", "unsetopt", "wait", "whence", "which",
+];
+
+fn command_is_available(command: &str, cwd: &Path) -> bool {
+    if ZSH_BUILTINS.contains(&command) {
+        return true;
+    }
+    if command.contains('/') {
+        let path = Path::new(command);
+        let resolved = if path.is_absolute() {
+            path.to_path_buf()
+        } else {
+            cwd.join(path)
+        };
+        return is_executable(&resolved);
+    }
+    std::env::var_os("PATH").is_some_and(|path| {
+        std::env::split_paths(&path).any(|directory| is_executable(&directory.join(command)))
+    })
 }
 
 #[cfg(unix)]
@@ -386,17 +436,45 @@ fn complete_paths(
     cwd: &Path,
     directories_only: bool,
 ) -> Vec<Candidate> {
+    let home = std::env::var_os("HOME").map(PathBuf::from);
+    complete_paths_with_home(context, cwd, directories_only, home.as_deref())
+}
+
+fn complete_paths_with_home(
+    context: &CompletionContext,
+    cwd: &Path,
+    directories_only: bool,
+    home: Option<&Path>,
+) -> Vec<Candidate> {
     let token = &context.current_token;
     let token_path = Path::new(token);
-    let (search_directory, display_parent, prefix) = if token.ends_with('/') {
-        (cwd.join(token_path), token_path.to_path_buf(), "")
-    } else {
-        let (search_directory, display_parent) = match token_path.parent() {
-            Some(parent) if !parent.as_os_str().is_empty() => {
-                (cwd.join(parent), parent.to_path_buf())
-            }
-            _ => (cwd.to_path_buf(), PathBuf::new()),
+    let resolved_token = if token == "~" {
+        let Some(home) = home else {
+            return Vec::new();
         };
+        home.to_path_buf()
+    } else if let Some(relative) = token.strip_prefix("~/") {
+        let Some(home) = home else {
+            return Vec::new();
+        };
+        home.join(relative)
+    } else {
+        cwd.join(token_path)
+    };
+    let (search_directory, display_parent, prefix) = if token == "~" {
+        (resolved_token, PathBuf::from("~"), "")
+    } else if token.ends_with('/') {
+        (resolved_token, token_path.to_path_buf(), "")
+    } else {
+        let search_directory = resolved_token
+            .parent()
+            .map(Path::to_path_buf)
+            .unwrap_or_else(|| cwd.to_path_buf());
+        let display_parent = token_path
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+            .map(Path::to_path_buf)
+            .unwrap_or_default();
         let prefix = token_path
             .file_name()
             .and_then(OsStr::to_str)
@@ -428,7 +506,7 @@ fn complete_paths(
             } else {
                 CandidateKind::File
             };
-            make_candidate(&insert, &shell_escape(&insert), None, kind, context)
+            make_candidate(&insert, &shell_escape_path(&insert), None, kind, context)
         })
         .collect()
 }
@@ -485,9 +563,19 @@ fn shell_escape(value: &str) -> String {
     }
 }
 
+fn shell_escape_path(value: &str) -> String {
+    value.strip_prefix("~/").map_or_else(
+        || shell_escape(value),
+        |relative| format!("~/{}", shell_escape(relative)),
+    )
+}
+
 #[cfg(test)]
 mod tests {
-    use std::path::PathBuf;
+    use std::{
+        path::PathBuf,
+        time::{SystemTime, UNIX_EPOCH},
+    };
 
     use wisp_protocol::{ShellKind, TerminalKind, TerminalSnapshot};
 
@@ -546,6 +634,88 @@ mod tests {
             .complete(&snapshot("cat src/"))
             .await;
         assert!(values.iter().any(|value| value.label == "src/lib.rs"));
+    }
+
+    #[tokio::test]
+    async fn cd_uses_native_directory_completion() {
+        let values = CompletionEngine::default()
+            .complete(&snapshot("cd s"))
+            .await;
+        assert!(values.iter().any(|candidate| {
+            candidate.label == "src/" && candidate.kind == CandidateKind::Directory
+        }));
+        assert!(
+            values
+                .iter()
+                .all(|candidate| candidate.kind == CandidateKind::Directory)
+        );
+    }
+
+    #[test]
+    fn unavailable_commands_are_filtered_from_command_candidates() {
+        let unavailable = format!("wisp-command-that-does-not-exist-{}", std::process::id());
+        let context = parse_completion_context(&unavailable, unavailable.chars().count());
+        let values = complete_commands(
+            &context,
+            std::slice::from_ref(&unavailable),
+            Path::new(env!("CARGO_MANIFEST_DIR")),
+        );
+        assert!(values.is_empty());
+    }
+
+    #[test]
+    fn zsh_builtins_are_available_without_path_executables() {
+        assert!(command_is_available(
+            "cd",
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+        ));
+    }
+
+    #[test]
+    fn tilde_paths_are_resolved_against_home_and_preserved_for_insertion() {
+        let nonce = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
+        let root = std::env::temp_dir().join(format!("wisp-tilde-test-{nonce}"));
+        let home = root.join("home");
+        std::fs::create_dir_all(home.join("Documents")).unwrap();
+        std::fs::create_dir_all(home.join("My Folder")).unwrap();
+
+        let documents = parse_completion_context("cd ~/Do", "cd ~/Do".chars().count());
+        let values = complete_paths_with_home(&documents, &root, true, Some(&home));
+        assert!(values.iter().any(|candidate| {
+            candidate.label == "~/Documents/" && candidate.insert_text == "~/Documents/"
+        }));
+
+        let spaced = parse_completion_context("cd ~/My", "cd ~/My".chars().count());
+        let values = complete_paths_with_home(&spaced, &root, true, Some(&home));
+        assert!(values.iter().any(|candidate| {
+            candidate.label == "~/My Folder/" && candidate.insert_text == "~/'My Folder/'"
+        }));
+
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn bare_tilde_completes_home_children() {
+        let nonce = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
+        let root = std::env::temp_dir().join(format!("wisp-bare-tilde-test-{nonce}"));
+        let home = root.join("home");
+        std::fs::create_dir_all(home.join("Projects")).unwrap();
+
+        let context = parse_completion_context("cd ~", "cd ~".chars().count());
+        let values = complete_paths_with_home(&context, &root, true, Some(&home));
+        assert!(
+            values
+                .iter()
+                .any(|candidate| candidate.label == "~/Projects/")
+        );
+
+        std::fs::remove_dir_all(root).unwrap();
     }
 
     #[tokio::test]
