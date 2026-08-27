@@ -1,0 +1,694 @@
+use std::{
+    path::PathBuf,
+    sync::{Arc, Mutex, mpsc},
+    thread,
+    time::{Duration, Instant},
+};
+
+use anyhow::Context;
+use clap::Parser;
+use gpui::{
+    App, Application, Bounds, Context as GpuiContext, Entity, Render, Timer, Window,
+    WindowBackgroundAppearance, WindowBounds, WindowKind, WindowOptions, div, point, prelude::*,
+    px, rgba, size,
+};
+use tokio::net::UnixStream;
+use tracing::debug;
+use tracing_subscriber::EnvFilter;
+use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
+use wisp_protocol::{
+    CandidateKind, ClientMessage, CursorAnchor, RenderModel, ServerMessage, framed,
+    receive_message, send_message,
+};
+
+const MAX_VISIBLE_CANDIDATES: usize = 8;
+const MAX_PATH_LABEL_WIDTH: usize = 40;
+const CURSOR_GAP: f32 = 8.0;
+
+#[derive(Debug, Parser)]
+#[command(version, about = "Wisp GPUI autocomplete overlay")]
+struct Args {
+    #[arg(long, env = "WISP_SOCKET")]
+    socket: Option<PathBuf>,
+}
+
+struct OverlayView {
+    model: RenderModel,
+    visible: bool,
+    suppressed_until_new_request: Option<(String, u64)>,
+}
+
+impl Render for OverlayView {
+    fn render(&mut self, _window: &mut Window, _cx: &mut GpuiContext<Self>) -> impl IntoElement {
+        let selected = self.model.selected;
+        let visible = visible_candidate_range(self.model.candidates.len(), selected);
+        let candidates = self
+            .model
+            .candidates
+            .iter()
+            .enumerate()
+            .skip(visible.start)
+            .take(visible.len())
+            .map(|(index, candidate)| {
+                let label = display_candidate_label(&candidate.label, candidate.kind);
+                div()
+                    .flex()
+                    .items_center()
+                    .h(px(32.0))
+                    .px(px(10.0))
+                    .text_size(px(13.0))
+                    .text_color(rgba(0xe7e9efff))
+                    .when(index == selected, |row| row.bg(rgba(0x3d67b1cc)))
+                    .child(
+                        div()
+                            .w(px(88.0))
+                            .text_color(rgba(0x8fa5cfff))
+                            .child(format!("{:?}", candidate.kind).to_lowercase()),
+                    )
+                    .child(div().flex_1().overflow_hidden().child(label))
+                    .when_some(candidate.description.clone(), |row, description| {
+                        row.child(
+                            div()
+                                .ml(px(12.0))
+                                .text_color(rgba(0x8b91a1ff))
+                                .child(description),
+                        )
+                    })
+            });
+
+        div()
+            .when(!self.visible, |root| root.opacity(0.0))
+            .flex()
+            .flex_col()
+            .size_full()
+            .overflow_hidden()
+            .rounded(px(9.0))
+            .border_1()
+            .border_color(rgba(0x515768dd))
+            .bg(rgba(0x17191fee))
+            .shadow_lg()
+            .when_some(self.model.ghost_text.clone(), |root, ghost| {
+                root.child(
+                    div()
+                        .h(px(30.0))
+                        .px(px(10.0))
+                        .flex()
+                        .items_center()
+                        .text_size(px(12.0))
+                        .text_color(rgba(0x9da4b5ff))
+                        .child(format!("→ {ghost}")),
+                )
+            })
+            .children(candidates)
+    }
+}
+
+fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt()
+        .with_env_filter(EnvFilter::try_from_default_env().unwrap_or_else(|_| "wisp=info".into()))
+        .init();
+    let args = Args::parse();
+    let socket = args.socket.unwrap_or_else(default_socket_path);
+    let (sender, receiver) = mpsc::channel();
+    spawn_subscription(socket, sender);
+
+    let first = loop {
+        match receiver.recv().context("overlay subscription stopped")? {
+            ServerMessage::Render { model } if model_has_content(&model) => break model,
+            _ => continue,
+        }
+    };
+    let receiver = Arc::new(Mutex::new(receiver));
+
+    Application::new().run(move |cx: &mut App| {
+        if let Err(error) = configure_overlay_application() {
+            debug!(%error, "could not configure overlay application policy");
+        }
+        let terminal_active = alacritty_is_frontmost();
+        let height = overlay_height(&first);
+        let anchor = overlay_origin(&first, height);
+        let bounds = Bounds {
+            origin: anchor,
+            size: size(px(440.0), px(height)),
+        };
+        let receiver = Arc::clone(&receiver);
+        cx.open_window(
+            WindowOptions {
+                window_bounds: Some(WindowBounds::Windowed(bounds)),
+                titlebar: None,
+                focus: false,
+                // GPUI otherwise orders the initial NSPanel before we have applied
+                // the non-activating application/window configuration.
+                show: false,
+                kind: WindowKind::PopUp,
+                is_movable: false,
+                is_resizable: false,
+                is_minimizable: false,
+                window_background: WindowBackgroundAppearance::Transparent,
+                window_decorations: None,
+                ..Default::default()
+            },
+            move |window, cx| {
+                let view = cx.new(|_| OverlayView {
+                    model: first,
+                    visible: terminal_active,
+                    suppressed_until_new_request: None,
+                });
+                let initial_model = view.read(cx).model.clone();
+                if let Err(error) =
+                    reposition_window(window, &initial_model, overlay_height(&initial_model))
+                {
+                    debug!(%error, "could not position initial overlay window");
+                }
+                if let Err(error) = set_overlay_window_visible(window, terminal_active) {
+                    debug!(%error, "could not configure overlay window");
+                }
+                poll_messages(window, cx, view.clone(), receiver, terminal_active);
+                view
+            },
+        )
+        .expect("open Wisp overlay window");
+    });
+    Ok(())
+}
+
+#[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
+fn configure_overlay_application() -> anyhow::Result<()> {
+    use cocoa::{
+        appkit::{NSApp, NSApplication, NSApplicationActivationPolicyAccessory},
+        base::{YES, nil},
+    };
+    use objc::{msg_send, sel, sel_impl};
+
+    let application = unsafe { NSApp() };
+    if application == nil {
+        return Err(anyhow::anyhow!("AppKit application is unavailable"));
+    }
+    let changed =
+        unsafe { application.setActivationPolicy_(NSApplicationActivationPolicyAccessory) };
+    if changed != YES {
+        return Err(anyhow::anyhow!(
+            "AppKit rejected accessory activation policy"
+        ));
+    }
+    let active: objc::runtime::BOOL = unsafe { msg_send![application, isActive] };
+    if active == YES {
+        unsafe {
+            let _: () = msg_send![application, deactivate];
+        }
+    }
+    Ok(())
+}
+
+#[cfg(not(target_os = "macos"))]
+fn configure_overlay_application() -> anyhow::Result<()> {
+    Ok(())
+}
+
+fn poll_messages(
+    window: &mut Window,
+    cx: &mut App,
+    view: Entity<OverlayView>,
+    receiver: Arc<Mutex<mpsc::Receiver<ServerMessage>>>,
+    initial_terminal_active: bool,
+) {
+    window
+        .spawn(cx, async move |cx| {
+            let mut terminal_active = initial_terminal_active;
+            let mut last_activity_check = Instant::now();
+            loop {
+                Timer::after(Duration::from_millis(16)).await;
+                let activity_changed =
+                    if last_activity_check.elapsed() >= Duration::from_millis(100) {
+                        last_activity_check = Instant::now();
+                        let active = alacritty_is_frontmost();
+                        let changed = active != terminal_active;
+                        terminal_active = active;
+                        changed
+                    } else {
+                        false
+                    };
+                let messages = {
+                    let receiver = receiver.lock().expect("overlay receiver mutex poisoned");
+                    receiver.try_iter().collect::<Vec<_>>()
+                };
+                if messages.is_empty() && !activity_changed {
+                    continue;
+                }
+                if cx
+                    .update(|window, app| {
+                        if activity_changed {
+                            let current = view.read(app);
+                            let suppression = if terminal_active {
+                                current.suppressed_until_new_request.clone()
+                            } else {
+                                Some((current.model.session_id.clone(), current.model.request_id))
+                            };
+                            let visible = terminal_active
+                                && model_has_content(&current.model)
+                                && !model_is_suppressed(&current.model, suppression.as_ref());
+                            if let Err(error) = set_overlay_window_visible(window, visible) {
+                                debug!(%error, "could not follow Alacritty activation");
+                            }
+                            view.update(app, |view, cx| {
+                                view.visible = visible;
+                                view.suppressed_until_new_request = suppression;
+                                cx.notify();
+                            });
+                        }
+                        for message in messages {
+                            match message {
+                                ServerMessage::Render { model } => {
+                                    let mut suppression =
+                                        view.read(app).suppressed_until_new_request.clone();
+                                    if !terminal_active {
+                                        suppression =
+                                            Some((model.session_id.clone(), model.request_id));
+                                    }
+                                    let suppressed =
+                                        model_is_suppressed(&model, suppression.as_ref());
+                                    let visible =
+                                        terminal_active && model_has_content(&model) && !suppressed;
+                                    if terminal_active && !suppressed {
+                                        suppression = None;
+                                    }
+                                    let height = overlay_height(&model);
+                                    window.resize(size(px(440.0), px(height)));
+                                    if let Err(error) = reposition_window(window, &model, height) {
+                                        debug!(%error, "could not reposition overlay window");
+                                    }
+                                    if let Err(error) = set_overlay_window_visible(window, visible)
+                                    {
+                                        debug!(%error, "could not change overlay visibility");
+                                    }
+                                    view.update(app, |view, cx| {
+                                        view.model = model;
+                                        view.visible = visible;
+                                        view.suppressed_until_new_request = suppression;
+                                        cx.notify();
+                                    });
+                                }
+                                ServerMessage::Hidden { session_id }
+                                    if hidden_message_matches(
+                                        &view.read(app).model,
+                                        &session_id,
+                                    ) =>
+                                {
+                                    if let Err(error) = set_overlay_window_visible(window, false) {
+                                        debug!(%error, "could not hide overlay window");
+                                    }
+                                    view.update(app, |view, cx| {
+                                        view.visible = false;
+                                        cx.notify();
+                                    });
+                                }
+                                _ => {}
+                            }
+                        }
+                    })
+                    .is_err()
+                {
+                    break;
+                }
+            }
+        })
+        .detach();
+}
+
+fn overlay_height(model: &RenderModel) -> f32 {
+    let rows = model.candidates.len().clamp(1, MAX_VISIBLE_CANDIDATES) as f32;
+    rows * 32.0
+        + if model.ghost_text.is_some() {
+            30.0
+        } else {
+            0.0
+        }
+}
+
+fn visible_candidate_range(candidate_count: usize, selected: usize) -> std::ops::Range<usize> {
+    let visible_count = candidate_count.min(MAX_VISIBLE_CANDIDATES);
+    let selected = selected.min(candidate_count.saturating_sub(1));
+    let start = selected
+        .saturating_add(1)
+        .saturating_sub(visible_count)
+        .min(candidate_count.saturating_sub(visible_count));
+    start..start + visible_count
+}
+
+fn display_candidate_label(label: &str, kind: CandidateKind) -> String {
+    if matches!(kind, CandidateKind::File | CandidateKind::Directory) {
+        truncate_middle(label, MAX_PATH_LABEL_WIDTH)
+    } else {
+        label.to_owned()
+    }
+}
+
+fn truncate_middle(value: &str, max_width: usize) -> String {
+    if UnicodeWidthStr::width(value) <= max_width {
+        return value.to_owned();
+    }
+    if max_width <= 1 {
+        return "…".into();
+    }
+
+    let remaining = max_width - 1;
+    let prefix_width = remaining / 3;
+    let suffix_width = remaining - prefix_width;
+    let prefix = take_prefix_columns(value, prefix_width);
+    let suffix = take_suffix_columns(value, suffix_width);
+    format!("{prefix}…{suffix}")
+}
+
+fn take_prefix_columns(value: &str, max_width: usize) -> String {
+    let mut width = 0;
+    value
+        .chars()
+        .take_while(|ch| {
+            let next = width + ch.width().unwrap_or(0);
+            let take = next <= max_width;
+            if take {
+                width = next;
+            }
+            take
+        })
+        .collect()
+}
+
+fn take_suffix_columns(value: &str, max_width: usize) -> String {
+    let mut width = 0;
+    let mut chars = value
+        .chars()
+        .rev()
+        .take_while(|ch| {
+            let next = width + ch.width().unwrap_or(0);
+            let take = next <= max_width;
+            if take {
+                width = next;
+            }
+            take
+        })
+        .collect::<Vec<_>>();
+    chars.reverse();
+    chars.into_iter().collect()
+}
+
+fn model_has_content(model: &RenderModel) -> bool {
+    !model.candidates.is_empty() || model.ghost_text.is_some()
+}
+
+fn model_is_suppressed(model: &RenderModel, suppression: Option<&(String, u64)>) -> bool {
+    suppression.is_some_and(|(session_id, request_id)| {
+        model.session_id == *session_id && model.request_id <= *request_id
+    })
+}
+
+fn hidden_message_matches(model: &RenderModel, session_id: &str) -> bool {
+    model.session_id == session_id
+}
+
+fn overlay_origin(model: &RenderModel, _height: f32) -> gpui::Point<gpui::Pixels> {
+    model.anchor.map_or(point(px(120.0), px(120.0)), |anchor| {
+        point(px(anchor.position.x), px(anchor.position.y + CURSOR_GAP))
+    })
+}
+
+fn preferred_overlay_top(anchor: CursorAnchor, height: f32, screen_height: f32) -> f32 {
+    let below = anchor.position.y + CURSOR_GAP;
+    if below + height <= screen_height {
+        below
+    } else {
+        (anchor.position.y - anchor.line_height - CURSOR_GAP - height).max(0.0)
+    }
+}
+
+#[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
+fn reposition_window(window: &Window, model: &RenderModel, height: f32) -> anyhow::Result<()> {
+    use cocoa::{
+        appkit::NSScreen,
+        base::nil,
+        foundation::{NSPoint, NSRect},
+    };
+    use objc::{msg_send, runtime::Object, sel, sel_impl};
+
+    let Some(anchor) = model.anchor else {
+        return Ok(());
+    };
+    let native_window = native_window(window)?;
+    let screen = unsafe { NSScreen::mainScreen(nil) };
+    let screen_frame: NSRect = unsafe { NSScreen::frame(screen) };
+    let top = preferred_overlay_top(anchor, height, screen_frame.size.height as f32);
+    let origin_x = f64::from(anchor.position.x);
+    let origin_y =
+        screen_frame.origin.y + screen_frame.size.height - f64::from(top) - f64::from(height);
+    // Moving NSWindow synchronously from inside GPUI's update callback re-enters
+    // GPUI while its window state is borrowed. Dispatching to the next main-queue
+    // turn keeps the native move ordered without triggering that re-entrant borrow.
+    dispatch::Queue::main().exec_async(move || {
+        let native_window = native_window as *mut Object;
+        let origin = NSPoint::new(origin_x, origin_y);
+        unsafe {
+            let _: () = msg_send![native_window, setFrameOrigin: origin];
+        }
+    });
+    Ok(())
+}
+
+#[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
+fn set_overlay_window_visible(window: &Window, visible: bool) -> anyhow::Result<()> {
+    use cocoa::base::nil;
+    use objc::{
+        msg_send,
+        runtime::{Object, YES},
+        sel, sel_impl,
+    };
+
+    let native_window = native_window(window)?;
+    // AppKit visibility changes can re-enter GPUI, so keep them ordered on the
+    // next main-queue turn just like native window repositioning.
+    dispatch::Queue::main().exec_async(move || {
+        let native_window = native_window as *mut Object;
+        unsafe {
+            let _: () = msg_send![native_window, setIgnoresMouseEvents: YES];
+            let _: () = msg_send![native_window, setBecomesKeyOnlyIfNeeded: YES];
+            if visible {
+                let _: () = msg_send![native_window, orderFront: nil];
+            } else {
+                let _: () = msg_send![native_window, orderOut: nil];
+            }
+        }
+    });
+    Ok(())
+}
+
+#[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
+fn alacritty_is_frontmost() -> bool {
+    use std::ffi::CStr;
+
+    use objc::{class, msg_send, runtime::Object, sel, sel_impl};
+
+    if let Ok(value) = std::env::var("WISP_ALACRITTY_ACTIVE") {
+        return matches!(value.as_str(), "1" | "true" | "yes");
+    }
+    unsafe {
+        let workspace: *mut Object = msg_send![class!(NSWorkspace), sharedWorkspace];
+        if workspace.is_null() {
+            return false;
+        }
+        let application: *mut Object = msg_send![workspace, frontmostApplication];
+        if application.is_null() {
+            return false;
+        }
+        let name: *mut Object = msg_send![application, localizedName];
+        if name.is_null() {
+            return false;
+        }
+        let bytes: *const std::os::raw::c_char = msg_send![name, UTF8String];
+        !bytes.is_null()
+            && CStr::from_ptr(bytes)
+                .to_string_lossy()
+                .eq_ignore_ascii_case("Alacritty")
+    }
+}
+
+#[cfg(not(target_os = "macos"))]
+fn alacritty_is_frontmost() -> bool {
+    true
+}
+
+#[cfg(target_os = "macos")]
+#[allow(unexpected_cfgs)]
+fn native_window(window: &Window) -> anyhow::Result<usize> {
+    use objc::{msg_send, runtime::Object, sel, sel_impl};
+    use raw_window_handle::{HasWindowHandle, RawWindowHandle};
+
+    let handle = HasWindowHandle::window_handle(window)
+        .map_err(|error| anyhow::anyhow!("read GPUI window handle: {error:?}"))?;
+    let RawWindowHandle::AppKit(handle) = handle.as_raw() else {
+        return Err(anyhow::anyhow!("GPUI window is not backed by AppKit"));
+    };
+    let view = handle.ns_view.as_ptr().cast::<Object>();
+    let native_window: *mut Object = unsafe { msg_send![view, window] };
+    if native_window.is_null() {
+        return Err(anyhow::anyhow!("GPUI AppKit view has no window"));
+    }
+    Ok(native_window as usize)
+}
+
+#[cfg(not(target_os = "macos"))]
+fn reposition_window(_window: &Window, _model: &RenderModel, _height: f32) -> anyhow::Result<()> {
+    Ok(())
+}
+
+#[cfg(not(target_os = "macos"))]
+fn set_overlay_window_visible(_window: &Window, _visible: bool) -> anyhow::Result<()> {
+    Ok(())
+}
+
+fn spawn_subscription(socket: PathBuf, sender: mpsc::Sender<ServerMessage>) {
+    thread::spawn(move || {
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .expect("build overlay IPC runtime");
+        runtime.block_on(async move {
+            loop {
+                match subscribe_once(&socket, &sender).await {
+                    Ok(()) => return,
+                    Err(error) => {
+                        debug!(%error, "overlay subscription reconnecting");
+                        tokio::time::sleep(Duration::from_millis(250)).await;
+                    }
+                }
+            }
+        });
+    });
+}
+
+async fn subscribe_once(
+    socket: &PathBuf,
+    sender: &mpsc::Sender<ServerMessage>,
+) -> anyhow::Result<()> {
+    let stream = UnixStream::connect(socket).await?;
+    let mut connection = framed(stream);
+    send_message(&mut connection, &ClientMessage::SubscribeOverlay).await?;
+    while let Some(message) = receive_message(&mut connection).await? {
+        if sender.send(message).is_err() {
+            return Ok(());
+        }
+    }
+    Err(anyhow::anyhow!("daemon closed overlay subscription"))
+}
+
+fn default_socket_path() -> PathBuf {
+    if let Some(path) = std::env::var_os("WISP_SOCKET") {
+        return path.into();
+    }
+    std::env::var_os("XDG_RUNTIME_DIR").map_or_else(
+        || std::env::temp_dir().join(format!("wisp-{}.sock", socket_identity())),
+        |directory| PathBuf::from(directory).join("wisp.sock"),
+    )
+}
+
+fn socket_identity() -> String {
+    std::env::var("USER")
+        .unwrap_or_else(|_| "user".into())
+        .chars()
+        .filter(|ch| ch.is_ascii_alphanumeric() || *ch == '-')
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn empty_model(session_id: &str) -> RenderModel {
+        RenderModel {
+            request_id: 1,
+            session_id: session_id.into(),
+            anchor: None,
+            candidates: Vec::new(),
+            selected: 0,
+            ghost_text: None,
+        }
+    }
+
+    #[test]
+    fn empty_model_is_not_visible() {
+        assert!(!model_has_content(&empty_model("current")));
+    }
+
+    #[test]
+    fn hidden_message_only_applies_to_current_session() {
+        let model = empty_model("current");
+        assert!(hidden_message_matches(&model, "current"));
+        assert!(!hidden_message_matches(&model, "stale"));
+    }
+
+    #[test]
+    fn blurred_request_stays_suppressed_until_a_new_request() {
+        let mut model = empty_model("current");
+        model.request_id = 7;
+        let suppression = Some(("current".to_owned(), 7));
+
+        assert!(model_is_suppressed(&model, suppression.as_ref()));
+        model.request_id = 6;
+        assert!(model_is_suppressed(&model, suppression.as_ref()));
+        model.request_id = 8;
+        assert!(!model_is_suppressed(&model, suppression.as_ref()));
+        model.session_id = "other".into();
+        model.request_id = 7;
+        assert!(!model_is_suppressed(&model, suppression.as_ref()));
+    }
+
+    #[test]
+    fn overlay_has_padding_below_cursor() {
+        let mut model = empty_model("current");
+        model.anchor = Some(wisp_protocol::CursorAnchor {
+            position: wisp_protocol::ScreenPoint { x: 320.0, y: 480.0 },
+            line_height: 20.0,
+            cell_width: 10.0,
+        });
+        assert_eq!(overlay_origin(&model, 160.0), point(px(320.0), px(488.0)));
+    }
+
+    #[test]
+    fn candidate_viewport_follows_selection() {
+        assert_eq!(visible_candidate_range(0, 0), 0..0);
+        assert_eq!(visible_candidate_range(3, 2), 0..3);
+        assert_eq!(visible_candidate_range(12, 0), 0..8);
+        assert_eq!(visible_candidate_range(12, 7), 0..8);
+        assert_eq!(visible_candidate_range(12, 8), 1..9);
+        assert_eq!(visible_candidate_range(12, 11), 4..12);
+    }
+
+    #[test]
+    fn long_path_labels_are_shortened_without_changing_other_candidates() {
+        let path = "workspace/a-very-long-directory-name/another-directory/source-file.rs";
+        let shortened = display_candidate_label(path, CandidateKind::File);
+
+        assert!(shortened.contains('…'));
+        assert!(shortened.ends_with("source-file.rs"));
+        assert!(UnicodeWidthStr::width(shortened.as_str()) <= MAX_PATH_LABEL_WIDTH);
+        assert_eq!(display_candidate_label(path, CandidateKind::Command), path);
+        assert_eq!(
+            display_candidate_label("目录/非常非常非常长的文件名称.rs", CandidateKind::File),
+            "目录/非常非常非常长的文件名称.rs"
+        );
+    }
+
+    #[test]
+    fn overlay_flips_above_cursor_when_below_does_not_fit() {
+        let anchor = CursorAnchor {
+            position: wisp_protocol::ScreenPoint { x: 320.0, y: 480.0 },
+            line_height: 20.0,
+            cell_width: 10.0,
+        };
+
+        assert_eq!(preferred_overlay_top(anchor, 160.0, 1000.0), 488.0);
+        assert_eq!(preferred_overlay_top(anchor, 160.0, 600.0), 292.0);
+    }
+}
