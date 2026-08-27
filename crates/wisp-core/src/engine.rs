@@ -8,6 +8,7 @@ use std::{
 
 use tokio::{process::Command, time::timeout};
 use tracing::debug;
+use wisp_config::GeneratorConfig;
 use wisp_protocol::{BufferSnapshot, Candidate, CandidateKind};
 
 use crate::{
@@ -20,6 +21,7 @@ pub struct CompletionEngine {
     specs: SpecStore,
     commands: Arc<[String]>,
     max_candidates: usize,
+    generator: GeneratorConfig,
 }
 
 impl Default for CompletionEngine {
@@ -28,6 +30,7 @@ impl Default for CompletionEngine {
             specs: SpecStore::builtins(),
             commands: discover_commands().into(),
             max_candidates: 0,
+            generator: GeneratorConfig::default(),
         }
     }
 }
@@ -38,12 +41,18 @@ impl CompletionEngine {
             specs,
             commands: discover_commands().into(),
             max_candidates: 0,
+            generator: GeneratorConfig::default(),
         }
     }
 
     /// Set the number of candidates retained after ranking. Zero is unlimited.
     pub fn with_max_candidates(mut self, max_candidates: usize) -> Self {
         self.max_candidates = max_candidates;
+        self
+    }
+
+    pub fn with_generator_config(mut self, generator: GeneratorConfig) -> Self {
+        self.generator = generator;
         self
     }
 
@@ -253,7 +262,7 @@ impl CompletionEngine {
         }
 
         let output = timeout(
-            Duration::from_millis(150),
+            Duration::from_millis(self.generator.timeout_ms),
             Command::new(program).args(args).current_dir(cwd).output(),
         )
         .await;
@@ -261,7 +270,7 @@ impl CompletionEngine {
             debug!(program, "imported completion generator timed out or failed");
             return Vec::new();
         };
-        if !output.status.success() || output.stdout.len() > 256 * 1024 {
+        if !output.status.success() || output.stdout.len() > self.generator.max_output_bytes {
             return Vec::new();
         }
 
@@ -294,7 +303,7 @@ impl CompletionEngine {
         };
 
         let output = timeout(
-            Duration::from_millis(150),
+            Duration::from_millis(self.generator.timeout_ms),
             Command::new(program).args(args).current_dir(cwd).output(),
         )
         .await;
@@ -302,7 +311,7 @@ impl CompletionEngine {
             debug!(generator, "completion generator timed out or failed");
             return Vec::new();
         };
-        if !output.status.success() || output.stdout.len() > 256 * 1024 {
+        if !output.status.success() || output.stdout.len() > self.generator.max_output_bytes {
             return Vec::new();
         }
 

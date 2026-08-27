@@ -91,7 +91,7 @@ mkdir -p "$HOME/.config/wisp"
 cp config.example.toml "$HOME/.config/wisp/config.toml"
 ```
 
-The included example targets a local OpenAI-compatible server:
+The included example documents every runtime setting—completion and generator limits, AI behavior, overlay layout and animation, daemon sizing, terminal calibration, and startup retries—and targets a local OpenAI-compatible server:
 
 ```toml
 default_provider = "local"
@@ -109,7 +109,7 @@ timeout_ms = 800
 
 For remote providers, keep the API key out of the file and reference an environment variable with `api_key_env = "WISP_AI_API_KEY"`.
 
-Wisp only requests AI output when the cursor is at the end of a line, after 120 ms of idle time. Buffers that look like they contain passwords, tokens, secrets, or private keys are not sent. Responses are capped and stripped of newlines, NUL bytes, and terminal escape sequences before reaching Zsh.
+Wisp only requests AI output when the cursor is at the end of a line, after the configured idle delay (`ai.debounce_ms`, 120 ms by default). Buffers that look like they contain passwords, tokens, secrets, or private keys are not sent. Responses are capped and stripped of newlines, NUL bytes, and terminal escape sequences before reaching Zsh.
 
 <details>
 <summary><strong>Custom process provider contract</strong></summary>

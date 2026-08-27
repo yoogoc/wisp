@@ -6,6 +6,7 @@ use std::{
     time::{Duration, Instant},
 };
 
+use wisp_config::TerminalConfig;
 use wisp_core::display_cursor;
 use wisp_protocol::{BufferSnapshot, CursorAnchor, ScreenPoint, TerminalKind, TerminalViewport};
 
@@ -26,28 +27,32 @@ pub struct AlacrittyInsets {
 
 impl Default for AlacrittyInsets {
     fn default() -> Self {
+        let config = TerminalConfig::default();
         Self {
-            titlebar: 28.0,
-            padding_x: 0.0,
-            padding_y: 0.0,
+            titlebar: config.alacritty_titlebar,
+            padding_x: config.alacritty_padding_x,
+            padding_y: config.alacritty_padding_y,
         }
     }
 }
 
 impl AlacrittyInsets {
     pub fn from_environment() -> Self {
-        let defaults = Self::default();
+        Self::from_config(&TerminalConfig::default())
+    }
+
+    pub fn from_config(config: &TerminalConfig) -> Self {
         Self {
             titlebar: env_f32("WISP_ALACRITTY_TITLEBAR")
-                .or_else(configured_alacritty_titlebar)
-                .unwrap_or(defaults.titlebar),
-            padding_x: env_f32("WISP_ALACRITTY_PADDING_X").unwrap_or(defaults.padding_x),
-            padding_y: env_f32("WISP_ALACRITTY_PADDING_Y").unwrap_or(defaults.padding_y),
+                .or_else(|| configured_alacritty_titlebar(config.alacritty_titlebar))
+                .unwrap_or(config.alacritty_titlebar),
+            padding_x: env_f32("WISP_ALACRITTY_PADDING_X").unwrap_or(config.alacritty_padding_x),
+            padding_y: env_f32("WISP_ALACRITTY_PADDING_Y").unwrap_or(config.alacritty_padding_y),
         }
     }
 }
 
-fn configured_alacritty_titlebar() -> Option<f32> {
+fn configured_alacritty_titlebar(default_titlebar: f32) -> Option<f32> {
     let mut paths = Vec::new();
     if let Some(path) = std::env::var_os("ALACRITTY_CONFIG_FILE") {
         paths.push(PathBuf::from(path));
@@ -62,18 +67,22 @@ fn configured_alacritty_titlebar() -> Option<f32> {
     }
     paths.into_iter().find_map(|path| {
         let source = std::fs::read_to_string(path).ok()?;
-        titlebar_from_config(&source)
+        titlebar_from_config(&source, default_titlebar)
     })
 }
 
-fn titlebar_from_config(source: &str) -> Option<f32> {
+fn titlebar_from_config(source: &str, default_titlebar: f32) -> Option<f32> {
     let config: toml::Value = toml::from_str(source).ok()?;
     let decorations = config
         .get("window")?
         .get("decorations")?
         .as_str()?
         .to_ascii_lowercase();
-    Some(if decorations == "none" { 0.0 } else { 28.0 })
+    Some(if decorations == "none" {
+        0.0
+    } else {
+        default_titlebar
+    })
 }
 
 fn env_f32(name: &str) -> Option<f32> {
@@ -102,7 +111,7 @@ pub struct AlacrittyCursorLocator<P = SystemWindowFrameProvider> {
 impl Default for AlacrittyCursorLocator<SystemWindowFrameProvider> {
     fn default() -> Self {
         Self {
-            frame_provider: SystemWindowFrameProvider,
+            frame_provider: SystemWindowFrameProvider::default(),
             insets: AlacrittyInsets::from_environment(),
         }
     }
@@ -168,6 +177,17 @@ impl<P: WindowFrameProvider> AlacrittyCursorLocator<P> {
             line_height,
             cell_width,
         })
+    }
+}
+
+impl AlacrittyCursorLocator<SystemWindowFrameProvider> {
+    pub fn from_config(config: &TerminalConfig) -> Self {
+        Self {
+            frame_provider: SystemWindowFrameProvider {
+                cache_ttl: Duration::from_millis(config.window_frame_cache_ms),
+            },
+            insets: AlacrittyInsets::from_config(config),
+        }
     }
 }
 
@@ -246,7 +266,17 @@ fn estimated_grid_cursor(snapshot: &BufferSnapshot) -> (u16, u16) {
     (cursor_row, cursor_column)
 }
 
-pub struct SystemWindowFrameProvider;
+pub struct SystemWindowFrameProvider {
+    cache_ttl: Duration,
+}
+
+impl Default for SystemWindowFrameProvider {
+    fn default() -> Self {
+        Self {
+            cache_ttl: Duration::from_millis(TerminalConfig::default().window_frame_cache_ms),
+        }
+    }
+}
 
 impl WindowFrameProvider for SystemWindowFrameProvider {
     fn active_alacritty_window(&self) -> Result<WindowFrame, CursorLocationError> {
@@ -256,7 +286,7 @@ impl WindowFrameProvider for SystemWindowFrameProvider {
         static CACHE: OnceLock<Mutex<Option<(Instant, WindowFrame)>>> = OnceLock::new();
         let cache = CACHE.get_or_init(|| Mutex::new(None));
         if let Some((created_at, frame)) = *cache.lock().expect("window frame cache mutex poisoned")
-            && created_at.elapsed() < Duration::from_millis(250)
+            && created_at.elapsed() < self.cache_ttl
         {
             return Ok(frame);
         }
@@ -561,11 +591,11 @@ mod tests {
     #[test]
     fn detects_decorationless_alacritty_config() {
         assert_eq!(
-            titlebar_from_config("[window]\ndecorations = \"none\"\n"),
+            titlebar_from_config("[window]\ndecorations = \"none\"\n", 28.0),
             Some(0.0)
         );
         assert_eq!(
-            titlebar_from_config("[window]\ndecorations = \"Full\"\n"),
+            titlebar_from_config("[window]\ndecorations = \"Full\"\n", 28.0),
             Some(28.0)
         );
     }

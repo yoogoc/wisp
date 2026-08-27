@@ -1,10 +1,11 @@
-use std::{collections::HashMap, path::Path, process::Stdio, sync::Arc, time::Duration};
+use std::{collections::HashMap, process::Stdio, sync::Arc, time::Duration};
 
-use anyhow::Context;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use tokio::{io::AsyncWriteExt, process::Command, time::timeout};
 use tokio_util::sync::CancellationToken;
+use wisp_config::AiRuntimeConfig;
+pub use wisp_config::{CompletionConfig, ProviderConfig, WispConfig as AiConfig};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AiCompletionRequest {
@@ -51,54 +52,6 @@ pub trait AiProvider: Send + Sync {
     ) -> Result<AiCompletion, AiProviderError>;
 }
 
-#[derive(Debug, Clone, Default, Deserialize)]
-pub struct AiConfig {
-    #[serde(default)]
-    pub completion: CompletionConfig,
-    pub default_provider: Option<String>,
-    #[serde(default)]
-    pub providers: HashMap<String, ProviderConfig>,
-}
-
-#[derive(Debug, Clone, Default, Deserialize)]
-pub struct CompletionConfig {
-    /// Zero keeps every matching candidate.
-    #[serde(default)]
-    pub max_candidates: usize,
-}
-
-impl AiConfig {
-    pub fn load(path: &Path) -> anyhow::Result<Self> {
-        if !path.exists() {
-            return Ok(Self::default());
-        }
-        let source = std::fs::read_to_string(path)
-            .with_context(|| format!("read AI config {}", path.display()))?;
-        toml::from_str(&source).with_context(|| format!("parse AI config {}", path.display()))
-    }
-}
-
-#[derive(Debug, Clone, Deserialize)]
-#[serde(tag = "type", rename_all = "kebab-case")]
-pub enum ProviderConfig {
-    OpenaiCompatible {
-        base_url: String,
-        model: String,
-        api_key_env: Option<String>,
-        #[serde(default = "default_timeout")]
-        timeout_ms: u64,
-    },
-    Process {
-        command: Vec<String>,
-        #[serde(default = "default_timeout")]
-        timeout_ms: u64,
-    },
-}
-
-const fn default_timeout() -> u64 {
-    800
-}
-
 #[derive(Default)]
 pub struct ProviderRegistry {
     default_provider: Option<String>,
@@ -107,6 +60,7 @@ pub struct ProviderRegistry {
 
 impl ProviderRegistry {
     pub fn from_config(config: AiConfig) -> Result<Self, AiProviderError> {
+        let runtime = config.ai.clone();
         let mut registry = Self {
             default_provider: config.default_provider,
             providers: HashMap::new(),
@@ -124,11 +78,17 @@ impl ProviderRegistry {
                     model,
                     api_key_env,
                     timeout_ms,
+                    runtime.clone(),
                 )?),
                 ProviderConfig::Process {
                     command,
                     timeout_ms,
-                } => Arc::new(ProcessProvider::new(id.clone(), command, timeout_ms)?),
+                } => Arc::new(ProcessProvider::new(
+                    id.clone(),
+                    command,
+                    timeout_ms,
+                    runtime.clone(),
+                )?),
             };
             registry.providers.insert(id, provider);
         }
@@ -169,6 +129,7 @@ struct OpenAiCompatibleProvider {
     api_key_env: Option<String>,
     timeout: Duration,
     client: reqwest::Client,
+    runtime: AiRuntimeConfig,
 }
 
 impl OpenAiCompatibleProvider {
@@ -178,6 +139,7 @@ impl OpenAiCompatibleProvider {
         model: String,
         api_key_env: Option<String>,
         timeout_ms: u64,
+        runtime: AiRuntimeConfig,
     ) -> Result<Self, AiProviderError> {
         let base_url = base_url.trim_end_matches('/');
         let parsed = reqwest::Url::parse(base_url)
@@ -196,6 +158,7 @@ impl OpenAiCompatibleProvider {
             api_key_env,
             timeout: Duration::from_millis(timeout_ms),
             client: reqwest::Client::new(),
+            runtime,
         })
     }
 }
@@ -255,8 +218,8 @@ impl AiProvider for OpenAiCompatibleProvider {
                     ),
                 },
             ],
-            temperature: 0.1,
-            max_tokens: 64,
+            temperature: self.runtime.temperature,
+            max_tokens: self.runtime.max_tokens,
         };
         let mut builder = self.client.post(&self.endpoint).json(&body);
         if let Some(environment) = self.api_key_env.as_deref() {
@@ -278,7 +241,7 @@ impl AiProvider for OpenAiCompatibleProvider {
                 let body = response.text().await.unwrap_or_default();
                 return Err(AiProviderError::Request(format!(
                     "HTTP {status}: {}",
-                    truncate(&body, 512)
+                    truncate(&body, self.runtime.provider_error_chars)
                 )));
             }
             let response: ChatResponse = response
@@ -312,10 +275,16 @@ struct ProcessProvider {
     id: String,
     command: Vec<String>,
     timeout: Duration,
+    runtime: AiRuntimeConfig,
 }
 
 impl ProcessProvider {
-    fn new(id: String, command: Vec<String>, timeout_ms: u64) -> Result<Self, AiProviderError> {
+    fn new(
+        id: String,
+        command: Vec<String>,
+        timeout_ms: u64,
+        runtime: AiRuntimeConfig,
+    ) -> Result<Self, AiProviderError> {
         if command.is_empty() {
             return Err(AiProviderError::Configuration(
                 "process provider command cannot be empty".into(),
@@ -325,6 +294,7 @@ impl ProcessProvider {
             id,
             command,
             timeout: Duration::from_millis(timeout_ms),
+            runtime,
         })
     }
 }
@@ -378,7 +348,10 @@ impl AiProvider for ProcessProvider {
             return Err(AiProviderError::Request(format!(
                 "process exited with {}: {}",
                 output.status,
-                truncate(&String::from_utf8_lossy(&output.stderr), 512)
+                truncate(
+                    &String::from_utf8_lossy(&output.stderr),
+                    self.runtime.provider_error_chars,
+                )
             )));
         }
         let response: ProcessResponse = serde_json::from_slice(&output.stdout)
@@ -415,6 +388,7 @@ mod tests {
             completion: CompletionConfig::default(),
             default_provider: Some("missing".into()),
             providers: HashMap::new(),
+            ..Default::default()
         };
         assert!(ProviderRegistry::from_config(config).is_err());
     }
@@ -453,6 +427,7 @@ mod tests {
             completion: CompletionConfig::default(),
             default_provider: Some("custom".into()),
             providers,
+            ..Default::default()
         })
         .unwrap();
         let completion = registry

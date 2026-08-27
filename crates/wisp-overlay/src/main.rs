@@ -1,6 +1,6 @@
 use std::{
     path::{Path, PathBuf},
-    sync::{Arc, Mutex, mpsc},
+    sync::{Arc, Mutex, OnceLock, mpsc},
     thread,
     time::{Duration, Instant},
 };
@@ -16,25 +16,17 @@ use tokio::net::UnixStream;
 use tracing::debug;
 use tracing_subscriber::EnvFilter;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
+use wisp_config::{OverlayConfig, WispConfig};
 use wisp_protocol::{
     Candidate, CandidateKind, ClientMessage, CursorAnchor, RenderModel, ServerMessage, framed,
     receive_message, send_message,
 };
 
-const MAX_VISIBLE_CANDIDATES: usize = 8;
-const MAX_PATH_LABEL_WIDTH: usize = 40;
-const OVERLAY_WIDTH: f32 = 440.0;
-const ROW_CONTENT_WIDTH: f32 = OVERLAY_WIDTH - 20.0 - 24.0 - 8.0 - 12.0;
-const MIN_LABEL_WIDTH: f32 = 48.0;
-const MAX_LABEL_WIDTH: f32 = 220.0;
-const APPROX_TEXT_COLUMN_WIDTH: f32 = 7.0;
-const DESCRIPTION_SCROLL_PAUSE: Duration = Duration::from_millis(700);
-const DESCRIPTION_SCROLL_END_PAUSE: Duration = Duration::from_millis(500);
-const DESCRIPTION_SCROLL_SPEED: f32 = 34.0;
-const CURSOR_GAP: f32 = 8.0;
-const SCROLL_STEP_PIXELS: f32 = 18.0;
-const DETAIL_WIDTH: f32 = 400.0;
-const DETAIL_WINDOW_GAP: f32 = 8.0;
+static OVERLAY_CONFIG: OnceLock<OverlayConfig> = OnceLock::new();
+
+fn overlay_config() -> &'static OverlayConfig {
+    OVERLAY_CONFIG.get_or_init(OverlayConfig::default)
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum OverlayPlacement {
@@ -135,7 +127,7 @@ impl OverlayView {
         if !self.visible || self.model.candidates.len() < 2 {
             return;
         }
-        let delta = event.delta.pixel_delta(px(32.0));
+        let delta = event.delta.pixel_delta(px(overlay_config().row_height));
         let y = f32::from(delta.y);
         if y == 0.0 {
             return;
@@ -144,11 +136,12 @@ impl OverlayView {
             self.scroll_accumulator = 0.0;
         }
         self.scroll_accumulator += y;
-        if self.scroll_accumulator.abs() < SCROLL_STEP_PIXELS {
+        let scroll_step = overlay_config().scroll_step_pixels;
+        if self.scroll_accumulator.abs() < scroll_step {
             return;
         }
-        let steps = (self.scroll_accumulator.abs() / SCROLL_STEP_PIXELS).floor() as usize;
-        self.scroll_accumulator %= SCROLL_STEP_PIXELS;
+        let steps = (self.scroll_accumulator.abs() / scroll_step).floor() as usize;
+        self.scroll_accumulator %= scroll_step;
         let next = candidate_index_after_scroll(
             self.model.selected,
             self.model.candidates.len(),
@@ -220,7 +213,7 @@ impl Render for OverlayView {
                     .filter(|description| !description.is_empty());
                 let has_description = description.is_some();
                 let label_width = adaptive_label_width(&label);
-                let description_width = ROW_CONTENT_WIDTH - label_width;
+                let description_width = overlay_config().row_content_width() - label_width;
                 let description_offset = description.as_deref().map_or(0.0, |text| {
                     if index == selected {
                         description_scroll_offset(
@@ -237,8 +230,8 @@ impl Render for OverlayView {
                     .id(("candidate", index))
                     .flex()
                     .items_center()
-                    .h(px(32.0))
-                    .px(px(10.0))
+                    .h(px(overlay_config().row_height))
+                    .px(px(overlay_config().row_horizontal_padding))
                     .overflow_hidden()
                     .whitespace_nowrap()
                     .text_size(px(13.0))
@@ -250,8 +243,8 @@ impl Render for OverlayView {
                             .flex()
                             .items_center()
                             .justify_center()
-                            .w(px(24.0))
-                            .mr(px(8.0))
+                            .w(px(overlay_config().icon_width))
+                            .mr(px(overlay_config().icon_gap))
                             .flex_shrink_0()
                             .text_size(px(15.0))
                             .text_color(rgba(0x8fa5cfff))
@@ -270,7 +263,7 @@ impl Render for OverlayView {
                     .when_some(description, |row, description| {
                         row.child(
                             div()
-                                .ml(px(12.0))
+                                .ml(px(overlay_config().description_gap))
                                 .w(px(description_width))
                                 .flex_shrink_0()
                                 .overflow_hidden()
@@ -302,7 +295,7 @@ impl Render for OverlayView {
                             detail.candidate = candidate;
                             let height = candidate_detail_height(&detail.candidate)
                                 .min(placement_height_limit(&model, placement));
-                            window.resize(size(px(DETAIL_WIDTH), px(height)));
+                            window.resize(size(px(overlay_config().detail_width), px(height)));
                             if let Err(error) =
                                 reposition_detail_window(window, &model, height, placement)
                             {
@@ -332,8 +325,8 @@ impl Render for OverlayView {
             .when_some(self.model.ghost_text.clone(), |root, ghost| {
                 root.child(
                     div()
-                        .h(px(30.0))
-                        .px(px(10.0))
+                        .h(px(overlay_config().ghost_row_height))
+                        .px(px(overlay_config().row_horizontal_padding))
                         .flex()
                         .items_center()
                         .min_w(px(0.0))
@@ -374,17 +367,21 @@ impl Render for OverlayView {
 }
 
 fn candidate_detail_height(candidate: &Candidate) -> f32 {
-    const DETAIL_COLUMNS: usize = 54;
-    const DETAIL_LINE_HEIGHT: f32 = 18.0;
+    let config = overlay_config();
     let lines = [
         candidate.label.as_str(),
         candidate.description.as_deref().unwrap_or(""),
     ]
     .into_iter()
-    .map(|text| UnicodeWidthStr::width(text).div_ceil(DETAIL_COLUMNS).max(1))
+    .map(|text| {
+        UnicodeWidthStr::width(text)
+            .div_ceil(config.detail_columns)
+            .max(1)
+    })
     .sum::<usize>()
         + usize::from(candidate.insert_text != candidate.label);
-    (32.0 + lines as f32 * DETAIL_LINE_HEIGHT).clamp(96.0, 560.0)
+    (config.row_height + lines as f32 * config.detail_line_height)
+        .clamp(config.detail_min_height, config.detail_max_height)
 }
 
 fn empty_detail_candidate() -> Candidate {
@@ -417,6 +414,10 @@ fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     let socket = args.socket.unwrap_or_else(default_socket_path);
     let config = args.config.unwrap_or_else(wisp_daemon::default_config_path);
+    let loaded_config = WispConfig::load(&config)?;
+    OVERLAY_CONFIG
+        .set(loaded_config.overlay)
+        .map_err(|_| anyhow::anyhow!("overlay configuration was already initialized"))?;
     let (sender, receiver) = mpsc::channel();
     let (interaction_sender, interaction_receiver) = mpsc::channel();
     spawn_daemon(socket.clone(), config);
@@ -439,11 +440,14 @@ fn main() -> anyhow::Result<()> {
         let anchor = overlay_origin(&first, height);
         let bounds = Bounds {
             origin: anchor,
-            size: size(px(OVERLAY_WIDTH), px(height)),
+            size: size(px(overlay_config().width), px(height)),
         };
         let detail_bounds = Bounds {
             origin: anchor,
-            size: size(px(DETAIL_WIDTH), px(96.0)),
+            size: size(
+                px(overlay_config().detail_width),
+                px(overlay_config().detail_min_height),
+            ),
         };
         let detail_window = cx
             .open_window(
@@ -640,17 +644,18 @@ fn poll_messages(
                     .update(|_, app| selected_description_overflows(&view.read(app).model))
                     .unwrap_or(false);
             loop {
-                Timer::after(Duration::from_millis(16)).await;
-                let activity_changed =
-                    if last_activity_check.elapsed() >= Duration::from_millis(100) {
-                        last_activity_check = Instant::now();
-                        let active = alacritty_is_frontmost();
-                        let changed = active != terminal_active;
-                        terminal_active = active;
-                        changed
-                    } else {
-                        false
-                    };
+                Timer::after(Duration::from_millis(overlay_config().frame_interval_ms)).await;
+                let activity_changed = if last_activity_check.elapsed()
+                    >= Duration::from_millis(overlay_config().activity_check_ms)
+                {
+                    last_activity_check = Instant::now();
+                    let active = alacritty_is_frontmost();
+                    let changed = active != terminal_active;
+                    terminal_active = active;
+                    changed
+                } else {
+                    false
+                };
                 let messages = {
                     let receiver = receiver.lock().expect("overlay receiver mutex poisoned");
                     receiver.try_iter().collect::<Vec<_>>()
@@ -703,7 +708,7 @@ fn poll_messages(
                                     hide_detail_window(view.read(app).detail_window, app);
                                     let placement = preferred_model_placement(&model);
                                     let height = overlay_height(&model);
-                                    window.resize(size(px(OVERLAY_WIDTH), px(height)));
+                                    window.resize(size(px(overlay_config().width), px(height)));
                                     if let Err(error) =
                                         reposition_window(window, &model, height, placement)
                                     {
@@ -759,10 +764,14 @@ fn poll_messages(
 }
 
 fn overlay_height(model: &RenderModel) -> f32 {
-    let rows = model.candidates.len().clamp(1, MAX_VISIBLE_CANDIDATES) as f32;
-    rows * 32.0
+    let config = overlay_config();
+    let rows = model
+        .candidates
+        .len()
+        .clamp(1, config.max_visible_candidates) as f32;
+    rows * config.row_height
         + if model.ghost_text.is_some() {
-            30.0
+            config.ghost_row_height
         } else {
             0.0
         }
@@ -777,7 +786,7 @@ fn maximum_overlay_height(model: &RenderModel) -> f32 {
 }
 
 fn visible_candidate_range(candidate_count: usize, selected: usize) -> std::ops::Range<usize> {
-    let visible_count = candidate_count.min(MAX_VISIBLE_CANDIDATES);
+    let visible_count = candidate_count.min(overlay_config().max_visible_candidates);
     let selected = selected.min(candidate_count.saturating_sub(1));
     let start = selected
         .saturating_add(1)
@@ -788,7 +797,7 @@ fn visible_candidate_range(candidate_count: usize, selected: usize) -> std::ops:
 
 fn display_candidate_label(label: &str, kind: CandidateKind) -> String {
     if matches!(kind, CandidateKind::File | CandidateKind::Directory) {
-        truncate_middle(label, MAX_PATH_LABEL_WIDTH)
+        truncate_middle(label, overlay_config().max_path_label_width)
     } else {
         label.to_owned()
     }
@@ -808,7 +817,7 @@ fn candidate_kind_icon(kind: CandidateKind) -> &'static str {
 }
 
 fn approximate_text_width(value: &str) -> f32 {
-    UnicodeWidthStr::width(value) as f32 * APPROX_TEXT_COLUMN_WIDTH
+    UnicodeWidthStr::width(value) as f32 * overlay_config().text_column_width
 }
 
 fn display_candidate_description(description: &str) -> String {
@@ -816,11 +825,13 @@ fn display_candidate_description(description: &str) -> String {
 }
 
 fn adaptive_label_width(label: &str) -> f32 {
-    (approximate_text_width(label) + 8.0).clamp(MIN_LABEL_WIDTH, MAX_LABEL_WIDTH)
+    let config = overlay_config();
+    (approximate_text_width(label) + config.icon_gap)
+        .clamp(config.min_label_width, config.max_label_width)
 }
 
 fn description_viewport_width(label: &str) -> f32 {
-    ROW_CONTENT_WIDTH - adaptive_label_width(label)
+    overlay_config().row_content_width() - adaptive_label_width(label)
 }
 
 fn description_overflows(label: &str, description: &str) -> bool {
@@ -829,17 +840,20 @@ fn description_overflows(label: &str, description: &str) -> bool {
 
 fn description_scroll_offset(description: &str, viewport_width: f32, elapsed: Duration) -> f32 {
     let distance = (approximate_text_width(description) - viewport_width).max(0.0);
-    if distance == 0.0 || elapsed < DESCRIPTION_SCROLL_PAUSE {
+    let config = overlay_config();
+    let start_pause = Duration::from_millis(config.description_scroll_pause_ms);
+    let end_pause = Duration::from_millis(config.description_scroll_end_pause_ms);
+    if distance == 0.0 || elapsed < start_pause {
         return 0.0;
     }
-    let travel = Duration::from_secs_f32(distance / DESCRIPTION_SCROLL_SPEED);
-    let cycle = DESCRIPTION_SCROLL_PAUSE + travel + DESCRIPTION_SCROLL_END_PAUSE;
+    let travel = Duration::from_secs_f32(distance / config.description_scroll_speed);
+    let cycle = start_pause + travel + end_pause;
     let cycle_elapsed = elapsed.as_secs_f32() % cycle.as_secs_f32();
-    let moving_at = cycle_elapsed - DESCRIPTION_SCROLL_PAUSE.as_secs_f32();
+    let moving_at = cycle_elapsed - start_pause.as_secs_f32();
     if moving_at <= 0.0 {
         0.0
     } else {
-        (moving_at * DESCRIPTION_SCROLL_SPEED).min(distance)
+        (moving_at * config.description_scroll_speed).min(distance)
     }
 }
 
@@ -921,17 +935,21 @@ fn hidden_message_matches(model: &RenderModel, session_id: &str) -> bool {
 
 fn overlay_origin(model: &RenderModel, _height: f32) -> gpui::Point<gpui::Pixels> {
     model.anchor.map_or(point(px(120.0), px(120.0)), |anchor| {
-        point(px(anchor.position.x), px(anchor.position.y + CURSOR_GAP))
+        point(
+            px(anchor.position.x),
+            px(anchor.position.y + overlay_config().cursor_gap),
+        )
     })
 }
 
 #[cfg(test)]
 fn preferred_overlay_top(anchor: CursorAnchor, height: f32, screen_height: f32) -> f32 {
-    let below = anchor.position.y + CURSOR_GAP;
+    let cursor_gap = overlay_config().cursor_gap;
+    let below = anchor.position.y + cursor_gap;
     match preferred_overlay_placement(anchor, height, screen_height) {
         OverlayPlacement::Below => below,
         OverlayPlacement::Above => {
-            (anchor.position.y - anchor.line_height - CURSOR_GAP - height).max(0.0)
+            (anchor.position.y - anchor.line_height - cursor_gap - height).max(0.0)
         }
     }
 }
@@ -941,9 +959,10 @@ fn preferred_overlay_placement(
     required_height: f32,
     screen_height: f32,
 ) -> OverlayPlacement {
-    let below = anchor.position.y + CURSOR_GAP;
+    let cursor_gap = overlay_config().cursor_gap;
+    let below = anchor.position.y + cursor_gap;
     let below_available = (screen_height - below).max(0.0);
-    let above_available = (anchor.position.y - anchor.line_height - CURSOR_GAP).max(0.0);
+    let above_available = (anchor.position.y - anchor.line_height - cursor_gap).max(0.0);
     if required_height <= below_available {
         OverlayPlacement::Below
     } else if required_height <= above_available {
@@ -961,9 +980,9 @@ fn overlay_top_for_placement(
     placement: OverlayPlacement,
 ) -> f32 {
     match placement {
-        OverlayPlacement::Below => anchor.position.y + CURSOR_GAP,
+        OverlayPlacement::Below => anchor.position.y + overlay_config().cursor_gap,
         OverlayPlacement::Above => {
-            (anchor.position.y - anchor.line_height - CURSOR_GAP - height).max(0.0)
+            (anchor.position.y - anchor.line_height - overlay_config().cursor_gap - height).max(0.0)
         }
     }
 }
@@ -1002,9 +1021,12 @@ fn placement_height_limit(model: &RenderModel, placement: OverlayPlacement) -> f
     let screen_frame: NSRect = unsafe { NSScreen::frame(screen) };
     match placement {
         OverlayPlacement::Below => {
-            (screen_frame.size.height as f32 - anchor.position.y - CURSOR_GAP).max(0.0)
+            (screen_frame.size.height as f32 - anchor.position.y - overlay_config().cursor_gap)
+                .max(0.0)
         }
-        OverlayPlacement::Above => (anchor.position.y - anchor.line_height - CURSOR_GAP).max(0.0),
+        OverlayPlacement::Above => {
+            (anchor.position.y - anchor.line_height - overlay_config().cursor_gap).max(0.0)
+        }
     }
 }
 
@@ -1072,11 +1094,12 @@ fn reposition_detail_window(
     let native_window = native_window(window)?;
     let screen = unsafe { NSScreen::mainScreen(nil) };
     let screen_frame: NSRect = unsafe { NSScreen::frame(screen) };
-    let right = anchor.position.x + OVERLAY_WIDTH + DETAIL_WINDOW_GAP;
-    let x = if right + DETAIL_WIDTH <= screen_frame.size.width as f32 {
+    let config = overlay_config();
+    let right = anchor.position.x + config.width + config.detail_window_gap;
+    let x = if right + config.detail_width <= screen_frame.size.width as f32 {
         right
     } else {
-        (anchor.position.x - DETAIL_WINDOW_GAP - DETAIL_WIDTH).max(0.0)
+        (anchor.position.x - config.detail_window_gap - config.detail_width).max(0.0)
     };
     let top = overlay_top_for_placement(anchor, height, placement);
     let origin_y =
@@ -1243,7 +1266,8 @@ fn spawn_subscription(socket: PathBuf, sender: mpsc::Sender<ServerMessage>) {
                     Ok(()) => return,
                     Err(error) => {
                         debug!(%error, "overlay subscription reconnecting");
-                        tokio::time::sleep(Duration::from_millis(250)).await;
+                        tokio::time::sleep(Duration::from_millis(overlay_config().reconnect_ms))
+                            .await;
                     }
                 }
             }
@@ -1415,7 +1439,9 @@ mod tests {
 
         assert!(shortened.contains('…'));
         assert!(shortened.ends_with("source-file.rs"));
-        assert!(UnicodeWidthStr::width(shortened.as_str()) <= MAX_PATH_LABEL_WIDTH);
+        assert!(
+            UnicodeWidthStr::width(shortened.as_str()) <= overlay_config().max_path_label_width
+        );
         assert_eq!(display_candidate_label(path, CandidateKind::Command), path);
         assert_eq!(
             display_candidate_label("目录/非常非常非常长的文件名称.rs", CandidateKind::File),
@@ -1485,10 +1511,13 @@ mod tests {
         };
 
         let below_top = overlay_top_for_placement(anchor, 320.0, OverlayPlacement::Below);
-        assert!(below_top >= anchor.position.y + CURSOR_GAP);
+        assert!(below_top >= anchor.position.y + overlay_config().cursor_gap);
 
         let above_top = overlay_top_for_placement(anchor, 320.0, OverlayPlacement::Above);
-        assert!(above_top + 320.0 <= anchor.position.y - anchor.line_height - CURSOR_GAP);
+        assert!(
+            above_top + 320.0
+                <= anchor.position.y - anchor.line_height - overlay_config().cursor_gap
+        );
     }
 
     #[test]

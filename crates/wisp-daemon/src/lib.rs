@@ -9,7 +9,8 @@ use tokio::{
 };
 use tokio_util::sync::CancellationToken;
 use tracing::{debug, info, warn};
-use wisp_ai::{AiCompletionRequest, AiConfig, ProviderRegistry};
+use wisp_ai::{AiCompletionRequest, ProviderRegistry};
+use wisp_config::{AiRuntimeConfig, TerminalConfig, WispConfig};
 use wisp_core::CompletionEngine;
 use wisp_platform::AlacrittyCursorLocator;
 use wisp_protocol::{
@@ -29,6 +30,8 @@ struct DaemonState {
     requests: Mutex<RequestTracker>,
     sessions: Mutex<HashMap<String, SessionState>>,
     overlay: broadcast::Sender<ServerMessage>,
+    ai: AiRuntimeConfig,
+    terminal: TerminalConfig,
 }
 
 #[derive(Default)]
@@ -76,17 +79,20 @@ pub async fn run(
     config: PathBuf,
     shutdown: CancellationToken,
 ) -> anyhow::Result<()> {
-    let ai_config = AiConfig::load(&config)?;
-    let max_candidates = ai_config.completion.max_candidates;
-    let providers = ProviderRegistry::from_config(ai_config)
+    let config = WispConfig::load(&config)?;
+    let providers = ProviderRegistry::from_config(config.clone())
         .map_err(|error| anyhow::anyhow!("initialize AI providers: {error}"))?;
-    let (overlay, _) = broadcast::channel(64);
+    let (overlay, _) = broadcast::channel(config.daemon.overlay_channel_capacity);
     let state = Arc::new(DaemonState {
-        engine: CompletionEngine::default().with_max_candidates(max_candidates),
+        engine: CompletionEngine::default()
+            .with_max_candidates(config.completion.max_candidates)
+            .with_generator_config(config.generator),
         providers: Arc::new(providers),
         requests: Mutex::new(RequestTracker::default()),
         sessions: Mutex::new(HashMap::new()),
         overlay,
+        ai: config.ai,
+        terminal: config.terminal,
     });
 
     prepare_socket(&socket)?;
@@ -240,8 +246,9 @@ async fn complete(snapshot: BufferSnapshot, state: Arc<DaemonState>) -> (RenderM
 
     let candidates = state.engine.complete(&snapshot).await;
     let locator_snapshot = snapshot.clone();
+    let terminal_config = state.terminal.clone();
     let anchor = tokio::task::spawn_blocking(move || {
-        AlacrittyCursorLocator::default()
+        AlacrittyCursorLocator::from_config(&terminal_config)
             .locate(&locator_snapshot)
             .ok()
     })
@@ -277,7 +284,7 @@ async fn complete(snapshot: BufferSnapshot, state: Arc<DaemonState>) -> (RenderM
         );
     }
 
-    if should_request_ai(&snapshot, &state.providers) {
+    if should_request_ai(&snapshot, &state.providers, state.ai.min_command_chars) {
         tokio::spawn(request_ai(snapshot, state, cancellation));
     }
     (model, true)
@@ -308,10 +315,14 @@ async fn current_or_empty_model(state: &DaemonState, snapshot: &BufferSnapshot) 
         })
 }
 
-fn should_request_ai(snapshot: &BufferSnapshot, providers: &ProviderRegistry) -> bool {
+fn should_request_ai(
+    snapshot: &BufferSnapshot,
+    providers: &ProviderRegistry,
+    min_command_chars: usize,
+) -> bool {
     providers.is_enabled()
         && snapshot.cursor == snapshot.buffer.chars().count()
-        && snapshot.buffer.trim().chars().count() >= 3
+        && snapshot.buffer.trim().chars().count() >= min_command_chars
         && !looks_sensitive(&snapshot.buffer)
 }
 
@@ -329,7 +340,7 @@ async fn request_ai(
 ) {
     tokio::select! {
         () = cancellation.cancelled() => return,
-        () = tokio::time::sleep(Duration::from_millis(120)) => {}
+        () = tokio::time::sleep(Duration::from_millis(state.ai.debounce_ms)) => {}
     }
     let prefix: String = snapshot.buffer.chars().take(snapshot.cursor).collect();
     let suffix: String = snapshot.buffer.chars().skip(snapshot.cursor).collect();
@@ -340,7 +351,7 @@ async fn request_ai(
         shell: format!("{:?}", snapshot.shell).to_lowercase(),
         cwd: snapshot.cwd.to_string_lossy().into_owned(),
         recent_commands: Vec::new(),
-        max_output_chars: 256,
+        max_output_chars: state.ai.max_output_chars,
     };
     match state.providers.complete(request, cancellation).await {
         Ok(Some(completion)) if !completion.suffix.is_empty() => {

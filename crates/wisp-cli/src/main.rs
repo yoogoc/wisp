@@ -1,13 +1,15 @@
 use std::{
-    path::PathBuf,
+    path::{Path, PathBuf},
     process::{Command, Stdio},
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 use anyhow::{Context, bail};
 use clap::{Args, Parser, Subcommand, ValueEnum};
+use directories::ProjectDirs;
 use serde::Deserialize;
 use tokio::net::UnixStream;
+use wisp_config::WispConfig;
 use wisp_platform::AlacrittyCursorLocator;
 use wisp_protocol::{
     AcceptTarget, BufferSnapshot, ClientMessage, NavigationDirection, RenderedCursorSnapshot,
@@ -20,6 +22,8 @@ use wisp_protocol::{
 struct Cli {
     #[arg(long, global = true, env = "WISP_SOCKET")]
     socket: Option<PathBuf>,
+    #[arg(long, global = true)]
+    config: Option<PathBuf>,
     #[command(subcommand)]
     command: CommandKind,
 }
@@ -157,8 +161,9 @@ enum TerminalArg {
 async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
     let socket = cli.socket.unwrap_or_else(default_socket_path);
+    let config_path = cli.config.unwrap_or_else(default_config_path);
     match cli.command {
-        CommandKind::Start => start(&socket).await,
+        CommandKind::Start => start(&socket, &config_path).await,
         CommandKind::Init {
             shell: InitShell::Zsh,
         } => {
@@ -171,7 +176,7 @@ async fn main() -> anyhow::Result<()> {
             Ok(())
         }
         CommandKind::Shell { command } => shell_command(&socket, *command).await,
-        CommandKind::Doctor => doctor(&socket).await,
+        CommandKind::Doctor => doctor(&socket, &config_path).await,
         CommandKind::Demo { buffer } => demo(&socket, buffer).await,
         CommandKind::Ping => {
             let response = request(&socket, ClientMessage::Ping).await?;
@@ -184,12 +189,13 @@ async fn main() -> anyhow::Result<()> {
     }
 }
 
-async fn start(socket: &PathBuf) -> anyhow::Result<()> {
+async fn start(socket: &PathBuf, config_path: &Path) -> anyhow::Result<()> {
+    let config = WispConfig::load(config_path)?;
     if request(socket, ClientMessage::Ping).await.is_err() {
-        spawn_sibling("wisp-app", socket)?;
+        spawn_sibling("wisp-app", socket, config_path)?;
         let mut connected = false;
-        for _ in 0..20 {
-            tokio::time::sleep(Duration::from_millis(50)).await;
+        for _ in 0..config.startup.attempts {
+            tokio::time::sleep(Duration::from_millis(config.startup.retry_ms)).await;
             if request(socket, ClientMessage::Ping).await.is_ok() {
                 connected = true;
                 break;
@@ -203,7 +209,7 @@ async fn start(socket: &PathBuf) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn spawn_sibling(name: &str, socket: &PathBuf) -> anyhow::Result<()> {
+fn spawn_sibling(name: &str, socket: &PathBuf, config: &Path) -> anyhow::Result<()> {
     let current = std::env::current_exe().context("locate current executable")?;
     let path = current.with_file_name(name);
     if !path.is_file() {
@@ -215,6 +221,8 @@ fn spawn_sibling(name: &str, socket: &PathBuf) -> anyhow::Result<()> {
     }
     Command::new(path)
         .env("WISP_SOCKET", socket)
+        .arg("--config")
+        .arg(config)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::null())
@@ -442,7 +450,8 @@ fn snapshot_from_args(args: UpdateArgs) -> BufferSnapshot {
     }
 }
 
-async fn doctor(socket: &PathBuf) -> anyhow::Result<()> {
+async fn doctor(socket: &PathBuf, config_path: &Path) -> anyhow::Result<()> {
+    let config = WispConfig::load(config_path)?;
     println!("socket: {}", socket.display());
     match request(socket, ClientMessage::Ping).await {
         Ok(ServerMessage::Pong) => println!("daemon: ok"),
@@ -475,7 +484,7 @@ async fn doctor(socket: &PathBuf) -> anyhow::Result<()> {
             viewport: None,
         },
     };
-    match AlacrittyCursorLocator::default().locate(&sample) {
+    match AlacrittyCursorLocator::from_config(&config.terminal).locate(&sample) {
         Ok(anchor) => println!(
             "cursor locator: ok ({:.1}, {:.1}); adjust WISP_ALACRITTY_TITLEBAR/PADDING_X/PADDING_Y if needed",
             anchor.position.x, anchor.position.y
@@ -551,6 +560,12 @@ fn default_socket_path() -> PathBuf {
         || std::env::temp_dir().join(format!("wisp-{}.sock", socket_identity())),
         |directory| PathBuf::from(directory).join("wisp.sock"),
     )
+}
+
+fn default_config_path() -> PathBuf {
+    ProjectDirs::from("dev", "wisp", "wisp")
+        .map(|dirs| dirs.config_dir().join("config.toml"))
+        .unwrap_or_else(|| PathBuf::from("wisp.toml"))
 }
 
 fn socket_identity() -> String {
