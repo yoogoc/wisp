@@ -88,9 +88,11 @@ pub async fn run(
     let providers = ProviderRegistry::from_config(config.clone())
         .map_err(|error| anyhow::anyhow!("initialize AI providers: {error}"))?;
     let (overlay, _) = broadcast::channel(config.daemon.overlay_channel_capacity);
+    let ranking_path = default_ranking_path();
     let state = Arc::new(DaemonState {
         engine: CompletionEngine::default()
             .with_max_candidates(config.completion.max_candidates)
+            .with_recency_ranking(config.completion.recency, ranking_path)
             .with_generator_config(config.generator),
         providers: Arc::new(providers),
         requests: Mutex::new(RequestTracker::default()),
@@ -436,6 +438,9 @@ async fn accept(state: &DaemonState, session_id: &str, target: AcceptTarget) -> 
                     message: "no candidate to accept".into(),
                 };
             };
+            if let Err(error) = state.engine.record_selection(&session.snapshot, candidate) {
+                debug!(%error, "could not persist suggestion recency");
+            }
             (
                 replace_character_range(
                     &session.snapshot.buffer,
@@ -500,6 +505,12 @@ pub fn default_config_path() -> PathBuf {
     ProjectDirs::from("dev", "wisp", "wisp")
         .map(|dirs| dirs.config_dir().join("config.toml"))
         .unwrap_or_else(|| PathBuf::from("wisp.toml"))
+}
+
+fn default_ranking_path() -> PathBuf {
+    ProjectDirs::from("dev", "wisp", "wisp")
+        .map(|dirs| dirs.data_local_dir().join("ranking.json"))
+        .unwrap_or_else(|| PathBuf::from("ranking.json"))
 }
 
 fn prepare_socket(path: &Path) -> anyhow::Result<()> {

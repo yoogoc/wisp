@@ -182,6 +182,12 @@ file paths, folders, shell history, and the sibling subcommands of `help`.
 
 The original Fig license and the import coverage report live in [`specs/`](specs).
 
+Suggestion ranking follows Fig's priority model: an omitted priority defaults
+to 50, declared values are clamped to 0–100, textual match quality wins first,
+and priority breaks equal matches. Accepted candidates receive Fig's recency
+boost within the same top/default/bottom priority bands; this local ranking can
+be disabled with `completion.recency = false`.
+
 ## Positioning and calibration
 
 Wisp asks Alacritty for a standard `CSI 6n` cursor-position report and uses both its real row and column as the base terminal cell. Since ZLE reports the frame before repainting, Wisp applies only the linear cell delta between the previously rendered buffer and the current buffer. When running inside zellij, Wisp also reads the active pane's content origin and the outer terminal grid, so wrapped commands in split panes map to the correct Alacritty cell instead of stretching pane-local coordinates across the whole window. The popup keeps an 8 px cursor gap and flips above the cursor when there is not enough room below. Leaving Alacritty dismisses the current render request; returning does not restore it until the buffer changes.

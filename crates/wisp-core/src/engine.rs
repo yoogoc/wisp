@@ -8,6 +8,7 @@ use std::{
 use wisp_config::GeneratorConfig;
 use wisp_protocol::{BufferSnapshot, Candidate, CandidateKind};
 
+use crate::ranking::{DEFAULT_PRIORITY, RankingStore};
 use crate::{
     ArgumentSpec, CommandSpec, CompletionContext, FilterStrategy, GeneratorRuntime, GeneratorSpec,
     Native, OptionSpec, ParserDirectives, Presentation, QueryTerm, Repeat, SpecStore,
@@ -20,6 +21,7 @@ pub struct CompletionEngine {
     specs: SpecStore,
     commands: Arc<[String]>,
     generators: Arc<GeneratorRuntime>,
+    ranking: Arc<RankingStore>,
     max_candidates: usize,
 }
 
@@ -29,6 +31,7 @@ impl Default for CompletionEngine {
             specs: SpecStore::builtins(),
             commands: discover_commands().into(),
             generators: Arc::clone(GeneratorRuntime::shared()),
+            ranking: Arc::new(RankingStore::default()),
             max_candidates: 0,
         }
     }
@@ -40,6 +43,7 @@ impl CompletionEngine {
             specs,
             commands: discover_commands().into(),
             generators: Arc::clone(GeneratorRuntime::shared()),
+            ranking: Arc::new(RankingStore::default()),
             max_candidates: 0,
         }
     }
@@ -55,6 +59,23 @@ impl CompletionEngine {
         self
     }
 
+    pub fn with_recency_ranking(mut self, enabled: bool, path: PathBuf) -> Self {
+        self.ranking = Arc::new(RankingStore::load(enabled, path));
+        self
+    }
+
+    pub fn record_selection(
+        &self,
+        snapshot: &BufferSnapshot,
+        candidate: &Candidate,
+    ) -> std::io::Result<()> {
+        let context = parse_completion_context(&snapshot.buffer, snapshot.cursor);
+        self.ranking.record(
+            context.command.as_deref().unwrap_or_default(),
+            &candidate.label,
+        )
+    }
+
     pub async fn complete(&self, snapshot: &BufferSnapshot) -> Vec<Candidate> {
         if snapshot.buffer.trim().is_empty() {
             return Vec::new();
@@ -66,10 +87,18 @@ impl CompletionEngine {
             self.complete_arguments(&context, &snapshot.cwd).await
         };
 
+        let command = context.command.as_deref().unwrap_or_default();
+        for candidate in &mut candidates {
+            candidate.priority =
+                self.ranking
+                    .priority(command, &candidate.label, candidate.priority);
+        }
+
         candidates.sort_by(|left, right| {
             right
                 .score
                 .total_cmp(&left.score)
+                .then_with(|| right.priority.total_cmp(&left.priority))
                 .then_with(|| left.label.cmp(&right.label))
         });
         candidates.dedup_by(|left, right| left.insert_text == right.insert_text);
@@ -437,15 +466,12 @@ fn present(
             None => DANGEROUS.to_owned(),
         });
     }
-    // Fig ranks around a default priority of 50; keep the nudge small enough
-    // that a better textual match still wins.
-    if let Some(priority) = presentation.priority {
-        candidate.score += f64::from(priority - DEFAULT_PRIORITY) / 1_000.0;
-    }
+    candidate.priority = presentation
+        .priority
+        .map_or(DEFAULT_PRIORITY, f64::from)
+        .clamp(0.0, 100.0);
     Some(candidate)
 }
-
-const DEFAULT_PRIORITY: f32 = 50.0;
 
 /// Marks a suggestion Fig considers destructive.
 const DANGEROUS: &str = "[dangerous]";
@@ -572,9 +598,11 @@ impl<'a> ResolvedNode<'a> {
                         CandidateKind::Option,
                         context,
                     )?;
-                    if let Some(priority) = option.presentation.priority {
-                        candidate.score += f64::from(priority - DEFAULT_PRIORITY) / 1_000.0;
-                    }
+                    candidate.priority = option
+                        .presentation
+                        .priority
+                        .map_or(DEFAULT_PRIORITY, f64::from)
+                        .clamp(0.0, 100.0);
                     // What the command cannot run without belongs at the top.
                     if option.required {
                         candidate.score += 0.05;
@@ -864,6 +892,7 @@ fn make_candidate(
         insert_text: insert_text.to_owned(),
         description,
         kind,
+        priority: DEFAULT_PRIORITY,
         score,
         replace_start: context.replace_range.start,
         replace_end: context.replace_range.end,
@@ -874,13 +903,19 @@ fn match_score(query: &str, candidate: &str) -> Option<f64> {
     if query.is_empty() {
         return Some(0.5);
     }
+    if candidate == query {
+        return Some(1.0);
+    }
     let query_lower = query.to_lowercase();
     let candidate_lower = candidate.to_lowercase();
     if candidate_lower == query_lower {
-        return Some(1.0);
+        return Some(0.99);
+    }
+    if candidate.starts_with(query) {
+        return Some(0.9);
     }
     if candidate_lower.starts_with(&query_lower) {
-        return Some(0.9 - (candidate.len().saturating_sub(query.len()) as f64 * 0.001));
+        return Some(0.89);
     }
     let mut position = 0;
     let mut gaps = 0usize;
@@ -1137,6 +1172,84 @@ mod tests {
             labels(&values)
         );
         assert!(labels(&values).contains(&"deploy"));
+    }
+
+    #[tokio::test]
+    async fn fig_priorities_order_equal_matches_and_are_clamped() {
+        let directory = scratch("priority");
+        std::fs::write(
+            directory.join("ls.ron"),
+            r#"(
+                version: 1,
+                command: "ls",
+                subcommands: [
+                    (name: "bottom", presentation: (priority: Some(1.0))),
+                    (name: "default"),
+                    (name: "top", presentation: (priority: Some(9000.0))),
+                    (name: "apple", presentation: (priority: Some(1.0))),
+                    (name: "astronomical", presentation: (priority: Some(100.0))),
+                ],
+            )"#,
+        )
+        .expect("write the spec");
+        let mut specs = SpecStore::default();
+        specs.load_dir(&directory).expect("load the spec");
+
+        let values = CompletionEngine::new(specs)
+            .complete(&snapshot("ls "))
+            .await;
+        assert_eq!(
+            labels(&values),
+            ["astronomical", "top", "default", "apple", "bottom"]
+        );
+        assert_eq!(values[0].priority, 100.0);
+        assert_eq!(values[2].priority, 50.0);
+        assert_eq!(values[4].priority, 1.0);
+
+        let matching = CompletionEngine::new({
+            let mut specs = SpecStore::default();
+            specs.load_dir(&directory).expect("reload the spec");
+            specs
+        })
+        .complete(&snapshot("ls a"))
+        .await;
+        assert_eq!(&labels(&matching)[..2], ["astronomical", "apple"]);
+    }
+
+    #[tokio::test]
+    async fn accepted_suggestions_receive_persistent_recency_priority() {
+        let directory = scratch("recency");
+        std::fs::write(
+            directory.join("ls.ron"),
+            r#"(
+                version: 1,
+                command: "ls",
+                subcommands: [(name: "alpha"), (name: "zulu")],
+            )"#,
+        )
+        .expect("write the spec");
+        let mut specs = SpecStore::default();
+        specs.load_dir(&directory).expect("load the spec");
+        let ranking = directory.join("ranking.json");
+        let snapshot = snapshot("ls ");
+        let engine =
+            CompletionEngine::new(specs.clone()).with_recency_ranking(true, ranking.clone());
+        let initial = engine.complete(&snapshot).await;
+        assert_eq!(labels(&initial), ["alpha", "zulu"]);
+        let selected = initial
+            .iter()
+            .find(|candidate| candidate.label == "zulu")
+            .expect("zulu candidate");
+        engine
+            .record_selection(&snapshot, selected)
+            .expect("persist recency");
+
+        let reloaded = CompletionEngine::new(specs)
+            .with_recency_ranking(true, ranking)
+            .complete(&snapshot)
+            .await;
+        assert_eq!(reloaded[0].label, "zulu");
+        assert!(reloaded[0].priority > 75.0);
     }
 
     #[tokio::test]

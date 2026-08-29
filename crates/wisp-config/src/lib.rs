@@ -95,11 +95,23 @@ impl WispConfig {
     }
 }
 
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct CompletionConfig {
     /// Zero keeps every matching candidate.
     #[serde(default)]
     pub max_candidates: usize,
+    /// Rank previously accepted suggestions using Fig's recency bands.
+    #[serde(default = "default_completion_recency")]
+    pub recency: bool,
+}
+
+impl Default for CompletionConfig {
+    fn default() -> Self {
+        Self {
+            max_candidates: 0,
+            recency: default_completion_recency(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -327,6 +339,9 @@ pub enum ProviderConfig {
 const fn default_generator_timeout_ms() -> u64 {
     500
 }
+const fn default_completion_recency() -> bool {
+    true
+}
 const fn default_generator_max_output_bytes() -> usize {
     256 * 1024
 }
@@ -459,6 +474,7 @@ mod tests {
     fn empty_config_uses_current_runtime_defaults() {
         let config: WispConfig = toml::from_str("").unwrap();
         assert_eq!(config.completion.max_candidates, 0);
+        assert!(config.completion.recency);
         assert_eq!(config.generator.timeout_ms, 500);
         assert_eq!(config.generator.cache_ttl_ms, 3_000);
         assert_eq!(config.generator.history_limit, 2_000);

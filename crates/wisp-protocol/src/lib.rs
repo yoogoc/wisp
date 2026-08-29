@@ -105,10 +105,17 @@ pub struct Candidate {
     pub insert_text: String,
     pub description: Option<String>,
     pub kind: CandidateKind,
+    /// Fig-style ranking priority after recency has been applied.
+    #[serde(default = "default_candidate_priority")]
+    pub priority: f64,
     pub score: f64,
     /// Character range in the original shell buffer.
     pub replace_start: usize,
     pub replace_end: usize,
+}
+
+const fn default_candidate_priority() -> f64 {
+    50.0
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

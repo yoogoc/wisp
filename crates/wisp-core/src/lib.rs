@@ -2,6 +2,7 @@ mod engine;
 mod generator;
 mod native;
 mod parser;
+mod ranking;
 mod spec;
 
 pub use engine::CompletionEngine;
