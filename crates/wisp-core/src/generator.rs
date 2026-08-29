@@ -621,6 +621,25 @@ mod tests {
     }
 
     #[test]
+    fn docker_container_rule_keeps_the_json_format_argv() {
+        let runtime = GeneratorRuntime::shared();
+        let generator = script(&["docker", "ps", "--format", "{{ json . }}"]);
+        let rule = runtime
+            .matching_rule(&generator.script)
+            .expect("docker container rule");
+        assert_eq!(rule.script, generator.script);
+
+        let suggestions = rule
+            .pipeline
+            .apply(r#"{"Names":"api","Image":"example/api:latest"}"#);
+        assert_eq!(names(&suggestions), ["api"]);
+        assert_eq!(
+            suggestions[0].description.as_deref(),
+            Some("example/api:latest")
+        );
+    }
+
+    #[test]
     fn lines_strip_the_checked_out_branch_marker() {
         let suggestions = pipeline(r#"Lines((strip_prefix: Some("* ")))"#)
             .apply("* main\n  release/1.0\n\n  work\n");

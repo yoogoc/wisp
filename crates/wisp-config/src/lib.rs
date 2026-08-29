@@ -325,7 +325,7 @@ pub enum ProviderConfig {
 }
 
 const fn default_generator_timeout_ms() -> u64 {
-    150
+    500
 }
 const fn default_generator_max_output_bytes() -> usize {
     256 * 1024
@@ -459,7 +459,7 @@ mod tests {
     fn empty_config_uses_current_runtime_defaults() {
         let config: WispConfig = toml::from_str("").unwrap();
         assert_eq!(config.completion.max_candidates, 0);
-        assert_eq!(config.generator.timeout_ms, 150);
+        assert_eq!(config.generator.timeout_ms, 500);
         assert_eq!(config.generator.cache_ttl_ms, 3_000);
         assert_eq!(config.generator.history_limit, 2_000);
         assert_eq!(config.overlay.max_visible_candidates, 8);
