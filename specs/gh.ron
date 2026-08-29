@@ -20,6 +20,7 @@
                                         "alias",
                                         "list",
                                     ],
+                                    pipeline: Lines((delimiter: Some(":"), name: 0, description: Some(From(1)))),
                                     has_post_process: true,
                                 ),
                             ],
@@ -245,6 +246,8 @@
                                         "--no-color",
                                         "--sort=-committerdate",
                                     ],
+                                    pipeline: Lines((strip_prefix: Some("* "), reject_containing: ["HEAD detached"])),
+                                    kind: Branch,
                                     has_post_process: true,
                                 ),
                             ],
@@ -310,6 +313,7 @@
                                 "list",
                                 "--json=number,title,headRefName,state",
                             ],
+                            pipeline: Json((name: Some("number"), description: Some("title"))),
                             has_post_process: true,
                             cache: Some((
                                 stale_while_revalidate: true,
@@ -1546,6 +1550,7 @@
                                         "list",
                                         "--json=number,title,headRefName,state",
                                     ],
+                                    pipeline: Json((name: Some("number"), description: Some("title"))),
                                     has_post_process: true,
                                     cache: Some((
                                         stale_while_revalidate: true,
@@ -1578,6 +1583,7 @@
                                         "list",
                                         "--json=number,title,headRefName,state",
                                     ],
+                                    pipeline: Json((name: Some("number"), description: Some("title"))),
                                     has_post_process: true,
                                     cache: Some((
                                         stale_while_revalidate: true,
@@ -1610,6 +1616,7 @@
                                         "list",
                                         "--json=number,title,headRefName,state",
                                     ],
+                                    pipeline: Json((name: Some("number"), description: Some("title"))),
                                     has_post_process: true,
                                     cache: Some((
                                         stale_while_revalidate: true,
@@ -1795,6 +1802,7 @@
                                         "list",
                                         "--json=number,title,headRefName,state",
                                     ],
+                                    pipeline: Json((name: Some("number"), description: Some("title"))),
                                     has_post_process: true,
                                     cache: Some((
                                         stale_while_revalidate: true,
@@ -1849,6 +1857,7 @@
                                         "list",
                                         "--json=number,title,headRefName,state",
                                     ],
+                                    pipeline: Json((name: Some("number"), description: Some("title"))),
                                     has_post_process: true,
                                     cache: Some((
                                         stale_while_revalidate: true,
@@ -1893,6 +1902,8 @@
                                                 "--no-color",
                                                 "--sort=-committerdate",
                                             ],
+                                            pipeline: Lines((strip_prefix: Some("* "), reject_containing: ["HEAD detached"])),
+                                            kind: Branch,
                                             has_post_process: true,
                                         ),
                                     ],
@@ -2053,6 +2064,7 @@
                                         "list",
                                         "--json=number,title,headRefName,state",
                                     ],
+                                    pipeline: Json((name: Some("number"), description: Some("title"))),
                                     has_post_process: true,
                                     cache: Some((
                                         stale_while_revalidate: true,
@@ -2184,6 +2196,7 @@
                                         "list",
                                         "--json=number,title,headRefName,state",
                                     ],
+                                    pipeline: Json((name: Some("number"), description: Some("title"))),
                                     has_post_process: true,
                                     cache: Some((
                                         stale_while_revalidate: true,
@@ -2207,6 +2220,7 @@
                                         "list",
                                         "--json=number,title,headRefName,state",
                                     ],
+                                    pipeline: Json((name: Some("number"), description: Some("title"))),
                                     has_post_process: true,
                                     cache: Some((
                                         stale_while_revalidate: true,
@@ -2230,6 +2244,7 @@
                                         "list",
                                         "--json=number,title,headRefName,state",
                                     ],
+                                    pipeline: Json((name: Some("number"), description: Some("title"))),
                                     has_post_process: true,
                                     cache: Some((
                                         stale_while_revalidate: true,
@@ -2288,6 +2303,7 @@
                                         "list",
                                         "--json=number,title,headRefName,state",
                                     ],
+                                    pipeline: Json((name: Some("number"), description: Some("title"))),
                                     has_post_process: true,
                                     cache: Some((
                                         stale_while_revalidate: true,
@@ -2331,6 +2347,7 @@
                                         "list",
                                         "--json=number,title,headRefName,state",
                                     ],
+                                    pipeline: Json((name: Some("number"), description: Some("title"))),
                                     has_post_process: true,
                                     cache: Some((
                                         stale_while_revalidate: true,
@@ -5552,10 +5569,26 @@
                         "alias",
                         "list",
                     ],
+                    pipeline: Lines((delimiter: Some(":"), name: 0, description: Some(From(1)))),
                     has_post_process: true,
                 ),
             ],
             optional: true,
+            parser_directives: Some((
+                alias: Some((
+                    script: [
+                        "gh",
+                        "alias",
+                        "list",
+                    ],
+                    pipeline: Lines((delimiter: Some(":"), name: 0, description: Some(From(1)))),
+                    selection: MatchingName,
+                    value: Description,
+                    reject_prefixes: [
+                        "!",
+                    ],
+                )),
+            )),
         ),
     ],
 )

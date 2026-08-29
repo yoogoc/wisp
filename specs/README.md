@@ -20,16 +20,17 @@ The tree is a snapshot derived from `@withfig/autocomplete` 2.692.3 at commit
 TypeScript/JavaScript modules. Static command trees, options, arguments,
 suggestions, path templates, aliases, and `loadSpec` references are retained.
 
-Every field a Fig spec carries declaratively is kept. Whatever Fig expressed as
-a JavaScript function -- `postProcess`, `custom`, a dynamic `script`,
-`loadSpec`, `generateSpec`, `trigger`, `getQueryTerm` -- is recorded as a
-`has_*` flag rather than dropped, so the engine can tell "nothing here" apart
-from "not expressible without a JavaScript runtime".
+Every field a Fig spec carries declaratively is kept. Supported JavaScript
+callbacks are lowered into declarative generator pipelines, native adapters,
+and alias resolvers in the owning command RON. Functions that cannot yet be
+represented remain as `has_*` flags, so the engine can tell "nothing here"
+apart from "not expressible without a JavaScript runtime".
 
-A generator keeps the argv Fig would have run;
-`crates/wisp-core/src/generators.ron` says how to read each script's output and
-which programs may be spawned at all. Specs therefore stay data-only and cannot
-make Wisp execute an arbitrary command.
+A generator keeps the argv Fig would have run and describes how to read its
+output beside that argv. Wisp compiles in the executable allowlist; users may
+extend it with `generator.allowed_programs` and configure global stdout error
+prefixes with `generator.reject_prefixes`. Specs therefore stay data-only and
+cannot make Wisp execute an arbitrary command.
 
 Run `tools/fig-import` to regenerate this tree from a newer snapshot.
 

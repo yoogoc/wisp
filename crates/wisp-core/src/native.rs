@@ -2,20 +2,19 @@
 //!
 //! A `custom` generator carries no script, so nothing about it can be run; what
 //! it would have produced is usually sitting in a file the shell can see
-//! anyway. `generators.ron` maps a command path -- `npm run`, `make`, `ssh` --
-//! to one of these, and the engine reaches for it when an argument's generators
-//! are all JavaScript.
+//! anyway. The owning argument in each command RON names one of these, and the
+//! engine reaches for it when that argument's generators are JavaScript-only.
 
 use std::{
     collections::HashSet,
     path::{Path, PathBuf},
 };
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::generator::Suggestion;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Native {
     /// The `scripts` object of the nearest `package.json`.
     PackageJsonScripts,

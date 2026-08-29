@@ -10,6 +10,11 @@ use anyhow::{Context, bail};
 use flate2::read::GzDecoder;
 use serde::{Deserialize, Serialize};
 
+use crate::{
+    generator::{Pipeline, SuggestionKind},
+    native::Native,
+};
+
 /// A command's completion spec, imported from a Fig `Subcommand` at the root of
 /// a spec module. Every field a Fig spec can carry declaratively is kept;
 /// whatever Fig expressed as a JavaScript callback is kept as a `has_*` flag so
@@ -130,6 +135,8 @@ pub struct ArgumentSpec {
     pub load_spec_inline: Option<Box<SubcommandSpec>>,
     pub dangerous: bool,
     pub parser_directives: Option<ParserDirectives>,
+    /// Local replacement for a JavaScript-only Fig generator.
+    pub native: Option<Native>,
 }
 
 impl ArgumentSpec {
@@ -174,9 +181,8 @@ pub enum Template {
     Help,
 }
 
-/// A generator: a script to run plus how to read what it prints. Fig turned the
-/// output into suggestions with JavaScript; see `generators.ron` for the
-/// declarative rules that stand in for it.
+/// A generator: a script to run plus the command-local declarative replacement
+/// for the JavaScript callback Fig used to read its output.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct GeneratorSpec {
@@ -198,6 +204,10 @@ pub struct GeneratorSpec {
     pub query_term: Option<QueryTerm>,
     pub has_dynamic_query_term: bool,
     pub cache: Option<CacheSpec>,
+    /// Declarative replacement for Fig's JavaScript post-process callback.
+    pub pipeline: Pipeline,
+    pub kind: SuggestionKind,
+    pub reject_prefixes: Vec<String>,
 }
 
 /// Fig's `trigger`, in the forms that do not need JavaScript.
@@ -235,6 +245,35 @@ pub struct ParserDirectives {
     pub flags_are_posix_noncompliant: bool,
     pub options_must_precede_arguments: bool,
     pub option_arg_separators: Vec<String>,
+    /// Declarative equivalent of Fig's `arg.parserDirectives.alias` callback.
+    pub alias: Option<AliasResolverSpec>,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct AliasResolverSpec {
+    /// `{alias}` is substituted as one argv element, never through a shell.
+    pub script: Vec<String>,
+    /// A local, data-backed resolver such as the nearest package.json scripts.
+    pub native: Option<Native>,
+    pub pipeline: Pipeline,
+    pub selection: AliasSelection,
+    pub value: AliasValue,
+    pub reject_prefixes: Vec<String>,
+}
+
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
+pub enum AliasSelection {
+    #[default]
+    First,
+    MatchingName,
+}
+
+#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
+pub enum AliasValue {
+    #[default]
+    Name,
+    Description,
 }
 
 /// How a suggestion is shown and what it inserts.

@@ -46,6 +46,22 @@ impl WispConfig {
                 "generator timeout_ms, max_output_bytes, and history_limit must be greater than zero"
             );
         }
+        if self
+            .generator
+            .allowed_programs
+            .iter()
+            .any(|program| program.trim().is_empty())
+        {
+            bail!("generator allowed_programs cannot contain an empty program");
+        }
+        if self
+            .generator
+            .reject_prefixes
+            .iter()
+            .any(|prefix| prefix.is_empty())
+        {
+            bail!("generator reject_prefixes cannot contain an empty prefix");
+        }
         if self.overlay.max_visible_candidates == 0
             || self.overlay.max_path_label_width == 0
             || self.overlay.width <= 0.0
@@ -124,6 +140,12 @@ pub struct GeneratorConfig {
     pub cache_ttl_ms: u64,
     #[serde(default = "default_generator_history_limit")]
     pub history_limit: usize,
+    /// Additional executables trusted by the user, on top of Wisp's built-ins.
+    #[serde(default)]
+    pub allowed_programs: Vec<String>,
+    /// Stdout prefixes that mean a generator reported an error, not candidates.
+    #[serde(default)]
+    pub reject_prefixes: Vec<String>,
 }
 
 impl Default for GeneratorConfig {
@@ -133,6 +155,8 @@ impl Default for GeneratorConfig {
             max_output_bytes: default_generator_max_output_bytes(),
             cache_ttl_ms: default_generator_cache_ttl_ms(),
             history_limit: default_generator_history_limit(),
+            allowed_programs: Vec::new(),
+            reject_prefixes: Vec::new(),
         }
     }
 }
@@ -478,6 +502,8 @@ mod tests {
         assert_eq!(config.generator.timeout_ms, 500);
         assert_eq!(config.generator.cache_ttl_ms, 3_000);
         assert_eq!(config.generator.history_limit, 2_000);
+        assert!(config.generator.allowed_programs.is_empty());
+        assert!(config.generator.reject_prefixes.is_empty());
         assert_eq!(config.overlay.max_visible_candidates, 8);
         assert_eq!(config.overlay.width, 440.0);
         assert_eq!(config.terminal.window_frame_cache_ms, 250);
@@ -491,11 +517,27 @@ mod tests {
     }
 
     #[test]
+    fn empty_generator_policy_entries_are_rejected() {
+        let mut config = WispConfig::default();
+        config.generator.allowed_programs.push(" ".into());
+        assert!(config.validate().is_err());
+
+        let mut config = WispConfig::default();
+        config.generator.reject_prefixes.push(String::new());
+        assert!(config.validate().is_err());
+    }
+
+    #[test]
     fn documented_example_is_complete_and_valid() {
         let config: WispConfig =
             toml::from_str(include_str!("../../../config.example.toml")).unwrap();
         config.validate().unwrap();
         assert_eq!(config.generator.max_output_bytes, 262_144);
+        assert!(config.generator.allowed_programs.is_empty());
+        assert_eq!(
+            config.generator.reject_prefixes,
+            ["fatal:", "error:", "ERR_PNPM"]
+        );
         assert_eq!(config.overlay.detail_columns, 54);
         assert_eq!(config.startup.attempts, 100);
     }

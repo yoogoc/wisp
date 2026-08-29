@@ -133,6 +133,15 @@ fn tokenize(input: &str) -> Vec<Token> {
     tokens
 }
 
+/// Splits a shell-like value without executing it. Git aliases use the same
+/// quoting and escaping rules as command-line arguments.
+pub(crate) fn tokenize_words(input: &str) -> Vec<String> {
+    tokenize(input)
+        .into_iter()
+        .map(|token| token.value)
+        .collect()
+}
+
 /// Returns the cursor row/column relative to the start of the rendered prompt.
 pub fn display_cursor(prompt: &str, buffer_before_cursor: &str, columns: u16) -> (u16, u16) {
     let columns = usize::from(columns.max(1));

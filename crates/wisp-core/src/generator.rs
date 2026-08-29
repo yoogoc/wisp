@@ -4,13 +4,12 @@
 //! with a `postProcess` or `custom` JavaScript callback. Wisp imports the script
 //! argv as data but cannot run the callback, so every imported generator would
 //! otherwise be inert. This module replaces the callback with a declarative
-//! [`Pipeline`]: rules in `generators.ron` name the shape of a command's output,
-//! and anything unmatched falls back to [`Pipeline::Auto`], which recognises
+//! [`Pipeline`]: each command RON stores the shape of its generator output, and
+//! anything unspecified falls back to [`Pipeline::Auto`], which recognises
 //! JSON, newline-delimited JSON, and plain lines on its own.
 //!
-//! Scripts only run when their program is on the `allowed` list in
-//! `generators.ron`, so an imported spec still cannot execute an arbitrary
-//! command.
+//! Imported scripts only run when their program is in Wisp's built-in allowlist
+//! or explicitly trusted through `generator.allowed_programs`.
 
 use std::{
     collections::{HashMap, HashSet},
@@ -20,9 +19,9 @@ use std::{
     time::{Duration, Instant},
 };
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-use crate::{GeneratorSpec, Native, Trigger};
+use crate::{AliasResolverSpec, AliasSelection, AliasValue, GeneratorSpec, Trigger};
 use serde_json::Value;
 use tokio::{io::AsyncReadExt, process::Command, time::timeout};
 use tracing::debug;
@@ -39,7 +38,7 @@ pub struct Suggestion {
 }
 
 /// What a generator's suggestions represent, so the UI can pick an icon.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SuggestionKind {
     #[default]
     Value,
@@ -48,42 +47,9 @@ pub enum SuggestionKind {
     Directory,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct GeneratorRules {
-    /// Programs an imported generator may spawn. Everything else is refused.
-    allowed: HashSet<String>,
-    /// Matched against the head of an imported argv; the longest match wins.
-    #[serde(default)]
-    rules: Vec<GeneratorRule>,
-    /// What to read when a command's generator is JavaScript-only, keyed by the
-    /// command path it sits under, such as `npm run`.
-    #[serde(default)]
-    natives: HashMap<String, Native>,
-    /// A tool that reports a problem on stdout and still exits zero -- `git`
-    /// answering `fatal: not a git repository` -- has produced no suggestions.
-    #[serde(default)]
-    reject_prefixes: Vec<String>,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct GeneratorRule {
-    /// The argv to run. A rule in `rules` also matches on it, by prefix.
-    script: Vec<String>,
-    #[serde(default)]
-    pipeline: Pipeline,
-    #[serde(default)]
-    kind: SuggestionKind,
-    #[serde(default)]
-    timeout_ms: Option<u64>,
-    /// Output prefixes that mean this generator has nothing to say, on top of
-    /// the ones every generator rejects.
-    #[serde(default)]
-    reject_prefixes: Vec<String>,
-}
-
 /// How to turn a script's stdout into suggestions -- the declarative stand-in
 /// for Fig's `postProcess` and `splitOn`.
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Pipeline {
     /// Recognise the output's shape: JSON, newline-delimited JSON, or lines.
     #[default]
@@ -92,7 +58,7 @@ pub enum Pipeline {
     Json(JsonPipeline),
 }
 
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(default)]
 pub struct LinesPipeline {
     separator: String,
@@ -112,7 +78,7 @@ pub struct LinesPipeline {
     reject_containing: Vec<String>,
 }
 
-#[derive(Debug, Clone, Copy, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Column {
     /// A single column.
     At(usize),
@@ -120,7 +86,7 @@ pub enum Column {
     From(usize),
 }
 
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(default)]
 pub struct JsonPipeline {
     /// Object keys to walk before reading suggestions, e.g. `["Buckets"]`.
@@ -162,19 +128,157 @@ struct CacheEntry {
 /// Runs generators and caches their output per working directory.
 #[derive(Debug)]
 pub struct GeneratorRuntime {
-    rules: GeneratorRules,
+    allowed_programs: HashSet<String>,
     config: GeneratorConfig,
-    cache: Mutex<HashMap<(Vec<String>, PathBuf), CacheEntry>>,
+    cache: Mutex<HashMap<CacheKey, CacheEntry>>,
 }
 
-static RULES: &str = include_str!("generators.ron");
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+struct CacheKey {
+    script: Vec<String>,
+    cwd: PathBuf,
+    pipeline: Pipeline,
+    reject_prefixes: Vec<String>,
+}
+
+/// Fast, local programs used by the imported Fig snapshot. This built-in set is
+/// deliberately code-owned: command specs cannot expand it. Users can trust an
+/// additional executable with `generator.allowed_programs`.
+const BUILTIN_ALLOWED_PROGRAMS: &[&str] = &[
+    "Rscript",
+    "adb",
+    "amplify",
+    "ansible-doc",
+    "apt",
+    "arduino-cli",
+    "asdf",
+    "assimp",
+    "aws",
+    "aws-vault",
+    "bat",
+    "bosh",
+    "brew",
+    "bundle",
+    "cargo",
+    "cat",
+    "cf",
+    "chsh",
+    "conda",
+    "cordova",
+    "cw",
+    "dapr",
+    "dcli",
+    "defaultbrowser",
+    "defaults",
+    "docker",
+    "docker-compose",
+    "doppler",
+    "dotnet",
+    "dtm",
+    "eb",
+    "echo",
+    "envchain",
+    "expressots",
+    "fig",
+    "fin",
+    "firebase",
+    "flutter",
+    "fly",
+    "flyctl",
+    "fnm",
+    "fvm",
+    "gh",
+    "gibo",
+    "git",
+    "git-profile",
+    "go",
+    "gpg",
+    "herd",
+    "heroku",
+    "hyper",
+    "ibus",
+    "ifconfig",
+    "jenv",
+    "k3d",
+    "kind",
+    "kool",
+    "kubectl",
+    "kubectx",
+    "kubens",
+    "launchctl",
+    "lerna",
+    "limactl",
+    "ls",
+    "mackup",
+    "mdfind",
+    "meteor",
+    "mix",
+    "multipass",
+    "n",
+    "networksetup",
+    "ng",
+    "nx",
+    "okteto",
+    "op",
+    "oxlint",
+    "pandoc",
+    "pbpaste",
+    "phpunit",
+    "pip",
+    "pipx",
+    "pkgutil",
+    "pnpm",
+    "podman",
+    "pulumi",
+    "pyenv",
+    "q",
+    "quickmail",
+    "rake",
+    "rancher",
+    "rbenv",
+    "rclone",
+    "rubocop",
+    "rugby",
+    "rustc",
+    "rustup",
+    "sake",
+    "scarb",
+    "shortcuts",
+    "snaplet",
+    "stepzen",
+    "sysctl",
+    "tailscale",
+    "task",
+    "terraform",
+    "terragrunt",
+    "tfenv",
+    "tmux",
+    "tmuxinator",
+    "tokei",
+    "tsh",
+    "tsuru",
+    "v",
+    "valet",
+    "vr",
+    "vultr-cli",
+    "watson",
+    "xcodes",
+    "xcrun",
+    "yarn",
+    "ykman",
+    "yo",
+    "zellij",
+];
 
 impl GeneratorRuntime {
     pub fn new(config: GeneratorConfig) -> Arc<Self> {
-        let rules: GeneratorRules =
-            ron::from_str(RULES).expect("built-in generator rules must be valid RON");
+        let mut allowed_programs = BUILTIN_ALLOWED_PROGRAMS
+            .iter()
+            .map(|program| (*program).to_owned())
+            .collect::<HashSet<_>>();
+        allowed_programs.extend(config.allowed_programs.iter().cloned());
         Arc::new(Self {
-            rules,
+            allowed_programs,
             config,
             cache: Mutex::new(HashMap::new()),
         })
@@ -186,10 +290,9 @@ impl GeneratorRuntime {
         SHARED.get_or_init(|| GeneratorRuntime::new(GeneratorConfig::default()))
     }
 
-    /// Runs a generator imported from a Fig spec. Fig would have handed the
-    /// output to a JavaScript callback; a rule from `generators.ron` reads it
-    /// instead, falling back to the generator's own `splitOn` and then to
-    /// detecting the output's shape.
+    /// Runs a generator imported from a Fig spec. The command RON carries the
+    /// declarative replacement for Fig's JavaScript callback, falling back to
+    /// `splitOn` and then automatic output-shape detection.
     pub async fn run(&self, generator: &GeneratorSpec, token: &str, cwd: &Path) -> Vec<Suggestion> {
         // Fig regenerates on a threshold when the answer is only meaningful
         // once the user has typed enough to narrow it down.
@@ -207,8 +310,7 @@ impl GeneratorRuntime {
             .cwd
             .as_deref()
             .map_or_else(|| cwd.to_path_buf(), PathBuf::from);
-        let rule = self.matching_rule(&generator.script);
-        let script = rule.map_or(generator.script.as_slice(), |rule| rule.script.as_slice());
+        let script = generator.script.as_slice();
 
         let cache = generator.cache.as_ref();
         let ttl = if generator.trigger == Some(Trigger::OnChange) {
@@ -221,39 +323,40 @@ impl GeneratorRuntime {
                     .unwrap_or(self.config.cache_ttl_ms),
             )
         };
+        let pipeline = match (&generator.pipeline, &generator.split_on) {
+            (Pipeline::Auto, Some(separator)) => Pipeline::Lines(LinesPipeline {
+                separator: separator.clone(),
+                ..LinesPipeline::default()
+            }),
+            (pipeline, _) => pipeline.clone(),
+        };
         // Fig caches globally unless a generator asks for per-directory caching;
         // a script that reads the working directory is the common case, so keep
         // the directory in the key unless the spec says the result is global.
-        let key = (script.to_vec(), cwd.clone());
+        let key = CacheKey {
+            script: script.to_vec(),
+            cwd: cwd.clone(),
+            pipeline: pipeline.clone(),
+            reject_prefixes: generator.reject_prefixes.clone(),
+        };
         if let Some(cached) = self.cached(&key, ttl) {
             return cached.to_vec();
         }
 
         let requested_timeout_ms = generator
             .script_timeout_ms
-            .or_else(|| rule.and_then(|rule| rule.timeout_ms))
             .unwrap_or(self.config.timeout_ms);
         let timeout_ms = requested_timeout_ms.min(self.config.timeout_ms);
-        let pipeline = match rule {
-            Some(rule) => rule.pipeline.clone(),
-            None => match &generator.split_on {
-                Some(separator) => Pipeline::Lines(LinesPipeline {
-                    separator: separator.clone(),
-                    ..LinesPipeline::default()
-                }),
-                None => Pipeline::Auto,
-            },
-        };
 
         let Some(output) = self.execute(script, &cwd, timeout_ms).await else {
             return Vec::new();
         };
         let trimmed = output.trim_start();
         let rejected = self
-            .rules
+            .config
             .reject_prefixes
             .iter()
-            .chain(rule.into_iter().flat_map(|rule| &rule.reject_prefixes))
+            .chain(&generator.reject_prefixes)
             .any(|prefix| trimmed.starts_with(prefix.as_str()));
         if rejected {
             debug!(program = %script[0], "generator reported a problem on stdout");
@@ -266,36 +369,58 @@ impl GeneratorRuntime {
         suggestions
     }
 
-    /// What Wisp reads instead of running the JavaScript Fig would have run.
-    pub fn native(&self, path: &str) -> Option<Native> {
-        self.rules.natives.get(path).copied()
-    }
-
     pub fn history_limit(&self) -> usize {
         self.config.history_limit
     }
 
-    /// What kind of value this generator yields, for icon selection.
-    pub fn kind_of(&self, generator: &GeneratorSpec) -> SuggestionKind {
-        self.matching_rule(&generator.script)
-            .map_or(SuggestionKind::Value, |rule| rule.kind)
+    /// Looks up a user-configured alias using the resolver carried by the
+    /// argument spec. The returned text is data only; parsing and spec
+    /// resolution belong to the engine, and alias values are never executed.
+    pub async fn resolve_alias(
+        &self,
+        resolver: &AliasResolverSpec,
+        alias: &str,
+        cwd: &Path,
+    ) -> Option<String> {
+        let suggestions = if let Some(native) = resolver.native {
+            native.suggest(cwd, self.history_limit())
+        } else {
+            let generator = GeneratorSpec {
+                script: resolver
+                    .script
+                    .iter()
+                    .map(|word| word.replace("{alias}", alias))
+                    .collect(),
+                pipeline: resolver.pipeline.clone(),
+                ..GeneratorSpec::default()
+            };
+            self.run(&generator, "", cwd).await
+        };
+        let suggestion = match resolver.selection {
+            AliasSelection::First => suggestions.first()?,
+            AliasSelection::MatchingName => suggestions
+                .iter()
+                .find(|suggestion| suggestion.name == alias)?,
+        };
+        let value = match resolver.value {
+            AliasValue::Name => suggestion.name.clone(),
+            AliasValue::Description => suggestion.description.clone()?,
+        };
+        (!resolver
+            .reject_prefixes
+            .iter()
+            .any(|prefix| value.trim_start().starts_with(prefix)))
+        .then_some(value)
     }
 
-    /// The longest rule whose script is a prefix of `script`.
-    ///
-    /// Importing an argument that carried several Fig generators concatenates
-    /// their argv, so a rule runs its own script rather than what it matched.
-    fn matching_rule(&self, script: &[String]) -> Option<&GeneratorRule> {
-        self.rules
-            .rules
-            .iter()
-            .filter(|rule| script.starts_with(&rule.script))
-            .max_by_key(|rule| rule.script.len())
+    /// What kind of value this generator yields, for icon selection.
+    pub fn kind_of(&self, generator: &GeneratorSpec) -> SuggestionKind {
+        generator.kind
     }
 
     async fn execute(&self, script: &[String], cwd: &Path, timeout_ms: u64) -> Option<String> {
         let program = script.first()?;
-        if !self.rules.allowed.contains(program) {
+        if !self.allowed_programs.contains(program) {
             debug!(program, "generator program is not allowed to run");
             return None;
         }
@@ -329,13 +454,13 @@ impl GeneratorRuntime {
         Some(String::from_utf8_lossy(&output).into_owned())
     }
 
-    fn cached(&self, key: &(Vec<String>, PathBuf), ttl: Duration) -> Option<Arc<[Suggestion]>> {
+    fn cached(&self, key: &CacheKey, ttl: Duration) -> Option<Arc<[Suggestion]>> {
         let cache = self.cache.lock().ok()?;
         let entry = cache.get(key)?;
         (entry.fetched.elapsed() < ttl).then(|| Arc::clone(&entry.suggestions))
     }
 
-    fn store(&self, key: (Vec<String>, PathBuf), suggestions: &[Suggestion]) {
+    fn store(&self, key: CacheKey, suggestions: &[Suggestion]) {
         if let Ok(mut cache) = self.cache.lock() {
             cache.insert(
                 key,
@@ -592,44 +717,26 @@ mod tests {
     }
 
     #[test]
-    fn built_in_rules_are_valid() {
+    fn built_in_generator_allowlist_contains_imported_tools() {
         let runtime = GeneratorRuntime::shared();
-        assert!(!runtime.rules.rules.is_empty());
-        assert!(runtime.rules.allowed.contains("git"));
+        assert!(runtime.allowed_programs.contains("git"));
+        assert!(!runtime.allowed_programs.contains("sh"));
     }
 
     #[test]
-    fn the_longest_matching_rule_wins() {
+    fn generator_metadata_is_owned_by_the_generator_spec() {
         let runtime = GeneratorRuntime::shared();
-        let generator = script(&[
-            "git",
-            "--no-optional-locks",
-            "branch",
-            "--no-color",
-            "--sort=-committerdate",
-        ]);
+        let generator: GeneratorSpec = ron::from_str(
+            r#"(
+                script: ["docker", "ps", "--format", "{{ json . }}"],
+                pipeline: Json((name: Some("Names"), description: Some("Image"))),
+                kind: Branch,
+            )"#,
+        )
+        .expect("generator metadata must deserialize from command RON");
         assert_eq!(runtime.kind_of(&generator), SuggestionKind::Branch);
 
-        // A rule matches on the head of a longer argv and still runs its own
-        // script rather than the extra words.
-        let mut longer = generator.script.clone();
-        longer.push("--verbose".to_owned());
-        let rule = runtime
-            .matching_rule(&longer)
-            .expect("the head of a longer argv still matches");
-        assert_eq!(rule.script, generator.script);
-    }
-
-    #[test]
-    fn docker_container_rule_keeps_the_json_format_argv() {
-        let runtime = GeneratorRuntime::shared();
-        let generator = script(&["docker", "ps", "--format", "{{ json . }}"]);
-        let rule = runtime
-            .matching_rule(&generator.script)
-            .expect("docker container rule");
-        assert_eq!(rule.script, generator.script);
-
-        let suggestions = rule
+        let suggestions = generator
             .pipeline
             .apply(r#"{"Names":"api","Image":"example/api:latest"}"#);
         assert_eq!(names(&suggestions), ["api"]);
@@ -698,6 +805,60 @@ mod tests {
             )
             .await;
         assert!(suggestions.is_empty());
+    }
+
+    #[tokio::test]
+    async fn configuration_can_trust_an_additional_program() {
+        let mut config = GeneratorConfig::default();
+        config.allowed_programs.push("printf".into());
+        let suggestions = GeneratorRuntime::new(config)
+            .run(
+                &script(&["printf", "custom-program"]),
+                "",
+                Path::new(env!("CARGO_MANIFEST_DIR")),
+            )
+            .await;
+        assert_eq!(names(&suggestions), ["custom-program"]);
+    }
+
+    #[tokio::test]
+    async fn global_error_prefixes_come_from_configuration() {
+        let config = GeneratorConfig {
+            reject_prefixes: vec!["blocked:".into()],
+            ..GeneratorConfig::default()
+        };
+        let runtime = GeneratorRuntime::new(config);
+        let cwd = Path::new(env!("CARGO_MANIFEST_DIR"));
+
+        let accepted = runtime
+            .run(&script(&["echo", "fatal: accepted"]), "", cwd)
+            .await;
+        let rejected = runtime
+            .run(&script(&["echo", "blocked: rejected"]), "", cwd)
+            .await;
+
+        assert_eq!(names(&accepted), ["fatal: accepted"]);
+        assert!(rejected.is_empty());
+    }
+
+    #[tokio::test]
+    async fn cache_entries_are_isolated_by_command_local_pipeline() {
+        let runtime = GeneratorRuntime::new(GeneratorConfig::default());
+        let cwd = Path::new(env!("CARGO_MANIFEST_DIR"));
+        let plain = script(&["echo", "name description"]);
+        let columns = GeneratorSpec {
+            pipeline: pipeline(
+                r#"Lines((delimiter: Some(""), name: 0, description: Some(From(1))))"#,
+            ),
+            ..plain.clone()
+        };
+
+        let plain_values = runtime.run(&plain, "", cwd).await;
+        let column_values = runtime.run(&columns, "", cwd).await;
+
+        assert_eq!(names(&plain_values), ["name description"]);
+        assert_eq!(names(&column_values), ["name"]);
+        assert_eq!(column_values[0].description.as_deref(), Some("description"));
     }
 
     #[tokio::test]

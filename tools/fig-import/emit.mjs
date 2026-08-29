@@ -1,12 +1,15 @@
 // Serialises a Fig completion spec object into Wisp's RON schema.
 // Fields at their Rust default are omitted so the documents stay readable.
 
+import { generatorMetadata, nativeForPath } from "./generator-metadata.mjs";
+
 export const stats = {
   commands: 0, subcommands: 0, options: 0, arguments: 0, suggestions: 0,
   generators: 0, scripts: 0, dynamic_scripts: 0, post_process: 0, custom: 0,
   templates: 0, load_specs: 0, dynamic_load_specs: 0, generate_specs: 0,
   triggers: 0, dynamic_triggers: 0, query_terms: 0, dynamic_query_terms: 0,
   caches: 0, parser_directives: 0, exclusive_on: 0, depends_on: 0,
+  alias_directives: 0, dynamic_aliases: 0,
   persistent_options: 0, required_options: 0, repeatable_options: 0,
   separators: 0, hidden: 0, priorities: 0, icons: 0, display_names: 0,
   insert_values: 0, dangerous: 0, string_scripts: 0, truncated: 0,
@@ -120,13 +123,45 @@ function cache(value, indent) {
   ], indent);
 }
 
-function parserDirectives(value, indent) {
+function aliasResolver(value, path, indent) {
+  if (value === undefined) return undefined;
+  stats.alias_directives += 1;
+  const commandPath = path.join(" ");
+  let fields;
+  if (commandPath === "git") {
+    fields = [
+      ["script", list(["git", "--no-optional-locks", "config", "--get", "alias.{alias}"].map(text), indent + 4)],
+      ["reject_prefixes", list([text("!")], indent + 4)],
+    ];
+  } else if (commandPath === "gh") {
+    fields = [
+      ["script", list(["gh", "alias", "list"].map(text), indent + 4)],
+      ["pipeline", 'Lines((delimiter: Some(":"), name: 0, description: Some(From(1))))'],
+      ["selection", "MatchingName"],
+      ["value", "Description"],
+      ["reject_prefixes", list([text("!")], indent + 4)],
+    ];
+  } else if (["yarn", "yarn run", "rushx"].includes(commandPath)) {
+    fields = [
+      ["native", "Some(PackageJsonScripts)"],
+      ["selection", "MatchingName"],
+      ["value", "Description"],
+    ];
+  } else {
+    stats.dynamic_aliases += 1;
+    return undefined;
+  }
+  return `Some(${record(fields, indent)})`;
+}
+
+function parserDirectives(value, indent, path) {
   if (!value || typeof value !== "object") return undefined;
   const separators = array(value.optionArgSeparators).filter((item) => typeof item === "string");
   const fields = [
     ["flags_are_posix_noncompliant", flag(value.flagsArePosixNoncompliant)],
     ["options_must_precede_arguments", flag(value.optionsMustPrecedeArguments)],
     ["option_arg_separators", list(separators.map(text), indent + 4)],
+    ["alias", aliasResolver(value.alias, path, indent + 4)],
   ].filter(([, item]) => item !== undefined);
   if (!fields.length) return undefined;
   stats.parser_directives += 1;
@@ -137,18 +172,27 @@ function generator(value, indent) {
   stats.generators += 1;
   const fields = [];
   const script = value.script;
+  let argv;
   if (typeof script === "function") { stats.dynamic_scripts += 1; fields.push(["has_dynamic_script", "true"]); }
   else if (Array.isArray(script) && script.length) {
-    stats.scripts += 1;
-    fields.push(["script", list(script.map((word) => text(word)), indent + 4)]);
+    argv = script;
   } else if (typeof script === "string" && script.trim()) {
-    stats.scripts += 1; stats.string_scripts += 1;
-    fields.push(["script", list(script.trim().split(/\s+/).map(text), indent + 4)]);
+    stats.string_scripts += 1;
+    argv = script.trim().split(/\s+/);
   } else if (script && typeof script === "object") {
-    const argv = [script.command, ...array(script.args)].filter((word) => typeof word === "string");
-    if (argv.length) { stats.scripts += 1; fields.push(["script", list(argv.map(text), indent + 4)]); }
+    argv = [script.command, ...array(script.args)].filter((word) => typeof word === "string");
     if (script.cwd) fields.push(["cwd", some(script.cwd)]);
     if (typeof script.timeout === "number") fields.push(["script_timeout_ms", `Some(${Math.round(script.timeout)})`]);
+  }
+  const metadata = argv?.length ? generatorMetadata(argv) : undefined;
+  if (argv?.length) {
+    stats.scripts += 1;
+    fields.push(["script", list(argv.map(text), indent + 4)]);
+  }
+  if (metadata?.pipeline) fields.push(["pipeline", metadata.pipeline]);
+  if (metadata?.kind) fields.push(["kind", metadata.kind]);
+  if (metadata?.rejectPrefixes.length) {
+    fields.push(["reject_prefixes", list(metadata.rejectPrefixes.map(text), indent + 4)]);
   }
   if (typeof value.scriptTimeout === "number") fields.push(["script_timeout_ms", `Some(${Math.round(value.scriptTimeout)})`]);
   if (value.splitOn) fields.push(["split_on", some(value.splitOn)]);
@@ -164,7 +208,7 @@ function generator(value, indent) {
   return record(fields.filter(([, item]) => item !== undefined), indent);
 }
 
-function argument(value, indent, depth) {
+function argument(value, indent, depth, path) {
   stats.arguments += 1;
   const suggestions = array(value.suggestions).map((item) => suggestion(item, indent + 8));
   const generatorValues = array(value.generators).filter(Boolean);
@@ -174,7 +218,10 @@ function argument(value, indent, depth) {
   const generators = generatorValues
     .filter((item) => !item.__wispTemplate)
     .map((item) => generator(item, indent + 8));
-  const load = loadSpec(value.loadSpec, indent + 4, depth);
+  const load = loadSpec(value.loadSpec, indent + 4, depth, path);
+  const native = generatorValues.some((item) => !item.script)
+    ? nativeForPath(path)
+    : undefined;
   return record([
     ["name", text(value.name ?? "")],
     ["description", some(value.description)],
@@ -193,14 +240,15 @@ function argument(value, indent, depth) {
     ["default", some(value.default)],
     ...load,
     ["dangerous", flag(value.isDangerous)],
-    ["parser_directives", parserDirectives(value.parserDirectives, indent + 4)],
+    ["parser_directives", parserDirectives(value.parserDirectives, indent + 4, path)],
+    ["native", native ? `Some(${native})` : undefined],
   ], indent);
 }
 
-function option(value, indent, depth) {
+function option(value, indent, depth, path) {
   stats.options += 1;
   const names = array(value.name);
-  const args = array(value.args).filter(Boolean).map((item) => argument(item, indent + 8, depth));
+  const args = array(value.args).filter(Boolean).map((item) => argument(item, indent + 8, depth, path));
   if (value.isPersistent) stats.persistent_options += 1;
   if (value.isRequired) stats.required_options += 1;
   if (value.isRepeatable) stats.repeatable_options += 1;
@@ -227,21 +275,24 @@ function option(value, indent, depth) {
   ], indent);
 }
 
-function loadSpec(value, indent, depth) {
+function loadSpec(value, indent, depth, path) {
   if (value === undefined || value === null) return [];
   if (typeof value === "string") { stats.load_specs += 1; return [["load_spec", some(value)]]; }
   if (typeof value === "function") { stats.dynamic_load_specs += 1; return [["has_dynamic_load_spec", "true"]]; }
   if (typeof value === "object") {
     stats.load_specs += 1;
-    return [["load_spec_inline", `Some(${subcommand(value, indent, depth + 1)})`]];
+    return [["load_spec_inline", `Some(${subcommand(value, indent, depth + 1, path)})`]];
   }
   return [];
 }
 
-function body(node, indent, depth) {
-  const subcommands = array(node.subcommands).filter(Boolean).map((item) => subcommand(item, indent + 8, depth + 1));
-  const options = array(node.options).filter(Boolean).map((item) => option(item, indent + 8, depth));
-  const args = array(node.args).filter(Boolean).map((item) => argument(item, indent + 8, depth));
+function body(node, indent, depth, path) {
+  const subcommands = array(node.subcommands).filter(Boolean).map((item) => {
+    const name = array(item.name)[0] ?? "";
+    return subcommand(item, indent + 8, depth + 1, [...path, name]);
+  });
+  const options = array(node.options).filter(Boolean).map((item) => option(item, indent + 8, depth, path));
+  const args = array(node.args).filter(Boolean).map((item) => argument(item, indent + 8, depth, path));
   const extra = array(node.additionalSuggestions).map((item) => suggestion(item, indent + 8));
   if (typeof node.generateSpec === "function") stats.generate_specs += 1;
   return [
@@ -252,20 +303,20 @@ function body(node, indent, depth) {
     ["additional_suggestions", list(extra, indent + 4)],
     ["requires_subcommand", flag(node.requiresSubcommand)],
     ["filter_strategy", FILTER[node.filterStrategy]],
-    ["parser_directives", parserDirectives(node.parserDirectives, indent + 4)],
+    ["parser_directives", parserDirectives(node.parserDirectives, indent + 4, path)],
     ["has_generate_spec", flag(typeof node.generateSpec === "function")],
   ];
 }
 
-function subcommand(node, indent, depth) {
+function subcommand(node, indent, depth, path) {
   stats.subcommands += 1;
   if (depth > MAX_DEPTH) { stats.truncated += 1; return record([["name", text(array(node.name)[0] ?? "")]], indent); }
   const names = array(node.name);
   return record([
     ["name", text(names[0] ?? "")],
     ["aliases", list(names.slice(1).map(text), indent + 4)],
-    ...body(node, indent, depth),
-    ...loadSpec(node.loadSpec, indent + 4, depth),
+    ...body(node, indent, depth, path),
+    ...loadSpec(node.loadSpec, indent + 4, depth, path),
     ["presentation", presentation(node, indent + 4)],
   ], indent);
 }
@@ -277,8 +328,8 @@ export function emitSpec(node, command) {
     ["version", "1"],
     ["command", text(command)],
     ["aliases", list(names.filter((name) => name !== command).map(text), 4)],
-    ...body(node, 0, 0),
-    ...loadSpec(node.loadSpec, 4, 0),
+    ...body(node, 0, 0, [command]),
+    ...loadSpec(node.loadSpec, 4, 0, [command]),
     ["presentation", presentation(node, 4)],
   ], 0)}\n`;
 }

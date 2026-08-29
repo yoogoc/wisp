@@ -17,10 +17,14 @@ intends. The checkout path and optional output directory are command-line
 arguments; Fig's source is never copied into Wisp. `emit.mjs` then writes
 Wisp's RON schema, omitting any field that sits at its Rust default.
 
-Whatever Fig expressed as a JavaScript function -- `postProcess`, `custom`, a
-dynamic `script`, `loadSpec`, `generateSpec`, `trigger`, `getQueryTerm` -- is
-recorded as a `has_*` flag instead of being dropped, so the engine can tell
-"nothing here" apart from "not expressible without a JavaScript runtime".
+Known JavaScript callbacks are lowered into data on the owning command RON:
+generator output pipelines and kinds live on `GeneratorSpec`, local adapters on
+`ArgumentSpec`, and aliases on the argument's parser directives. Import-only
+translations live in `generator-metadata.mjs`; they are not loaded at runtime.
+Functions that cannot yet be expressed declaratively -- dynamic `script`,
+`loadSpec`, `generateSpec`, `trigger`, or `getQueryTerm` callbacks -- remain as
+`has_*` flags, so the engine can distinguish "nothing here" from "requires a
+JavaScript runtime".
 
 `loader.mjs` resolves the extensionless and directory imports the specs use, and
 supplies the one helper the published `@fig/autocomplete-generators` is missing.

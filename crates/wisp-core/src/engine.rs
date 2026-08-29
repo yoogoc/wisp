@@ -10,10 +10,10 @@ use wisp_protocol::{BufferSnapshot, Candidate, CandidateKind};
 
 use crate::ranking::{DEFAULT_PRIORITY, RankingStore};
 use crate::{
-    ArgumentSpec, CommandSpec, CompletionContext, FilterStrategy, GeneratorRuntime, GeneratorSpec,
-    Native, OptionSpec, ParserDirectives, Presentation, QueryTerm, Repeat, SpecStore,
-    SubcommandSpec, Suggestion, SuggestionKind, SuggestionSpec, SuggestionType, Template,
-    parse_completion_context,
+    AliasResolverSpec, ArgumentSpec, CommandSpec, CompletionContext, FilterStrategy,
+    GeneratorRuntime, GeneratorSpec, Native, OptionSpec, ParserDirectives, Presentation, QueryTerm,
+    Repeat, SpecStore, SubcommandSpec, Suggestion, SuggestionKind, SuggestionSpec, SuggestionType,
+    Template, parse_completion_context, parser::tokenize_words,
 };
 
 #[derive(Debug, Clone)]
@@ -99,7 +99,6 @@ impl CompletionEngine {
                 .score
                 .total_cmp(&left.score)
                 .then_with(|| right.priority.total_cmp(&left.priority))
-                .then_with(|| left.label.cmp(&right.label))
         });
         candidates.dedup_by(|left, right| left.insert_text == right.insert_text);
         if self.max_candidates > 0 {
@@ -119,7 +118,8 @@ impl CompletionEngine {
             return complete_paths(context, cwd, false);
         };
 
-        let resolved = self.resolve_node(spec, &context.args);
+        let expanded_args = self.expand_runtime_aliases(spec, &context.args, cwd).await;
+        let resolved = self.resolve_node(spec, &expanded_args, false);
         let token = context.current_token.as_str();
 
         // `--message=<value>`: the option is already settled, so complete the
@@ -164,15 +164,6 @@ impl CompletionEngine {
                         )
                     })
             })
-            .chain(
-                resolved
-                    .node
-                    .additional_suggestions()
-                    .iter()
-                    .filter_map(|suggestion| {
-                        suggestion_candidate(suggestion, CandidateKind::Subcommand, context)
-                    }),
-            )
             .collect();
 
         apply_filter_strategy(
@@ -181,11 +172,22 @@ impl CompletionEngine {
             &context.current_token,
         );
 
+        let mut additional: Vec<Candidate> = resolved
+            .node
+            .additional_suggestions()
+            .iter()
+            .filter_map(|suggestion| {
+                suggestion_candidate(suggestion, CandidateKind::Subcommand, context)
+            })
+            .collect();
+        apply_filter_strategy(
+            &mut additional,
+            resolved.node.filter_strategy(),
+            &context.current_token,
+        );
+
         // A command that insists on a subcommand offers nothing else.
         if !resolved.node.requires_subcommand() {
-            if !resolved.options_are_closed() {
-                candidates.extend(resolved.option_candidates(context));
-            }
             if let Some(argument) =
                 argument_at(resolved.node.arguments(), resolved.positional_index)
             {
@@ -193,27 +195,95 @@ impl CompletionEngine {
                     self.complete_argument(argument, &resolved, context, cwd)
                         .await,
                 );
-            } else if candidates.is_empty() {
+            }
+            candidates.extend(additional);
+            if !resolved.options_are_closed() {
+                candidates.extend(resolved.option_candidates(context));
+            }
+            if candidates.is_empty() {
                 candidates.extend(complete_paths(context, cwd, false));
             }
+        } else {
+            candidates.extend(additional);
         }
         candidates
     }
 
-    fn resolve_node<'a>(&'a self, spec: &'a CommandSpec, args: &'a [String]) -> ResolvedNode<'a> {
+    /// Expands tokens only when the argument that consumed them carries Fig's
+    /// `parserDirectives.alias`. After every substitution the spec is walked
+    /// again from the beginning, matching Fig's parser-state rollback.
+    async fn expand_runtime_aliases(
+        &self,
+        spec: &CommandSpec,
+        args: &[String],
+        cwd: &Path,
+    ) -> Vec<String> {
+        let mut expanded = args.to_vec();
+        let mut seen = HashSet::new();
+        for _ in 0..8 {
+            let resolved = self.resolve_node(spec, &expanded, true);
+            let Some(request) = resolved.alias_request else {
+                return expanded;
+            };
+            let index = request.token_index;
+            let alias = expanded[index].clone();
+            if !seen.insert((index, alias.clone())) {
+                return expanded;
+            }
+            let Some(value) = self
+                .generators
+                .resolve_alias(request.resolver, &alias, cwd)
+                .await
+            else {
+                return expanded;
+            };
+            let replacement = tokenize_words(&value);
+            if replacement.is_empty()
+                || replacement
+                    .iter()
+                    .any(|word| matches!(word.as_str(), "|" | "||" | "&&" | ";"))
+            {
+                return expanded;
+            }
+            expanded.splice(index..=index, replacement);
+        }
+        expanded
+    }
+
+    fn resolve_node<'a>(
+        &'a self,
+        spec: &'a CommandSpec,
+        args: &'a [String],
+        detect_alias: bool,
+    ) -> ResolvedNode<'a> {
+        self.resolve_node_at(spec, args, detect_alias, 0)
+    }
+
+    fn resolve_node_at<'a>(
+        &'a self,
+        spec: &'a CommandSpec,
+        args: &'a [String],
+        detect_alias: bool,
+        token_offset: usize,
+    ) -> ResolvedNode<'a> {
         let mut node = NodeRef::Root(spec);
         let mut parent = None;
-        let mut path = vec![spec.command.as_str()];
         let mut positional_index = 0;
         let mut pending_argument = None;
         let mut persistent: Vec<&'a OptionSpec> = Vec::new();
         let mut used: Vec<&'a str> = Vec::new();
         let mut directives = node.parser_directives();
+        let mut alias_request = None;
 
-        let mut rest = args;
-        while let Some((token, tail)) = rest.split_first() {
-            rest = tail;
-            if pending_argument.take().is_some() {
+        for (index, token) in args.iter().enumerate() {
+            if let Some(argument) = pending_argument.take() {
+                if detect_alias && let Some(resolver) = argument_alias(argument) {
+                    alias_request = Some(AliasRequest {
+                        token_index: token_offset + index,
+                        resolver,
+                    });
+                    break;
+                }
                 continue;
             }
 
@@ -237,7 +307,6 @@ impl CompletionEngine {
             {
                 persistent.extend(node.options().iter().filter(|option| option.persistent));
                 parent = Some(node);
-                path.push(subcommand.name.as_str());
                 node = NodeRef::Subcommand(subcommand);
                 if let Some(loaded) = self.load(subcommand.load_spec.as_deref()) {
                     node = NodeRef::Root(loaded);
@@ -252,11 +321,24 @@ impl CompletionEngine {
 
             // `sudo <command>` and friends: the rest of the line is a command
             // line of its own, so resolution restarts from that command's spec.
-            if let Some(argument) = argument_at(node.arguments(), positional_index)
-                && argument.is_command
-                && let Some(nested) = self.specs.get(token)
-            {
-                return self.resolve_node(nested, rest);
+            if let Some(argument) = argument_at(node.arguments(), positional_index) {
+                if detect_alias && let Some(resolver) = argument_alias(argument) {
+                    alias_request = Some(AliasRequest {
+                        token_index: token_offset + index,
+                        resolver,
+                    });
+                    break;
+                }
+                if argument.is_command
+                    && let Some(nested) = self.specs.get(token)
+                {
+                    return self.resolve_node_at(
+                        nested,
+                        &args[index + 1..],
+                        detect_alias,
+                        token_offset + index + 1,
+                    );
+                }
             }
             positional_index += 1;
         }
@@ -264,12 +346,12 @@ impl CompletionEngine {
         ResolvedNode {
             node,
             parent,
-            path: path.join(" "),
             positional_index,
             pending_argument,
             persistent,
             used,
             directives,
+            alias_request,
         }
     }
 
@@ -361,7 +443,7 @@ impl CompletionEngine {
 
         // Every generator here was a JavaScript callback. Some of them ask a
         // question Wisp can answer by reading a file.
-        if javascript_only && let Some(native) = self.generators.native(&resolved.path) {
+        if javascript_only && let Some(native) = argument.native {
             candidates.extend(candidates_from(
                 native.suggest(cwd, self.generators.history_limit()),
                 SuggestionKind::Value,
@@ -542,8 +624,6 @@ struct ResolvedNode<'a> {
     node: NodeRef<'a>,
     /// The node one level up, which is where Fig's `help` template looks.
     parent: Option<NodeRef<'a>>,
-    /// The command and the subcommands entered so far, such as `npm run`.
-    path: String,
     positional_index: usize,
     pending_argument: Option<&'a ArgumentSpec>,
     /// Options inherited from every ancestor that marked them persistent.
@@ -551,6 +631,14 @@ struct ResolvedNode<'a> {
     /// Option names already on the command line at this node.
     used: Vec<&'a str>,
     directives: Option<&'a ParserDirectives>,
+    /// A consumed token whose argument requests alias expansion.
+    alias_request: Option<AliasRequest<'a>>,
+}
+
+#[derive(Clone, Copy)]
+struct AliasRequest<'a> {
+    token_index: usize,
+    resolver: &'a AliasResolverSpec,
 }
 
 impl<'a> ResolvedNode<'a> {
@@ -697,6 +785,13 @@ fn argument_at(arguments: &[ArgumentSpec], index: usize) -> Option<&ArgumentSpec
     arguments
         .get(index)
         .or_else(|| arguments.last().filter(|argument| argument.variadic))
+}
+
+fn argument_alias(argument: &ArgumentSpec) -> Option<&AliasResolverSpec> {
+    argument
+        .parser_directives
+        .as_ref()
+        .and_then(|directives| directives.alias.as_ref())
 }
 
 fn is_command_position(context: &CompletionContext) -> bool {
@@ -1200,7 +1295,7 @@ mod tests {
             .await;
         assert_eq!(
             labels(&values),
-            ["astronomical", "top", "default", "apple", "bottom"]
+            ["top", "astronomical", "default", "bottom", "apple"]
         );
         assert_eq!(values[0].priority, 100.0);
         assert_eq!(values[2].priority, 50.0);
@@ -1214,6 +1309,33 @@ mod tests {
         .complete(&snapshot("ls a"))
         .await;
         assert_eq!(&labels(&matching)[..2], ["astronomical", "apple"]);
+    }
+
+    #[tokio::test]
+    async fn equal_priority_candidates_keep_fig_source_order() {
+        let directory = scratch("source-order");
+        std::fs::write(
+            directory.join("ls.ron"),
+            r#"(
+                version: 1,
+                command: "ls",
+                subcommands: [(name: "subcommand")],
+                arguments: [(name: "value", suggestions: [(name: "argument")])],
+                additional_suggestions: [(name: "additional")],
+                options: [(names: ["--option"])],
+            )"#,
+        )
+        .expect("write the spec");
+        let mut specs = SpecStore::default();
+        specs.load_dir(&directory).expect("load the spec");
+
+        let values = CompletionEngine::new(specs)
+            .complete(&snapshot("ls "))
+            .await;
+        assert_eq!(
+            labels(&values),
+            ["subcommand", "argument", "additional", "--option"]
+        );
     }
 
     #[tokio::test]
@@ -1292,6 +1414,76 @@ mod tests {
                 .any(|candidate| candidate.kind == CandidateKind::Branch),
             "expected a branch from the imported generator, got {values:?}"
         );
+    }
+
+    #[tokio::test]
+    async fn a_configured_git_alias_uses_the_canonical_subcommand_spec() {
+        let directory = scratch("git-alias");
+        let initialized = std::process::Command::new("git")
+            .args(["init", "--quiet"])
+            .current_dir(&directory)
+            .status()
+            .is_ok_and(|status| status.success());
+        if !initialized {
+            return;
+        }
+        let configured = std::process::Command::new("git")
+            .args(["config", "alias.wisp-checkout", "checkout"])
+            .current_dir(&directory)
+            .status()
+            .expect("configure the repository alias");
+        assert!(configured.success());
+
+        let mut snapshot = snapshot("git wisp-checkout ");
+        snapshot.cwd = directory;
+        let values = CompletionEngine::default().complete(&snapshot).await;
+        assert!(
+            labels(&values).contains(&"-"),
+            "expected checkout's last-branch suggestion, got {values:?}"
+        );
+        assert!(labels(&values).contains(&"--detach"));
+        assert!(!labels(&values).contains(&"commit -m 'msg'"));
+    }
+
+    #[tokio::test]
+    async fn an_alias_directive_expands_an_argument_at_a_nested_command_path() {
+        let directory = scratch("nested-alias");
+        std::fs::write(
+            directory.join("package.json"),
+            r#"{"scripts":{"switch":"git checkout"}}"#,
+        )
+        .expect("write package scripts");
+        let engine = CompletionEngine::default();
+        let spec = engine.specs.get("yarn").expect("built-in yarn spec");
+
+        let expanded = engine
+            .expand_runtime_aliases(spec, &["run".into(), "switch".into()], &directory)
+            .await;
+        assert_eq!(expanded, ["run", "git", "checkout"]);
+    }
+
+    #[tokio::test]
+    async fn an_argument_without_an_alias_directive_is_never_rewritten() {
+        let directory = scratch("plain-argument");
+        std::fs::write(
+            directory.join("package.json"),
+            r#"{"scripts":{"switch":"git checkout"}}"#,
+        )
+        .expect("write package scripts");
+        let spec = CommandSpec {
+            command: "yarn".into(),
+            arguments: vec![ArgumentSpec {
+                name: "script".into(),
+                ..ArgumentSpec::default()
+            }],
+            ..CommandSpec::default()
+        };
+        let engine = CompletionEngine::default();
+
+        let expanded = engine
+            .expand_runtime_aliases(&spec, &["switch".into()], &directory)
+            .await;
+        assert_eq!(expanded, ["switch"]);
     }
 
     #[test]
