@@ -56,8 +56,7 @@ if [[ $- == *i* ]]; then
     _wisp_bash_update() {
       local buffer=${READLINE_LINE-} point=${READLINE_POINT-0} state
       [[ ${READLINE_LINE+x} ]] || return 0
-      if [[ -n ${ZELLIJ:-} ]] &&
-        (( _WISP_PANE_COLUMNS != ${COLUMNS:-80} || _WISP_PANE_ROWS != ${LINES:-24} )); then
+      if (( _WISP_PANE_COLUMNS != ${COLUMNS:-80} || _WISP_PANE_ROWS != ${LINES:-24} )); then
         _wisp_bash_refresh_viewport
       fi
       state="${_WISP_VIEWPORT_X}:${_WISP_VIEWPORT_Y}:${COLUMNS:-80}:${LINES:-24}:${point}:${_WISP_PROMPT}:${buffer}"

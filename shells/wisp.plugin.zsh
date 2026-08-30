@@ -122,8 +122,7 @@ function _wisp_cursor_position() {
 
 function _wisp_line_pre_redraw() {
   local current_prompt="${(%)PROMPT}"
-  if [[ -n "${ZELLIJ:-}" ]] && \
-     (( _WISP_PANE_COLUMNS != ${COLUMNS:-80} || _WISP_PANE_ROWS != ${LINES:-24} )); then
+  if (( _WISP_PANE_COLUMNS != ${COLUMNS:-80} || _WISP_PANE_ROWS != ${LINES:-24} )); then
     _wisp_refresh_terminal_viewport
   fi
   local state="${_WISP_VIEWPORT_X}:${_WISP_VIEWPORT_Y}:${COLUMNS:-80}:${LINES:-24}:${CURSOR}:${BUFFER}"

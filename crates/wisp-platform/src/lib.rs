@@ -145,6 +145,15 @@ pub enum CursorLocationError {
 
 pub trait WindowFrameProvider: Send + Sync {
     fn active_window(&self, terminal: TerminalKind) -> Result<ActiveWindow, CursorLocationError>;
+
+    fn active_window_for_grid(
+        &self,
+        terminal: TerminalKind,
+        _grid_columns: u16,
+        _grid_rows: u16,
+    ) -> Result<ActiveWindow, CursorLocationError> {
+        self.active_window(terminal)
+    }
 }
 
 pub struct TerminalCursorLocator<P = SystemWindowFrameProvider> {
@@ -186,7 +195,20 @@ impl<P: WindowFrameProvider> TerminalCursorLocator<P> {
         if columns == 0 || rows == 0 {
             return Err(CursorLocationError::InvalidGeometry);
         }
-        let active_window = self.frame_provider.active_window(snapshot.terminal.kind)?;
+        let viewport = snapshot.terminal.viewport.unwrap_or(TerminalViewport {
+            x: 0,
+            y: 0,
+            grid_columns: columns,
+            grid_rows: rows,
+        });
+        if viewport.grid_columns == 0 || viewport.grid_rows == 0 {
+            return Err(CursorLocationError::InvalidGeometry);
+        }
+        let active_window = self.frame_provider.active_window_for_grid(
+            snapshot.terminal.kind,
+            viewport.grid_columns,
+            viewport.grid_rows,
+        )?;
         let effective_terminal = if snapshot.terminal.kind == TerminalKind::Unknown {
             terminal_kind_for_application(&active_window.application_id)
                 .unwrap_or(TerminalKind::Unknown)
@@ -208,15 +230,6 @@ impl<P: WindowFrameProvider> TerminalCursorLocator<P> {
             self.fixed_insets
                 .unwrap_or_else(|| TerminalInsets::for_terminal(effective_terminal, &self.config))
         };
-        let viewport = snapshot.terminal.viewport.unwrap_or(TerminalViewport {
-            x: 0,
-            y: 0,
-            grid_columns: columns,
-            grid_rows: rows,
-        });
-        if viewport.grid_columns == 0 || viewport.grid_rows == 0 {
-            return Err(CursorLocationError::InvalidGeometry);
-        }
         let content_width = frame.width - insets.padding_x * 2.0;
         let content_height = frame.height - insets.titlebar - insets.padding_y * 2.0;
         if content_width <= 0.0 || content_height <= 0.0 {
@@ -372,6 +385,25 @@ impl Default for SystemWindowFrameProvider {
 
 impl WindowFrameProvider for SystemWindowFrameProvider {
     fn active_window(&self, terminal: TerminalKind) -> Result<ActiveWindow, CursorLocationError> {
+        self.active_window_cached(terminal, None)
+    }
+
+    fn active_window_for_grid(
+        &self,
+        terminal: TerminalKind,
+        grid_columns: u16,
+        grid_rows: u16,
+    ) -> Result<ActiveWindow, CursorLocationError> {
+        self.active_window_cached(terminal, Some((grid_columns, grid_rows)))
+    }
+}
+
+impl SystemWindowFrameProvider {
+    fn active_window_cached(
+        &self,
+        terminal: TerminalKind,
+        grid: Option<(u16, u16)>,
+    ) -> Result<ActiveWindow, CursorLocationError> {
         let bounds_variable = format!("WISP_{}_BOUNDS", terminal_env_prefix(terminal));
         if let Ok(value) = std::env::var(&bounds_variable) {
             let frame = parse_frame(&value).ok_or(CursorLocationError::InvalidGeometry)?;
@@ -383,13 +415,15 @@ impl WindowFrameProvider for SystemWindowFrameProvider {
                 content_frame: None,
             });
         }
-        static CACHE: OnceLock<Mutex<Option<(Instant, ActiveWindow)>>> = OnceLock::new();
+        type CachedWindow = (Instant, Option<(u16, u16)>, ActiveWindow);
+        static CACHE: OnceLock<Mutex<Option<CachedWindow>>> = OnceLock::new();
         let cache = CACHE.get_or_init(|| Mutex::new(None));
-        if let Some((created_at, active_window)) = cache
+        if let Some((created_at, cached_grid, active_window)) = cache
             .lock()
             .expect("window frame cache mutex poisoned")
             .as_ref()
             && created_at.elapsed() < self.cache_ttl
+            && *cached_grid == grid
             && terminal_matches_application(terminal, &active_window.application_id)
         {
             return Ok(active_window.clone());
@@ -402,7 +436,7 @@ impl WindowFrameProvider for SystemWindowFrameProvider {
             )));
         }
         *cache.lock().expect("window frame cache mutex poisoned") =
-            Some((Instant::now(), active_window.clone()));
+            Some((Instant::now(), grid, active_window.clone()));
         Ok(active_window)
     }
 }
@@ -546,23 +580,48 @@ mod tests {
 
     struct FixedFrame;
 
+    fn fixed_active_window(terminal: TerminalKind) -> ActiveWindow {
+        ActiveWindow {
+            application_id: primary_bundle_id(terminal)
+                .unwrap_or("test.terminal")
+                .into(),
+            frame: WindowFrame {
+                x: 100.0,
+                y: 200.0,
+                width: 800.0,
+                height: 508.0,
+            },
+            content_frame: None,
+        }
+    }
+
     impl WindowFrameProvider for FixedFrame {
         fn active_window(
             &self,
             terminal: TerminalKind,
         ) -> Result<ActiveWindow, CursorLocationError> {
-            Ok(ActiveWindow {
-                application_id: primary_bundle_id(terminal)
-                    .unwrap_or("test.terminal")
-                    .into(),
-                frame: WindowFrame {
-                    x: 100.0,
-                    y: 200.0,
-                    width: 800.0,
-                    height: 508.0,
-                },
-                content_frame: None,
-            })
+            Ok(fixed_active_window(terminal))
+        }
+    }
+
+    struct GridRecordingFrame(Mutex<Option<(u16, u16)>>);
+
+    impl WindowFrameProvider for GridRecordingFrame {
+        fn active_window(
+            &self,
+            _terminal: TerminalKind,
+        ) -> Result<ActiveWindow, CursorLocationError> {
+            panic!("the locator should include terminal grid dimensions")
+        }
+
+        fn active_window_for_grid(
+            &self,
+            terminal: TerminalKind,
+            grid_columns: u16,
+            grid_rows: u16,
+        ) -> Result<ActiveWindow, CursorLocationError> {
+            *self.0.lock().unwrap() = Some((grid_columns, grid_rows));
+            Ok(fixed_active_window(terminal))
         }
     }
 
@@ -599,6 +658,46 @@ mod tests {
         assert_eq!(anchor.cell_width, 10.0);
         assert_eq!(anchor.line_height, 20.0);
         assert_eq!(anchor.position, ScreenPoint { x: 150.0, y: 708.0 });
+    }
+
+    #[test]
+    fn forwards_outer_grid_size_to_the_window_frame_cache() {
+        let locator = TerminalCursorLocator::new(
+            GridRecordingFrame(Mutex::new(None)),
+            TerminalInsets {
+                titlebar: 28.0,
+                padding_x: 0.0,
+                padding_y: 0.0,
+            },
+        );
+        let snapshot = BufferSnapshot {
+            request_id: 1,
+            session_id: "resized".into(),
+            buffer: "git".into(),
+            cursor: 3,
+            cwd: PathBuf::from("/tmp"),
+            shell: ShellKind::Fish,
+            terminal: TerminalSnapshot {
+                kind: TerminalKind::Alacritty,
+                window_id: None,
+                columns: 72,
+                rows: 20,
+                prompt: String::new(),
+                cursor_row: None,
+                cursor_column: None,
+                rendered: None,
+                viewport: Some(TerminalViewport {
+                    x: 0,
+                    y: 0,
+                    grid_columns: 144,
+                    grid_rows: 40,
+                }),
+            },
+        };
+
+        locator.locate(&snapshot).unwrap();
+
+        assert_eq!(*locator.frame_provider.0.lock().unwrap(), Some((144, 40)));
     }
 
     #[test]

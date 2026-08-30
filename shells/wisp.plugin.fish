@@ -39,7 +39,7 @@ if status is-interactive; and not set -q _WISP_FISH_LOADED
     function _wisp_fish_update
         commandline --search-mode; and return
         commandline --paging-mode; and return
-        if set -q ZELLIJ; and test $_WISP_PANE_COLUMNS -ne $COLUMNS -o $_WISP_PANE_ROWS -ne $LINES
+        if test $_WISP_PANE_COLUMNS -ne $COLUMNS -o $_WISP_PANE_ROWS -ne $LINES
             _wisp_fish_refresh_viewport
         end
         set -l buffer (commandline)

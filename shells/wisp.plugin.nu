@@ -51,7 +51,7 @@ if not ($env | columns | any {|name| $name == '_WISP_NUSHELL_LOADED' }) {
         let buffer = commandline
         let cursor = commandline get-cursor
         let size = term size
-        if ($env | columns | any {|name| $name == 'ZELLIJ' }) and (
+        if (
             $env._WISP_PANE_COLUMNS != $size.columns or $env._WISP_PANE_ROWS != $size.rows
         ) {
             _wisp_nu_refresh_viewport
