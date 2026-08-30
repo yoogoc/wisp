@@ -81,6 +81,8 @@ mkdir ($nu.user-autoload-dirs | first)
 wisp init nushell | save --force (($nu.user-autoload-dirs | first) | path join wisp.nu)
 ```
 
+The generated adapter runs inside the current shell process. After upgrading Wisp, start a new shell or reload the adapter so shell-side fixes take effect. Zsh can rerun its `eval` command; Bash should first run `unset _WISP_BASH_LOADED`; Fish should run `set -e _WISP_FISH_LOADED`; Nushell should regenerate its autoload file and restart.
+
 Run `wisp start` after login to launch the Wisp menu-bar app. It hosts the daemon and GPUI overlay in one process and stays out of the Dock. On first use, macOS may ask for **Accessibility** permission because Wisp uses System Events to read the active terminal content or window frame.
 
 ## Key bindings
@@ -217,7 +219,9 @@ be disabled with `completion.recency = false`.
 
 ## Positioning and calibration
 
-Where the shell adapter exposes it, Wisp asks the terminal for a standard `CSI 6n` cursor-position report and uses both its real row and column as the base terminal cell; other adapters derive the cell from the command-line layout and terminal geometry. Since shell line editors report the frame before repainting, Wisp applies only the linear cell delta between the previously rendered buffer and the current buffer. On macOS it prefers the focused terminal text area's Accessibility frame; if a terminal does not expose one, it maps the grid through the front window with terminal-specific chrome defaults. When running inside zellij, Wisp also reads the active pane's content origin and the outer terminal grid, so wrapped commands in split panes map to the correct cell instead of stretching pane-local coordinates across the whole window. The popup keeps an 8 px cursor gap and flips above the cursor when there is not enough room below. Leaving the originating terminal dismisses the current render request; returning does not restore it until the buffer changes.
+Where the shell adapter exposes it, Wisp asks the terminal for a standard `CSI 6n` cursor-position report and uses both its real row and column as the base terminal cell; other adapters derive the cell from the command-line layout and terminal geometry. Since shell line editors report the frame before repainting, Wisp applies only the linear cell delta between the previously rendered buffer and the current buffer. On macOS it prefers the focused terminal text area's Accessibility frame; if a terminal does not expose one, it maps the grid through the front window with terminal-specific chrome defaults.
+
+All shell adapters watch their current column and row counts. After a terminal window is resized, they refresh the viewport before sending the next snapshot; the locator also keys its short-lived window-frame cache by the outer terminal grid, so a new grid is never mapped through a stale pre-resize frame. Inside zellij, Wisp reads both the active pane's content origin and the outer terminal grid, so wrapped commands in split panes map to the correct cell. The popup keeps an 8 px cursor gap and flips above the cursor when there is not enough room below. Leaving the originating terminal dismisses the current render request; returning does not restore it until the buffer changes.
 
 Terminal detection uses the standard `TERM_PROGRAM` value plus well-known per-terminal environment variables. If those do not identify the terminal, Wisp uses an `unknown` fallback only when the foreground application's bundle id belongs to one of the supported terminals. It will not place the popup over an arbitrary foreground application.
 
@@ -266,8 +270,11 @@ Run the menu-bar app and shell integration:
 # Menu-bar app (daemon + overlay)
 RUST_LOG=wisp=debug cargo run -p wisp-app --bin wisp-app
 
-# Current Zsh session (use bash or fish for those adapters)
+# Current Zsh session (replace zsh with bash when needed)
 eval "$(cargo run -q -p wisp-cli --bin wisp -- init zsh)"
+
+# Current Fish session
+cargo run -q -p wisp-cli --bin wisp -- init fish | source
 ```
 
 Before submitting changes:
@@ -291,8 +298,8 @@ Special thanks to [**Fig**](https://github.com/withfig/autocomplete) and its con
 
 ## License
 
-Licensed under either **MIT** or [**Apache-2.0**](LICENSE-APACHE), at your option.
+Wisp is licensed under either the [MIT License](LICENSE-MIT) or the
+[Apache License 2.0](LICENSE-APACHE), at your option.
 
-<div align="center">
-  <sub>Built for people who want the speed of a shell and the guidance of an IDE.</sub>
-</div>
+Completion specifications derived from Fig retain their original MIT license;
+see [specs/LICENSE-FIG](specs/LICENSE-FIG) and [specs/README.md](specs/README.md).
