@@ -94,10 +94,15 @@ pub(crate) fn install_status_item() -> anyhow::Result<()> {
 }
 
 #[allow(unexpected_cfgs)]
-pub(crate) fn terminal_is_frontmost() -> bool {
-    if let Ok(value) = std::env::var("WISP_ALACRITTY_ACTIVE") {
+pub(crate) fn terminal_is_frontmost(expected_application_id: Option<&str>) -> bool {
+    if let Ok(value) =
+        std::env::var("WISP_TERMINAL_ACTIVE").or_else(|_| std::env::var("WISP_ALACRITTY_ACTIVE"))
+    {
         return matches!(value.as_str(), "1" | "true" | "yes");
     }
+    let Some(expected_application_id) = expected_application_id else {
+        return false;
+    };
     unsafe {
         let workspace: *mut Object = msg_send![class!(NSWorkspace), sharedWorkspace];
         if workspace.is_null() {
@@ -107,15 +112,15 @@ pub(crate) fn terminal_is_frontmost() -> bool {
         if application.is_null() {
             return false;
         }
-        let name: *mut Object = msg_send![application, localizedName];
-        if name.is_null() {
+        let bundle_id: *mut Object = msg_send![application, bundleIdentifier];
+        if bundle_id.is_null() {
             return false;
         }
-        let bytes: *const std::os::raw::c_char = msg_send![name, UTF8String];
+        let bytes: *const std::os::raw::c_char = msg_send![bundle_id, UTF8String];
         !bytes.is_null()
             && CStr::from_ptr(bytes)
                 .to_string_lossy()
-                .eq_ignore_ascii_case("Alacritty")
+                .eq_ignore_ascii_case(expected_application_id)
     }
 }
 

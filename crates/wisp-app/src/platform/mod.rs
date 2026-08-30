@@ -29,7 +29,7 @@ pub(crate) fn install_status_item() -> anyhow::Result<()> {
 }
 
 #[cfg(not(target_os = "macos"))]
-pub(crate) fn terminal_is_frontmost() -> bool {
+pub(crate) fn terminal_is_frontmost(_expected_application_id: Option<&str>) -> bool {
     true
 }
 

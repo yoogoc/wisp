@@ -30,14 +30,6 @@ if zmodload -e zsh/system && zmodload -e zsh/zselect; then
   sysopen -rw -u _WISP_TTY_FD /dev/tty 2>/dev/null || _WISP_TTY_FD=-1
 fi
 
-function _wisp_terminal_name() {
-  if [[ -n "${ALACRITTY_SOCKET:-}" || -n "${ALACRITTY_LOG:-}" || "${TERM:-}" == "alacritty" ]]; then
-    print -r -- alacritty
-  else
-    print -r -- unknown
-  fi
-}
-
 function _wisp_refresh_terminal_viewport() {
   local geometry=''
   if [[ -n "${ZELLIJ:-}" ]] && \
@@ -58,9 +50,7 @@ function _wisp_cursor_position() {
   local -i state=0 bytes_read=0 found=0 wait_ticks=2
   _WISP_CURSOR_OUTPUT=''
   (( _WISP_TTY_FD >= 0 )) || return 1
-  [[ "$(_wisp_terminal_name)" == alacritty ]] || return 1
-
-  # Alacritty implements the standard CSI 6n cursor-position report. ZLE is
+  # Supported terminals implement the standard CSI 6n cursor-position report. ZLE is
   # paused while this hook runs. Read the complete response byte by byte:
   # a single sysread can legally return only ESC and leave "[row;columnR" for
   # ZLE, which would then insert the control sequence into the command line.
@@ -176,7 +166,6 @@ function _wisp_line_pre_redraw() {
     --viewport-y "$_WISP_VIEWPORT_Y" \
     --grid-columns "$_WISP_GRID_COLUMNS" \
     --grid-rows "$_WISP_GRID_ROWS" \
-    --terminal "$(_wisp_terminal_name)" \
     --window-id "${ALACRITTY_WINDOW_ID:-}" \
     >/dev/null 2>&1 &!
 

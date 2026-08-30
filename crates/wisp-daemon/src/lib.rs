@@ -17,7 +17,7 @@ use tracing::{debug, info, warn};
 use wisp_ai::{AiCompletionRequest, ProviderRegistry};
 use wisp_config::{AiRuntimeConfig, TerminalConfig, WispConfig};
 use wisp_core::CompletionEngine;
-use wisp_platform::AlacrittyCursorLocator;
+use wisp_platform::TerminalCursorLocator;
 use wisp_protocol::{
     AcceptTarget, ApplyEdit, BufferSnapshot, ClientMessage, NavigationDirection, RenderModel,
     ServerMessage, framed, receive_message, send_message,
@@ -254,9 +254,9 @@ async fn complete(snapshot: BufferSnapshot, state: Arc<DaemonState>) -> (RenderM
     let candidates = state.engine.complete(&snapshot).await;
     let locator_snapshot = snapshot.clone();
     let terminal_config = state.terminal.clone();
-    let anchor = tokio::task::spawn_blocking(move || {
-        AlacrittyCursorLocator::from_config(&terminal_config)
-            .locate(&locator_snapshot)
+    let located = tokio::task::spawn_blocking(move || {
+        TerminalCursorLocator::from_config(&terminal_config)
+            .locate_with_context(&locator_snapshot)
             .ok()
     })
     .await
@@ -266,7 +266,10 @@ async fn complete(snapshot: BufferSnapshot, state: Arc<DaemonState>) -> (RenderM
     let model = RenderModel {
         request_id: snapshot.request_id,
         session_id: snapshot.session_id.clone(),
-        anchor,
+        terminal_application_id: located
+            .as_ref()
+            .map(|located| located.application_id.clone()),
+        anchor: located.map(|located| located.anchor),
         candidates,
         selected: 0,
         ghost_text: None,
@@ -315,6 +318,7 @@ async fn current_or_empty_model(state: &DaemonState, snapshot: &BufferSnapshot) 
         .unwrap_or_else(|| RenderModel {
             request_id: snapshot.request_id,
             session_id: snapshot.session_id.clone(),
+            terminal_application_id: None,
             anchor: None,
             candidates: Vec::new(),
             selected: 0,

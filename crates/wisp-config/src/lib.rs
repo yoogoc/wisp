@@ -311,6 +311,13 @@ pub struct TerminalConfig {
     pub alacritty_padding_x: f32,
     #[serde(default)]
     pub alacritty_padding_y: f32,
+    /// Window chrome used by terminals without a dedicated preset.
+    #[serde(default = "default_titlebar")]
+    pub fallback_titlebar: f32,
+    #[serde(default)]
+    pub fallback_padding_x: f32,
+    #[serde(default)]
+    pub fallback_padding_y: f32,
     #[serde(default = "default_window_frame_cache_ms")]
     pub window_frame_cache_ms: u64,
 }
@@ -321,6 +328,9 @@ impl Default for TerminalConfig {
             alacritty_titlebar: default_titlebar(),
             alacritty_padding_x: 0.0,
             alacritty_padding_y: 0.0,
+            fallback_titlebar: default_titlebar(),
+            fallback_padding_x: 0.0,
+            fallback_padding_y: 0.0,
             window_frame_cache_ms: default_window_frame_cache_ms(),
         }
     }

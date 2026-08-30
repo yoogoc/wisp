@@ -64,7 +64,7 @@ pub fn run() -> anyhow::Result<()> {
         if let Err(error) = install_status_item() {
             debug!(%error, "could not install Wisp status item");
         }
-        let terminal_active = terminal_is_frontmost();
+        let terminal_active = terminal_is_frontmost(first.terminal_application_id.as_deref());
         let height = overlay_height(&config, &first);
         let anchor = overlay_origin(&config, &first);
         let bounds = Bounds {
@@ -163,7 +163,11 @@ fn poll_messages(
                     >= Duration::from_millis(config.activity_check_ms)
                 {
                     last_activity_check = Instant::now();
-                    let active = terminal_is_frontmost();
+                    let application_id = cx
+                        .update(|_, app| view.read(app).state.model.terminal_application_id.clone())
+                        .ok()
+                        .flatten();
+                    let active = terminal_is_frontmost(application_id.as_deref());
                     let changed = active != terminal_active;
                     terminal_active = active;
                     changed
@@ -190,12 +194,15 @@ fn poll_messages(
                                 cx.notify();
                             });
                             if let Err(error) = set_overlay_window_visible(window, visible) {
-                                debug!(%error, "could not follow Alacritty activation");
+                                debug!(%error, "could not follow terminal activation");
                             }
                         }
                         for message in messages {
                             match message {
                                 ServerMessage::Render { model } => {
+                                    terminal_active = terminal_is_frontmost(
+                                        model.terminal_application_id.as_deref(),
+                                    );
                                     hide_detail_window(view.read(app).detail_window, app);
                                     let placement = preferred_model_placement(&config, &model);
                                     let height = overlay_height(&config, &model);
@@ -208,6 +215,7 @@ fn poll_messages(
                                     let mut visible = false;
                                     view.update(app, |view, cx| {
                                         view.state.render(model, placement);
+                                        view.state.set_terminal_active(terminal_active);
                                         visible = view.state.visible;
                                         animate_description = visible
                                             && selected_description_overflows(
@@ -276,6 +284,7 @@ fn empty_render_model() -> RenderModel {
     RenderModel {
         request_id: 0,
         session_id: String::new(),
+        terminal_application_id: None,
         anchor: None,
         candidates: Vec::new(),
         selected: 0,

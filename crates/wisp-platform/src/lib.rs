@@ -18,14 +18,28 @@ pub struct WindowFrame {
     pub height: f32,
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct ActiveWindow {
+    pub application_id: String,
+    pub frame: WindowFrame,
+    /// Exact focused terminal text area reported by macOS Accessibility.
+    pub content_frame: Option<WindowFrame>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct LocatedCursor {
+    pub anchor: CursorAnchor,
+    pub application_id: String,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct AlacrittyInsets {
+pub struct TerminalInsets {
     pub titlebar: f32,
     pub padding_x: f32,
     pub padding_y: f32,
 }
 
-impl Default for AlacrittyInsets {
+impl Default for TerminalInsets {
     fn default() -> Self {
         let config = TerminalConfig::default();
         Self {
@@ -36,7 +50,7 @@ impl Default for AlacrittyInsets {
     }
 }
 
-impl AlacrittyInsets {
+impl TerminalInsets {
     pub fn from_environment() -> Self {
         Self::from_config(&TerminalConfig::default())
     }
@@ -48,6 +62,36 @@ impl AlacrittyInsets {
                 .unwrap_or(config.alacritty_titlebar),
             padding_x: env_f32("WISP_ALACRITTY_PADDING_X").unwrap_or(config.alacritty_padding_x),
             padding_y: env_f32("WISP_ALACRITTY_PADDING_Y").unwrap_or(config.alacritty_padding_y),
+        }
+    }
+
+    pub fn for_terminal(kind: TerminalKind, config: &TerminalConfig) -> Self {
+        if kind == TerminalKind::Alacritty {
+            return Self::from_config(config);
+        }
+        let prefix = match kind {
+            TerminalKind::AppleTerminal => "APPLE_TERMINAL",
+            TerminalKind::Iterm2 => "ITERM2",
+            TerminalKind::Ghostty => "GHOSTTY",
+            TerminalKind::Wezterm => "WEZTERM",
+            TerminalKind::Kitty => "KITTY",
+            TerminalKind::Warp => "WARP",
+            TerminalKind::Vscode => "VSCODE",
+            TerminalKind::Unknown => "FALLBACK",
+            TerminalKind::Alacritty => unreachable!(),
+        };
+        let default_titlebar = match kind {
+            // Warp and VS Code reserve additional chrome above their terminal grid.
+            TerminalKind::Warp => 52.0,
+            TerminalKind::Vscode => 86.0,
+            _ => config.fallback_titlebar,
+        };
+        Self {
+            titlebar: env_f32(&format!("WISP_{prefix}_TITLEBAR")).unwrap_or(default_titlebar),
+            padding_x: env_f32(&format!("WISP_{prefix}_PADDING_X"))
+                .unwrap_or(config.fallback_padding_x),
+            padding_y: env_f32(&format!("WISP_{prefix}_PADDING_Y"))
+                .unwrap_or(config.fallback_padding_y),
         }
     }
 }
@@ -93,48 +137,77 @@ fn env_f32(name: &str) -> Option<f32> {
 pub enum CursorLocationError {
     #[error("unsupported terminal")]
     UnsupportedTerminal,
-    #[error("could not find the active Alacritty window: {0}")]
+    #[error("could not find the active terminal window: {0}")]
     WindowUnavailable(String),
     #[error("invalid terminal geometry")]
     InvalidGeometry,
 }
 
 pub trait WindowFrameProvider: Send + Sync {
-    fn active_alacritty_window(&self) -> Result<WindowFrame, CursorLocationError>;
+    fn active_window(&self, terminal: TerminalKind) -> Result<ActiveWindow, CursorLocationError>;
 }
 
-pub struct AlacrittyCursorLocator<P = SystemWindowFrameProvider> {
+pub struct TerminalCursorLocator<P = SystemWindowFrameProvider> {
     frame_provider: P,
-    insets: AlacrittyInsets,
+    config: TerminalConfig,
+    fixed_insets: Option<TerminalInsets>,
 }
 
-impl Default for AlacrittyCursorLocator<SystemWindowFrameProvider> {
+impl Default for TerminalCursorLocator<SystemWindowFrameProvider> {
     fn default() -> Self {
         Self {
             frame_provider: SystemWindowFrameProvider::default(),
-            insets: AlacrittyInsets::from_environment(),
+            config: TerminalConfig::default(),
+            fixed_insets: None,
         }
     }
 }
 
-impl<P: WindowFrameProvider> AlacrittyCursorLocator<P> {
-    pub fn new(frame_provider: P, insets: AlacrittyInsets) -> Self {
+impl<P: WindowFrameProvider> TerminalCursorLocator<P> {
+    pub fn new(frame_provider: P, insets: TerminalInsets) -> Self {
         Self {
             frame_provider,
-            insets,
+            config: TerminalConfig::default(),
+            fixed_insets: Some(insets),
         }
     }
 
     pub fn locate(&self, snapshot: &BufferSnapshot) -> Result<CursorAnchor, CursorLocationError> {
-        if snapshot.terminal.kind != TerminalKind::Alacritty {
-            return Err(CursorLocationError::UnsupportedTerminal);
-        }
+        self.locate_with_context(snapshot)
+            .map(|located| located.anchor)
+    }
+
+    pub fn locate_with_context(
+        &self,
+        snapshot: &BufferSnapshot,
+    ) -> Result<LocatedCursor, CursorLocationError> {
         let columns = snapshot.terminal.columns;
         let rows = snapshot.terminal.rows;
         if columns == 0 || rows == 0 {
             return Err(CursorLocationError::InvalidGeometry);
         }
-        let frame = self.frame_provider.active_alacritty_window()?;
+        let active_window = self.frame_provider.active_window(snapshot.terminal.kind)?;
+        let effective_terminal = if snapshot.terminal.kind == TerminalKind::Unknown {
+            terminal_kind_for_application(&active_window.application_id)
+                .unwrap_or(TerminalKind::Unknown)
+        } else {
+            snapshot.terminal.kind
+        };
+        let content_frame = active_window.content_frame.filter(|content| {
+            content_frame_is_plausible(active_window.frame, *content, columns, rows)
+        });
+        let has_accessible_content_frame = content_frame.is_some();
+        let frame = content_frame.unwrap_or(active_window.frame);
+        let insets = if has_accessible_content_frame {
+            TerminalInsets {
+                titlebar: 0.0,
+                padding_x: 0.0,
+                padding_y: 0.0,
+            }
+        } else {
+            self.fixed_insets
+                .unwrap_or_else(|| TerminalInsets::for_terminal(effective_terminal, &self.config))
+        };
         let viewport = snapshot.terminal.viewport.unwrap_or(TerminalViewport {
             x: 0,
             y: 0,
@@ -144,8 +217,8 @@ impl<P: WindowFrameProvider> AlacrittyCursorLocator<P> {
         if viewport.grid_columns == 0 || viewport.grid_rows == 0 {
             return Err(CursorLocationError::InvalidGeometry);
         }
-        let content_width = frame.width - self.insets.padding_x * 2.0;
-        let content_height = frame.height - self.insets.titlebar - self.insets.padding_y * 2.0;
+        let content_width = frame.width - insets.padding_x * 2.0;
+        let content_height = frame.height - insets.titlebar - insets.padding_y * 2.0;
         if content_width <= 0.0 || content_height <= 0.0 {
             return Err(CursorLocationError::InvalidGeometry);
         }
@@ -166,27 +239,46 @@ impl<P: WindowFrameProvider> AlacrittyCursorLocator<P> {
         let screen_row = viewport.y.saturating_add(cursor_row);
         let cell_width = content_width / f32::from(viewport.grid_columns);
         let line_height = content_height / f32::from(viewport.grid_rows);
-        Ok(CursorAnchor {
-            position: ScreenPoint {
-                x: frame.x + self.insets.padding_x + f32::from(screen_column) * cell_width,
-                y: frame.y
-                    + self.insets.titlebar
-                    + self.insets.padding_y
-                    + f32::from(screen_row + 1) * line_height,
+        Ok(LocatedCursor {
+            anchor: CursorAnchor {
+                position: ScreenPoint {
+                    x: frame.x + insets.padding_x + f32::from(screen_column) * cell_width,
+                    y: frame.y
+                        + insets.titlebar
+                        + insets.padding_y
+                        + f32::from(screen_row + 1) * line_height,
+                },
+                line_height,
+                cell_width,
             },
-            line_height,
-            cell_width,
+            application_id: active_window.application_id,
         })
     }
 }
 
-impl AlacrittyCursorLocator<SystemWindowFrameProvider> {
+fn content_frame_is_plausible(
+    window: WindowFrame,
+    content: WindowFrame,
+    columns: u16,
+    rows: u16,
+) -> bool {
+    const TOLERANCE: f32 = 2.0;
+    content.width >= f32::from(columns) * 2.0
+        && content.height >= f32::from(rows) * 2.0
+        && content.x >= window.x - TOLERANCE
+        && content.y >= window.y - TOLERANCE
+        && content.x + content.width <= window.x + window.width + TOLERANCE
+        && content.y + content.height <= window.y + window.height + TOLERANCE
+}
+
+impl TerminalCursorLocator<SystemWindowFrameProvider> {
     pub fn from_config(config: &TerminalConfig) -> Self {
         Self {
             frame_provider: SystemWindowFrameProvider {
                 cache_ttl: Duration::from_millis(config.window_frame_cache_ms),
             },
-            insets: AlacrittyInsets::from_config(config),
+            config: config.clone(),
+            fixed_insets: None,
         }
     }
 }
@@ -279,26 +371,63 @@ impl Default for SystemWindowFrameProvider {
 }
 
 impl WindowFrameProvider for SystemWindowFrameProvider {
-    fn active_alacritty_window(&self) -> Result<WindowFrame, CursorLocationError> {
-        if let Ok(value) = std::env::var("WISP_ALACRITTY_BOUNDS") {
-            return parse_frame(&value).ok_or(CursorLocationError::InvalidGeometry);
+    fn active_window(&self, terminal: TerminalKind) -> Result<ActiveWindow, CursorLocationError> {
+        let bounds_variable = format!("WISP_{}_BOUNDS", terminal_env_prefix(terminal));
+        if let Ok(value) = std::env::var(&bounds_variable) {
+            let frame = parse_frame(&value).ok_or(CursorLocationError::InvalidGeometry)?;
+            return Ok(ActiveWindow {
+                application_id: primary_bundle_id(terminal)
+                    .unwrap_or("wisp.fallback")
+                    .into(),
+                frame,
+                content_frame: None,
+            });
         }
-        static CACHE: OnceLock<Mutex<Option<(Instant, WindowFrame)>>> = OnceLock::new();
+        static CACHE: OnceLock<Mutex<Option<(Instant, ActiveWindow)>>> = OnceLock::new();
         let cache = CACHE.get_or_init(|| Mutex::new(None));
-        if let Some((created_at, frame)) = *cache.lock().expect("window frame cache mutex poisoned")
+        if let Some((created_at, active_window)) = cache
+            .lock()
+            .expect("window frame cache mutex poisoned")
+            .as_ref()
             && created_at.elapsed() < self.cache_ttl
+            && terminal_matches_application(terminal, &active_window.application_id)
         {
-            return Ok(frame);
+            return Ok(active_window.clone());
         }
-        let frame = active_alacritty_window()?;
-        *cache.lock().expect("window frame cache mutex poisoned") = Some((Instant::now(), frame));
-        Ok(frame)
+        let active_window = active_terminal_window()?;
+        if !terminal_matches_application(terminal, &active_window.application_id) {
+            return Err(CursorLocationError::WindowUnavailable(format!(
+                "frontmost application {} does not match {terminal:?}",
+                active_window.application_id
+            )));
+        }
+        *cache.lock().expect("window frame cache mutex poisoned") =
+            Some((Instant::now(), active_window.clone()));
+        Ok(active_window)
     }
 }
 
 #[cfg(target_os = "macos")]
-fn active_alacritty_window() -> Result<WindowFrame, CursorLocationError> {
-    let script = r#"tell application "System Events" to tell process "Alacritty" to get {position, size} of front window"#;
+fn active_terminal_window() -> Result<ActiveWindow, CursorLocationError> {
+    let script = r#"
+tell application "System Events"
+    set terminalProcess to first application process whose frontmost is true
+    set applicationId to bundle identifier of terminalProcess
+    set {windowX, windowY} to position of front window of terminalProcess
+    set {windowWidth, windowHeight} to size of front window of terminalProcess
+    set contentFrame to ""
+    try
+        set focusedElement to value of attribute "AXFocusedUIElement" of terminalProcess
+        set focusedRole to value of attribute "AXRole" of focusedElement
+        if focusedRole is "AXTextArea" then
+            set {contentX, contentY} to position of focusedElement
+            set {contentWidth, contentHeight} to size of focusedElement
+            set contentFrame to contentX & "," & contentY & "," & contentWidth & "," & contentHeight
+        end if
+    end try
+    return applicationId & linefeed & windowX & "," & windowY & "," & windowWidth & "," & windowHeight & linefeed & contentFrame
+end tell
+"#;
     let output = Command::new("/usr/bin/osascript")
         .args(["-e", script])
         .output()
@@ -308,16 +437,86 @@ fn active_alacritty_window() -> Result<WindowFrame, CursorLocationError> {
             String::from_utf8_lossy(&output.stderr).trim().to_owned(),
         ));
     }
-    parse_frame(&String::from_utf8_lossy(&output.stdout)).ok_or_else(|| {
+    parse_active_window(&String::from_utf8_lossy(&output.stdout)).ok_or_else(|| {
         CursorLocationError::WindowUnavailable("unexpected System Events response".into())
     })
 }
 
 #[cfg(not(target_os = "macos"))]
-fn active_alacritty_window() -> Result<WindowFrame, CursorLocationError> {
+fn active_terminal_window() -> Result<ActiveWindow, CursorLocationError> {
     Err(CursorLocationError::WindowUnavailable(
-        "automatic Alacritty window discovery currently requires macOS".into(),
+        "automatic terminal window discovery currently requires macOS".into(),
     ))
+}
+
+fn parse_active_window(value: &str) -> Option<ActiveWindow> {
+    let mut lines = value.lines();
+    let application_id = lines.next()?.trim();
+    let frame = parse_frame(lines.next()?)?;
+    let content_frame = lines.next().and_then(parse_frame);
+    Some(ActiveWindow {
+        application_id: application_id.to_owned(),
+        frame,
+        content_frame,
+    })
+}
+
+pub fn primary_bundle_id(terminal: TerminalKind) -> Option<&'static str> {
+    match terminal {
+        TerminalKind::Alacritty => Some("org.alacritty"),
+        TerminalKind::AppleTerminal => Some("com.apple.Terminal"),
+        TerminalKind::Iterm2 => Some("com.googlecode.iterm2"),
+        TerminalKind::Ghostty => Some("com.mitchellh.ghostty"),
+        TerminalKind::Wezterm => Some("com.github.wez.wezterm"),
+        TerminalKind::Kitty => Some("net.kovidgoyal.kitty"),
+        TerminalKind::Warp => Some("dev.warp.Warp-Stable"),
+        TerminalKind::Vscode => Some("com.microsoft.VSCode"),
+        TerminalKind::Unknown => None,
+    }
+}
+
+fn terminal_matches_application(terminal: TerminalKind, application_id: &str) -> bool {
+    match terminal {
+        TerminalKind::Warp => matches!(
+            application_id,
+            "dev.warp.Warp-Stable" | "dev.warp.Warp-Beta" | "dev.warp.Warp-Nightly"
+        ),
+        TerminalKind::Vscode => matches!(
+            application_id,
+            "com.microsoft.VSCode" | "com.microsoft.VSCodeInsiders"
+        ),
+        TerminalKind::Unknown => terminal_kind_for_application(application_id).is_some(),
+        _ => primary_bundle_id(terminal).is_some_and(|expected| expected == application_id),
+    }
+}
+
+pub fn terminal_kind_for_application(application_id: &str) -> Option<TerminalKind> {
+    [
+        TerminalKind::Alacritty,
+        TerminalKind::AppleTerminal,
+        TerminalKind::Iterm2,
+        TerminalKind::Ghostty,
+        TerminalKind::Wezterm,
+        TerminalKind::Kitty,
+        TerminalKind::Warp,
+        TerminalKind::Vscode,
+    ]
+    .into_iter()
+    .find(|terminal| terminal_matches_application(*terminal, application_id))
+}
+
+fn terminal_env_prefix(terminal: TerminalKind) -> &'static str {
+    match terminal {
+        TerminalKind::Alacritty => "ALACRITTY",
+        TerminalKind::AppleTerminal => "APPLE_TERMINAL",
+        TerminalKind::Iterm2 => "ITERM2",
+        TerminalKind::Ghostty => "GHOSTTY",
+        TerminalKind::Wezterm => "WEZTERM",
+        TerminalKind::Kitty => "KITTY",
+        TerminalKind::Warp => "WARP",
+        TerminalKind::Vscode => "VSCODE",
+        TerminalKind::Unknown => "FALLBACK",
+    }
 }
 
 fn parse_frame(value: &str) -> Option<WindowFrame> {
@@ -348,21 +547,30 @@ mod tests {
     struct FixedFrame;
 
     impl WindowFrameProvider for FixedFrame {
-        fn active_alacritty_window(&self) -> Result<WindowFrame, CursorLocationError> {
-            Ok(WindowFrame {
-                x: 100.0,
-                y: 200.0,
-                width: 800.0,
-                height: 508.0,
+        fn active_window(
+            &self,
+            terminal: TerminalKind,
+        ) -> Result<ActiveWindow, CursorLocationError> {
+            Ok(ActiveWindow {
+                application_id: primary_bundle_id(terminal)
+                    .unwrap_or("test.terminal")
+                    .into(),
+                frame: WindowFrame {
+                    x: 100.0,
+                    y: 200.0,
+                    width: 800.0,
+                    height: 508.0,
+                },
+                content_frame: None,
             })
         }
     }
 
     #[test]
     fn maps_alacritty_grid_to_screen_coordinates() {
-        let locator = AlacrittyCursorLocator::new(
+        let locator = TerminalCursorLocator::new(
             FixedFrame,
-            AlacrittyInsets {
+            TerminalInsets {
                 titlebar: 28.0,
                 padding_x: 0.0,
                 padding_y: 0.0,
@@ -394,10 +602,54 @@ mod tests {
     }
 
     #[test]
-    fn reported_grid_cursor_overrides_bottom_row_estimate() {
-        let locator = AlacrittyCursorLocator::new(
+    fn maps_every_supported_terminal_grid() {
+        let locator = TerminalCursorLocator::new(
             FixedFrame,
-            AlacrittyInsets {
+            TerminalInsets {
+                titlebar: 28.0,
+                padding_x: 0.0,
+                padding_y: 0.0,
+            },
+        );
+        let mut snapshot = BufferSnapshot {
+            request_id: 1,
+            session_id: "test".into(),
+            buffer: "git".into(),
+            cursor: 3,
+            cwd: PathBuf::from("/tmp"),
+            shell: ShellKind::Zsh,
+            terminal: TerminalSnapshot {
+                kind: TerminalKind::Unknown,
+                window_id: None,
+                columns: 80,
+                rows: 24,
+                prompt: "$ ".into(),
+                cursor_row: Some(4),
+                cursor_column: Some(9),
+                rendered: None,
+                viewport: None,
+            },
+        };
+        for terminal in [
+            TerminalKind::Alacritty,
+            TerminalKind::AppleTerminal,
+            TerminalKind::Iterm2,
+            TerminalKind::Ghostty,
+            TerminalKind::Wezterm,
+            TerminalKind::Kitty,
+            TerminalKind::Warp,
+            TerminalKind::Vscode,
+        ] {
+            snapshot.terminal.kind = terminal;
+            assert!(locator.locate(&snapshot).is_ok(), "{terminal:?}");
+        }
+    }
+
+    #[test]
+    fn reported_grid_cursor_overrides_bottom_row_estimate() {
+        let locator = TerminalCursorLocator::new(
+            FixedFrame,
+            TerminalInsets {
                 titlebar: 28.0,
                 padding_x: 0.0,
                 padding_y: 0.0,
@@ -430,9 +682,9 @@ mod tests {
 
     #[test]
     fn maps_zellij_pane_cursor_through_full_terminal_grid() {
-        let locator = AlacrittyCursorLocator::new(
+        let locator = TerminalCursorLocator::new(
             FixedFrame,
-            AlacrittyInsets {
+            TerminalInsets {
                 titlebar: 28.0,
                 padding_x: 0.0,
                 padding_y: 0.0,
@@ -472,9 +724,9 @@ mod tests {
 
     #[test]
     fn reported_row_is_advanced_when_new_buffer_wraps() {
-        let locator = AlacrittyCursorLocator::new(
+        let locator = TerminalCursorLocator::new(
             FixedFrame,
-            AlacrittyInsets {
+            TerminalInsets {
                 titlebar: 28.0,
                 padding_x: 0.0,
                 padding_y: 0.0,
@@ -586,6 +838,57 @@ mod tests {
                 height: 600.0,
             })
         );
+    }
+
+    #[test]
+    fn parses_accessibility_content_frame() {
+        assert_eq!(
+            parse_active_window("com.apple.Terminal\n100,200,800,600\n110,240,780,550\n"),
+            Some(ActiveWindow {
+                application_id: "com.apple.Terminal".into(),
+                frame: WindowFrame {
+                    x: 100.0,
+                    y: 200.0,
+                    width: 800.0,
+                    height: 600.0,
+                },
+                content_frame: Some(WindowFrame {
+                    x: 110.0,
+                    y: 240.0,
+                    width: 780.0,
+                    height: 550.0,
+                }),
+            })
+        );
+    }
+
+    #[test]
+    fn every_supported_terminal_has_a_bundle_identity() {
+        for terminal in [
+            TerminalKind::Alacritty,
+            TerminalKind::AppleTerminal,
+            TerminalKind::Iterm2,
+            TerminalKind::Ghostty,
+            TerminalKind::Wezterm,
+            TerminalKind::Kitty,
+            TerminalKind::Warp,
+            TerminalKind::Vscode,
+        ] {
+            let application_id = primary_bundle_id(terminal).unwrap();
+            assert!(terminal_matches_application(terminal, application_id));
+            assert_eq!(
+                terminal_kind_for_application(application_id),
+                Some(terminal)
+            );
+            assert!(terminal_matches_application(
+                TerminalKind::Unknown,
+                application_id
+            ));
+        }
+        assert!(!terminal_matches_application(
+            TerminalKind::Unknown,
+            "com.apple.Safari"
+        ));
     }
 
     #[test]

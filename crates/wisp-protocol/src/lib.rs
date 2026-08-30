@@ -17,10 +17,18 @@ pub enum ShellKind {
     Unknown,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum TerminalKind {
     Alacritty,
+    AppleTerminal,
+    Iterm2,
+    Ghostty,
+    Wezterm,
+    Kitty,
+    Warp,
+    Vscode,
+    #[default]
     Unknown,
 }
 
@@ -122,6 +130,10 @@ const fn default_candidate_priority() -> f64 {
 pub struct RenderModel {
     pub request_id: u64,
     pub session_id: SessionId,
+    /// Bundle identifier of the terminal application that produced this model.
+    /// The overlay uses it to hide stale results as soon as another app is focused.
+    #[serde(default)]
+    pub terminal_application_id: Option<String>,
     pub anchor: Option<CursorAnchor>,
     pub candidates: Vec<Candidate>,
     pub selected: usize,

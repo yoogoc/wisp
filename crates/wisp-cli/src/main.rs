@@ -10,7 +10,7 @@ use directories::ProjectDirs;
 use serde::Deserialize;
 use tokio::net::UnixStream;
 use wisp_config::WispConfig;
-use wisp_platform::AlacrittyCursorLocator;
+use wisp_platform::TerminalCursorLocator;
 use wisp_protocol::{
     AcceptTarget, BufferSnapshot, ClientMessage, NavigationDirection, RenderedCursorSnapshot,
     ServerMessage, ShellKind, TerminalKind, TerminalSnapshot, TerminalViewport, framed,
@@ -39,7 +39,7 @@ enum CommandKind {
         #[command(subcommand)]
         command: Box<ShellCommand>,
     },
-    /// Check daemon and Alacritty integration.
+    /// Check daemon and terminal integration.
     Doctor,
     /// Send a sample completion request.
     Demo {
@@ -154,6 +154,13 @@ enum DirectionArg {
 enum TerminalArg {
     Auto,
     Alacritty,
+    AppleTerminal,
+    Iterm2,
+    Ghostty,
+    Wezterm,
+    Kitty,
+    Warp,
+    Vscode,
     Unknown,
 }
 
@@ -401,6 +408,13 @@ fn print_zellij_viewport() -> anyhow::Result<()> {
 fn snapshot_from_args(args: UpdateArgs) -> BufferSnapshot {
     let terminal = match args.terminal {
         TerminalArg::Alacritty => TerminalKind::Alacritty,
+        TerminalArg::AppleTerminal => TerminalKind::AppleTerminal,
+        TerminalArg::Iterm2 => TerminalKind::Iterm2,
+        TerminalArg::Ghostty => TerminalKind::Ghostty,
+        TerminalArg::Wezterm => TerminalKind::Wezterm,
+        TerminalArg::Kitty => TerminalKind::Kitty,
+        TerminalArg::Warp => TerminalKind::Warp,
+        TerminalArg::Vscode => TerminalKind::Vscode,
         TerminalArg::Unknown => TerminalKind::Unknown,
         TerminalArg::Auto => detect_terminal(),
     };
@@ -464,12 +478,6 @@ async fn doctor(socket: &PathBuf, config_path: &Path) -> anyhow::Result<()> {
     }
     let terminal = detect_terminal();
     println!("terminal: {terminal:?}");
-    if terminal != TerminalKind::Alacritty {
-        println!(
-            "alacritty: not detected (expected ALACRITTY_SOCKET, ALACRITTY_LOG, or TERM=alacritty)"
-        );
-        return Ok(());
-    }
     let sample = BufferSnapshot {
         request_id: request_id(),
         session_id: "doctor".into(),
@@ -478,7 +486,7 @@ async fn doctor(socket: &PathBuf, config_path: &Path) -> anyhow::Result<()> {
         cwd: std::env::current_dir()?,
         shell: ShellKind::Zsh,
         terminal: TerminalSnapshot {
-            kind: TerminalKind::Alacritty,
+            kind: terminal,
             window_id: std::env::var("ALACRITTY_WINDOW_ID").ok(),
             columns: 80,
             rows: 24,
@@ -489,9 +497,9 @@ async fn doctor(socket: &PathBuf, config_path: &Path) -> anyhow::Result<()> {
             viewport: None,
         },
     };
-    match AlacrittyCursorLocator::from_config(&config.terminal).locate(&sample) {
+    match TerminalCursorLocator::from_config(&config.terminal).locate(&sample) {
         Ok(anchor) => println!(
-            "cursor locator: ok ({:.1}, {:.1}); adjust WISP_ALACRITTY_TITLEBAR/PADDING_X/PADDING_Y if needed",
+            "cursor locator: ok ({:.1}, {:.1}); adjust WISP_<TERMINAL>_TITLEBAR/PADDING_X/PADDING_Y if needed",
             anchor.position.x, anchor.position.y
         ),
         Err(error) => println!("cursor locator: {error}"),
@@ -536,11 +544,52 @@ async fn request(socket: &PathBuf, message: ClientMessage) -> anyhow::Result<Ser
 }
 
 fn detect_terminal() -> TerminalKind {
-    if std::env::var_os("ALACRITTY_SOCKET").is_some()
-        || std::env::var_os("ALACRITTY_LOG").is_some()
-        || std::env::var("TERM").is_ok_and(|term| term.eq_ignore_ascii_case("alacritty"))
+    let term_program = std::env::var("TERM_PROGRAM")
+        .unwrap_or_default()
+        .to_ascii_lowercase();
+    let term = std::env::var("TERM")
+        .unwrap_or_default()
+        .to_ascii_lowercase();
+    detect_terminal_from(&term_program, &term, |name| {
+        std::env::var_os(name).is_some()
+    })
+}
+
+fn detect_terminal_from(
+    term_program: &str,
+    term: &str,
+    has_environment_variable: impl Fn(&str) -> bool,
+) -> TerminalKind {
+    if has_environment_variable("ALACRITTY_SOCKET")
+        || has_environment_variable("ALACRITTY_LOG")
+        || term == "alacritty"
+        || term_program == "alacritty"
     {
         TerminalKind::Alacritty
+    } else if has_environment_variable("ITERM_SESSION_ID")
+        || matches!(term_program, "iterm.app" | "iterm2")
+    {
+        TerminalKind::Iterm2
+    } else if has_environment_variable("GHOSTTY_RESOURCES_DIR") || term_program.contains("ghostty")
+    {
+        TerminalKind::Ghostty
+    } else if has_environment_variable("WEZTERM_PANE") || term_program.contains("wezterm") {
+        TerminalKind::Wezterm
+    } else if has_environment_variable("KITTY_WINDOW_ID")
+        || term == "xterm-kitty"
+        || term_program == "kitty"
+    {
+        TerminalKind::Kitty
+    } else if has_environment_variable("WARP_IS_LOCAL_SHELL_SESSION")
+        || term_program.contains("warp")
+    {
+        TerminalKind::Warp
+    } else if has_environment_variable("VSCODE_INJECTION")
+        || matches!(term_program, "vscode" | "code")
+    {
+        TerminalKind::Vscode
+    } else if term_program == "apple_terminal" {
+        TerminalKind::AppleTerminal
     } else {
         TerminalKind::Unknown
     }
@@ -579,4 +628,49 @@ fn socket_identity() -> String {
         .chars()
         .filter(|ch| ch.is_ascii_alphanumeric() || *ch == '-')
         .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn detects_common_terminals_from_their_standard_environment() {
+        let cases = [
+            (
+                "Apple_Terminal",
+                "xterm-256color",
+                None,
+                TerminalKind::AppleTerminal,
+            ),
+            ("iTerm.app", "xterm-256color", None, TerminalKind::Iterm2),
+            ("ghostty", "xterm-ghostty", None, TerminalKind::Ghostty),
+            ("WezTerm", "xterm-256color", None, TerminalKind::Wezterm),
+            ("", "xterm-kitty", None, TerminalKind::Kitty),
+            ("WarpTerminal", "xterm-256color", None, TerminalKind::Warp),
+            ("vscode", "xterm-256color", None, TerminalKind::Vscode),
+            (
+                "",
+                "xterm-256color",
+                Some("ALACRITTY_SOCKET"),
+                TerminalKind::Alacritty,
+            ),
+        ];
+        for (program, term, variable, expected) in cases {
+            assert_eq!(
+                detect_terminal_from(&program.to_ascii_lowercase(), term, |name| {
+                    variable == Some(name)
+                }),
+                expected
+            );
+        }
+    }
+
+    #[test]
+    fn unrecognized_environment_uses_the_fallback_terminal_kind() {
+        assert_eq!(
+            detect_terminal_from("new-terminal", "xterm-256color", |_| false),
+            TerminalKind::Unknown
+        );
+    }
 }

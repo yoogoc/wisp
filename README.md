@@ -5,24 +5,24 @@
 
   <p>
     <strong>Fast, context-aware terminal completion with a native floating UI.</strong><br />
-    Built in Rust for macOS, Alacritty, and Zsh.
+    Built in Rust for macOS terminals and Zsh.
   </p>
 
   <p>
     <img alt="Rust 1.98+" src="https://img.shields.io/badge/Rust-1.98%2B-f97316?style=flat-square&amp;logo=rust&amp;logoColor=white" />
     <img alt="Platform: macOS" src="https://img.shields.io/badge/platform-macOS-111827?style=flat-square&amp;logo=apple&amp;logoColor=white" />
-    <img alt="Terminal: Alacritty" src="https://img.shields.io/badge/terminal-Alacritty-facc15?style=flat-square" />
+    <img alt="Terminal: macOS" src="https://img.shields.io/badge/terminals-8-facc15?style=flat-square" />
     <img alt="Shell: Zsh" src="https://img.shields.io/badge/shell-Zsh-22c55e?style=flat-square" />
     <img alt="License: MIT OR Apache-2.0" src="https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-38bdf8?style=flat-square" />
   </p>
 </div>
 
 > [!IMPORTANT]
-> Wisp is currently an MVP. The supported experience is **macOS + Alacritty + Zsh**; other platforms still need adapters.
+> Wisp is currently an MVP. The supported experience is **macOS + Zsh** with Alacritty, Apple Terminal, iTerm2, Ghostty, WezTerm, kitty, Warp, or VS Code; other platforms still need adapters.
 
 ## Why Wisp?
 
-Wisp brings IDE-like suggestions to the command line without taking focus away from your terminal. It combines deterministic, low-latency completions with optional AI ghost text, then renders everything in a native GPUI popup positioned beside the real Alacritty cursor.
+Wisp brings IDE-like suggestions to the command line without taking focus away from your terminal. It combines deterministic, low-latency completions with optional AI ghost text, then renders everything in a native GPUI popup positioned beside the real terminal cursor.
 
 | | Capability | What it gives you |
 | :--: | --- | --- |
@@ -31,14 +31,14 @@ Wisp brings IDE-like suggestions to the command line without taking focus away f
 | 🎯 | Precise placement | Cursor-aware popup positioning, including wrapped prompts and Unicode input |
 | 🧠 | Shell-aware parsing | Tolerates incomplete quotes, pipelines, and partially typed commands |
 | 🔒 | Local-first safety | Unix socket permissions, cancellation, stale-result rejection, and secret detection |
-| 🪶 | Non-activating UI | Never steals focus; leaving Alacritty dismisses the current popup |
+| 🪶 | Non-activating UI | Never steals focus; leaving the originating terminal dismisses the current popup |
 
 ## Quick start
 
 ### Requirements
 
 - macOS
-- [Alacritty](https://alacritty.org/) and Zsh
+- Zsh in Alacritty, Apple Terminal, iTerm2, Ghostty, WezTerm, kitty, Warp, or VS Code
 - Rust **1.98+**
 - Accessibility permission for terminal window discovery
 
@@ -59,7 +59,7 @@ The `wisp` and `wisp-app` binaries must remain next to one another. To enable Wi
 eval "$(wisp init zsh)"
 ```
 
-Run `wisp start` after login to launch the Wisp menu-bar app. It hosts the daemon and GPUI overlay in one process and stays out of the Dock. On first use, macOS may ask for **Accessibility** permission because Wisp uses System Events to read the active Alacritty window frame.
+Run `wisp start` after login to launch the Wisp menu-bar app. It hosts the daemon and GPUI overlay in one process and stays out of the Dock. On first use, macOS may ask for **Accessibility** permission because Wisp uses System Events to read the active terminal content or window frame.
 
 ## Key bindings
 
@@ -150,7 +150,7 @@ flowchart LR
     D -. optional .-> A[AI provider]
     E --> S[RON specs + dynamic generators]
     D -->|render model| O[GPUI overlay]
-    O -->|non-activating popup| T[Alacritty]
+    O -->|non-activating popup| T[Active terminal]
     C -->|accepted edit| Z
 ```
 
@@ -161,7 +161,7 @@ flowchart LR
 | `wisp-core` | Parser, fuzzy ranking, completion engine, and RON specs |
 | `wisp-ai` | OpenAI-compatible and external-process providers |
 | `wisp-app` | Menu-bar lifecycle plus native GPUI candidate popup and ghost-text rendering |
-| `wisp-platform` | Alacritty cursor-to-screen coordinate mapping |
+| `wisp-platform` | Terminal cursor-to-screen coordinate mapping and macOS window discovery |
 | `wisp-protocol` | Shared messages and length-delimited JSON transport |
 
 ## Completion specs
@@ -195,7 +195,9 @@ be disabled with `completion.recency = false`.
 
 ## Positioning and calibration
 
-Wisp asks Alacritty for a standard `CSI 6n` cursor-position report and uses both its real row and column as the base terminal cell. Since ZLE reports the frame before repainting, Wisp applies only the linear cell delta between the previously rendered buffer and the current buffer. When running inside zellij, Wisp also reads the active pane's content origin and the outer terminal grid, so wrapped commands in split panes map to the correct Alacritty cell instead of stretching pane-local coordinates across the whole window. The popup keeps an 8 px cursor gap and flips above the cursor when there is not enough room below. Leaving Alacritty dismisses the current render request; returning does not restore it until the buffer changes.
+Wisp asks the terminal for a standard `CSI 6n` cursor-position report and uses both its real row and column as the base terminal cell. Since ZLE reports the frame before repainting, Wisp applies only the linear cell delta between the previously rendered buffer and the current buffer. On macOS it prefers the focused terminal text area's Accessibility frame; if a terminal does not expose one, it maps the grid through the front window with terminal-specific chrome defaults. When running inside zellij, Wisp also reads the active pane's content origin and the outer terminal grid, so wrapped commands in split panes map to the correct cell instead of stretching pane-local coordinates across the whole window. The popup keeps an 8 px cursor gap and flips above the cursor when there is not enough room below. Leaving the originating terminal dismisses the current render request; returning does not restore it until the buffer changes.
+
+Terminal detection uses the standard `TERM_PROGRAM` value plus well-known per-terminal environment variables. If those do not identify the terminal, Wisp uses an `unknown` fallback only when the foreground application's bundle id belongs to one of the supported terminals. It will not place the popup over an arbitrary foreground application.
 
 For custom window decorations or padding:
 
@@ -205,15 +207,24 @@ export WISP_ALACRITTY_PADDING_X=0
 export WISP_ALACRITTY_PADDING_Y=0
 ```
 
+Replace `ALACRITTY` with `APPLE_TERMINAL`, `ITERM2`, `GHOSTTY`, `WEZTERM`, `KITTY`, `WARP`, `VSCODE`, or `FALLBACK` to calibrate another adapter. The equivalent default fallback values can be set in the config file:
+
+```toml
+[terminal]
+fallback_titlebar = 28.0
+fallback_padding_x = 0.0
+fallback_padding_y = 0.0
+```
+
 For deterministic tests, bypass System Events with `x,y,width,height` screen coordinates:
 
 ```bash
-export WISP_ALACRITTY_BOUNDS="100,200,800,600"
+export WISP_GHOSTTY_BOUNDS="100,200,800,600"
 ```
 
 ## Diagnostics
 
-Run these commands **inside Alacritty**:
+Run these commands inside the terminal you want to diagnose:
 
 ```bash
 wisp doctor

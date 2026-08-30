@@ -139,6 +139,7 @@ mod tests {
         RenderModel {
             request_id: 1,
             session_id: "current".into(),
+            terminal_application_id: None,
             anchor: None,
             candidates: Vec::new(),
             selected: 0,
