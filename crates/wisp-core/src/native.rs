@@ -11,6 +11,7 @@ use std::{
 };
 
 use serde::{Deserialize, Serialize};
+use wisp_protocol::ShellKind;
 
 use crate::generator::Suggestion;
 
@@ -28,11 +29,20 @@ pub enum Native {
 
 impl Native {
     pub fn suggest(self, cwd: &Path, history_limit: usize) -> Vec<Suggestion> {
+        self.suggest_for_shell(cwd, history_limit, ShellKind::Unknown)
+    }
+
+    pub fn suggest_for_shell(
+        self,
+        cwd: &Path,
+        history_limit: usize,
+        shell: ShellKind,
+    ) -> Vec<Suggestion> {
         match self {
             Self::PackageJsonScripts => package_json_scripts(cwd),
             Self::MakeTargets => make_targets(cwd),
             Self::SshHosts => ssh_hosts(),
-            Self::History => history(history_limit),
+            Self::History => history(history_limit, shell),
         }
     }
 }
@@ -174,18 +184,53 @@ fn ssh_hosts_in(home: &Path) -> Vec<Suggestion> {
 
 /// The most recent commands first, which is the order Fig's history template
 /// shows them in.
-fn history(limit: usize) -> Vec<Suggestion> {
-    let path = std::env::var_os("HISTFILE").map(PathBuf::from).or_else(|| {
-        let home = std::env::var_os("HOME").map(PathBuf::from)?;
-        [".zsh_history", ".bash_history"]
-            .iter()
-            .map(|name| home.join(name))
-            .find(|candidate| candidate.is_file())
-    });
+fn history(limit: usize, shell: ShellKind) -> Vec<Suggestion> {
+    let home = std::env::var_os("HOME").map(PathBuf::from);
+    let path = match shell {
+        ShellKind::Zsh | ShellKind::Bash => std::env::var_os("HISTFILE")
+            .map(PathBuf::from)
+            .filter(|path| path.is_file())
+            .or_else(|| {
+                let home = home.as_ref()?;
+                let name = if shell == ShellKind::Zsh {
+                    ".zsh_history"
+                } else {
+                    ".bash_history"
+                };
+                Some(home.join(name)).filter(|path| path.is_file())
+            }),
+        ShellKind::Fish => home
+            .as_ref()
+            .map(|home| home.join(".local/share/fish/fish_history"))
+            .filter(|path| path.is_file()),
+        ShellKind::Nushell => home.as_ref().and_then(|home| {
+            [
+                home.join("Library/Application Support/nushell/history.txt"),
+                home.join(".config/nushell/history.txt"),
+                home.join(".local/share/nushell/history.txt"),
+            ]
+            .into_iter()
+            .find(|path| path.is_file())
+        }),
+        ShellKind::Unknown => std::env::var_os("HISTFILE")
+            .map(PathBuf::from)
+            .filter(|path| path.is_file())
+            .or_else(|| {
+                let home = home.as_ref()?;
+                [".zsh_history", ".bash_history"]
+                    .iter()
+                    .map(|name| home.join(name))
+                    .find(|candidate| candidate.is_file())
+            }),
+    };
     let Some(path) = path else {
         return Vec::new();
     };
-    history_in(&path, limit)
+    if shell == ShellKind::Fish {
+        fish_history_in(&path, limit)
+    } else {
+        history_in(&path, limit)
+    }
 }
 
 fn history_in(path: &Path, limit: usize) -> Vec<Suggestion> {
@@ -210,6 +255,22 @@ fn history_in(path: &Path, limit: usize) -> Vec<Suggestion> {
         }
     }
     entries
+}
+
+fn fish_history_in(path: &Path, limit: usize) -> Vec<Suggestion> {
+    let Ok(source) = std::fs::read_to_string(path) else {
+        return Vec::new();
+    };
+    let mut seen = HashSet::new();
+    source
+        .lines()
+        .rev()
+        .filter_map(|line| line.strip_prefix("- cmd: "))
+        .map(|command| command.replace("\\n", "\n").replace("\\\\", "\\"))
+        .filter(|command| !command.is_empty() && seen.insert(command.clone()))
+        .take(limit)
+        .map(|command| suggestion(command, Some("History".into())))
+        .collect()
 }
 
 fn would_be_metadata(line: &str) -> &str {
@@ -296,6 +357,22 @@ mod tests {
         assert_eq!(
             names(&history_in(&path, 2_000)),
             ["git status", "cargo test"]
+        );
+    }
+
+    #[test]
+    fn fish_history_reads_only_command_records() {
+        let root = scratch("fish-history");
+        let path = root.join("fish_history");
+        std::fs::write(
+            &path,
+            "- cmd: git status\n  when: 1700000000\n- cmd: printf one\\ntwo\n  when: 1700000001\n- cmd: git status\n  when: 1700000002\n",
+        )
+        .expect("write fish history");
+
+        assert_eq!(
+            names(&fish_history_in(&path, 2_000)),
+            ["git status", "printf one\ntwo"]
         );
     }
 }

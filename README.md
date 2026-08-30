@@ -5,20 +5,20 @@
 
   <p>
     <strong>Fast, context-aware terminal completion with a native floating UI.</strong><br />
-    Built in Rust for macOS terminals and Zsh.
+    Built in Rust for macOS terminals and Zsh, Bash, Fish, and Nushell.
   </p>
 
   <p>
     <img alt="Rust 1.98+" src="https://img.shields.io/badge/Rust-1.98%2B-f97316?style=flat-square&amp;logo=rust&amp;logoColor=white" />
     <img alt="Platform: macOS" src="https://img.shields.io/badge/platform-macOS-111827?style=flat-square&amp;logo=apple&amp;logoColor=white" />
     <img alt="Terminal: macOS" src="https://img.shields.io/badge/terminals-8-facc15?style=flat-square" />
-    <img alt="Shell: Zsh" src="https://img.shields.io/badge/shell-Zsh-22c55e?style=flat-square" />
+    <img alt="Shells: Zsh, Bash, Fish, Nushell" src="https://img.shields.io/badge/shells-4-22c55e?style=flat-square" />
     <img alt="License: MIT OR Apache-2.0" src="https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-38bdf8?style=flat-square" />
   </p>
 </div>
 
 > [!IMPORTANT]
-> Wisp is currently an MVP. The supported experience is **macOS + Zsh** with Alacritty, Apple Terminal, iTerm2, Ghostty, WezTerm, kitty, Warp, or VS Code; other platforms still need adapters.
+> Wisp is currently an MVP. The supported experience is **macOS + Zsh, Bash 4+, Fish, or Nushell** with Alacritty, Apple Terminal, iTerm2, Ghostty, WezTerm, kitty, Warp, or VS Code; other platforms still need adapters.
 
 ## Why Wisp?
 
@@ -38,7 +38,7 @@ Wisp brings IDE-like suggestions to the command line without taking focus away f
 ### Requirements
 
 - macOS
-- Zsh in Alacritty, Apple Terminal, iTerm2, Ghostty, WezTerm, kitty, Warp, or VS Code
+- Zsh, Bash 4+, Fish, or Nushell in Alacritty, Apple Terminal, iTerm2, Ghostty, WezTerm, kitty, Warp, or VS Code
 - Rust **1.98+**
 - Accessibility permission for terminal window discovery
 
@@ -50,24 +50,46 @@ From the repository root:
 cargo build --release --workspace
 
 ./target/release/wisp start
-eval "$(./target/release/wisp init zsh)"
 ```
 
-The `wisp` and `wisp-app` binaries must remain next to one another. To enable Wisp in future shells, put `target/release` on your `PATH` and add this to `~/.zshrc`:
+The `wisp` and `wisp-app` binaries must remain next to one another. Put `target/release` on your `PATH`, then load the adapter for your shell.
+
+Zsh (`~/.zshrc`):
 
 ```zsh
 eval "$(wisp init zsh)"
+```
+
+Bash 4 or newer (`~/.bashrc`):
+
+```bash
+eval "$(wisp init bash)"
+```
+
+macOS `/bin/bash` 3.2 is not supported because it does not expose Readline's editable `READLINE_LINE` and `READLINE_POINT` variables. A newer Bash installed separately works normally.
+
+Fish (`~/.config/fish/config.fish`):
+
+```fish
+wisp init fish | source
+```
+
+Nushell can load generated integration from its user autoload directory. Run this once, then restart Nushell:
+
+```nu
+mkdir ($nu.user-autoload-dirs | first)
+wisp init nushell | save --force (($nu.user-autoload-dirs | first) | path join wisp.nu)
 ```
 
 Run `wisp start` after login to launch the Wisp menu-bar app. It hosts the daemon and GPUI overlay in one process and stays out of the Dock. On first use, macOS may ask for **Accessibility** permission because Wisp uses System Events to read the active terminal content or window frame.
 
 ## Key bindings
 
-Wisp preserves normal Zsh behavior whenever it has nothing to act on.
+Wisp preserves the shell's normal editing, completion, and history behavior whenever it has nothing to act on.
 
 | Key | Wisp action | Fallback |
 | --- | --- | --- |
-| `Tab` | Accept selected candidate | Zsh completion |
+| `Tab` | Accept selected candidate | Shell completion |
 | `Right` | Accept AI ghost text | Move cursor right |
 | `Up` / `Ctrl-P` | Select previous candidate | Previous history entry |
 | `Down` / `Ctrl-N` | Select next candidate | Next history entry |
@@ -114,7 +136,7 @@ timeout_ms = 800
 
 For remote providers, keep the API key out of the file and reference an environment variable with `api_key_env = "WISP_AI_API_KEY"`.
 
-Wisp only requests AI output when the cursor is at the end of a line, after the configured idle delay (`ai.debounce_ms`, 120 ms by default). Buffers that look like they contain passwords, tokens, secrets, or private keys are not sent. Responses are capped and stripped of newlines, NUL bytes, and terminal escape sequences before reaching Zsh.
+Wisp only requests AI output when the cursor is at the end of a line, after the configured idle delay (`ai.debounce_ms`, 120 ms by default). Buffers that look like they contain passwords, tokens, secrets, or private keys are not sent. Responses are capped and stripped of newlines, NUL bytes, and terminal escape sequences before reaching the shell.
 
 <details>
 <summary><strong>Custom process provider contract</strong></summary>
@@ -144,7 +166,7 @@ Leading spaces in `suffix` are significant.
 
 ```mermaid
 flowchart LR
-    Z[Zsh integration] -->|buffer snapshot| C[wisp CLI]
+    Z[Shell integration] -->|buffer snapshot| C[wisp CLI]
     C -->|length-delimited JSON| D[wisp-app background service]
     D --> E[Completion engine]
     D -. optional .-> A[AI provider]
@@ -195,7 +217,7 @@ be disabled with `completion.recency = false`.
 
 ## Positioning and calibration
 
-Wisp asks the terminal for a standard `CSI 6n` cursor-position report and uses both its real row and column as the base terminal cell. Since ZLE reports the frame before repainting, Wisp applies only the linear cell delta between the previously rendered buffer and the current buffer. On macOS it prefers the focused terminal text area's Accessibility frame; if a terminal does not expose one, it maps the grid through the front window with terminal-specific chrome defaults. When running inside zellij, Wisp also reads the active pane's content origin and the outer terminal grid, so wrapped commands in split panes map to the correct cell instead of stretching pane-local coordinates across the whole window. The popup keeps an 8 px cursor gap and flips above the cursor when there is not enough room below. Leaving the originating terminal dismisses the current render request; returning does not restore it until the buffer changes.
+Where the shell adapter exposes it, Wisp asks the terminal for a standard `CSI 6n` cursor-position report and uses both its real row and column as the base terminal cell; other adapters derive the cell from the command-line layout and terminal geometry. Since shell line editors report the frame before repainting, Wisp applies only the linear cell delta between the previously rendered buffer and the current buffer. On macOS it prefers the focused terminal text area's Accessibility frame; if a terminal does not expose one, it maps the grid through the front window with terminal-specific chrome defaults. When running inside zellij, Wisp also reads the active pane's content origin and the outer terminal grid, so wrapped commands in split panes map to the correct cell instead of stretching pane-local coordinates across the whole window. The popup keeps an 8 px cursor gap and flips above the cursor when there is not enough room below. Leaving the originating terminal dismisses the current render request; returning does not restore it until the buffer changes.
 
 Terminal detection uses the standard `TERM_PROGRAM` value plus well-known per-terminal environment variables. If those do not identify the terminal, Wisp uses an `unknown` fallback only when the foreground application's bundle id belongs to one of the supported terminals. It will not place the popup over an arbitrary foreground application.
 
@@ -244,7 +266,7 @@ Run the menu-bar app and shell integration:
 # Menu-bar app (daemon + overlay)
 RUST_LOG=wisp=debug cargo run -p wisp-app --bin wisp-app
 
-# Current Zsh session
+# Current Zsh session (use bash or fish for those adapters)
 eval "$(cargo run -q -p wisp-cli --bin wisp -- init zsh)"
 ```
 
@@ -259,7 +281,7 @@ cargo clippy --workspace --all-targets -- -D warnings
 ## Roadmap
 
 - Additional terminal and operating-system adapters
-- More shell integrations
+- Additional shell integrations
 - Broader completion-spec coverage
 - Packaging and a first-class installer
 

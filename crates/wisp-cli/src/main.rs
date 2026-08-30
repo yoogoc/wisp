@@ -12,9 +12,9 @@ use tokio::net::UnixStream;
 use wisp_config::WispConfig;
 use wisp_platform::TerminalCursorLocator;
 use wisp_protocol::{
-    AcceptTarget, BufferSnapshot, ClientMessage, NavigationDirection, RenderedCursorSnapshot,
-    ServerMessage, ShellKind, TerminalKind, TerminalSnapshot, TerminalViewport, framed,
-    receive_message, send_message,
+    AcceptTarget, ApplyEdit, BufferSnapshot, ClientMessage, NavigationDirection,
+    RenderedCursorSnapshot, ServerMessage, ShellKind, TerminalKind, TerminalSnapshot,
+    TerminalViewport, framed, receive_message, send_message,
 };
 
 #[derive(Debug, Parser)]
@@ -53,6 +53,9 @@ enum CommandKind {
 #[derive(Debug, Clone, Copy, ValueEnum)]
 enum InitShell {
     Zsh,
+    Bash,
+    Fish,
+    Nushell,
 }
 
 #[derive(Debug, Subcommand)]
@@ -61,8 +64,8 @@ enum ShellCommand {
     Navigate(SessionArgsWithDirection),
     Accept(AcceptArgs),
     Dismiss(DismissArgs),
-    /// Print the active zellij pane geometry as Zsh assignments.
-    Viewport,
+    /// Print the active zellij pane geometry for a shell adapter.
+    Viewport(ViewportArgs),
 }
 
 #[derive(Debug, Args)]
@@ -76,6 +79,8 @@ struct UpdateArgs {
     buffer: String,
     #[arg(long)]
     cursor: usize,
+    #[arg(long, value_enum, default_value_t = CursorUnit::Characters)]
+    cursor_unit: CursorUnit,
     #[arg(long)]
     cwd: PathBuf,
     #[arg(long, default_value = "")]
@@ -111,6 +116,11 @@ struct UpdateArgs {
     terminal: TerminalArg,
     #[arg(long)]
     window_id: Option<String>,
+    #[arg(long, value_enum, default_value_t = ShellArg::Zsh)]
+    shell: ShellArg,
+    /// Send the snapshot and return without waiting for completion results.
+    #[arg(long)]
+    no_wait: bool,
 }
 
 #[derive(Debug, Args)]
@@ -126,6 +136,14 @@ struct AcceptArgs {
     /// Accept AI ghost text instead of the selected dropdown candidate.
     #[arg(long)]
     ghost: bool,
+    #[arg(long, value_enum, default_value_t = EditFormat::Zsh)]
+    format: EditFormat,
+}
+
+#[derive(Debug, Args)]
+struct ViewportArgs {
+    #[arg(long, value_enum, default_value_t = ViewportFormat::Posix)]
+    format: ViewportFormat,
 }
 
 #[derive(Debug, Args)]
@@ -151,6 +169,36 @@ enum DirectionArg {
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
+enum ShellArg {
+    Zsh,
+    Bash,
+    Fish,
+    Nushell,
+    Unknown,
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+enum CursorUnit {
+    Characters,
+    Bytes,
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+enum EditFormat {
+    Zsh,
+    Bash,
+    Fish,
+    Json,
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+enum ViewportFormat {
+    Posix,
+    Fish,
+    Json,
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
 enum TerminalArg {
     Auto,
     Alacritty,
@@ -171,15 +219,30 @@ async fn main() -> anyhow::Result<()> {
     let config_path = cli.config.unwrap_or_else(default_config_path);
     match cli.command {
         CommandKind::Start => start(&socket, &config_path).await,
-        CommandKind::Init {
-            shell: InitShell::Zsh,
-        } => {
+        CommandKind::Init { shell } => {
             let executable = std::env::current_exe().context("locate Wisp executable")?;
-            println!(
-                "typeset -gx WISP_BIN={}",
-                zsh_quote(&executable.to_string_lossy())
-            );
-            print!("{}", include_str!("../../../shells/wisp.plugin.zsh"));
+            let executable = executable.to_string_lossy();
+            match shell {
+                InitShell::Zsh => {
+                    println!("typeset -gx WISP_BIN={}", posix_quote(&executable));
+                    print!("{}", include_str!("../../../shells/wisp.plugin.zsh"));
+                }
+                InitShell::Bash => {
+                    println!("export WISP_BIN={}", posix_quote(&executable));
+                    print!("{}", include_str!("../../../shells/wisp.plugin.bash"));
+                }
+                InitShell::Fish => {
+                    println!("set -gx WISP_BIN {}", fish_quote(&executable));
+                    print!("{}", include_str!("../../../shells/wisp.plugin.fish"));
+                }
+                InitShell::Nushell => {
+                    println!(
+                        "$env.WISP_BIN = {}",
+                        serde_json::to_string(executable.as_ref())?
+                    );
+                    print!("{}", include_str!("../../../shells/wisp.plugin.nu"));
+                }
+            }
             Ok(())
         }
         CommandKind::Shell { command } => shell_command(&socket, *command).await,
@@ -212,7 +275,7 @@ async fn start(socket: &PathBuf, config_path: &Path) -> anyhow::Result<()> {
             bail!("wisp-app did not become ready at {}", socket.display());
         }
     }
-    println!("Wisp is running. Add eval \"$(wisp init zsh)\" to .zshrc.");
+    println!("Wisp is running. Load `wisp init <shell>` from your shell config.");
     Ok(())
 }
 
@@ -246,8 +309,13 @@ fn spawn_sibling(name: &str, socket: &PathBuf, config: &Path) -> anyhow::Result<
 async fn shell_command(socket: &PathBuf, command: ShellCommand) -> anyhow::Result<()> {
     match command {
         ShellCommand::Update(args) => {
+            let no_wait = args.no_wait;
             let snapshot = snapshot_from_args(*args);
-            let response = request(socket, ClientMessage::Complete { snapshot }).await?;
+            let message = ClientMessage::Complete { snapshot };
+            if no_wait {
+                return send_only(socket, &message).await;
+            }
+            let response = request(socket, message).await?;
             if !matches!(response, ServerMessage::Render { .. }) {
                 bail!("completion failed: {response:?}");
             }
@@ -286,12 +354,7 @@ async fn shell_command(socket: &PathBuf, command: ShellCommand) -> anyhow::Resul
             let ServerMessage::ApplyEdit { edit } = response else {
                 bail!("no suggestion to accept");
             };
-            println!("BUFFER={}", zsh_quote(&edit.buffer));
-            println!("CURSOR={}", edit.cursor);
-            println!(
-                "WISP_CONTINUE={}",
-                if edit.continue_completion { 1 } else { 0 }
-            );
+            print_edit(&edit, args.format)?;
         }
         ShellCommand::Dismiss(args) => {
             let response = request(
@@ -306,7 +369,7 @@ async fn shell_command(socket: &PathBuf, command: ShellCommand) -> anyhow::Resul
                 bail!("dismiss failed: {response:?}");
             }
         }
-        ShellCommand::Viewport => print_zellij_viewport()?,
+        ShellCommand::Viewport(args) => print_zellij_viewport(args.format)?,
     }
     Ok(())
 }
@@ -331,7 +394,7 @@ struct ZellijTabGeometry {
     display_area_columns: u16,
 }
 
-fn print_zellij_viewport() -> anyhow::Result<()> {
+fn print_zellij_viewport(format: ViewportFormat) -> anyhow::Result<()> {
     if std::env::var_os("ZELLIJ").is_none() {
         bail!("not running inside zellij");
     }
@@ -396,16 +459,42 @@ fn print_zellij_viewport() -> anyhow::Result<()> {
         .find(|tab| tab.tab_id == pane.tab_id)
         .context("could not identify the zellij pane's terminal grid")?;
 
-    println!("_WISP_VIEWPORT_X={}", pane.pane_content_x);
-    println!("_WISP_VIEWPORT_Y={}", pane.pane_content_y);
-    println!("_WISP_PANE_COLUMNS={}", pane.pane_content_columns);
-    println!("_WISP_PANE_ROWS={}", pane.pane_content_rows);
-    println!("_WISP_GRID_COLUMNS={}", tab.display_area_columns);
-    println!("_WISP_GRID_ROWS={}", tab.display_area_rows);
+    let values = [
+        ("_WISP_VIEWPORT_X", pane.pane_content_x),
+        ("_WISP_VIEWPORT_Y", pane.pane_content_y),
+        ("_WISP_PANE_COLUMNS", pane.pane_content_columns),
+        ("_WISP_PANE_ROWS", pane.pane_content_rows),
+        ("_WISP_GRID_COLUMNS", tab.display_area_columns),
+        ("_WISP_GRID_ROWS", tab.display_area_rows),
+    ];
+    match format {
+        ViewportFormat::Posix => {
+            for (name, value) in values {
+                println!("{name}={value}");
+            }
+        }
+        ViewportFormat::Fish => {
+            for (name, value) in values {
+                println!("set -g {name} {value}");
+            }
+        }
+        ViewportFormat::Json => println!(
+            "{}",
+            serde_json::json!({
+                "viewport_x": pane.pane_content_x,
+                "viewport_y": pane.pane_content_y,
+                "pane_columns": pane.pane_content_columns,
+                "pane_rows": pane.pane_content_rows,
+                "grid_columns": tab.display_area_columns,
+                "grid_rows": tab.display_area_rows,
+            })
+        ),
+    }
     Ok(())
 }
 
 fn snapshot_from_args(args: UpdateArgs) -> BufferSnapshot {
+    let cursor = normalize_cursor(&args.buffer, args.cursor, args.cursor_unit);
     let terminal = match args.terminal {
         TerminalArg::Alacritty => TerminalKind::Alacritty,
         TerminalArg::AppleTerminal => TerminalKind::AppleTerminal,
@@ -418,15 +507,18 @@ fn snapshot_from_args(args: UpdateArgs) -> BufferSnapshot {
         TerminalArg::Unknown => TerminalKind::Unknown,
         TerminalArg::Auto => detect_terminal(),
     };
-    let rendered = args
-        .rendered_buffer
-        .zip(args.rendered_cursor)
-        .map(|(buffer, cursor)| RenderedCursorSnapshot {
-            buffer,
-            cursor,
-            prompt: args.rendered_prompt.unwrap_or_else(|| args.prompt.clone()),
-            columns: args.rendered_columns.unwrap_or(args.columns),
-        });
+    let rendered =
+        args.rendered_buffer
+            .zip(args.rendered_cursor)
+            .map(|(buffer, rendered_cursor)| {
+                let rendered_cursor = normalize_cursor(&buffer, rendered_cursor, args.cursor_unit);
+                RenderedCursorSnapshot {
+                    buffer,
+                    cursor: rendered_cursor,
+                    prompt: args.rendered_prompt.unwrap_or_else(|| args.prompt.clone()),
+                    columns: args.rendered_columns.unwrap_or(args.columns),
+                }
+            });
     let viewport = match (
         args.viewport_x,
         args.viewport_y,
@@ -449,9 +541,15 @@ fn snapshot_from_args(args: UpdateArgs) -> BufferSnapshot {
         request_id: args.request_id.unwrap_or_else(request_id),
         session_id: args.session,
         buffer: args.buffer,
-        cursor: args.cursor,
+        cursor,
         cwd: args.cwd,
-        shell: ShellKind::Zsh,
+        shell: match args.shell {
+            ShellArg::Zsh => ShellKind::Zsh,
+            ShellArg::Bash => ShellKind::Bash,
+            ShellArg::Fish => ShellKind::Fish,
+            ShellArg::Nushell => ShellKind::Nushell,
+            ShellArg::Unknown => ShellKind::Unknown,
+        },
         terminal: TerminalSnapshot {
             kind: terminal,
             window_id: args
@@ -543,6 +641,14 @@ async fn request(socket: &PathBuf, message: ClientMessage) -> anyhow::Result<Ser
         .context("daemon closed the connection without a response")
 }
 
+async fn send_only(socket: &PathBuf, message: &ClientMessage) -> anyhow::Result<()> {
+    let stream = UnixStream::connect(socket)
+        .await
+        .with_context(|| format!("connect to daemon at {}", socket.display()))?;
+    let mut connection = framed(stream);
+    send_message(&mut connection, message).await
+}
+
 fn detect_terminal() -> TerminalKind {
     let term_program = std::env::var("TERM_PROGRAM")
         .unwrap_or_default()
@@ -553,6 +659,19 @@ fn detect_terminal() -> TerminalKind {
     detect_terminal_from(&term_program, &term, |name| {
         std::env::var_os(name).is_some()
     })
+}
+
+fn normalize_cursor(buffer: &str, cursor: usize, unit: CursorUnit) -> usize {
+    match unit {
+        CursorUnit::Characters => cursor.min(buffer.chars().count()),
+        CursorUnit::Bytes => {
+            let mut byte = cursor.min(buffer.len());
+            while !buffer.is_char_boundary(byte) {
+                byte = byte.saturating_sub(1);
+            }
+            buffer[..byte].chars().count()
+        }
+    }
 }
 
 fn detect_terminal_from(
@@ -595,8 +714,35 @@ fn detect_terminal_from(
     }
 }
 
-fn zsh_quote(value: &str) -> String {
+fn print_edit(edit: &ApplyEdit, format: EditFormat) -> anyhow::Result<()> {
+    let continue_completion = usize::from(edit.continue_completion);
+    match format {
+        EditFormat::Zsh => {
+            println!("BUFFER={}", posix_quote(&edit.buffer));
+            println!("CURSOR={}", edit.cursor);
+            println!("WISP_CONTINUE={continue_completion}");
+        }
+        EditFormat::Bash => {
+            println!("_WISP_EDIT_BUFFER={}", posix_quote(&edit.buffer));
+            println!("_WISP_EDIT_CURSOR={}", edit.cursor);
+            println!("_WISP_EDIT_CONTINUE={continue_completion}");
+        }
+        EditFormat::Fish => {
+            println!("set -g _WISP_EDIT_BUFFER {}", fish_quote(&edit.buffer));
+            println!("set -g _WISP_EDIT_CURSOR {}", edit.cursor);
+            println!("set -g _WISP_EDIT_CONTINUE {continue_completion}");
+        }
+        EditFormat::Json => println!("{}", serde_json::to_string(edit)?),
+    }
+    Ok(())
+}
+
+fn posix_quote(value: &str) -> String {
     format!("'{}'", value.replace('\'', "'\\''"))
+}
+
+fn fish_quote(value: &str) -> String {
+    format!("'{}'", value.replace('\\', "\\\\").replace('\'', "\\'"))
 }
 
 fn request_id() -> u64 {
@@ -672,5 +818,26 @@ mod tests {
             detect_terminal_from("new-terminal", "xterm-256color", |_| false),
             TerminalKind::Unknown
         );
+    }
+
+    #[test]
+    fn byte_cursors_are_normalized_to_protocol_character_offsets() {
+        assert_eq!(normalize_cursor("a中🙂z", 0, CursorUnit::Bytes), 0);
+        assert_eq!(normalize_cursor("a中🙂z", 1, CursorUnit::Bytes), 1);
+        assert_eq!(normalize_cursor("a中🙂z", 4, CursorUnit::Bytes), 2);
+        assert_eq!(normalize_cursor("a中🙂z", 8, CursorUnit::Bytes), 3);
+        assert_eq!(normalize_cursor("a中🙂z", 99, CursorUnit::Bytes), 4);
+    }
+
+    #[test]
+    fn byte_cursors_inside_a_codepoint_snap_to_its_start() {
+        assert_eq!(normalize_cursor("a中z", 2, CursorUnit::Bytes), 1);
+        assert_eq!(normalize_cursor("a中z", 3, CursorUnit::Bytes), 1);
+    }
+
+    #[test]
+    fn shell_output_quoting_preserves_quotes_and_backslashes() {
+        assert_eq!(posix_quote("a'b"), "'a'\\''b'");
+        assert_eq!(fish_quote("a\\b'c"), "'a\\\\b\\'c'");
     }
 }

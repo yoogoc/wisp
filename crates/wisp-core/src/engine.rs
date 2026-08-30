@@ -6,7 +6,7 @@ use std::{
 };
 
 use wisp_config::GeneratorConfig;
-use wisp_protocol::{BufferSnapshot, Candidate, CandidateKind};
+use wisp_protocol::{BufferSnapshot, Candidate, CandidateKind, ShellKind};
 
 use crate::ranking::{DEFAULT_PRIORITY, RankingStore};
 use crate::{
@@ -82,9 +82,10 @@ impl CompletionEngine {
         }
         let context = parse_completion_context(&snapshot.buffer, snapshot.cursor);
         let mut candidates = if is_command_position(&context) {
-            complete_commands(&context, &self.commands, &snapshot.cwd)
+            complete_commands(&context, &self.commands, &snapshot.cwd, snapshot.shell)
         } else {
-            self.complete_arguments(&context, &snapshot.cwd).await
+            self.complete_arguments(&context, &snapshot.cwd, snapshot.shell)
+                .await
         };
 
         let command = context.command.as_deref().unwrap_or_default();
@@ -107,11 +108,16 @@ impl CompletionEngine {
         candidates
     }
 
-    async fn complete_arguments(&self, context: &CompletionContext, cwd: &Path) -> Vec<Candidate> {
+    async fn complete_arguments(
+        &self,
+        context: &CompletionContext,
+        cwd: &Path,
+        shell: ShellKind,
+    ) -> Vec<Candidate> {
         let Some(command) = context.command.as_deref() else {
-            return complete_commands(context, &self.commands, cwd);
+            return complete_commands(context, &self.commands, cwd, shell);
         };
-        if !command_is_available(command, cwd) {
+        if !command_is_available(command, cwd, shell) {
             return Vec::new();
         }
         let Some(spec) = self.specs.get(command) else {
@@ -132,7 +138,7 @@ impl CompletionEngine {
                 replace_range: (context.replace_range.start + offset)..context.replace_range.end,
             };
             return self
-                .complete_argument(argument, &resolved, &inner, cwd)
+                .complete_argument(argument, &resolved, &inner, cwd, shell)
                 .await;
         }
 
@@ -142,7 +148,7 @@ impl CompletionEngine {
 
         if let Some(argument) = resolved.pending_argument {
             return self
-                .complete_argument(argument, &resolved, context, cwd)
+                .complete_argument(argument, &resolved, context, cwd, shell)
                 .await;
         }
 
@@ -192,7 +198,7 @@ impl CompletionEngine {
                 argument_at(resolved.node.arguments(), resolved.positional_index)
             {
                 candidates.extend(
-                    self.complete_argument(argument, &resolved, context, cwd)
+                    self.complete_argument(argument, &resolved, context, cwd, shell)
                         .await,
                 );
             }
@@ -368,6 +374,7 @@ impl CompletionEngine {
         resolved: &ResolvedNode<'_>,
         context: &CompletionContext,
         cwd: &Path,
+        shell: ShellKind,
     ) -> Vec<Candidate> {
         let mut candidates: Vec<Candidate> = argument
             .suggestions
@@ -382,7 +389,7 @@ impl CompletionEngine {
                 Template::FilePaths => candidates.extend(complete_paths(context, cwd, false)),
                 Template::Folders => candidates.extend(complete_paths(context, cwd, true)),
                 Template::History => candidates.extend(candidates_from(
-                    Native::History.suggest(cwd, self.generators.history_limit()),
+                    Native::History.suggest_for_shell(cwd, self.generators.history_limit(), shell),
                     SuggestionKind::Value,
                     context,
                 )),
@@ -445,7 +452,7 @@ impl CompletionEngine {
         // question Wisp can answer by reading a file.
         if javascript_only && let Some(native) = argument.native {
             candidates.extend(candidates_from(
-                native.suggest(cwd, self.generators.history_limit()),
+                native.suggest_for_shell(cwd, self.generators.history_limit(), shell),
                 SuggestionKind::Value,
                 context,
             ));
@@ -807,11 +814,7 @@ fn discover_commands() -> Vec<String> {
         return Vec::new();
     };
     let mut seen = HashSet::new();
-    let mut commands = ZSH_BUILTINS
-        .iter()
-        .map(|command| (*command).to_owned())
-        .collect::<Vec<_>>();
-    seen.extend(commands.iter().cloned());
+    let mut commands = Vec::new();
     for directory in std::env::split_paths(&path) {
         let Ok(entries) = std::fs::read_dir(directory) else {
             continue;
@@ -837,10 +840,15 @@ fn complete_commands(
     context: &CompletionContext,
     commands: &[String],
     cwd: &Path,
+    shell: ShellKind,
 ) -> Vec<Candidate> {
+    let mut seen = HashSet::new();
     commands
         .iter()
-        .filter(|name| command_is_available(name, cwd))
+        .map(String::as_str)
+        .chain(shell_builtins(shell).iter().copied())
+        .filter(|name| seen.insert((*name).to_owned()))
+        .filter(|name| command_is_available(name, cwd, shell))
         .filter_map(|name| {
             make_candidate(
                 name,
@@ -860,8 +868,281 @@ const ZSH_BUILTINS: &[&str] = &[
     "unalias", "unset", "unsetopt", "wait", "whence", "which",
 ];
 
-fn command_is_available(command: &str, cwd: &Path) -> bool {
-    if ZSH_BUILTINS.contains(&command) {
+const BASH_BUILTINS: &[&str] = &[
+    "alias",
+    "bg",
+    "bind",
+    "break",
+    "builtin",
+    "caller",
+    "cd",
+    "command",
+    "compgen",
+    "complete",
+    "compopt",
+    "continue",
+    "declare",
+    "dirs",
+    "disown",
+    "echo",
+    "enable",
+    "eval",
+    "exec",
+    "exit",
+    "export",
+    "false",
+    "fc",
+    "fg",
+    "getopts",
+    "hash",
+    "help",
+    "history",
+    "jobs",
+    "kill",
+    "let",
+    "local",
+    "logout",
+    "mapfile",
+    "popd",
+    "printf",
+    "pushd",
+    "pwd",
+    "read",
+    "readarray",
+    "readonly",
+    "return",
+    "set",
+    "shift",
+    "shopt",
+    "source",
+    "suspend",
+    "test",
+    "times",
+    "trap",
+    "true",
+    "type",
+    "typeset",
+    "ulimit",
+    "umask",
+    "unalias",
+    "unset",
+    "wait",
+];
+
+const FISH_BUILTINS: &[&str] = &[
+    "abbr",
+    "alias",
+    "and",
+    "argparse",
+    "begin",
+    "bg",
+    "bind",
+    "block",
+    "break",
+    "builtin",
+    "case",
+    "cd",
+    "command",
+    "commandline",
+    "complete",
+    "contains",
+    "continue",
+    "count",
+    "disown",
+    "echo",
+    "else",
+    "emit",
+    "end",
+    "eval",
+    "exec",
+    "exit",
+    "false",
+    "fg",
+    "for",
+    "function",
+    "functions",
+    "history",
+    "if",
+    "jobs",
+    "math",
+    "nextd",
+    "not",
+    "or",
+    "popd",
+    "prevd",
+    "printf",
+    "prompt_pwd",
+    "psub",
+    "pwd",
+    "random",
+    "read",
+    "realpath",
+    "return",
+    "set",
+    "set_color",
+    "source",
+    "status",
+    "string",
+    "switch",
+    "test",
+    "time",
+    "trap",
+    "true",
+    "type",
+    "ulimit",
+    "umask",
+    "wait",
+    "while",
+];
+
+const NUSHELL_BUILTINS: &[&str] = &[
+    "alias",
+    "all",
+    "ansi",
+    "any",
+    "append",
+    "ast",
+    "break",
+    "bytes",
+    "cal",
+    "cd",
+    "char",
+    "clear",
+    "collect",
+    "columns",
+    "commandline",
+    "compact",
+    "const",
+    "continue",
+    "cp",
+    "date",
+    "debug",
+    "decode",
+    "def",
+    "describe",
+    "do",
+    "drop",
+    "du",
+    "each",
+    "echo",
+    "encode",
+    "error",
+    "every",
+    "exec",
+    "exit",
+    "explore",
+    "export",
+    "extern",
+    "find",
+    "first",
+    "flatten",
+    "for",
+    "format",
+    "from",
+    "generate",
+    "get",
+    "glob",
+    "group-by",
+    "hash",
+    "headers",
+    "help",
+    "hide",
+    "histogram",
+    "history",
+    "if",
+    "ignore",
+    "input",
+    "insert",
+    "inspect",
+    "into",
+    "items",
+    "join",
+    "keybindings",
+    "kill",
+    "last",
+    "length",
+    "let",
+    "lines",
+    "load-env",
+    "ls",
+    "math",
+    "merge",
+    "metadata",
+    "module",
+    "move",
+    "mv",
+    "mut",
+    "open",
+    "overlay",
+    "par-each",
+    "path",
+    "polars",
+    "prepend",
+    "print",
+    "ps",
+    "query",
+    "random",
+    "range",
+    "reduce",
+    "reject",
+    "rename",
+    "return",
+    "reverse",
+    "rm",
+    "roll",
+    "rotate",
+    "run-external",
+    "save",
+    "select",
+    "seq",
+    "shuffle",
+    "skip",
+    "sort",
+    "source",
+    "split",
+    "start",
+    "stor",
+    "str",
+    "sys",
+    "table",
+    "take",
+    "tee",
+    "term",
+    "timeit",
+    "to",
+    "touch",
+    "transpose",
+    "try",
+    "tutor",
+    "uniq",
+    "update",
+    "upsert",
+    "url",
+    "use",
+    "values",
+    "version",
+    "view",
+    "where",
+    "which",
+    "while",
+    "window",
+    "with-env",
+    "wrap",
+    "zip",
+];
+
+fn shell_builtins(shell: ShellKind) -> &'static [&'static str] {
+    match shell {
+        ShellKind::Zsh => ZSH_BUILTINS,
+        ShellKind::Bash => BASH_BUILTINS,
+        ShellKind::Fish => FISH_BUILTINS,
+        ShellKind::Nushell => NUSHELL_BUILTINS,
+        ShellKind::Unknown => &[],
+    }
+}
+
+fn command_is_available(command: &str, cwd: &Path, shell: ShellKind) -> bool {
+    if shell_builtins(shell).contains(&command) {
         return true;
     }
     if command.contains('/') {
@@ -1494,6 +1775,7 @@ mod tests {
             &context,
             std::slice::from_ref(&unavailable),
             Path::new(env!("CARGO_MANIFEST_DIR")),
+            ShellKind::Zsh,
         );
         assert!(values.is_empty());
     }
@@ -1502,8 +1784,22 @@ mod tests {
     fn zsh_builtins_are_available_without_path_executables() {
         assert!(command_is_available(
             "cd",
-            Path::new(env!("CARGO_MANIFEST_DIR"))
+            Path::new(env!("CARGO_MANIFEST_DIR")),
+            ShellKind::Zsh,
         ));
+    }
+
+    #[test]
+    fn builtins_are_selected_for_the_active_shell() {
+        let cwd = Path::new(env!("CARGO_MANIFEST_DIR"));
+        assert!(command_is_available("setopt", cwd, ShellKind::Zsh));
+        assert!(!command_is_available("setopt", cwd, ShellKind::Bash));
+        assert!(command_is_available("shopt", cwd, ShellKind::Bash));
+        assert!(!command_is_available("shopt", cwd, ShellKind::Fish));
+        assert!(command_is_available("set_color", cwd, ShellKind::Fish));
+        assert!(!command_is_available("set_color", cwd, ShellKind::Nushell));
+        assert!(command_is_available("overlay", cwd, ShellKind::Nushell));
+        assert!(!command_is_available("overlay", cwd, ShellKind::Unknown));
     }
 
     #[test]
